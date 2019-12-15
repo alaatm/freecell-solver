@@ -161,7 +161,6 @@ namespace FreeCellSolver
         public Tableau Clone() => new Tableau(Index, _cards.Reverse());
 
         #region Equality overrides and overloads
-        private int? _hashCode = null;
         public bool Equals([AllowNull] Tableau other) => other == null
             ? false
             : Index == other.Index && _cards.SequenceEqual(other._cards);
@@ -170,17 +169,12 @@ namespace FreeCellSolver
 
         public override int GetHashCode()
         {
-            if (_hashCode == null)
+            var hc = Index.GetHashCode();
+            foreach (var card in _cards)
             {
-                var hc = Index.GetHashCode();
-                foreach (var card in _cards)
-                {
-                    hc = HashCode.Combine(hc, card.GetHashCode());
-                }
-                _hashCode = hc;
+                hc = HashCode.Combine(hc, card.GetHashCode());
             }
-
-            return _hashCode.Value;
+            return hc;
         }
 
         public static bool operator ==(Tableau a, Tableau b) => Equals(a, b);

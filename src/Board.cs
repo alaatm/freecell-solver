@@ -260,7 +260,6 @@ namespace FreeCellSolver
         }
 
         #region Equality overrides and overloads
-        private int? _hashCode = null;
         public bool Equals([AllowNull] Board other) => other == null
             ? false
             : Moves.SequenceEqual(other.Moves) && Deal == other.Deal;
@@ -269,17 +268,12 @@ namespace FreeCellSolver
 
         public override int GetHashCode()
         {
-            if (_hashCode == null)
+            var hc = Deal.GetHashCode();
+            foreach (var move in Moves)
             {
-                var hc = Deal.GetHashCode();
-                foreach (var move in Moves)
-                {
-                    hc = HashCode.Combine(hc, move.GetHashCode());
-                }
-                _hashCode = hc;
+                hc = HashCode.Combine(hc, move.GetHashCode());
             }
-
-            return _hashCode.Value;
+            return hc;
         }
 
         public static bool operator ==(Board a, Board b) => Equals(a, b);

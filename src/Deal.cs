@@ -98,7 +98,6 @@ namespace FreeCellSolver
         public Deal Clone() => new Deal(_tableaus.Select(t => t.Clone()));
 
         #region Equality overrides and overloads
-        private int? _hashCode = null;
         public bool Equals([AllowNull] Deal other) => other == null
             ? false
             : _tableaus.SequenceEqual(other._tableaus);
@@ -107,17 +106,12 @@ namespace FreeCellSolver
 
         public override int GetHashCode()
         {
-            if (_hashCode == null)
+            var hc = _tableaus[0].GetHashCode();
+            for (var i = 1; i < _tableaus.Count; i++)
             {
-                var hc = _tableaus[0].GetHashCode();
-                foreach (var tableau in _tableaus.Skip(1))
-                {
-                    hc = HashCode.Combine(hc, tableau.GetHashCode());
-                }
-                _hashCode = hc;
+                hc = HashCode.Combine(hc, _tableaus[i].GetHashCode());
             }
-
-            return _hashCode.Value;
+            return hc;
         }
 
         public static bool operator ==(Deal a, Deal b) => Equals(a, b);
