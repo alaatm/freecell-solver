@@ -8,7 +8,7 @@ namespace FreeCellSolver
 {
     public class Tableau : IEquatable<Tableau>
     {
-        private Stack<Card> _cards = new Stack<Card>();
+        private Stack<Card> _cards = new Stack<Card>(19);
 
         public int Index { get; private set; }
 
@@ -55,8 +55,6 @@ namespace FreeCellSolver
         public IEnumerable<Card> Stack => _cards.ToList();
 
         public Card Top => IsEmpty ? null : _cards.Peek();
-
-        public Tableau(int index) => Index = index;
 
         public Tableau(int index, string cards)
         {
