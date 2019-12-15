@@ -62,12 +62,12 @@ namespace FreeCellSolver
             switch (move.Source)
             {
                 case Location.Tableau:
-                    var sourceTableau = Deal.Tableaus.ElementAt(move.SourceIndex.Value);
+                    var sourceTableau = Deal.Tableaus[move.SourceIndex.Value];
 
                     switch (move.Target)
                     {
                         case Location.Tableau:
-                            var targetTableau = Deal.Tableaus.ElementAt(move.TargetIndex.Value);
+                            var targetTableau = Deal.Tableaus[move.TargetIndex.Value];
                             sourceTableau.Move(targetTableau, 1);
                             break;
                         case Location.Reserve:
@@ -84,7 +84,7 @@ namespace FreeCellSolver
                     switch (move.Target)
                     {
                         case Location.Tableau:
-                            var targetTableau = Deal.Tableaus.ElementAt(move.TargetIndex.Value);
+                            var targetTableau = Deal.Tableaus[move.TargetIndex.Value];
                             Reserve.Move(card, targetTableau);
                             break;
                         case Location.Foundation:
@@ -148,7 +148,7 @@ namespace FreeCellSolver
 
             if (move.Source == Location.Tableau)
             {
-                var sourceTableau = Deal.Tableaus.ElementAt(move.SourceIndex.Value);
+                var sourceTableau = Deal.Tableaus[move.SourceIndex.Value];
                 var stack = sourceTableau.Stack;
                 cardToBeMoved = sourceTableau.Top;
 
@@ -186,7 +186,7 @@ namespace FreeCellSolver
             if (move.Target == Location.Tableau)
             {
                 LastMoveRating += RATING_TABLEAU;
-                var targetTableau = Deal.Tableaus.ElementAt(move.TargetIndex.Value);
+                var targetTableau = Deal.Tableaus[move.TargetIndex.Value];
                 var stack = targetTableau.Stack.Reverse();
 
                 // Punish buring foundation target
@@ -201,7 +201,7 @@ namespace FreeCellSolver
                 if (targetTableau.IsEmpty)
                 {
                     // Avoid moving the single card of a tableau to an empty one
-                    if (move.Source == Location.Tableau && Deal.Tableaus.ElementAt(move.SourceIndex.Value).Stack.Count() == 1)
+                    if (move.Source == Location.Tableau && Deal.Tableaus[move.SourceIndex.Value].Stack.Count() == 1)
                     {
                         LastMoveRating = -RATING_FOUNDATION;
                         return;

@@ -21,9 +21,9 @@ namespace FreeCellSolver.Extensions
 
             var bmp = new SKBitmap(width, height);
             using var canvas = new SKCanvas(bmp);
-            for (var i = 0; i < deal.Tableaus.Count(); i++)
+            for (var i = 0; i < deal.Tableaus.Count; i++)
             {
-                var tableauImage = deal.Tableaus.ElementAt(i).ToImage();
+                var tableauImage = deal.Tableaus[i].ToImage();
                 if (tableauImage != null)
                 {
                     canvas.DrawImage(
@@ -49,7 +49,7 @@ namespace FreeCellSolver.Extensions
                 isValid = false;
             }
 
-            if (deal.Tableaus.Count() != 8)
+            if (deal.Tableaus.Count != 8)
             {
                 stdErr.WriteLine("Incorrect number of tableaus.");
                 isValid = false;
@@ -59,7 +59,7 @@ namespace FreeCellSolver.Extensions
 
                 for (var i = 0; i < 4; i++)
                 {
-                    if (deal.Tableaus.ElementAt(i).Stack.Count() != 7)
+                    if (deal.Tableaus[i].Stack.Count() != 7)
                     {
                         stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
                         isValid = false;
@@ -68,7 +68,7 @@ namespace FreeCellSolver.Extensions
 
                 for (var i = 4; i < 8; i++)
                 {
-                    if (deal.Tableaus.ElementAt(i).Stack.Count() != 6)
+                    if (deal.Tableaus[i].Stack.Count() != 6)
                     {
                         stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
                         isValid = false;

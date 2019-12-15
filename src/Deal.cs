@@ -10,11 +10,9 @@ namespace FreeCellSolver
 {
     public class Deal : IEquatable<Deal>
     {
-        private readonly List<Tableau> _tableaus = new List<Tableau>(8);
+        public List<Tableau> Tableaus = new List<Tableau>(8);
 
-        public IEnumerable<Tableau> Tableaus => _tableaus.AsReadOnly();
-
-        public Deal(IEnumerable<Tableau> tableaus) => _tableaus = new List<Tableau>(tableaus);
+        public Deal(IEnumerable<Tableau> tableaus) => Tableaus = tableaus.ToList();
 
         public Deal(int dealNum)
         {
@@ -42,7 +40,7 @@ namespace FreeCellSolver
 
             for (var c = 0; c < 8; c++)
             {
-                _tableaus.Add(new Tableau(c, tableaus[c].Select(n => new Card(n)).ToList()));
+                Tableaus.Add(new Tableau(c, tableaus[c].Select(n => new Card(n)).ToList()));
             }
         }
 
@@ -70,7 +68,7 @@ namespace FreeCellSolver
 
             for (var c = 0; c < 8; c++)
             {
-                _tableaus.Add(new Tableau(c, tableaus[c].Select(n => new Card(n)).ToList()));
+                Tableaus.Add(new Tableau(c, tableaus[c].Select(n => new Card(n)).ToList()));
             }
         }
 
@@ -81,7 +79,7 @@ namespace FreeCellSolver
             {
                 for (var c = 0; c < 8; c++)
                 {
-                    var stack = Tableaus.ElementAt(c).Stack.Reverse();
+                    var stack = Tableaus[c].Stack.Reverse();
                     if (stack.Count() > r)
                     {
                         sb.Append(stack.ElementAt(r).ToString());
@@ -95,21 +93,21 @@ namespace FreeCellSolver
             return sb.ToString();
         }
 
-        public Deal Clone() => new Deal(_tableaus.Select(t => t.Clone()));
+        public Deal Clone() => new Deal(Tableaus.Select(t => t.Clone()));
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Deal other) => other == null
             ? false
-            : _tableaus.SequenceEqual(other._tableaus);
+            : Tableaus.SequenceEqual(other.Tableaus);
 
         public override bool Equals(object obj) => obj is Deal deal && Equals(deal);
 
         public override int GetHashCode()
         {
-            var hc = _tableaus[0].GetHashCode();
-            for (var i = 1; i < _tableaus.Count; i++)
+            var hc = Tableaus[0].GetHashCode();
+            for (var i = 1; i < Tableaus.Count; i++)
             {
-                hc = HashCode.Combine(hc, _tableaus[i].GetHashCode());
+                hc = HashCode.Combine(hc, Tableaus[i].GetHashCode());
             }
             return hc;
         }

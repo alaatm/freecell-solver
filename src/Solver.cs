@@ -53,9 +53,9 @@ namespace FreeCellSolver
                     break;
                 }
 
-                for (var t = 0; t < board.Deal.Tableaus.Count(); t++)
+                for (var t = 0; t < board.Deal.Tableaus.Count; t++)
                 {
-                    var tableau = board.Deal.Tableaus.ElementAt(t);
+                    var tableau = board.Deal.Tableaus[t];
                     if (board.Reserve.CanMove(card, tableau))
                     {
                         moves.Add($"{"abcd"[index]}{t}");
@@ -64,9 +64,9 @@ namespace FreeCellSolver
             }
 
             // Find moves from tableau
-            for (var i = 0; i < board.Deal.Tableaus.Count(); i++)
+            for (var i = 0; i < board.Deal.Tableaus.Count; i++)
             {
-                var tableau = board.Deal.Tableaus.ElementAt(i);
+                var tableau = board.Deal.Tableaus[i];
                 if (tableau.IsEmpty)
                 {
                     continue;
@@ -85,9 +85,9 @@ namespace FreeCellSolver
                     moves.Add($"{i}{"abcd"[index]}");
                 }
 
-                for (var t = 0; t < board.Deal.Tableaus.Count(); t++)
+                for (var t = 0; t < board.Deal.Tableaus.Count; t++)
                 {
-                    var targetTableau = board.Deal.Tableaus.ElementAt(t);
+                    var targetTableau = board.Deal.Tableaus[t];
                     if (targetTableau.IsEmpty || tableau.Top.IsBelow(targetTableau.Top))
                     {
                         moves.Add($"{i}{t}");
