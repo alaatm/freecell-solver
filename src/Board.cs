@@ -27,22 +27,6 @@ namespace FreeCellSolver
             Deal = deal;
         }
 
-        public IEnumerable<int> FindValidTargets(Card card, Location target)
-        {
-            switch (target)
-            {
-                case Location.Foundation:
-                    return new[] { Foundation.CanPush(card) ? 0 : -1 };
-                case Location.Reserve:
-                    return new[] { Reserve.CanInsert(card).index };
-                case Location.Tableau:
-                    return Deal.Tableaus.Select((t, i) => t.CanPush(card) ? i : -1);
-            }
-
-            Debug.Assert(false);
-            return new[] { -1 };
-        }
-
         public bool ShouldMove(string moveString)
         {
             // Do not move if this is an exact opposite of the previous move
