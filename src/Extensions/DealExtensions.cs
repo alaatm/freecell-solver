@@ -42,7 +42,7 @@ namespace FreeCellSolver.Extensions
             ConsoleErrorWriter.Set();
             var stdErr = Console.Error;
 
-            var totalCardCount = deal.Tableaus.Sum(t => t.Stack.Count());
+            var totalCardCount = deal.Tableaus.Sum(t => t.Stack.Count);
             if (totalCardCount != 52)
             {
                 stdErr.WriteLine($"Total card count is invalid, should be '52' but is '{totalCardCount}'.");
@@ -59,7 +59,7 @@ namespace FreeCellSolver.Extensions
 
                 for (var i = 0; i < 4; i++)
                 {
-                    if (deal.Tableaus[i].Stack.Count() != 7)
+                    if (deal.Tableaus[i].Stack.Count != 7)
                     {
                         stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
                         isValid = false;
@@ -68,7 +68,7 @@ namespace FreeCellSolver.Extensions
 
                 for (var i = 4; i < 8; i++)
                 {
-                    if (deal.Tableaus[i].Stack.Count() != 6)
+                    if (deal.Tableaus[i].Stack.Count != 6)
                     {
                         stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
                         isValid = false;

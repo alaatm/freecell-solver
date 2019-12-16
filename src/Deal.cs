@@ -75,7 +75,7 @@ namespace FreeCellSolver
         public override string ToString()
         {
             var sb = new StringBuilder();
-            for (var r = 0; r < Tableaus.Max(t => t.Stack.Count()); r++)
+            for (var r = 0; r < Tableaus.Max(t => t.Stack.Count); r++)
             {
                 for (var c = 0; c < 8; c++)
                 {

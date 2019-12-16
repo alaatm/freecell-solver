@@ -18,12 +18,12 @@ namespace FreeCellSolver.Extensions
             }
 
             var width = DeckImage.CardWidth;
-            var height = ((tableau.Stack.Count() - 1) * topOffset) + DeckImage.CardHeight;
+            var height = ((tableau.Stack.Count - 1) * topOffset) + DeckImage.CardHeight;
 
             var bmp = new SKBitmap(width, height);
             using var canvas = new SKCanvas(bmp);
             var reversedStack = tableau.Stack.Reverse();
-            for (var i = 0; i < tableau.Stack.Count(); i++)
+            for (var i = 0; i < tableau.Stack.Count; i++)
             {
                 var card = reversedStack.ElementAt(i);
                 canvas.DrawImage(card.ToImage(), 0, topOffset * i);

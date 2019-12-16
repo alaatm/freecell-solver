@@ -189,7 +189,7 @@ namespace FreeCellSolver.Test
             reserve.Move(card, tableau);
 
             Assert.Equal(4, reserve.FreeCount);
-            Assert.Equal(2, tableau.Stack.Count());
+            Assert.Equal(2, tableau.Stack.Count);
             Assert.Equal(card, tableau.Top);
         }
 

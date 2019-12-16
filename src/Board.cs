@@ -95,7 +95,7 @@ namespace FreeCellSolver
             }
 
             Debug.Assert(
-                Deal.Tableaus.Sum(t => t.Stack.Count())
+                Deal.Tableaus.Sum(t => t.Stack.Count)
                 + Reserve.Occupied.Count()
                 + Foundation.State.Values.Where(v => v != -1).Select(n => n + 1).Sum() == 52);
         }
@@ -153,13 +153,13 @@ namespace FreeCellSolver
                 cardToBeMoved = sourceTableau.Top;
 
                 // Reward emptying tableau slot
-                if (stack.Count() == 1)
+                if (stack.Count == 1)
                 {
                     LastMoveRating += RATING_OPENTABLEAU;
                 }
 
                 // Reward unburing foundation targets
-                for (var i = 1; i < stack.Count(); i++)
+                for (var i = 1; i < stack.Count; i++)
                 {
                     if (Foundation.CanPush(stack.ElementAt(i)))
                     {
@@ -168,7 +168,7 @@ namespace FreeCellSolver
                 }
 
                 // Reward a newly discovered tableau-to-tableau move
-                var cardToBeTop = stack.Count() > 1 ? stack.ElementAt(1) : null;
+                var cardToBeTop = stack.Count > 1 ? stack.ElementAt(1) : null;
                 if (cardToBeTop != null && Deal.Tableaus.Any(t => t.CanPush(cardToBeTop)))
                 {
                     LastMoveRating += RATING_FREETABLEAUTARGET;
@@ -201,7 +201,7 @@ namespace FreeCellSolver
                 if (targetTableau.IsEmpty)
                 {
                     // Avoid moving the single card of a tableau to an empty one
-                    if (move.Source == Location.Tableau && Deal.Tableaus[move.SourceIndex.Value].Stack.Count() == 1)
+                    if (move.Source == Location.Tableau && Deal.Tableaus[move.SourceIndex.Value].Stack.Count == 1)
                     {
                         LastMoveRating = -RATING_FOUNDATION;
                         return;
