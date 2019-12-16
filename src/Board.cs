@@ -163,7 +163,7 @@ namespace FreeCellSolver
                 {
                     if (Foundation.CanPush(stack.ElementAt(i)))
                     {
-                        LastMoveRating += RATING_FREEFOUNDATIONTARGET - (i - 1);
+                        LastMoveRating += Math.Max(1, RATING_FREEFOUNDATIONTARGET - ((i - 1) * 3));
                     }
                 }
 
