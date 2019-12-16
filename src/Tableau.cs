@@ -3,6 +3,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
 {
@@ -73,6 +74,8 @@ namespace FreeCellSolver
                 Stack.Push(card);
             }
         }
+
+        public Tableau() { }
 
         public bool CanPush(Card card) => IsEmpty || card.IsBelow(Top);
 
@@ -154,7 +157,11 @@ namespace FreeCellSolver
             return movable;
         }
 
-        public Tableau Clone() => new Tableau(Index, Stack.Reverse());
+        public Tableau Clone() => new Tableau
+        {
+            Index = Index,
+            Stack = Stack.Clone()
+        };
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableau other) => other == null
