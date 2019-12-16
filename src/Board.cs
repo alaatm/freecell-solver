@@ -51,7 +51,7 @@ namespace FreeCellSolver
         {
             _lastMoveString = moveString;
             Card card;
-            var move = FreeCellSolver.Move.Parse(moveString);
+            var move = FreeCellSolver.Move.Get(moveString);
             Moves.Add(move);
 
             if (rate)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
@@ -14,14 +15,60 @@ namespace FreeCellSolver
 
     public class Move : IEquatable<Move>
     {
-        public string MoveString { get; private set; }
+        private static Dictionary<string, Move> _possibleMoves = new Dictionary<string, Move>();
 
+        public string MoveString { get; private set; }
         public Location Source { get; private set; }
         public Location Target { get; private set; }
         public int? SourceIndex { get; private set; }
         public int? TargetIndex { get; private set; }
 
-        public static Move Parse(string move)
+        static Move()
+        {
+            // Cache all possible moves
+            // Reserve -> foundation
+            // Reserve -> tableau
+            // Tableau -> foundation
+            // Tableau -> reserve
+            // Tableau -> tableau
+
+            foreach (var c in "abcd")
+            {
+                var move = $"{c}h";
+                _possibleMoves.Add(move, Parse(move));
+
+                for (var t = 0; t < 8; t++)
+                {
+                    move = $"{c}{t}";
+                    _possibleMoves.Add(move, Parse(move));
+                }
+            }
+
+            for (var t = 0; t < 8; t++)
+            {
+                var move = $"{t}h";
+                _possibleMoves.Add(move, Parse(move));
+
+                foreach (var c in "abcd")
+                {
+                    move = $"{t}{c}";
+                    _possibleMoves.Add(move, Parse(move));
+                }
+
+                for (var t2 = 0; t2 < 8; t2++)
+                {
+                    if (t != t2)
+                    {
+                        move = $"{t}{t2}";
+                        _possibleMoves.Add(move, Parse(move));
+                    }
+                }
+            }
+        }
+
+        public static Move Get(string move) => _possibleMoves[move];
+
+        private static Move Parse(string move)
         {
             Debug.Assert(Regex.IsMatch(move, @"^(?:^([01234567][01234567]|[01234567][abcd]|[01234567]h|[abcd][01234567]|[abcd]h)$)$"));
 
