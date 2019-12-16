@@ -79,7 +79,7 @@ namespace FreeCellSolver
                     }
                     break;
                 case Location.Reserve:
-                    card = Reserve.State.ElementAt(move.SourceIndex.Value);
+                    card = Reserve.State[move.SourceIndex.Value];
 
                     switch (move.Target)
                     {
@@ -179,7 +179,7 @@ namespace FreeCellSolver
             if (move.Source == Location.Reserve)
             {
                 LastMoveRating += RATING_OPENRESERVE;
-                cardToBeMoved = Reserve.State.ElementAt(move.SourceIndex.Value);
+                cardToBeMoved = Reserve.State[move.SourceIndex.Value];
             }
 
             // Reward any move to tableau

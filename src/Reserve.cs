@@ -6,7 +6,7 @@ namespace FreeCellSolver
 {
     public class Reserve
     {
-        private readonly List<Card> _list = new List<Card>
+        public readonly List<Card> State = new List<Card>
         {
             null,
             null,
@@ -14,49 +14,44 @@ namespace FreeCellSolver
             null,
         };
 
-        public IEnumerable<Card> State => _list.ToList();
-
         public IEnumerable<(int index, Card card)> Occupied
         {
             get
             {
-                var ret = new List<(int index, Card card)>();
-                for (var i = 0; i < _list.Count; i++)
+                for (var i = 0; i < State.Count; i++)
                 {
-                    if (_list[i] != null)
+                    if (State[i] != null)
                     {
-                        ret.Add((i, _list[i]));
+                        yield return (i, State[i]);
                     }
                 }
-
-                return ret;
             }
         }
 
-        public int FreeCount => _list.Count(c => c == null);
+        public int FreeCount => State.Count(c => c == null);
 
-        internal Reserve(Reserve reserve) => _list = reserve._list.ToList();
+        internal Reserve(Reserve reserve) => State = reserve.State.ToList();
 
         public Reserve() { }
 
         public (bool canInsert, int index) CanInsert(Card card)
         {
-            Debug.Assert(!_list.Contains(card));
+            Debug.Assert(!State.Contains(card));
             return FreeCount > 0
-                ? (true, _list.IndexOf(null))
+                ? (true, State.IndexOf(null))
                 : (false, -1);
         }
 
         public bool CanInsert(int index, Card card)
         {
-            Debug.Assert(!_list.Contains(card));
+            Debug.Assert(!State.Contains(card));
             Debug.Assert(index >= 0 && index < 4);
-            return _list[index] == null;
+            return State[index] == null;
         }
 
         public bool CanMove(Card card, Tableau tableau)
         {
-            Debug.Assert(_list.Contains(card));
+            Debug.Assert(State.Contains(card));
 
             if (tableau.IsEmpty)
             {
@@ -68,22 +63,22 @@ namespace FreeCellSolver
 
         public bool CanMove(Card card, Foundation foundation)
         {
-            Debug.Assert(_list.Contains(card));
+            Debug.Assert(State.Contains(card));
             return foundation.CanPush(card);
         }
 
         public void Insert(int index, Card card)
         {
             Debug.Assert(CanInsert(index, card));
-            _list[index] = card;
+            State[index] = card;
         }
 
         public void Remove(Card card)
         {
-            Debug.Assert(_list.Contains(card));
+            Debug.Assert(State.Contains(card));
 
-            var index = _list.IndexOf(card);
-            _list[index] = null;
+            var index = State.IndexOf(card);
+            State[index] = null;
         }
 
         public void Move(Card card, Tableau tableau)

@@ -11,7 +11,7 @@ namespace FreeCellSolver.Test
         {
             var reserve = new Reserve();
 
-            Assert.Equal(4, reserve.State.Count());
+            Assert.Equal(4, reserve.State.Count);
             Assert.All(reserve.State, c => Assert.Null(c));
 
             reserve.Insert(0, Cards.KingOfSpades);
@@ -181,7 +181,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Move_moves_card_to_tableau()
         {
-            var card = Cards.AceOfClubs;
+            var card = Cards.AceOfDiamonds;
             var tableau = new Tableau(0, "2C");
             var reserve = new Reserve();
             reserve.Insert(1, card);

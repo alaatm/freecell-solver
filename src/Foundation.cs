@@ -5,7 +5,7 @@ namespace FreeCellSolver
 {
     public class Foundation
     {
-        private readonly Dictionary<Suit, int> _foundation = new Dictionary<Suit, int>()
+        public readonly Dictionary<Suit, int> State = new Dictionary<Suit, int>()
         {
             { Suit.Hearts, -1 },
             { Suit.Clubs, -1 },
@@ -13,21 +13,19 @@ namespace FreeCellSolver
             { Suit.Spades, -1 },
         };
 
-        public Dictionary<Suit, int> State => new Dictionary<Suit, int>(_foundation);
-
-        internal Foundation(Foundation foundation) => _foundation = new Dictionary<Suit, int>(foundation._foundation);
+        internal Foundation(Foundation foundation) => State = new Dictionary<Suit, int>(foundation.State);
 
         public Foundation() { }
 
         public bool CanPush(Card card)
-            => _foundation[card.Suit] == (int)card.Rank - 1;
+            => State[card.Suit] == (int)card.Rank - 1;
 
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
-            _foundation[card.Suit]++;
+            State[card.Suit]++;
         }
 
-        public int Size(Suit suit) => _foundation[suit];
+        public int Size(Suit suit) => State[suit];
     }
 }
