@@ -109,8 +109,10 @@ namespace FreeCellSolver
                 if (board.ShouldMove(move))
                 {
                     var next = board.Clone();
-                    next.Move(move, true);
-                    addedBoards.Add(next);
+                    if (next.Move(move, true))
+                    {
+                        addedBoards.Add(next);
+                    }
                 }
             }
 
@@ -139,7 +141,7 @@ namespace FreeCellSolver
             {
                 jumpDepth = (int)Math.Ceiling(depth * scale);
             }
-            if (!moves.Any())
+            if (addedBoards.Count == 0)
             {
                 jumpDepth = (int)Math.Ceiling(depth * 0.7f);
             }

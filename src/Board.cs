@@ -47,7 +47,7 @@ namespace FreeCellSolver
         /// 3h       : Tableau 3 to Foundation
         /// b0       : Reserve 1 to Tableau 0
         /// ah       : Reserve 0 to Foundation
-        public void Move(string moveString, bool rate = false)
+        public bool Move(string moveString, bool rate = false)
         {
             _lastMoveString = moveString;
             Card card;
@@ -56,7 +56,10 @@ namespace FreeCellSolver
 
             if (rate)
             {
-                RateMove(move);
+                if (!RateMove(move))
+                {
+                    return false;
+                }
             }
 
             switch (move.Source)
@@ -98,6 +101,8 @@ namespace FreeCellSolver
                 Deal.Tableaus.Sum(t => t.Stack.Count)
                 + Reserve.Occupied.Count()
                 + Foundation.State.Values.Where(v => v != -1).Select(n => n + 1).Sum() == 52);
+
+            return true;
         }
 
         public Board Clone()
@@ -124,7 +129,7 @@ namespace FreeCellSolver
             }
         }
 
-        private void RateMove(Move move)
+        private bool RateMove(Move move)
         {
             const int RATING_FOUNDATION = 1000;
             const int RATING_CLOSEDTABLEAUFOLLOWUP = 20;
@@ -200,11 +205,11 @@ namespace FreeCellSolver
 
                 if (targetTableau.IsEmpty)
                 {
-                    // Avoid moving the single card of a tableau to an empty one
+                    // Do not move the single card of a tableau to an empty one
                     if (move.Source == Location.Tableau && Deal.Tableaus[move.SourceIndex.Value].Stack.Count == 1)
                     {
                         LastMoveRating = -RATING_FOUNDATION;
-                        return;
+                        return false;
                     }
 
                     var followup = false;
@@ -241,6 +246,8 @@ namespace FreeCellSolver
             {
                 LastMoveRating += RATING_RESERVE;
             }
+
+            return true;
         }
 
         #region Equality overrides and overloads
