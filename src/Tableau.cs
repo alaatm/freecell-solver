@@ -3,13 +3,12 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
 {
     public class Tableau : IEquatable<Tableau>
     {
-        public Stack<Card> Stack = new Stack<Card>(19);
+        public FastAccessStack<Card> Stack = new FastAccessStack<Card>(19);
 
         public int Index { get; private set; }
 
@@ -173,8 +172,9 @@ namespace FreeCellSolver
         public override int GetHashCode()
         {
             var hc = Index.GetHashCode();
-            foreach (var card in Stack)
+            for (var i = 0; i < Stack.Count; i++)
             {
+                var card = Stack.ElementAt(i);
                 hc = HashCode.Combine(hc, card.GetHashCode());
             }
             return hc;
