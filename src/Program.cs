@@ -44,10 +44,10 @@ namespace FreeCellSolver
             // }
             // return;
 
-            // await Task.Delay(0);
-            await RunBenchmarksAsync();
+            await Task.Delay(0);
+            // await RunBenchmarksAsync();
             // GC.Collect();
-            // RunBenchmarks();
+            RunBenchmarks();
 
             // var cards = Deck.Random();
             // var tableaus = new List<Tableau>();
@@ -127,17 +127,17 @@ namespace FreeCellSolver
             Console.WriteLine($"{(b != null ? "Done" : "Bailed")} in {sw.Elapsed}");
             Console.WriteLine();
 
-            Console.WriteLine($"Processing normal board");
-            sw.Restart();
-            b = Solver.Solve(BoardExtensions.GetNormalBoard());
-            Console.WriteLine($"{(b != null ? "Done" : "Bailed")} in {sw.Elapsed}");
-            Console.WriteLine();
+            // Console.WriteLine($"Processing normal board");
+            // sw.Restart();
+            // b = Solver.Solve(BoardExtensions.GetNormalBoard());
+            // Console.WriteLine($"{(b != null ? "Done" : "Bailed")} in {sw.Elapsed}");
+            // Console.WriteLine();
 
-            Console.WriteLine($"Processing slow board");
-            sw.Restart();
-            b = Solver.Solve(BoardExtensions.GetSlowBoard());
-            Console.WriteLine($"{(b != null ? "Done" : "Bailed")} in {sw.Elapsed}");
-            Console.WriteLine();
+            // Console.WriteLine($"Processing slow board");
+            // sw.Restart();
+            // b = Solver.Solve(BoardExtensions.GetSlowBoard());
+            // Console.WriteLine($"{(b != null ? "Done" : "Bailed")} in {sw.Elapsed}");
+            // Console.WriteLine();
         }
     }
 }
