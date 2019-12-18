@@ -80,8 +80,9 @@ namespace FreeCellSolver.Extensions
 
             foreach (var tableau in deal.Tableaus)
             {
-                foreach (var card in tableau.Stack)
+                for (var i = 0; i < tableau.Stack.Count; i++)
                 {
+                    var card = tableau.Stack.ElementAt(i);
                     if (!deck.Contains(card))
                     {
                         stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableau #{tableau.Index + 1}");
