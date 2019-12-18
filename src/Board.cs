@@ -29,7 +29,7 @@ namespace FreeCellSolver
         public bool ShouldMove(string moveString)
         {
             // Do not move if this is an exact opposite of the previous move
-            if (Moves[Moves.Count - 1].MoveString.IsReverseOf(moveString))
+            if (Moves.Count > 0 && Moves[Moves.Count - 1].MoveString.IsReverseOf(moveString))
             {
                 return false;
             }
