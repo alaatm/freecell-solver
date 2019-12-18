@@ -25,8 +25,8 @@ namespace FreeCellSolver
 
         public static async Task<Board> SolveAsync(Board board, Func<Board, bool> solvedCondition)
         {
-            var solver = new ParallelSolver(solvedCondition);
-            var states = solver.GetStates(board, Environment.ProcessorCount);
+            var solver = new Solver(solvedCondition);
+            var states = ParallelSolver.GetStates(board, Environment.ProcessorCount);
             Console.WriteLine($"Using {states.Count} cores");
 
             var tasks = states.Select(b => Task.Run(() => solver.SolveCore(b, 0, 0, new HashSet<int>())));
@@ -36,7 +36,7 @@ namespace FreeCellSolver
 
         public ParallelSolver(Func<Board, bool> solvedCondition) => _solvedCondition = solvedCondition;
 
-        private List<Board> GetStates(Board initialBoard, int num)
+        private static List<Board> GetStates(Board initialBoard, int num)
         {
             var tree = new Dictionary<int, List<BP>>() { { 0, new List<BP> { new BP(initialBoard) } } };
             var depth = 0;
@@ -150,135 +150,6 @@ namespace FreeCellSolver
 
                 return moves;
             }
-        }
-
-        private int SolveCore(Board board, int depth, int movesSinceFoundation, HashSet<int> visitedHashes)
-        {
-            if (SolvedBoard != null)
-            {
-                return 0;
-            }
-
-            if (depth > _maxDepth)
-            {
-                return _maxDepth;
-            }
-
-            if (_solvedCondition(board))
-            {
-                SolvedBoard = board;
-                return 0;
-            }
-
-            var moves = new List<string>();
-            var foundFoundation = false;
-
-            // Find moves from reserve
-            foreach (var (index, card) in board.Reserve.Occupied)
-            {
-                if (board.Foundation.CanPush(card))
-                {
-                    moves.Add($"{"abcd"[index]}h");
-                    foundFoundation = true;
-                    break;
-                }
-
-                for (var t = 0; t < board.Deal.Tableaus.Count; t++)
-                {
-                    var tableau = board.Deal.Tableaus[t];
-                    if (board.Reserve.CanMove(card, tableau))
-                    {
-                        moves.Add($"{"abcd"[index]}{t}");
-                    }
-                }
-            }
-
-            // Find moves from tableau
-            for (var i = 0; i < board.Deal.Tableaus.Count; i++)
-            {
-                var tableau = board.Deal.Tableaus[i];
-                if (tableau.IsEmpty)
-                {
-                    continue;
-                }
-
-                if (board.Foundation.CanPush(tableau.Top))
-                {
-                    moves.Add($"{i}h");
-                    foundFoundation = true;
-                    break;
-                }
-
-                var (canInsert, index) = board.Reserve.CanInsert(tableau.Top);
-                if (canInsert)
-                {
-                    moves.Add($"{i}{"abcd"[index]}");
-                }
-
-                for (var t = 0; t < board.Deal.Tableaus.Count; t++)
-                {
-                    var targetTableau = board.Deal.Tableaus[t];
-                    if (targetTableau.IsEmpty || tableau.Top.IsBelow(targetTableau.Top))
-                    {
-                        moves.Add($"{i}{t}");
-                    }
-                }
-            }
-
-            movesSinceFoundation = foundFoundation ? 0 : ++movesSinceFoundation;
-
-            var scale = 1f;
-            if (movesSinceFoundation >= 20)
-            {
-                scale = 0.7f;
-            }
-
-            var addedBoards = new List<Board>();
-            foreach (var moveString in moves)
-            {
-                var move = Move.Get(moveString);
-
-                if (board.ShouldMove(move))
-                {
-                    var next = board.Clone();
-                    if (next.Move(move, true))
-                    {
-                        addedBoards.Add(next);
-                    }
-                }
-            }
-
-            var jumpDepth = -1;
-
-            if (scale == 1)
-            {
-                foreach (var b in addedBoards.OrderByDescending(p => p.LastMoveRating))
-                {
-                    if (jumpDepth != -1 && jumpDepth < depth)
-                    {
-                        break;
-                    }
-
-                    if (visitedHashes.Contains(b.GetHashCode()))
-                    {
-                        continue;
-                    }
-
-                    visitedHashes.Add(b.GetHashCode());
-                    jumpDepth = SolveCore(b, depth + 1, movesSinceFoundation, visitedHashes);
-                }
-            }
-
-            if (jumpDepth == -1)
-            {
-                jumpDepth = (int)Math.Ceiling(depth * scale);
-            }
-            if (addedBoards.Count == 0)
-            {
-                jumpDepth = (int)Math.Ceiling(depth * 0.7f);
-            }
-
-            return jumpDepth;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace FreeCellSolver
 
         public Solver(Func<Board, bool> solvedCondition) => _solvedCondition = solvedCondition;
 
-        private int SolveCore(Board board, int depth, int movesSinceFoundation, HashSet<int> visitedHashes)
+        internal int SolveCore(Board board, int depth, int movesSinceFoundation, HashSet<int> visitedHashes)
         {
             if (SolvedBoard != null)
             {
