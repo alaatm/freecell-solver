@@ -6,22 +6,23 @@ using System.Text.RegularExpressions;
 
 namespace FreeCellSolver
 {
-    public enum Location
+    public enum MoveType
     {
-        Reserve,
-        Foundation,
-        Tableau,
+        None,
+        TableauToFoundation,
+        TableauToReserve,
+        TableauToTableau,
+        ReserveToFoundation,
+        ReserveToTableau,
     }
 
     public class Move : IEquatable<Move>
     {
         private static Dictionary<string, Move> _possibleMoves = new Dictionary<string, Move>();
 
-        public string MoveString { get; private set; }
-        public Location Source { get; private set; }
-        public Location Target { get; private set; }
-        public int? SourceIndex { get; private set; }
-        public int? TargetIndex { get; private set; }
+        public MoveType Type { get; private set; }
+        public int From { get; private set; }
+        public int To { get; private set; }
 
         static Move()
         {
@@ -75,59 +76,77 @@ namespace FreeCellSolver
             var s = move[0].ToString();
             var t = move[1].ToString();
 
-            Location? source = null;
-            Location? target = null;
-            int? sourceIndex = null;
-            int? targetIndex = null;
+            var fromTableau = Regex.IsMatch(s, "[01234567]");
+            var toTableau = Regex.IsMatch(t, "[01234567]");
+            var fromReserve = Regex.IsMatch(s, "[abcd]");
+            var toReserve = Regex.IsMatch(t, "[abcd]");
+            var toHome = t == "h";
 
-            if (Regex.IsMatch(s, "[01234567]"))
-            {
-                source = Location.Tableau;
-                sourceIndex = int.Parse(s);
-            }
-            else if (Regex.IsMatch(s, "[abcd]"))
-            {
-                source = Location.Reserve;
-                sourceIndex = "abcd".IndexOf(s);
-            }
+            const string r = "abcd";
 
-            if (Regex.IsMatch(t, "[01234567]"))
+            if (fromTableau && toHome)
             {
-                target = Location.Tableau;
-                targetIndex = int.Parse(t);
+                return new Move(MoveType.TableauToFoundation, int.Parse(s));
             }
-            else if (Regex.IsMatch(t, "[abcd]"))
+            else if (fromTableau && toTableau)
             {
-                target = Location.Reserve;
-                targetIndex = "abcd".IndexOf(t);
+                return new Move(MoveType.TableauToTableau, int.Parse(s), int.Parse(t));
             }
-            else if (t == "h")
+            else if (fromTableau && toReserve)
             {
-                target = Location.Foundation;
+                return new Move(MoveType.TableauToReserve, int.Parse(s), r.IndexOf(t));
+            }
+            else if (fromReserve && toHome)
+            {
+                return new Move(MoveType.ReserveToFoundation, r.IndexOf(s));
+            }
+            else if (fromReserve && toTableau)
+            {
+                return new Move(MoveType.ReserveToTableau, r.IndexOf(s), int.Parse(t));
             }
 
-            return new Move(source.Value, target.Value, sourceIndex, targetIndex) { MoveString = move };
+            Debug.Assert(false);
+            return null;
         }
 
-        internal Move(Location source, Location target, int? sourceIndex, int? targetIndex)
+        internal Move(MoveType type, int from, int to = -1)
         {
-            Source = source;
-            Target = target;
-            SourceIndex = sourceIndex;
-            TargetIndex = targetIndex;
+            Type = type;
+            From = from;
+            To = to;
         }
 
-        public override string ToString() => MoveString;
+        public override string ToString()
+        {
+            const string r = "abcd";
+
+            switch (Type)
+            {
+                case MoveType.TableauToFoundation:
+                    return $"{From}h";
+                case MoveType.TableauToReserve:
+                    return $"{From}{r[To]}";
+                case MoveType.TableauToTableau:
+                    return $"{From}{To}";
+                case MoveType.ReserveToFoundation:
+                    return $"{r[From]}h";
+                case MoveType.ReserveToTableau:
+                    return $"{r[From]}{To}";
+            }
+
+            Debug.Assert(false);
+            return null;
+        }
 
         #region Equality overrides and overloads
         private int? _hashCode = null;
         public bool Equals([AllowNull] Move other) => other == null
             ? false
-            : Source == other.Source && Target == other.Target && SourceIndex == other.SourceIndex && TargetIndex == other.TargetIndex;
+            : Type == other.Type && From == other.From && To == other.To;
 
         public override bool Equals(object obj) => obj is Move move && Equals(move);
 
-        public override int GetHashCode() => _hashCode ??= HashCode.Combine(Source, Target, SourceIndex, TargetIndex);
+        public override int GetHashCode() => _hashCode ??= HashCode.Combine(Type, From, To);
 
         public static bool operator ==(Move a, Move b) => Equals(a, b);
 

@@ -50,10 +50,11 @@ namespace FreeCellSolver
                         tree.Add(depth, new List<BP>());
                     }
 
-                    foreach (var move in GetMoves(bp.Board))
+                    foreach (var moveString in GetMoves(bp.Board))
                     {
-                        var next = bp.Board.Clone();
+                        var move = Move.Get(moveString);
 
+                        var next = bp.Board.Clone();
                         next.Move(move);
                         tree[depth].Add(new BP(next, bp.Board));
                     }
@@ -233,8 +234,10 @@ namespace FreeCellSolver
             }
 
             var addedBoards = new List<Board>();
-            foreach (var move in moves)
+            foreach (var moveString in moves)
             {
+                var move = Move.Get(moveString);
+
                 if (board.ShouldMove(move))
                 {
                     var next = board.Clone();

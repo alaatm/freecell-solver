@@ -104,8 +104,10 @@ namespace FreeCellSolver
             }
 
             var addedBoards = new List<Board>();
-            foreach (var move in moves)
+            foreach (var moveString in moves)
             {
+                var move = Move.Get(moveString);
+
                 if (board.ShouldMove(move))
                 {
                     var next = board.Clone();

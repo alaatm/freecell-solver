@@ -26,10 +26,10 @@ namespace FreeCellSolver
             Deal = deal;
         }
 
-        public bool ShouldMove(string moveString)
+        public bool ShouldMove(Move move)
         {
             // Do not move if this is an exact opposite of the previous move
-            if (Moves.Count > 0 && Moves[Moves.Count - 1].MoveString.IsReverseOf(moveString))
+            if (Moves.Count > 0 && Moves[Moves.Count - 1].IsReverseOf(move))
             {
                 return false;
             }
@@ -46,10 +46,8 @@ namespace FreeCellSolver
         /// 3h       : Tableau 3 to Foundation
         /// b0       : Reserve 1 to Tableau 0
         /// ah       : Reserve 0 to Foundation
-        public bool Move(string moveString, bool rate = false)
+        public bool Move(Move move, bool rate = false)
         {
-            Card card;
-            var move = FreeCellSolver.Move.Get(moveString);
             Moves.Add(move);
 
             if (rate)
@@ -60,38 +58,24 @@ namespace FreeCellSolver
                 }
             }
 
-            switch (move.Source)
+            switch (move.Type)
             {
-                case Location.Tableau:
-                    var sourceTableau = Deal.Tableaus[move.SourceIndex.Value];
-
-                    switch (move.Target)
-                    {
-                        case Location.Tableau:
-                            var targetTableau = Deal.Tableaus[move.TargetIndex.Value];
-                            sourceTableau.Move(targetTableau, 1);
-                            break;
-                        case Location.Reserve:
-                            sourceTableau.Move(Reserve, move.TargetIndex.Value);
-                            break;
-                        case Location.Foundation:
-                            sourceTableau.Move(Foundation);
-                            break;
-                    }
+                case MoveType.TableauToFoundation:
+                    Deal.Tableaus[move.From].Move(Foundation);
                     break;
-                case Location.Reserve:
-                    card = Reserve.State[move.SourceIndex.Value];
-
-                    switch (move.Target)
-                    {
-                        case Location.Tableau:
-                            var targetTableau = Deal.Tableaus[move.TargetIndex.Value];
-                            Reserve.Move(card, targetTableau);
-                            break;
-                        case Location.Foundation:
-                            Reserve.Move(card, Foundation);
-                            break;
-                    }
+                case MoveType.TableauToReserve:
+                    Deal.Tableaus[move.From].Move(Reserve, move.To);
+                    break;
+                case MoveType.TableauToTableau:
+                    Deal.Tableaus[move.From].Move(Deal.Tableaus[move.To], 1);
+                    break;
+                case MoveType.ReserveToFoundation:
+                    var card = Reserve.State[move.From];
+                    Reserve.Move(card, Foundation);
+                    break;
+                case MoveType.ReserveToTableau:
+                    card = Reserve.State[move.From];
+                    Reserve.Move(card, Deal.Tableaus[move.To]);
                     break;
             }
 
@@ -121,7 +105,7 @@ namespace FreeCellSolver
             var i = 1;
             foreach (var move in Moves)
             {
-                replayBoard.Move(move.ToString());
+                replayBoard.Move(move);
                 replayBoard.ToImage().Save(Path.Join(path, $"{i++}.jpg"));
             }
         }
@@ -143,14 +127,14 @@ namespace FreeCellSolver
             Card cardToBeMoved = null;
 
             // Reward move to foundation
-            if (move.Target == Location.Foundation)
+            if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.ReserveToFoundation)
             {
                 LastMoveRating += RATING_FOUNDATION;
             }
 
-            if (move.Source == Location.Tableau)
+            if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.TableauToReserve || move.Type == MoveType.TableauToTableau)
             {
-                var sourceTableau = Deal.Tableaus[move.SourceIndex.Value];
+                var sourceTableau = Deal.Tableaus[move.From];
                 var stack = sourceTableau.Stack;
                 cardToBeMoved = sourceTableau.Top;
 
@@ -178,17 +162,17 @@ namespace FreeCellSolver
             }
 
             // Reward opening reserve slot
-            if (move.Source == Location.Reserve)
+            if (move.Type == MoveType.ReserveToFoundation || move.Type == MoveType.ReserveToTableau)
             {
                 LastMoveRating += RATING_OPENRESERVE;
-                cardToBeMoved = Reserve.State[move.SourceIndex.Value];
+                cardToBeMoved = Reserve.State[move.From];
             }
 
             // Reward any move to tableau
-            if (move.Target == Location.Tableau)
+            if (move.Type == MoveType.ReserveToTableau || move.Type == MoveType.TableauToTableau)
             {
                 LastMoveRating += RATING_TABLEAU;
-                var targetTableau = Deal.Tableaus[move.TargetIndex.Value];
+                var targetTableau = Deal.Tableaus[move.To];
                 var stack = targetTableau.Stack.Reverse();
 
                 // Punish buring foundation target
@@ -203,7 +187,7 @@ namespace FreeCellSolver
                 if (targetTableau.IsEmpty)
                 {
                     // Do not move the single card of a tableau to an empty one
-                    if (move.Source == Location.Tableau && Deal.Tableaus[move.SourceIndex.Value].Stack.Count == 1)
+                    if (move.Type == MoveType.TableauToTableau && Deal.Tableaus[move.From].Stack.Count == 1)
                     {
                         LastMoveRating = -RATING_FOUNDATION;
                         return false;
@@ -239,7 +223,8 @@ namespace FreeCellSolver
                 }
             }
 
-            if (move.Target == Location.Reserve)
+            // Punish filling a reserve spot
+            if (move.Type == MoveType.TableauToReserve)
             {
                 LastMoveRating += RATING_RESERVE;
             }
