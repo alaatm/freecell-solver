@@ -10,7 +10,6 @@ namespace FreeCellSolver
 {
     public class Board : IEquatable<Board>
     {
-        private string _lastMoveString;
         private Deal _originalDeal;
 
         public List<Move> Moves { get; private set; } = new List<Move>();
@@ -30,7 +29,7 @@ namespace FreeCellSolver
         public bool ShouldMove(string moveString)
         {
             // Do not move if this is an exact opposite of the previous move
-            if (_lastMoveString.IsReverseOf(moveString))
+            if (Moves[Moves.Count - 1].MoveString.IsReverseOf(moveString))
             {
                 return false;
             }
@@ -49,7 +48,6 @@ namespace FreeCellSolver
         /// ah       : Reserve 0 to Foundation
         public bool Move(string moveString, bool rate = false)
         {
-            _lastMoveString = moveString;
             Card card;
             var move = FreeCellSolver.Move.Get(moveString);
             Moves.Add(move);
@@ -108,7 +106,6 @@ namespace FreeCellSolver
         public Board Clone()
         {
             var board = new Board(Deal.Clone());
-            // board._lastMoveString = new string(_lastMoveString);
             board._originalDeal = _originalDeal.Clone();
             board.Moves = Moves.ToList();
             board.Reserve = new Reserve(Reserve);
