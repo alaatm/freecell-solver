@@ -1,4 +1,3 @@
-using System.Linq;
 using FreeCellSolver.Extensions;
 using Xunit;
 
@@ -7,49 +6,20 @@ namespace FreeCellSolver.Test
     public class ReserveTests
     {
         [Fact]
-        public void State_returns_all_cells()
+        public void State_is_initialized_to_empty_reserve()
         {
             var reserve = new Reserve();
 
-            Assert.Equal(4, reserve.State.Count);
-            Assert.All(reserve.State, c => Assert.Null(c));
-
-            reserve.Insert(0, Cards.KingOfSpades);
-            Assert.Equal(new[] { Cards.KingOfSpades, null, null, null }, reserve.State);
-
-            reserve.Insert(1, Cards.KingOfHearts);
-            Assert.Equal(new[] { Cards.KingOfSpades, Cards.KingOfHearts, null, null }, reserve.State);
-
-            reserve.Insert(2, Cards.KingOfDiamonds);
-            Assert.Equal(new[] { Cards.KingOfSpades, Cards.KingOfHearts, Cards.KingOfDiamonds, null }, reserve.State);
-
-            reserve.Insert(3, Cards.KingOfClubs);
-            Assert.Equal(new[] { Cards.KingOfSpades, Cards.KingOfHearts, Cards.KingOfDiamonds, Cards.KingOfClubs }, reserve.State);
+            Assert.Equal(4, reserve.Count);
+            for (var i = 0; i < reserve.Count; i++)
+            {
+                Assert.Null(reserve[i]);
+            }
         }
 
         [Fact]
-        public void Occupied_returns_occupied_cells()
-        {
-            var reserve = new Reserve();
-
-            Assert.Empty(reserve.Occupied);
-
-            reserve.Insert(0, Cards.KingOfSpades);
-            Assert.Equal(new[] { Cards.KingOfSpades }, reserve.Occupied.Select(occ => occ.card));
-            Assert.Equal(new[] { 0 }, reserve.Occupied.Select(occ => occ.index));
-
-            reserve.Insert(1, Cards.KingOfHearts);
-            Assert.Equal(new[] { Cards.KingOfSpades, Cards.KingOfHearts }, reserve.Occupied.Select(occ => occ.card));
-            Assert.Equal(new[] { 0, 1 }, reserve.Occupied.Select(occ => occ.index));
-
-            reserve.Insert(2, Cards.KingOfDiamonds);
-            Assert.Equal(new[] { Cards.KingOfSpades, Cards.KingOfHearts, Cards.KingOfDiamonds }, reserve.Occupied.Select(occ => occ.card));
-            Assert.Equal(new[] { 0, 1, 2 }, reserve.Occupied.Select(occ => occ.index));
-
-            reserve.Insert(3, Cards.KingOfClubs);
-            Assert.Equal(new[] { Cards.KingOfSpades, Cards.KingOfHearts, Cards.KingOfDiamonds, Cards.KingOfClubs }, reserve.Occupied.Select(occ => occ.card));
-            Assert.Equal(new[] { 0, 1, 2, 3 }, reserve.Occupied.Select(occ => occ.index));
-        }
+        public void Count_returns_reserve_slots_count()
+            => Assert.Equal(4, new Reserve().Count);
 
         [Fact]
         public void FreeCount_returns_free_cell_count()
@@ -153,29 +123,26 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void Insert_inserts_card() => State_returns_all_cells();
+        public void Insert_inserts_card()
+        {
+            var reserve = new Reserve();
+            var index = 2;
+            var card = Cards.FiveOfClubs;
+
+            reserve.Insert(index, card);
+            Assert.Equal(card, reserve[index]);
+        }
 
         [Fact]
         public void Remove_removes_card()
         {
             var reserve = new Reserve();
-            reserve.Insert(0, Cards.KingOfSpades);
-            reserve.Insert(1, Cards.KingOfHearts);
-            reserve.Insert(2, Cards.KingOfDiamonds);
-            reserve.Insert(3, Cards.KingOfClubs);
-            Assert.Equal(new[] { Cards.KingOfSpades, Cards.KingOfHearts, Cards.KingOfDiamonds, Cards.KingOfClubs }, reserve.State);
+            var index = 2;
+            var card = Cards.FiveOfClubs;
 
-            reserve.Remove(Cards.KingOfSpades);
-            Assert.Equal(new[] { null, Cards.KingOfHearts, Cards.KingOfDiamonds, Cards.KingOfClubs }, reserve.State);
-
-            reserve.Remove(Cards.KingOfHearts);
-            Assert.Equal(new[] { null, null, Cards.KingOfDiamonds, Cards.KingOfClubs }, reserve.State);
-
-            reserve.Remove(Cards.KingOfDiamonds);
-            Assert.Equal(new[] { null, null, null, Cards.KingOfClubs }, reserve.State);
-
-            reserve.Remove(Cards.KingOfClubs);
-            Assert.Equal(new[] { (Card)null, null, null, null }, reserve.State);
+            reserve.Insert(index, card);
+            reserve.Remove(card);
+            Assert.Null(reserve[index]);
         }
 
         [Fact]

@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -6,7 +5,7 @@ namespace FreeCellSolver
 {
     public class Reserve
     {
-        public readonly List<Card> State = new List<Card>
+        private readonly List<Card> _state = new List<Card>
         {
             null,
             null,
@@ -14,44 +13,61 @@ namespace FreeCellSolver
             null,
         };
 
-        public IEnumerable<(int index, Card card)> Occupied
+        public Card this[int i] => _state[i];
+
+        public int Count => _state.Count;
+
+        public int FreeCount
         {
             get
             {
-                for (var i = 0; i < State.Count; i++)
+                var freeCount = 0;
+                for (var i = 0; i < _state.Count; i++)
                 {
-                    if (State[i] != null)
+                    if (_state[i] == null)
                     {
-                        yield return (i, State[i]);
+                        freeCount++;
                     }
                 }
+                return freeCount;
             }
         }
 
-        public int FreeCount => State.Count(c => c == null);
+        public int OccupiedCount => Count - FreeCount;
 
-        internal Reserve(Reserve reserve) => State = reserve.State.ToList();
+        public Reserve(Card card1, Card card2, Card card3, Card card4)
+        {
+            Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != null) || card1 == null);
+            Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != null) || card2 == null);
+            Debug.Assert((card3 != card1 && card3 != card2 && card3 != card4 && card3 != null) || card3 == null);
+            Debug.Assert((card4 != card1 && card4 != card2 && card4 != card3 && card4 != null) || card4 == null);
+
+            _state[0] = card1;
+            _state[1] = card2;
+            _state[2] = card3;
+            _state[3] = card4;
+        }
 
         public Reserve() { }
 
         public (bool canInsert, int index) CanInsert(Card card)
         {
-            Debug.Assert(!State.Contains(card));
+            Debug.Assert(!_state.Contains(card));
             return FreeCount > 0
-                ? (true, State.IndexOf(null))
+                ? (true, _state.IndexOf(null))
                 : (false, -1);
         }
 
         public bool CanInsert(int index, Card card)
         {
-            Debug.Assert(!State.Contains(card));
+            Debug.Assert(!_state.Contains(card));
             Debug.Assert(index >= 0 && index < 4);
-            return State[index] == null;
+            return _state[index] == null;
         }
 
         public bool CanMove(Card card, Tableau tableau)
         {
-            Debug.Assert(State.Contains(card));
+            Debug.Assert(_state.Contains(card));
 
             if (tableau.IsEmpty)
             {
@@ -63,22 +79,21 @@ namespace FreeCellSolver
 
         public bool CanMove(Card card, Foundation foundation)
         {
-            Debug.Assert(State.Contains(card));
+            Debug.Assert(_state.Contains(card));
             return foundation.CanPush(card);
         }
 
         public void Insert(int index, Card card)
         {
             Debug.Assert(CanInsert(index, card));
-            State[index] = card;
+            _state[index] = card;
         }
 
         public void Remove(Card card)
         {
-            Debug.Assert(State.Contains(card));
-
-            var index = State.IndexOf(card);
-            State[index] = null;
+            Debug.Assert(_state.Contains(card));
+            var index = _state.IndexOf(card);
+            _state[index] = null;
         }
 
         public void Move(Card card, Tableau tableau)
@@ -94,5 +109,7 @@ namespace FreeCellSolver
             Remove(card);
             foundation.Push(card);
         }
+
+        public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]);
     }
 }

@@ -33,12 +33,16 @@ namespace FreeCellSolver
             var tableauToFoundationFound = false;
 
             // 1. Reserve -> Foundation
-            foreach (var (index, card) in Reserve.Occupied)
+            for (var i = 0; i < Reserve.Count; i++)
             {
-                if (Foundation.CanPush(card))
+                var card = Reserve[i];
+                if (card != null)
                 {
-                    moves.Add($"{"abcd"[index]}h");
-                    reserveToFoundationFound = true;
+                    if (Foundation.CanPush(card))
+                    {
+                        moves.Add($"{"abcd"[i]}h");
+                        reserveToFoundationFound = true;
+                    }
                 }
             }
 
@@ -58,17 +62,18 @@ namespace FreeCellSolver
                 }
             }
 
-            if (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound))
+            // 3. Reserve -> Tableau
+            for (var i = 0; i < Reserve.Count && (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound)); i++)
             {
-                // 3. Reserve -> Tableau
-                foreach (var (index, card) in Reserve.Occupied)
+                var card = Reserve[i];
+                if (card != null)
                 {
                     for (var t = 0; t < Deal.Tableaus.Count; t++)
                     {
                         var tableau = Deal.Tableaus[t];
                         if (Reserve.CanMove(card, tableau))
                         {
-                            moves.Add($"{"abcd"[index]}{t}");
+                            moves.Add($"{"abcd"[i]}{t}");
                         }
                     }
                 }
@@ -147,18 +152,18 @@ namespace FreeCellSolver
                     Deal.Tableaus[move.From].Move(Deal.Tableaus[move.To], 1);
                     break;
                 case MoveType.ReserveToFoundation:
-                    var card = Reserve.State[move.From];
+                    var card = Reserve[move.From];
                     Reserve.Move(card, Foundation);
                     break;
                 case MoveType.ReserveToTableau:
-                    card = Reserve.State[move.From];
+                    card = Reserve[move.From];
                     Reserve.Move(card, Deal.Tableaus[move.To]);
                     break;
             }
 
             Debug.Assert(
                 Deal.Tableaus.Sum(t => t.Stack.Count)
-                + Reserve.Occupied.Count()
+                + Reserve.OccupiedCount
                 + Foundation.State.Values.Where(v => v != -1).Select(n => n + 1).Sum() == 52);
 
             return true;
@@ -169,7 +174,7 @@ namespace FreeCellSolver
             var board = new Board(Deal.Clone());
             board._originalDeal = _originalDeal.Clone();
             board.Moves = Moves.ToList();
-            board.Reserve = new Reserve(Reserve);
+            board.Reserve = Reserve.Clone();
             board.Foundation = new Foundation(Foundation);
             return board;
         }
@@ -242,7 +247,7 @@ namespace FreeCellSolver
             if (move.Type == MoveType.ReserveToFoundation || move.Type == MoveType.ReserveToTableau)
             {
                 LastMoveRating += RATING_OPENRESERVE;
-                cardToBeMoved = Reserve.State[move.From];
+                cardToBeMoved = Reserve[move.From];
             }
 
             // Reward any move to tableau
@@ -273,12 +278,16 @@ namespace FreeCellSolver
                     var followup = false;
 
                     // Reward a move to an empty tableau that can be followed by another move from reserve
-                    foreach (var (_, card) in Reserve.Occupied)
+                    for (var i = 0; i < Reserve.Count; i++)
                     {
-                        if (card.IsBelow(cardToBeMoved))
+                        var card = Reserve[i];
+                        if (card != null)
                         {
-                            LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + (int)card.Rank;
-                            followup = true;
+                            if (card.IsBelow(cardToBeMoved))
+                            {
+                                LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + (int)card.Rank;
+                                followup = true;
+                            }
                         }
                     }
 

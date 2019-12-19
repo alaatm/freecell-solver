@@ -1,4 +1,3 @@
-using System.Linq;
 using SkiaSharp;
 using FreeCellSolver.Drawing;
 
@@ -6,10 +5,8 @@ namespace FreeCellSolver.Extensions
 {
     public static class ReserveExtensions
     {
-        public static SKImage ToImage(this Reserve freeCells)
+        public static SKImage ToImage(this Reserve reserve)
         {
-            var list = freeCells.State;
-
             var spacing = 60;
             var width = DeckImage.CardWidth * 4 + spacing * 3;
             var height = DeckImage.CardHeight;
@@ -18,13 +15,13 @@ namespace FreeCellSolver.Extensions
             using var canvas = new SKCanvas(bmp);
             using var paint = new SKPaint { Color = new SKColor(255, 255, 255, 82) };
             using var bgPaint = new SKPaint { Color = SKColor.Parse("1b5e20") };
-            for (var i = 0; i < list.Count(); i++)
+            for (var i = 0; i < reserve.Count; i++)
             {
                 var x = i * DeckImage.CardWidth + i * spacing;
 
-                if (list.ElementAt(i) != null)
+                if (reserve[i] != null)
                 {
-                    canvas.DrawImage(list.ElementAt(i).ToImage(), x, 0);
+                    canvas.DrawImage(reserve[i].ToImage(), x, 0);
                 }
                 else
                 {
