@@ -10,7 +10,7 @@ namespace FreeCellSolver
 {
     public class Deal : IEquatable<Deal>
     {
-        public List<Tableau> Tableaus = new List<Tableau>(8)
+        private List<Tableau> _state = new List<Tableau>(8)
         {
             null,
             null,
@@ -22,15 +22,20 @@ namespace FreeCellSolver
             null,
         };
 
+        public Tableau this[int index] => _state[index];
+
+        public int CardCount
+            => _state[0].Size + _state[1].Size + _state[2].Size + _state[3].Size + _state[4].Size + _state[5].Size + _state[6].Size + _state[7].Size;
+
         public int EmptyTableauCount
         {
             get
             {
                 var emptyCount = 0;
 
-                for (var i = 0; i < Tableaus.Count; i++)
+                for (var i = 0; i < _state.Count; i++)
                 {
-                    if (Tableaus[i].IsEmpty)
+                    if (_state[i].IsEmpty)
                     {
                         emptyCount++;
                     }
@@ -42,14 +47,14 @@ namespace FreeCellSolver
 
         public Deal(Tableau tableau1, Tableau tableau2, Tableau tableau3, Tableau tableau4, Tableau tableau5, Tableau tableau6, Tableau tableau7, Tableau tableau8)
         {
-            Tableaus[0] = tableau1.Clone();
-            Tableaus[1] = tableau2.Clone();
-            Tableaus[2] = tableau3.Clone();
-            Tableaus[3] = tableau4.Clone();
-            Tableaus[4] = tableau5.Clone();
-            Tableaus[5] = tableau6.Clone();
-            Tableaus[6] = tableau7.Clone();
-            Tableaus[7] = tableau8.Clone();
+            _state[0] = tableau1.Clone();
+            _state[1] = tableau2.Clone();
+            _state[2] = tableau3.Clone();
+            _state[3] = tableau4.Clone();
+            _state[4] = tableau5.Clone();
+            _state[5] = tableau6.Clone();
+            _state[6] = tableau7.Clone();
+            _state[7] = tableau8.Clone();
         }
 
         public Deal(int dealNum)
@@ -78,7 +83,7 @@ namespace FreeCellSolver
 
             for (var c = 0; c < 8; c++)
             {
-                Tableaus[c] = new Tableau(tableaus[c].Select(n => new Card(n)).ToList());
+                _state[c] = new Tableau(tableaus[c].Select(n => new Card(n)).ToList());
             }
         }
 
@@ -106,21 +111,34 @@ namespace FreeCellSolver
 
             for (var c = 0; c < 8; c++)
             {
-                Tableaus[c] = new Tableau(tableaus[c].Select(n => new Card(n)).ToList());
+                _state[c] = new Tableau(tableaus[c].Select(n => new Card(n)).ToList());
             }
+        }
+
+        public bool CanReceive(Card card)
+        {
+            for (var i = 0; i < 8 && card != null; i++)
+            {
+                if (_state[i].CanPush(card))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public override string ToString()
         {
             var sb = new StringBuilder();
-            for (var r = 0; r < Tableaus.Max(t => t.Size); r++)
+            for (var r = 0; r < _state.Max(t => t.Size); r++)
             {
                 for (var c = 0; c < 8; c++)
                 {
-                    var size = Tableaus[c].Size;
+                    var size = _state[c].Size;
                     if (size > r)
                     {
-                        sb.Append(Tableaus[c][size - r - 1].ToString());
+                        sb.Append(_state[c][size - r - 1].ToString());
                     }
                     sb.Append(" ");
                 }
@@ -132,28 +150,28 @@ namespace FreeCellSolver
         }
 
         public Deal Clone() => new Deal(
-            Tableaus[0],
-            Tableaus[1],
-            Tableaus[2],
-            Tableaus[3],
-            Tableaus[4],
-            Tableaus[5],
-            Tableaus[6],
-            Tableaus[7]);
+            _state[0],
+            _state[1],
+            _state[2],
+            _state[3],
+            _state[4],
+            _state[5],
+            _state[6],
+            _state[7]);
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Deal other) => other == null
             ? false
-            : Tableaus.SequenceEqual(other.Tableaus);
+            : _state.SequenceEqual(other._state);
 
         public override bool Equals(object obj) => obj is Deal deal && Equals(deal);
 
         public override int GetHashCode()
         {
-            var hc = Tableaus[0].GetHashCode();
-            for (var i = 1; i < Tableaus.Count; i++)
+            var hc = _state[0].GetHashCode();
+            for (var i = 1; i < _state.Count; i++)
             {
-                hc = HashCode.Combine(hc, Tableaus[i].GetHashCode());
+                hc = HashCode.Combine(hc, _state[i].GetHashCode());
             }
             return hc;
         }

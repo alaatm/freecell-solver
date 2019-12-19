@@ -21,9 +21,9 @@ namespace FreeCellSolver.Extensions
 
             var bmp = new SKBitmap(width, height);
             using var canvas = new SKCanvas(bmp);
-            for (var i = 0; i < deal.Tableaus.Count; i++)
+            for (var i = 0; i < 8; i++)
             {
-                var tableauImage = deal.Tableaus[i].ToImage();
+                var tableauImage = deal[i].ToImage();
                 if (tableauImage != null)
                 {
                     canvas.DrawImage(
@@ -42,44 +42,36 @@ namespace FreeCellSolver.Extensions
             ConsoleErrorWriter.Set();
             var stdErr = Console.Error;
 
-            var totalCardCount = deal.Tableaus.Sum(t => t.Size);
+            var totalCardCount = deal.CardCount;
             if (totalCardCount != 52)
             {
                 stdErr.WriteLine($"Total card count is invalid, should be '52' but is '{totalCardCount}'.");
                 isValid = false;
             }
 
-            if (deal.Tableaus.Count != 8)
+            for (var i = 0; i < 4; i++)
             {
-                stdErr.WriteLine("Incorrect number of tableaus.");
-                isValid = false;
-            }
-            else
-            {
-
-                for (var i = 0; i < 4; i++)
+                if (deal[i].Size != 7)
                 {
-                    if (deal.Tableaus[i].Size != 7)
-                    {
-                        stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
-                        isValid = false;
-                    }
+                    stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
+                    isValid = false;
                 }
+            }
 
-                for (var i = 4; i < 8; i++)
+            for (var i = 4; i < 8; i++)
+            {
+                if (deal[i].Size != 6)
                 {
-                    if (deal.Tableaus[i].Size != 6)
-                    {
-                        stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
-                        isValid = false;
-                    }
+                    stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
+                    isValid = false;
                 }
             }
 
             var deck = Deck.Get();
 
-            foreach (var tableau in deal.Tableaus)
+            for (var t = 0; t < 8; t++)
             {
+                var tableau = deal[t];
                 for (var i = 0; i < tableau.Size; i++)
                 {
                     var card = tableau[i];
