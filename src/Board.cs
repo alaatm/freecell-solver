@@ -10,20 +10,23 @@ namespace FreeCellSolver
 {
     public class Board : IEquatable<Board>
     {
-        private Deal _originalDeal;
-
         public List<Move> Moves { get; private set; } = new List<Move>();
-        public Reserve Reserve { get; private set; } = new Reserve();
-        public Foundation Foundation { get; private set; } = new Foundation();
+        public Reserve Reserve { get; private set; }
+        public Foundation Foundation { get; private set; }
         public Deal Deal { get; private set; }
         public bool IsSolved => Foundation.IsComplete;
 
         public int LastMoveRating { get; private set; }
 
-        public Board(Deal deal)
+        private Board() { }
+
+        public Board(Deal deal) : this(deal, null, null) { }
+
+        public Board(Deal deal, Reserve reserve, Foundation foundation)
         {
-            _originalDeal = deal.Clone();
-            Deal = deal;
+            Deal = deal.Clone();
+            Reserve = reserve?.Clone() ?? new Reserve();
+            Foundation = foundation?.Clone() ?? new Foundation();
         }
 
         public (List<string> moves, bool foundationFound) GetValidMoves(bool haltWhenFoundationFound)
@@ -169,29 +172,6 @@ namespace FreeCellSolver
             return true;
         }
 
-        public Board Clone()
-        {
-            var board = new Board(Deal.Clone());
-            board._originalDeal = _originalDeal.Clone();
-            board.Moves = Moves.ToList();
-            board.Reserve = Reserve.Clone();
-            board.Foundation = Foundation.Clone();
-            return board;
-        }
-
-        public void PrintMoves(string path)
-        {
-            var replayBoard = new Board(_originalDeal);
-            replayBoard.ToImage().Save(Path.Join(path, "0.jpg"));
-
-            var i = 1;
-            foreach (var move in Moves)
-            {
-                replayBoard.Move(move);
-                replayBoard.ToImage().Save(Path.Join(path, $"{i++}.jpg"));
-            }
-        }
-
         private bool RateMove(Move move)
         {
             const int RATING_FOUNDATION = 1000;
@@ -314,6 +294,26 @@ namespace FreeCellSolver
             }
 
             return true;
+        }
+
+        public Board Clone()
+        {
+            var board = new Board(Deal, Reserve, Foundation);
+            board.Moves = Moves.ToList();
+            return board;
+        }
+
+        public void PrintMoves(string path, Deal originalDeal)
+        {
+            var replayBoard = new Board(originalDeal);
+            replayBoard.ToImage().Save(Path.Join(path, "0.jpg"));
+
+            var i = 1;
+            foreach (var move in Moves)
+            {
+                replayBoard.Move(move);
+                replayBoard.ToImage().Save(Path.Join(path, $"{i++}.jpg"));
+            }
         }
 
         #region Equality overrides and overloads
