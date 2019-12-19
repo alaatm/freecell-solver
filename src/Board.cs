@@ -33,7 +33,7 @@ namespace FreeCellSolver
             var tableauToFoundationFound = false;
 
             // 1. Reserve -> Foundation
-            for (var i = 0; i < Reserve.Count; i++)
+            for (var i = 0; i < 4; i++)
             {
                 var card = Reserve[i];
                 if (card != null)
@@ -63,7 +63,7 @@ namespace FreeCellSolver
             }
 
             // 3. Reserve -> Tableau
-            for (var i = 0; i < Reserve.Count && (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound)); i++)
+            for (var i = 0; i < 4 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound)); i++)
             {
                 var card = Reserve[i];
                 if (card != null)
@@ -278,7 +278,7 @@ namespace FreeCellSolver
                     var followup = false;
 
                     // Reward a move to an empty tableau that can be followed by another move from reserve
-                    for (var i = 0; i < Reserve.Count; i++)
+                    for (var i = 0; i < 4; i++)
                     {
                         var card = Reserve[i];
                         if (card != null)

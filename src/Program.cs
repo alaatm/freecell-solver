@@ -44,10 +44,10 @@ namespace FreeCellSolver
             // }
             // return;
 
-            await Task.Delay(0);
-            // await RunBenchmarksAsync();
+            // await Task.Delay(0);
+            await RunBenchmarksAsync();
             // GC.Collect();
-            RunBenchmarks();
+            // RunBenchmarks();
 
             // var cards = Deck.Random();
             // var tableaus = new List<Tableau>();

@@ -10,16 +10,11 @@ namespace FreeCellSolver.Test
         {
             var reserve = new Reserve();
 
-            Assert.Equal(4, reserve.Count);
-            for (var i = 0; i < reserve.Count; i++)
+            for (var i = 0; i < 4; i++)
             {
                 Assert.Null(reserve[i]);
             }
         }
-
-        [Fact]
-        public void Count_returns_reserve_slots_count()
-            => Assert.Equal(4, new Reserve().Count);
 
         [Fact]
         public void FreeCount_returns_free_cell_count()

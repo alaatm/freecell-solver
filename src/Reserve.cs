@@ -15,8 +15,6 @@ namespace FreeCellSolver
 
         public Card this[int i] => _state[i];
 
-        public int Count => _state.Count;
-
         public int FreeCount
         {
             get
@@ -33,7 +31,7 @@ namespace FreeCellSolver
             }
         }
 
-        public int OccupiedCount => Count - FreeCount;
+        public int OccupiedCount => 4 - FreeCount;
 
         public Reserve(Card card1, Card card2, Card card3, Card card4)
         {

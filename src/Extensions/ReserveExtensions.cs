@@ -15,7 +15,7 @@ namespace FreeCellSolver.Extensions
             using var canvas = new SKCanvas(bmp);
             using var paint = new SKPaint { Color = new SKColor(255, 255, 255, 82) };
             using var bgPaint = new SKPaint { Color = SKColor.Parse("1b5e20") };
-            for (var i = 0; i < reserve.Count; i++)
+            for (var i = 0; i < 4; i++)
             {
                 var x = i * DeckImage.CardWidth + i * spacing;
 
