@@ -88,7 +88,7 @@ namespace FreeCellSolver
 
             Console.WriteLine($"Processing Deal #6 board");
             sw.Restart();
-            b = await ParallelSolver.SolveAsync(new Board(new Tableaus(6)));
+            b = await ParallelSolver.SolveAsync(new Board(Deal.FromDealNum(6)));
             Console.WriteLine($"{(b != null ? "Done" : "Bailed")} in {sw.Elapsed}");
             Console.WriteLine();
 

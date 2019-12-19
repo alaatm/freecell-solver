@@ -2,9 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Diagnostics.CodeAnalysis;
-using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
 {
@@ -55,64 +53,6 @@ namespace FreeCellSolver
             _state[5] = tableau6.Clone();
             _state[6] = tableau7.Clone();
             _state[7] = tableau8.Clone();
-        }
-
-        public Tableaus(int dealNum)
-        {
-            var cards = Enumerable.Range(0, 52).Reverse().ToList();
-            var seed = dealNum;
-
-            for (var i = 0; i < cards.Count; i++)
-            {
-                var pos = 51 - (int)((seed = (seed * 214013 + 2531011) & int.MaxValue) >> 16) % (52 - i);
-                cards.Swap(i, pos);
-            }
-
-            var tableaus = new int[8][];
-
-            for (var i = 0; i < cards.Count; i++)
-            {
-                var c = i % 8;
-                var r = i / 8;
-                if (c == i)
-                {
-                    tableaus[i] = new int[c < 4 ? 7 : 6];
-                }
-                tableaus[c][r] = cards[i];
-            }
-
-            for (var c = 0; c < 8; c++)
-            {
-                _state[c] = new Tableau(tableaus[c].Select(n => new Card(n)).ToList());
-            }
-        }
-
-        public Tableaus(string deal)
-        {
-            if (!Regex.IsMatch(deal, @"^(?:(?:[A23456789TJQK][CDHS] ){7}[A23456789TJQK][CDHS](\r\n|\r|\n)){6}(?:[A23456789TJQK][CDHS] ){3}[A23456789TJQK][CDHS]$"))
-            {
-                throw new ArgumentException("Invalid deal string.");
-            }
-
-            var cards = deal.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-            var tableaus = new string[8][];
-
-            for (var i = 0; i < cards.Length; i++)
-            {
-                var c = i % 8;
-                var r = i / 8;
-                if (c == i)
-                {
-                    tableaus[i] = new string[c < 4 ? 7 : 6];
-                }
-                tableaus[c][r] = cards[i];
-            }
-
-            for (var c = 0; c < 8; c++)
-            {
-                _state[c] = new Tableau(tableaus[c].Select(n => new Card(n)).ToList());
-            }
         }
 
         public bool CanReceive(Card card)

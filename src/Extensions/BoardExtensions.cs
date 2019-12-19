@@ -46,7 +46,7 @@ namespace FreeCellSolver.Extensions
         }
 
 
-        public static Board GetExtremlyFastBoard() => new Board(new Tableaus(
+        public static Board GetExtremlyFastBoard() => new Board(Deal.FromString(
 @"QH 6C 8D 4D 3C 8C 8H 9S
 QC 7D 9D TS KH QD 2C 7S
 5D AS 2H TD JS 3H AH JC
@@ -55,10 +55,10 @@ KD JH 3S 6H 5C QS 3D 7H
 5H 2D 9H 4S JD 4H 5S KC
 KS 4C AC TH"));
         // 00:00:00.0901497
-        public static Board GetFastBoard() => new Board(new Tableaus(5911382));
+        public static Board GetFastBoard() => new Board(Deal.FromDealNum(5911382));
         // 00:00:16.2200133
-        public static Board GetNormalBoard() => new Board(new Tableaus(1024999));
-        public static Board GetSlowBoard() => new Board(new Tableaus(
+        public static Board GetNormalBoard() => new Board(Deal.FromDealNum(1024999));
+        public static Board GetSlowBoard() => new Board(Deal.FromString(
 @"QH 6C 8D 4D 3C 8C 8H 9S
 QC 7D 9D TS KH AC 2C 7S
 5D AS 2H TD JS 3H AH JC
@@ -67,9 +67,9 @@ KD JH 3S 6H 5C QS 3D 7H
 5H 2D 9H 4S JD 4H 5S KC
 KS 4C QD TH"));
         // >> 28 MIN
-        public static Board GetExtremlySlowBoard() => new Board(new Tableaus(2401571));
+        public static Board GetExtremlySlowBoard() => new Board(Deal.FromDealNum(2401571));
 
-        public static Board GetSolitareDeck() => new Board(new Tableaus(
+        public static Board GetSolitareDeck() => new Board(Deal.FromString(
 @"QC 5H 2D AS QH QD 4C AD
 KS 7C AC TC 8D QS 2C 4H
 6H 6S 7H 5D 7S AH KD 3D
