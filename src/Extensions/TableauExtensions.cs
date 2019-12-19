@@ -22,10 +22,9 @@ namespace FreeCellSolver.Extensions
 
             var bmp = new SKBitmap(width, height);
             using var canvas = new SKCanvas(bmp);
-            var reversedStack = tableau.Stack.Reverse();
-            for (var i = 0; i < tableau.Size; i++)
+            for (var i = tableau.Size - 1; i > 0; i++)
             {
-                var card = reversedStack.ElementAt(i);
+                var card = tableau[i];
                 canvas.DrawImage(card.ToImage(), 0, topOffset * i);
             }
 

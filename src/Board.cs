@@ -249,19 +249,18 @@ namespace FreeCellSolver
                 cardToBeMoved = Reserve[move.From];
             }
 
-            // Reward any move to tableau
             if (move.Type == MoveType.ReserveToTableau || move.Type == MoveType.TableauToTableau)
             {
+                // Reward any move to tableau
                 LastMoveRating += RATING_TABLEAU;
                 var targetTableau = Deal.Tableaus[move.To];
-                var stack = targetTableau.Stack.Reverse();
 
                 // Punish buring foundation target
-                for (var i = 0; i < stack.Count(); i++)
+                for (var i = 0; i < targetTableau.Size; i++)
                 {
-                    if (Foundation.CanPush(stack.ElementAt(i)))
+                    if (Foundation.CanPush(targetTableau[i]))
                     {
-                        LastMoveRating += RATING_BURYFOUNDATIONTARGET * (i + 1);
+                        LastMoveRating += RATING_BURYFOUNDATIONTARGET * (targetTableau.Size - i); // make the penalty higher on bottom cards
                     }
                 }
 

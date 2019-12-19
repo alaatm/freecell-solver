@@ -79,10 +79,10 @@ namespace FreeCellSolver
             {
                 for (var c = 0; c < 8; c++)
                 {
-                    var stack = Tableaus[c].Stack.Reverse();
-                    if (stack.Count() > r)
+                    var size = Tableaus[c].Size;
+                    if (size > r)
                     {
-                        sb.Append(stack.ElementAt(r).ToString());
+                        sb.Append(Tableaus[c][size - r - 1].ToString());
                     }
                     sb.Append(" ");
                 }

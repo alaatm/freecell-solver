@@ -8,19 +8,19 @@ namespace FreeCellSolver
 {
     public class Tableau : IEquatable<Tableau>
     {
-        public FastAccessStack<Card> Stack = new FastAccessStack<Card>(19);
+        private FastAccessStack<Card> _stack = new FastAccessStack<Card>(19);
 
         public int Index { get; private set; }
 
-        public int Size => Stack.Size;
+        public int Size => _stack.Size;
 
-        public bool IsEmpty => Stack.Size == 0;
+        public bool IsEmpty => _stack.Size == 0;
 
-        public Card this[int index] => Stack[index];
+        public Card this[int index] => _stack[index];
 
-        public IEnumerable<Card> SortedStack => Stack.Take(SortedSize);
+        public IEnumerable<Card> SortedStack => _stack.Take(SortedSize);
 
-        public Card Top => IsEmpty ? null : Stack.Peek();
+        public Card Top => IsEmpty ? null : _stack.Peek();
 
         /// <summary>
         /// Returns sorted cards that are only at the top of the stack
@@ -36,15 +36,15 @@ namespace FreeCellSolver
                 }
 
                 var sortedSize = 1;
-                for (var i = 0; i < Stack.Size - 1; i++)
+                for (var i = 0; i < _stack.Size - 1; i++)
                 {
-                    if (i == Stack.Size)
+                    if (i == _stack.Size)
                     {
                         break;
                     }
 
-                    var card = Stack[i];
-                    if (card.IsBelow(Stack[i + 1]))
+                    var card = _stack[i];
+                    if (card.IsBelow(_stack[i + 1]))
                     {
                         sortedSize++;
                     }
@@ -65,7 +65,7 @@ namespace FreeCellSolver
             Index = index;
             for (var i = 0; i < cards.Length; i += 2)
             {
-                Stack.Push(new Card(cards.Substring(i, 2)));
+                _stack.Push(new Card(cards.Substring(i, 2)));
             }
         }
 
@@ -74,7 +74,7 @@ namespace FreeCellSolver
             Index = index;
             foreach (var card in cards)
             {
-                Stack.Push(card);
+                _stack.Push(card);
             }
         }
 
@@ -91,13 +91,13 @@ namespace FreeCellSolver
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
-            Stack.Push(card);
+            _stack.Push(card);
         }
 
         public Card Pop()
         {
             Debug.Assert(CanPop());
-            return Stack.Pop();
+            return _stack.Pop();
         }
 
         public void Move(Tableau target, int requestedCount)
@@ -163,22 +163,22 @@ namespace FreeCellSolver
         public Tableau Clone() => new Tableau
         {
             Index = Index,
-            Stack = Stack.Clone()
+            _stack = _stack.Clone()
         };
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableau other) => other == null
             ? false
-            : Index == other.Index && Stack.SequenceEqual(other.Stack);
+            : Index == other.Index && _stack.SequenceEqual(other._stack);
 
         public override bool Equals(object obj) => obj is Tableau tableau && Equals(tableau);
 
         public override int GetHashCode()
         {
             var hc = Index.GetHashCode();
-            for (var i = 0; i < Stack.Size; i++)
+            for (var i = 0; i < _stack.Size; i++)
             {
-                var card = Stack[i];
+                var card = _stack[i];
                 hc = HashCode.Combine(hc, card.GetHashCode());
             }
             return hc;
