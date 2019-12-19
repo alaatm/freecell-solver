@@ -16,7 +16,7 @@ namespace FreeCellSolver
         private T[] _array;
         private int _size;
 
-        public int Count => _size;
+        public int Size => _size;
 
         public FastAccessStack(int capacity)
         {

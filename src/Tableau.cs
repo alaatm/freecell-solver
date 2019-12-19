@@ -12,7 +12,9 @@ namespace FreeCellSolver
 
         public int Index { get; private set; }
 
-        public bool IsEmpty => Stack.Count == 0;
+        public int Size => Stack.Size;
+
+        public bool IsEmpty => Stack.Size == 0;
 
         public IEnumerable<Card> SortedStack => Stack.Take(SortedSize);
 
@@ -32,9 +34,9 @@ namespace FreeCellSolver
                 }
 
                 var sortedSize = 1;
-                for (var i = 0; i < Stack.Count - 1; i++)
+                for (var i = 0; i < Stack.Size - 1; i++)
                 {
-                    if (i == Stack.Count)
+                    if (i == Stack.Size)
                     {
                         break;
                     }
@@ -172,7 +174,7 @@ namespace FreeCellSolver
         public override int GetHashCode()
         {
             var hc = Index.GetHashCode();
-            for (var i = 0; i < Stack.Count; i++)
+            for (var i = 0; i < Stack.Size; i++)
             {
                 var card = Stack.ElementAt(i);
                 hc = HashCode.Combine(hc, card.GetHashCode());
