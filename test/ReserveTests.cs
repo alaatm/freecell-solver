@@ -171,7 +171,7 @@ namespace FreeCellSolver.Test
             reserve.Move(card, foundation);
 
             Assert.Equal(4, reserve.FreeCount);
-            Assert.Equal(0, foundation.State[Suit.Clubs]);
+            Assert.Equal(0, foundation[Suit.Clubs]);
         }
     }
 }

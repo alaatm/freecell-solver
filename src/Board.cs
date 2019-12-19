@@ -16,7 +16,7 @@ namespace FreeCellSolver
         public Reserve Reserve { get; private set; } = new Reserve();
         public Foundation Foundation { get; private set; } = new Foundation();
         public Deal Deal { get; private set; }
-        public bool IsSolved => Foundation.State.Values.Where(v => v != -1).Sum() + 4 == 52;
+        public bool IsSolved => Foundation.IsComplete;
 
         public int LastMoveRating { get; private set; }
 
@@ -164,7 +164,7 @@ namespace FreeCellSolver
             Debug.Assert(
                 Deal.Tableaus.Sum(t => t.Stack.Count)
                 + Reserve.OccupiedCount
-                + Foundation.State.Values.Where(v => v != -1).Select(n => n + 1).Sum() == 52);
+                + Foundation.CountPlaced == 52);
 
             return true;
         }
@@ -175,7 +175,7 @@ namespace FreeCellSolver
             board._originalDeal = _originalDeal.Clone();
             board.Moves = Moves.ToList();
             board.Reserve = Reserve.Clone();
-            board.Foundation = new Foundation(Foundation);
+            board.Foundation = Foundation.Clone();
             return board;
         }
 

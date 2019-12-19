@@ -89,11 +89,8 @@ JD 8H 3H 6D 8C JH TD 9D
             var t7 = new Tableau(6, "KC");
             var t8 = new Tableau(7, "QCJD");
             var reserve = new Reserve(Cards.TenOfDiamonds, Cards.SixOfClubs, Cards.NineOfClubs, null);
+            var foundation = new Foundation(12, 3, 7, 12);
             var board = new Board(new Deal(new[] { t1, t2, t3, t4, t5, t6, t7, t8 }));
-            board.Foundation.State[Suit.Hearts] = 12;
-            board.Foundation.State[Suit.Clubs] = 3;
-            board.Foundation.State[Suit.Diamonds] = 7;
-            board.Foundation.State[Suit.Spades] = 12;
 
             return board;
         }

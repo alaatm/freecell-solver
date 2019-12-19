@@ -11,7 +11,7 @@ namespace FreeCellSolver
 
         public Board SolvedBoard { get; private set; }
 
-        public static Board Solve(Board board) => Solve(board, b => b.Foundation.State.Values.Where(v => v != -1).Sum() + 4 == 52);
+        public static Board Solve(Board board) => Solve(board, b => b.IsSolved);
 
         public static Board Solve(Board board, Func<Board, bool> solvedCondition)
         {

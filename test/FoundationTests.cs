@@ -8,12 +8,11 @@ namespace FreeCellSolver.Test
         public void State_is_initialized_to_empty_foundation()
         {
             var foundation = new Foundation();
-            var state = foundation.State;
 
-            Assert.Equal(-1, state[Suit.Spades]);
-            Assert.Equal(-1, state[Suit.Hearts]);
-            Assert.Equal(-1, state[Suit.Diamonds]);
-            Assert.Equal(-1, state[Suit.Clubs]);
+            foreach (var suit in Suits.All())
+            {
+                Assert.Equal(-1, foundation[suit]);
+            }
         }
 
         [Theory]
@@ -41,15 +40,15 @@ namespace FreeCellSolver.Test
 
             foreach (var suit in suits)
             {
-                Assert.Equal(-1, foundation.Size(suit));
+                Assert.Equal(-1, foundation[suit]);
 
                 for (var r = 0; r < 13; r++)
                 {
                     var card = new Card(suit, (Rank)r);
                     foundation.Push(card);
 
-                    Assert.Equal(r, foundation.Size(suit));
-                    Assert.Equal(r, foundation.State[suit]);
+                    Assert.Equal(r, foundation[suit]);
+                    Assert.Equal(r, foundation[suit]);
                 }
             }
         }

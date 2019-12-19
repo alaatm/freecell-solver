@@ -21,7 +21,7 @@ namespace FreeCellSolver
 
         public Board SolvedBoard { get; private set; }
 
-        public static Task<Board> SolveAsync(Board board) => SolveAsync(board, b => b.Foundation.State.Values.Where(v => v != -1).Sum() + 4 == 52);
+        public static Task<Board> SolveAsync(Board board) => SolveAsync(board, b => b.IsSolved);
 
         public static async Task<Board> SolveAsync(Board board, Func<Board, bool> solvedCondition)
         {
