@@ -8,7 +8,7 @@ using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
 {
-    public class Deal : IEquatable<Deal>
+    public class Tableaus : IEquatable<Tableaus>
     {
         private List<Tableau> _state = new List<Tableau>(8)
         {
@@ -45,7 +45,7 @@ namespace FreeCellSolver
             }
         }
 
-        public Deal(Tableau tableau1, Tableau tableau2, Tableau tableau3, Tableau tableau4, Tableau tableau5, Tableau tableau6, Tableau tableau7, Tableau tableau8)
+        public Tableaus(Tableau tableau1, Tableau tableau2, Tableau tableau3, Tableau tableau4, Tableau tableau5, Tableau tableau6, Tableau tableau7, Tableau tableau8)
         {
             _state[0] = tableau1.Clone();
             _state[1] = tableau2.Clone();
@@ -57,7 +57,7 @@ namespace FreeCellSolver
             _state[7] = tableau8.Clone();
         }
 
-        public Deal(int dealNum)
+        public Tableaus(int dealNum)
         {
             var cards = Enumerable.Range(0, 52).Reverse().ToList();
             var seed = dealNum;
@@ -87,7 +87,7 @@ namespace FreeCellSolver
             }
         }
 
-        public Deal(string deal)
+        public Tableaus(string deal)
         {
             if (!Regex.IsMatch(deal, @"^(?:(?:[A23456789TJQK][CDHS] ){7}[A23456789TJQK][CDHS](\r\n|\r|\n)){6}(?:[A23456789TJQK][CDHS] ){3}[A23456789TJQK][CDHS]$"))
             {
@@ -149,7 +149,7 @@ namespace FreeCellSolver
             return sb.ToString();
         }
 
-        public Deal Clone() => new Deal(
+        public Tableaus Clone() => new Tableaus(
             _state[0],
             _state[1],
             _state[2],
@@ -160,11 +160,11 @@ namespace FreeCellSolver
             _state[7]);
 
         #region Equality overrides and overloads
-        public bool Equals([AllowNull] Deal other) => other == null
+        public bool Equals([AllowNull] Tableaus other) => other == null
             ? false
             : _state.SequenceEqual(other._state);
 
-        public override bool Equals(object obj) => obj is Deal deal && Equals(deal);
+        public override bool Equals(object obj) => obj is Tableaus deal && Equals(deal);
 
         public override int GetHashCode()
         {
@@ -176,9 +176,9 @@ namespace FreeCellSolver
             return hc;
         }
 
-        public static bool operator ==(Deal a, Deal b) => Equals(a, b);
+        public static bool operator ==(Tableaus a, Tableaus b) => Equals(a, b);
 
-        public static bool operator !=(Deal a, Deal b) => !(a == b);
+        public static bool operator !=(Tableaus a, Tableaus b) => !(a == b);
         #endregion
     }
 }

@@ -13,18 +13,18 @@ namespace FreeCellSolver
         public List<Move> Moves { get; private set; } = new List<Move>();
         public Reserve Reserve { get; private set; }
         public Foundation Foundation { get; private set; }
-        public Deal Deal { get; private set; }
+        public Tableaus Tableaus { get; private set; }
         public bool IsSolved => Foundation.IsComplete;
 
         public int LastMoveRating { get; private set; }
 
         private Board() { }
 
-        public Board(Deal deal) : this(deal, null, null) { }
+        public Board(Tableaus tableaus) : this(tableaus, null, null) { }
 
-        public Board(Deal deal, Reserve reserve, Foundation foundation)
+        public Board(Tableaus tableaus, Reserve reserve, Foundation foundation)
         {
-            Deal = deal.Clone();
+            Tableaus = tableaus.Clone();
             Reserve = reserve?.Clone() ?? new Reserve();
             Foundation = foundation?.Clone() ?? new Foundation();
         }
@@ -52,7 +52,7 @@ namespace FreeCellSolver
             // 2. Tableau -> Foundation
             for (var t = 0; t < 8; t++)
             {
-                var tableau = Deal[t];
+                var tableau = Tableaus[t];
                 if (tableau.IsEmpty)
                 {
                     continue;
@@ -73,7 +73,7 @@ namespace FreeCellSolver
                 {
                     for (var t = 0; t < 8; t++)
                     {
-                        var tableau = Deal[t];
+                        var tableau = Tableaus[t];
                         if (Reserve.CanMove(card, tableau))
                         {
                             moves.Add(Move.Get(MoveType.ReserveToTableau, r, t));
@@ -85,7 +85,7 @@ namespace FreeCellSolver
             // 4. Tableau -> Tableau
             for (var t1 = 0; t1 < 8 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); t1++)
             {
-                var tableau = Deal[t1];
+                var tableau = Tableaus[t1];
                 if (tableau.IsEmpty)
                 {
                     continue;
@@ -93,7 +93,7 @@ namespace FreeCellSolver
 
                 for (var t2 = 0; t2 < 8; t2++)
                 {
-                    var targetTableau = Deal[t2];
+                    var targetTableau = Tableaus[t2];
                     if (targetTableau.IsEmpty || tableau.Top.IsBelow(targetTableau.Top))
                     {
                         moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2));
@@ -104,7 +104,7 @@ namespace FreeCellSolver
             // 5. Tableau -> Reserve
             for (var t = 0; t < 8 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); t++)
             {
-                var tableau = Deal[t];
+                var tableau = Tableaus[t];
                 if (tableau.IsEmpty)
                 {
                     continue;
@@ -146,13 +146,13 @@ namespace FreeCellSolver
             switch (move.Type)
             {
                 case MoveType.TableauToFoundation:
-                    Deal[move.From].Move(Foundation);
+                    Tableaus[move.From].Move(Foundation);
                     break;
                 case MoveType.TableauToReserve:
-                    Deal[move.From].Move(Reserve, move.To);
+                    Tableaus[move.From].Move(Reserve, move.To);
                     break;
                 case MoveType.TableauToTableau:
-                    Deal[move.From].Move(Deal[move.To], 1);
+                    Tableaus[move.From].Move(Tableaus[move.To], 1);
                     break;
                 case MoveType.ReserveToFoundation:
                     var card = Reserve[move.From];
@@ -160,12 +160,12 @@ namespace FreeCellSolver
                     break;
                 case MoveType.ReserveToTableau:
                     card = Reserve[move.From];
-                    Reserve.Move(card, Deal[move.To]);
+                    Reserve.Move(card, Tableaus[move.To]);
                     break;
             }
 
             Debug.Assert(
-                Deal.CardCount
+                Tableaus.CardCount
                 + Reserve.OccupiedCount
                 + Foundation.CountPlaced == 52);
 
@@ -196,7 +196,7 @@ namespace FreeCellSolver
 
             if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.TableauToReserve || move.Type == MoveType.TableauToTableau)
             {
-                var sourceTableau = Deal[move.From];
+                var sourceTableau = Tableaus[move.From];
                 cardToBeMoved = sourceTableau.Top;
 
                 // Reward emptying tableau slot
@@ -216,7 +216,7 @@ namespace FreeCellSolver
 
                 // Reward a newly discovered tableau-to-tableau move
                 var cardToBeTop = sourceTableau.Size > 1 ? sourceTableau[1] : null;
-                if (Deal.CanReceive(cardToBeTop))
+                if (Tableaus.CanReceive(cardToBeTop))
                 {
                     LastMoveRating += RATING_FREETABLEAUTARGET;
                 }
@@ -233,7 +233,7 @@ namespace FreeCellSolver
             {
                 // Reward any move to tableau
                 LastMoveRating += RATING_TABLEAU;
-                var targetTableau = Deal[move.To];
+                var targetTableau = Tableaus[move.To];
 
                 // Punish buring foundation target
                 for (var i = 0; i < targetTableau.Size; i++)
@@ -247,7 +247,7 @@ namespace FreeCellSolver
                 if (targetTableau.IsEmpty)
                 {
                     // Do not move the single card of a tableau to an empty one
-                    if (move.Type == MoveType.TableauToTableau && Deal[move.From].Size == 1)
+                    if (move.Type == MoveType.TableauToTableau && Tableaus[move.From].Size == 1)
                     {
                         LastMoveRating = -RATING_FOUNDATION;
                         return false;
@@ -272,7 +272,7 @@ namespace FreeCellSolver
                     // Reward a move to an empty tableau that can be followed by another move from tableaus
                     for (var i = 0; i < 8; i++)
                     {
-                        var card = Deal[i].Top;
+                        var card = Tableaus[i].Top;
                         if (card?.IsBelow(cardToBeMoved) ?? false)
                         {
                             LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + (int)card.Rank;
@@ -299,12 +299,12 @@ namespace FreeCellSolver
 
         public Board Clone()
         {
-            var board = new Board(Deal, Reserve, Foundation);
+            var board = new Board(Tableaus, Reserve, Foundation);
             board.Moves = Moves.ToList();
             return board;
         }
 
-        public void PrintMoves(string path, Deal originalDeal)
+        public void PrintMoves(string path, Tableaus originalDeal)
         {
             var replayBoard = new Board(originalDeal);
             replayBoard.ToImage().Save(Path.Join(path, "0.jpg"));
@@ -320,13 +320,13 @@ namespace FreeCellSolver
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Board other) => other == null
             ? false
-            : Moves.SequenceEqual(other.Moves) && Deal == other.Deal;
+            : Moves.SequenceEqual(other.Moves) && Tableaus == other.Tableaus;
 
         public override bool Equals(object obj) => obj is Board board && Equals(board);
 
         public override int GetHashCode()
         {
-            var hc = Deal.GetHashCode();
+            var hc = Tableaus.GetHashCode();
             foreach (var move in Moves)
             {
                 hc = HashCode.Combine(hc, move.GetHashCode());

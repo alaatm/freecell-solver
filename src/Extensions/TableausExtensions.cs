@@ -1,15 +1,14 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 using SkiaSharp;
 using FreeCellSolver.Drawing;
 
 namespace FreeCellSolver.Extensions
 {
-    public static class DealExtensions
+    public static class TableausExtensions
     {
-        public static SKImage ToImage(this Deal deal)
+        public static SKImage ToImage(this Tableaus deal)
         {
             // From tableau's ToImage()
             const float partialOffset = 0.27f;
@@ -36,7 +35,7 @@ namespace FreeCellSolver.Extensions
             return SKImage.FromBitmap(bmp);
         }
 
-        public static bool IsValid(this Deal deal)
+        public static bool IsValid(this Tableaus deal)
         {
             var isValid = true;
             ConsoleErrorWriter.Set();
