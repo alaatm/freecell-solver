@@ -16,6 +16,8 @@ namespace FreeCellSolver
 
         public bool IsEmpty => Stack.Size == 0;
 
+        public Card this[int index] => Stack[index];
+
         public IEnumerable<Card> SortedStack => Stack.Take(SortedSize);
 
         public Card Top => IsEmpty ? null : Stack.Peek();
@@ -41,8 +43,8 @@ namespace FreeCellSolver
                         break;
                     }
 
-                    var card = Stack.ElementAt(i);
-                    if (card.IsBelow(Stack.ElementAt(i + 1)))
+                    var card = Stack[i];
+                    if (card.IsBelow(Stack[i + 1]))
                     {
                         sortedSize++;
                     }
@@ -176,7 +178,7 @@ namespace FreeCellSolver
             var hc = Index.GetHashCode();
             for (var i = 0; i < Stack.Size; i++)
             {
-                var card = Stack.ElementAt(i);
+                var card = Stack[i];
                 hc = HashCode.Combine(hc, card.GetHashCode());
             }
             return hc;

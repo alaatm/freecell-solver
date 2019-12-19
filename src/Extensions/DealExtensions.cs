@@ -82,7 +82,7 @@ namespace FreeCellSolver.Extensions
             {
                 for (var i = 0; i < tableau.Size; i++)
                 {
-                    var card = tableau.Stack.ElementAt(i);
+                    var card = tableau[i];
                     if (!deck.Contains(card))
                     {
                         stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableau #{tableau.Index + 1}");

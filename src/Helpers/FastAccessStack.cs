@@ -18,13 +18,13 @@ namespace FreeCellSolver
 
         public int Size => _size;
 
+        public T this[int index] => _array[_size - index - 1];
+
         public FastAccessStack(int capacity)
         {
             _initialCapacity = capacity;
             _array = new T[capacity];
         }
-
-        public T ElementAt(int index) => _array[_size - index - 1];
 
         public T Peek()
         {

@@ -217,26 +217,25 @@ namespace FreeCellSolver
             if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.TableauToReserve || move.Type == MoveType.TableauToTableau)
             {
                 var sourceTableau = Deal.Tableaus[move.From];
-                var stack = sourceTableau.Stack;
                 cardToBeMoved = sourceTableau.Top;
 
                 // Reward emptying tableau slot
-                if (stack.Size == 1)
+                if (sourceTableau.Size == 1)
                 {
                     LastMoveRating += RATING_OPENTABLEAU;
                 }
 
                 // Reward unburing foundation targets
-                for (var i = 1; i < stack.Size; i++)
+                for (var i = 1; i < sourceTableau.Size; i++)
                 {
-                    if (Foundation.CanPush(stack.ElementAt(i)))
+                    if (Foundation.CanPush(sourceTableau[i]))
                     {
                         LastMoveRating += Math.Max(1, RATING_FREEFOUNDATIONTARGET - ((i - 1) * 3));
                     }
                 }
 
                 // Reward a newly discovered tableau-to-tableau move
-                var cardToBeTop = stack.Size > 1 ? stack.ElementAt(1) : null;
+                var cardToBeTop = sourceTableau.Size > 1 ? sourceTableau[1] : null;
                 if (cardToBeTop != null && Deal.Tableaus.Any(t => t.CanPush(cardToBeTop)))
                 {
                     LastMoveRating += RATING_FREETABLEAUTARGET;
