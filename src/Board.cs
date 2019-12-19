@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
@@ -26,6 +26,92 @@ namespace FreeCellSolver
             Deal = deal;
         }
 
+        public (List<string> moves, bool foundationFound) GetValidMoves(bool haltWhenFoundationFound)
+        {
+            var moves = new List<string>();
+            var reserveToFoundationFound = false;
+            var tableauToFoundationFound = false;
+
+            // 1. Reserve -> Foundation
+            foreach (var (index, card) in Reserve.Occupied)
+            {
+                if (Foundation.CanPush(card))
+                {
+                    moves.Add($"{"abcd"[index]}h");
+                    reserveToFoundationFound = true;
+                }
+            }
+
+            // 2. Tableau -> Foundation
+            for (var i = 0; i < Deal.Tableaus.Count; i++)
+            {
+                var tableau = Deal.Tableaus[i];
+                if (tableau.IsEmpty)
+                {
+                    continue;
+                }
+
+                if (Foundation.CanPush(tableau.Top))
+                {
+                    moves.Add($"{i}h");
+                    tableauToFoundationFound = true;
+                }
+            }
+
+            if (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound))
+            {
+                // 3. Reserve -> Tableau
+                foreach (var (index, card) in Reserve.Occupied)
+                {
+                    for (var t = 0; t < Deal.Tableaus.Count; t++)
+                    {
+                        var tableau = Deal.Tableaus[t];
+                        if (Reserve.CanMove(card, tableau))
+                        {
+                            moves.Add($"{"abcd"[index]}{t}");
+                        }
+                    }
+                }
+            }
+
+            // 4. Tableau -> Tableau
+            for (var i = 0; i < Deal.Tableaus.Count && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); i++)
+            {
+                var tableau = Deal.Tableaus[i];
+                if (tableau.IsEmpty)
+                {
+                    continue;
+                }
+
+                for (var t = 0; t < Deal.Tableaus.Count; t++)
+                {
+                    var targetTableau = Deal.Tableaus[t];
+                    if (targetTableau.IsEmpty || tableau.Top.IsBelow(targetTableau.Top))
+                    {
+                        moves.Add($"{i}{t}");
+                    }
+                }
+            }
+
+            // 5. Tableau -> Reserve
+            for (var i = 0; i < Deal.Tableaus.Count && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); i++)
+            {
+                var tableau = Deal.Tableaus[i];
+                if (tableau.IsEmpty)
+                {
+                    continue;
+                }
+
+                var (canInsert, index) = Reserve.CanInsert(tableau.Top);
+                if (canInsert)
+                {
+                    moves.Add($"{i}{"abcd"[index]}");
+                }
+            }
+
+            return (moves, reserveToFoundationFound || tableauToFoundationFound);
+        }
+
         public bool ShouldMove(Move move)
         {
             // Do not move if this is an exact opposite of the previous move
@@ -37,15 +123,6 @@ namespace FreeCellSolver
             return true;
         }
 
-        /// 01234567 : Tableau
-        /// abcd     : Freecell/Reserve
-        /// h        : Home/Foundation
-        /// 
-        /// 72       : Tableau 7 to Tableau 2
-        /// 7c       : Tableau 7 to Reserve 3
-        /// 3h       : Tableau 3 to Foundation
-        /// b0       : Reserve 1 to Tableau 0
-        /// ah       : Reserve 0 to Foundation
         public bool Move(Move move, bool rate = false)
         {
             Moves.Add(move);

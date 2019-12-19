@@ -50,7 +50,8 @@ namespace FreeCellSolver
                         tree.Add(depth, new List<BP>());
                     }
 
-                    foreach (var moveString in GetMoves(bp.Board))
+                    var (moves, _) = bp.Board.GetValidMoves(true);
+                    foreach (var moveString in moves)
                     {
                         var move = Move.Get(moveString);
 
@@ -93,63 +94,6 @@ namespace FreeCellSolver
             return boards != null
                 ? boards
                 : tree.OrderByDescending(p => p.Value.Count).FirstOrDefault(p => p.Value.Count < 16).Value.Select(p => p.Board).ToList();
-
-            List<string> GetMoves(Board board)
-            {
-                var moves = new List<string>();
-
-                // Find moves from reserve
-                foreach (var (index, card) in board.Reserve.Occupied)
-                {
-                    if (board.Foundation.CanPush(card))
-                    {
-                        moves.Add($"{"abcd"[index]}h");
-                        break;
-                    }
-
-                    for (var t = 0; t < board.Deal.Tableaus.Count; t++)
-                    {
-                        var tableau = board.Deal.Tableaus[t];
-                        if (board.Reserve.CanMove(card, tableau))
-                        {
-                            moves.Add($"{"abcd"[index]}{t}");
-                        }
-                    }
-                }
-
-                // Find moves from tableau
-                for (var i = 0; i < board.Deal.Tableaus.Count; i++)
-                {
-                    var tableau = board.Deal.Tableaus[i];
-                    if (tableau.IsEmpty)
-                    {
-                        continue;
-                    }
-
-                    if (board.Foundation.CanPush(tableau.Top))
-                    {
-                        moves.Add($"{i}h");
-                        break;
-                    }
-
-                    var (canInsert, index) = board.Reserve.CanInsert(tableau.Top);
-                    if (canInsert)
-                    {
-                        moves.Add($"{i}{"abcd"[index]}");
-                    }
-
-                    for (var t = 0; t < board.Deal.Tableaus.Count; t++)
-                    {
-                        var targetTableau = board.Deal.Tableaus[t];
-                        if (targetTableau.IsEmpty || tableau.Top.IsBelow(targetTableau.Top))
-                        {
-                            moves.Add($"{i}{t}");
-                        }
-                    }
-                }
-
-                return moves;
-            }
         }
     }
 }
