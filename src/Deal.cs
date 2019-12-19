@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Diagnostics.CodeAnalysis;
 using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
@@ -40,7 +40,7 @@ namespace FreeCellSolver
 
             for (var c = 0; c < 8; c++)
             {
-                Tableaus.Add(new Tableau(c, tableaus[c].Select(n => new Card(n)).ToList()));
+                Tableaus.Add(new Tableau(tableaus[c].Select(n => new Card(n)).ToList()));
             }
         }
 
@@ -68,7 +68,7 @@ namespace FreeCellSolver
 
             for (var c = 0; c < 8; c++)
             {
-                Tableaus.Add(new Tableau(c, tableaus[c].Select(n => new Card(n)).ToList()));
+                Tableaus.Add(new Tableau(tableaus[c].Select(n => new Card(n)).ToList()));
             }
         }
 

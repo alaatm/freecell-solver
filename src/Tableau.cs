@@ -10,8 +10,6 @@ namespace FreeCellSolver
     {
         private FastAccessStack<Card> _stack = new FastAccessStack<Card>(19);
 
-        public int Index { get; private set; }
-
         public int Size => _stack.Size;
 
         public bool IsEmpty => _stack.Size == 0;
@@ -58,20 +56,18 @@ namespace FreeCellSolver
             }
         }
 
-        public Tableau(int index, string cards)
+        public Tableau(string cards)
         {
             Debug.Assert(cards.Length % 2 == 0);
 
-            Index = index;
             for (var i = 0; i < cards.Length; i += 2)
             {
                 _stack.Push(new Card(cards.Substring(i, 2)));
             }
         }
 
-        public Tableau(int index, IEnumerable<Card> cards)
+        public Tableau(IEnumerable<Card> cards)
         {
-            Index = index;
             foreach (var card in cards)
             {
                 _stack.Push(card);
@@ -104,7 +100,8 @@ namespace FreeCellSolver
         {
             var movableCount = CountMovable(target);
 
-            Debug.Assert(Index != target.Index);
+            Debug.Assert(!IsEmpty);
+            Debug.Assert(this != target);
             Debug.Assert(requestedCount <= movableCount);
 
             var poppedCards = new List<Card>();
@@ -162,20 +159,19 @@ namespace FreeCellSolver
 
         public Tableau Clone() => new Tableau
         {
-            Index = Index,
             _stack = _stack.Clone()
         };
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableau other) => other == null
             ? false
-            : Index == other.Index && _stack.SequenceEqual(other._stack);
+            : _stack.SequenceEqual(other._stack);
 
         public override bool Equals(object obj) => obj is Tableau tableau && Equals(tableau);
 
         public override int GetHashCode()
         {
-            var hc = Index.GetHashCode();
+            var hc = 27;
             for (var i = 0; i < _stack.Size; i++)
             {
                 var card = _stack[i];

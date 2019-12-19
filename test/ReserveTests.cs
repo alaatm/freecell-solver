@@ -90,7 +90,7 @@ namespace FreeCellSolver.Test
         public void CanMove_returns_whether_card_can_be_moved_to_tableau_or_not(string cardToMove, string topCardAtTarget, bool expectedCanRemove)
         {
             var card = new Card(cardToMove);
-            var tableau = new Tableau(0, topCardAtTarget);
+            var tableau = new Tableau(topCardAtTarget);
 
             var reserve = new Reserve();
             reserve.Insert(0, card);
@@ -144,7 +144,7 @@ namespace FreeCellSolver.Test
         public void Move_moves_card_to_tableau()
         {
             var card = Cards.AceOfDiamonds;
-            var tableau = new Tableau(0, "2C");
+            var tableau = new Tableau("2C");
             var reserve = new Reserve();
             reserve.Insert(1, card);
 

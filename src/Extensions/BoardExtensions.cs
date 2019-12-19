@@ -80,14 +80,14 @@ JD 8H 3H 6D 8C JH TD 9D
 
         public static Board GetTestBoard()
         {
-            var t1 = new Tableau(0, "5CKD");
-            var t2 = new Tableau(1, "TC9D8C");
-            var t3 = new Tableau(2, "");
-            var t4 = new Tableau(3, "QD");
-            var t5 = new Tableau(4, "JC");
-            var t6 = new Tableau(5, "7C");
-            var t7 = new Tableau(6, "KC");
-            var t8 = new Tableau(7, "QCJD");
+            var t1 = new Tableau("5CKD");
+            var t2 = new Tableau("TC9D8C");
+            var t3 = new Tableau("");
+            var t4 = new Tableau("QD");
+            var t5 = new Tableau("JC");
+            var t6 = new Tableau("7C");
+            var t7 = new Tableau("KC");
+            var t8 = new Tableau("QCJD");
             var reserve = new Reserve(Cards.TenOfDiamonds, Cards.SixOfClubs, Cards.NineOfClubs, null);
             var foundation = new Foundation(12, 3, 7, 12);
             var board = new Board(new Deal(new[] { t1, t2, t3, t4, t5, t6, t7, t8 }));

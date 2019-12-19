@@ -16,7 +16,7 @@ namespace FreeCellSolver.Test
         [InlineData("JD7H8CKCQHAH", 1)]
         public void SortedSize_returns_sorted_size(string cards, int expectedSize)
         {
-            var tableau = new Tableau(0, cards);
+            var tableau = new Tableau(cards);
             Assert.Equal(expectedSize, tableau.SortedSize);
         }
 
@@ -32,8 +32,8 @@ namespace FreeCellSolver.Test
         [InlineData("2HQSJDTC9H8S7D6C5H4S3D2SAD", "KH", 12)]
         public void CountMovable_returns_num_of_cards_that_can_be_moved(string sourceCards, string destCards, int expectedMovableCount)
         {
-            var sourceTableau = new Tableau(0, sourceCards);
-            var destTableau = new Tableau(1, destCards);
+            var sourceTableau = new Tableau(sourceCards);
+            var destTableau = new Tableau(destCards);
             Assert.Equal(expectedMovableCount, sourceTableau.CountMovable(destTableau));
         }
 
@@ -46,8 +46,8 @@ namespace FreeCellSolver.Test
         [InlineData("2HQSJDTC9H8S7D6C5H4S3D2SAD", "8C", 7, false, false, 5, 8)]
         public void Move_moves_cards_between_tableau(string sourceCards, string destCards, int requestedCount, bool expectedSrcEmpty, bool expectedDestEmpy, int expectedSrcSortedCount, int expectedDestSortedCount)
         {
-            var sourceTableau = new Tableau(0, sourceCards);
-            var destTableau = new Tableau(1, destCards);
+            var sourceTableau = new Tableau(sourceCards);
+            var destTableau = new Tableau(destCards);
 
             sourceTableau.Move(destTableau, requestedCount);
 

@@ -85,7 +85,7 @@ namespace FreeCellSolver.Extensions
                     var card = tableau[i];
                     if (!deck.Contains(card))
                     {
-                        stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableau #{tableau.Index + 1}");
+                        stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableau #{i + 1}");
                         isValid = false;
                     }
                     deck.Remove(card);
