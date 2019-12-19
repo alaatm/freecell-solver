@@ -15,9 +15,9 @@ namespace FreeCellSolver
 
         public int this[Suit s] => _state[s];
 
-        public bool IsComplete => _state[Suit.Hearts] == 12 && _state[Suit.Clubs] == 12 && _state[Suit.Diamonds] == 12 && _state[Suit.Spades] == 12;
+        public bool IsComplete => CountPlaced == 52;
 
-        public int CountPlaced => _state[Suit.Hearts] + _state[Suit.Clubs] + _state[Suit.Diamonds] + _state[Suit.Spades] - 4;
+        public int CountPlaced => _state[Suit.Hearts] + _state[Suit.Clubs] + _state[Suit.Diamonds] + _state[Suit.Spades] + 4;
 
         public Foundation(int heartsTop, int clubsTop, int diamondsTop, int spadesTop)
         {
