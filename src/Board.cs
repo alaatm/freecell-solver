@@ -29,30 +29,30 @@ namespace FreeCellSolver
             Foundation = foundation?.Clone() ?? new Foundation();
         }
 
-        public (List<string> moves, bool foundationFound) GetValidMoves(bool haltWhenFoundationFound)
+        public (List<Move> moves, bool foundationFound) GetValidMoves(bool haltWhenFoundationFound)
         {
-            var moves = new List<string>();
+            var moves = new List<Move>();
             var reserveToFoundationFound = false;
             var tableauToFoundationFound = false;
 
             // 1. Reserve -> Foundation
-            for (var i = 0; i < 4; i++)
+            for (var r = 0; r < 4; r++)
             {
-                var card = Reserve[i];
+                var card = Reserve[r];
                 if (card != null)
                 {
                     if (Foundation.CanPush(card))
                     {
-                        moves.Add($"{"abcd"[i]}h");
+                        moves.Add(Move.Get(MoveType.ReserveToFoundation, r));
                         reserveToFoundationFound = true;
                     }
                 }
             }
 
             // 2. Tableau -> Foundation
-            for (var i = 0; i < Deal.Tableaus.Count; i++)
+            for (var t = 0; t < Deal.Tableaus.Count; t++)
             {
-                var tableau = Deal.Tableaus[i];
+                var tableau = Deal.Tableaus[t];
                 if (tableau.IsEmpty)
                 {
                     continue;
@@ -60,15 +60,15 @@ namespace FreeCellSolver
 
                 if (Foundation.CanPush(tableau.Top))
                 {
-                    moves.Add($"{i}h");
+                    moves.Add(Move.Get(MoveType.TableauToFoundation, t));
                     tableauToFoundationFound = true;
                 }
             }
 
             // 3. Reserve -> Tableau
-            for (var i = 0; i < 4 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound)); i++)
+            for (var r = 0; r < 4 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound)); r++)
             {
-                var card = Reserve[i];
+                var card = Reserve[r];
                 if (card != null)
                 {
                     for (var t = 0; t < Deal.Tableaus.Count; t++)
@@ -76,44 +76,44 @@ namespace FreeCellSolver
                         var tableau = Deal.Tableaus[t];
                         if (Reserve.CanMove(card, tableau))
                         {
-                            moves.Add($"{"abcd"[i]}{t}");
+                            moves.Add(Move.Get(MoveType.ReserveToTableau, r, t));
                         }
                     }
                 }
             }
 
             // 4. Tableau -> Tableau
-            for (var i = 0; i < Deal.Tableaus.Count && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); i++)
+            for (var t1 = 0; t1 < Deal.Tableaus.Count && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); t1++)
             {
-                var tableau = Deal.Tableaus[i];
+                var tableau = Deal.Tableaus[t1];
                 if (tableau.IsEmpty)
                 {
                     continue;
                 }
 
-                for (var t = 0; t < Deal.Tableaus.Count; t++)
+                for (var t2 = 0; t2 < Deal.Tableaus.Count; t2++)
                 {
-                    var targetTableau = Deal.Tableaus[t];
+                    var targetTableau = Deal.Tableaus[t2];
                     if (targetTableau.IsEmpty || tableau.Top.IsBelow(targetTableau.Top))
                     {
-                        moves.Add($"{i}{t}");
+                        moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2));
                     }
                 }
             }
 
             // 5. Tableau -> Reserve
-            for (var i = 0; i < Deal.Tableaus.Count && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); i++)
+            for (var t = 0; t < Deal.Tableaus.Count && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); t++)
             {
-                var tableau = Deal.Tableaus[i];
+                var tableau = Deal.Tableaus[t];
                 if (tableau.IsEmpty)
                 {
                     continue;
                 }
 
-                var (canInsert, index) = Reserve.CanInsert(tableau.Top);
+                var (canInsert, r) = Reserve.CanInsert(tableau.Top);
                 if (canInsert)
                 {
-                    moves.Add($"{i}{"abcd"[index]}");
+                    moves.Add(Move.Get(MoveType.TableauToReserve, t, r));
                 }
             }
 
@@ -131,7 +131,7 @@ namespace FreeCellSolver
             return true;
         }
 
-        public bool Move(Move move, bool rate = false)
+        public bool ExecuteMove(Move move, bool rate = false)
         {
             Moves.Add(move);
 
@@ -311,7 +311,7 @@ namespace FreeCellSolver
             var i = 1;
             foreach (var move in Moves)
             {
-                replayBoard.Move(move);
+                replayBoard.ExecuteMove(move);
                 replayBoard.ToImage().Save(Path.Join(path, $"{i++}.jpg"));
             }
         }

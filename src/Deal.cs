@@ -22,6 +22,24 @@ namespace FreeCellSolver
             null,
         };
 
+        public int EmptyTableauCount
+        {
+            get
+            {
+                var emptyCount = 0;
+
+                for (var i = 0; i < Tableaus.Count; i++)
+                {
+                    if (Tableaus[i].IsEmpty)
+                    {
+                        emptyCount++;
+                    }
+                }
+
+                return emptyCount;
+            }
+        }
+
         public Deal(Tableau tableau1, Tableau tableau2, Tableau tableau3, Tableau tableau4, Tableau tableau5, Tableau tableau6, Tableau tableau7, Tableau tableau8)
         {
             Tableaus[0] = tableau1.Clone();

@@ -51,12 +51,10 @@ namespace FreeCellSolver
                     }
 
                     var (moves, _) = bp.Board.GetValidMoves(true);
-                    foreach (var moveString in moves)
+                    foreach (var move in moves)
                     {
-                        var move = Move.Get(moveString);
-
                         var next = bp.Board.Clone();
-                        next.Move(move);
+                        next.ExecuteMove(move);
                         tree[depth].Add(new BP(next, bp.Board));
                     }
                 }

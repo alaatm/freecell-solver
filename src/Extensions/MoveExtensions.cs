@@ -6,6 +6,6 @@ namespace FreeCellSolver
             => (val.Type == MoveType.TableauToTableau && other.Type == MoveType.TableauToTableau
                 || val.Type == MoveType.TableauToReserve && other.Type == MoveType.ReserveToTableau
                 || val.Type == MoveType.ReserveToTableau && other.Type == MoveType.TableauToReserve)
-                && val.From == other.To && val.To == other.From;
+                && val.From == other.To && val.To == other.From && val.Size == other.Size;
     }
 }

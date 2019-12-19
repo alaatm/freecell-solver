@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 
 namespace FreeCellSolver
 {
@@ -18,11 +17,12 @@ namespace FreeCellSolver
 
     public class Move : IEquatable<Move>
     {
-        private static Dictionary<string, Move> _possibleMoves = new Dictionary<string, Move>();
+        private static Dictionary<(MoveType, int, int, int), Move> _possibleMoves = new Dictionary<(MoveType, int, int, int), Move>();
 
         public MoveType Type { get; private set; }
         public int From { get; private set; }
         public int To { get; private set; }
+        public int Size { get; private set; }
 
         static Move()
         {
@@ -33,87 +33,51 @@ namespace FreeCellSolver
             // Tableau -> reserve
             // Tableau -> tableau
 
-            foreach (var c in "abcd")
+            for (var r = 0; r < 4; r++)
             {
-                var move = $"{c}h";
-                _possibleMoves.Add(move, Parse(move));
+                var mt = MoveType.ReserveToFoundation;
+                _possibleMoves.Add((mt, r, -1, 1), new Move(mt, r));
 
+                mt = MoveType.ReserveToTableau;
                 for (var t = 0; t < 8; t++)
                 {
-                    move = $"{c}{t}";
-                    _possibleMoves.Add(move, Parse(move));
+                    _possibleMoves.Add((mt, r, t, 1), new Move(mt, r, t));
                 }
             }
 
             for (var t = 0; t < 8; t++)
             {
-                var move = $"{t}h";
-                _possibleMoves.Add(move, Parse(move));
+                var mt = MoveType.TableauToFoundation;
+                _possibleMoves.Add((mt, t, -1, 1), new Move(mt, t));
 
-                foreach (var c in "abcd")
+                mt = MoveType.TableauToReserve;
+                for (var r = 0; r < 4; r++)
                 {
-                    move = $"{t}{c}";
-                    _possibleMoves.Add(move, Parse(move));
+                    _possibleMoves.Add((mt, t, r, 1), new Move(mt, t, r));
                 }
 
+                mt = MoveType.TableauToTableau;
                 for (var t2 = 0; t2 < 8; t2++)
                 {
                     if (t != t2)
                     {
-                        move = $"{t}{t2}";
-                        _possibleMoves.Add(move, Parse(move));
+                        for (var count = 1; count < 13; count++)
+                        {
+                            _possibleMoves.Add((mt, t, t2, count), new Move(mt, t, t2, count));
+                        }
                     }
                 }
             }
         }
 
-        public static Move Get(string move) => _possibleMoves[move];
+        public static Move Get(MoveType moveType, int from, int to = -1, int size = 1) => _possibleMoves[(moveType, from, to, size)];
 
-        private static Move Parse(string move)
-        {
-            Debug.Assert(Regex.IsMatch(move, @"^(?:^([01234567][01234567]|[01234567][abcd]|[01234567]h|[abcd][01234567]|[abcd]h)$)$"));
-
-            var s = move[0].ToString();
-            var t = move[1].ToString();
-
-            var fromTableau = Regex.IsMatch(s, "[01234567]");
-            var toTableau = Regex.IsMatch(t, "[01234567]");
-            var fromReserve = Regex.IsMatch(s, "[abcd]");
-            var toReserve = Regex.IsMatch(t, "[abcd]");
-            var toHome = t == "h";
-
-            const string r = "abcd";
-
-            if (fromTableau && toHome)
-            {
-                return new Move(MoveType.TableauToFoundation, int.Parse(s));
-            }
-            else if (fromTableau && toTableau)
-            {
-                return new Move(MoveType.TableauToTableau, int.Parse(s), int.Parse(t));
-            }
-            else if (fromTableau && toReserve)
-            {
-                return new Move(MoveType.TableauToReserve, int.Parse(s), r.IndexOf(t));
-            }
-            else if (fromReserve && toHome)
-            {
-                return new Move(MoveType.ReserveToFoundation, r.IndexOf(s));
-            }
-            else if (fromReserve && toTableau)
-            {
-                return new Move(MoveType.ReserveToTableau, r.IndexOf(s), int.Parse(t));
-            }
-
-            Debug.Assert(false);
-            return null;
-        }
-
-        internal Move(MoveType type, int from, int to = -1)
+        internal Move(MoveType type, int from, int to = -1, int size = 1)
         {
             Type = type;
             From = from;
             To = to;
+            Size = size;
         }
 
         public override string ToString()
@@ -127,7 +91,7 @@ namespace FreeCellSolver
                 case MoveType.TableauToReserve:
                     return $"{From}{r[To]}";
                 case MoveType.TableauToTableau:
-                    return $"{From}{To}";
+                    return $"{From}{To}{{{Size}}}";
                 case MoveType.ReserveToFoundation:
                     return $"{r[From]}h";
                 case MoveType.ReserveToTableau:
@@ -142,11 +106,11 @@ namespace FreeCellSolver
         private int? _hashCode = null;
         public bool Equals([AllowNull] Move other) => other == null
             ? false
-            : Type == other.Type && From == other.From && To == other.To;
+            : Type == other.Type && From == other.From && To == other.To && Size == other.Size;
 
         public override bool Equals(object obj) => obj is Move move && Equals(move);
 
-        public override int GetHashCode() => _hashCode ??= HashCode.Combine(Type, From, To);
+        public override int GetHashCode() => _hashCode ??= HashCode.Combine(Type, From, To, Size);
 
         public static bool operator ==(Move a, Move b) => Equals(a, b);
 
