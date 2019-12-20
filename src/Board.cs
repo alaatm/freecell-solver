@@ -98,19 +98,13 @@ namespace FreeCellSolver
                     if (t1 != t2)
                     {
                         var targetTableau = Tableaus[t2];
-                        var sortedSize = tableau.SortedSize;
-                        var maxAllowedMoves = sortedSize == 1 ? 1 : MaxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
+                        var moveSize = tableau.CountMovable(targetTableau);
+                        var maxAllowedMoves = moveSize == 1 ? 1 : MaxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
 
-                        do
+                        if (moveSize > 0 && maxAllowedMoves >= moveSize)
                         {
-                            if (maxAllowedMoves >= sortedSize)
-                            {
-                                if (targetTableau.IsEmpty || tableau[sortedSize - 1].IsBelow(targetTableau.Top))
-                                {
-                                    moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, sortedSize));
-                                }
-                            }
-                        } while (--sortedSize > 0);
+                            moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, moveSize));
+                        }
                     }
                 }
             }

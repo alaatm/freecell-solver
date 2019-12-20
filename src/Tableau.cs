@@ -82,11 +82,9 @@ namespace FreeCellSolver
 
         public void Move(Tableau target, int requestedCount)
         {
-            var movableCount = CountMovable(target);
-
             Debug.Assert(!IsEmpty);
             Debug.Assert(this != target);
-            Debug.Assert(requestedCount <= movableCount);
+            Debug.Assert(requestedCount <= CountMovable(target));
 
             var poppedCards = new List<Card>();
             for (var i = 0; i < requestedCount; i++)
@@ -125,20 +123,23 @@ namespace FreeCellSolver
                 return SortedSize;
             }
 
-            var movable = SortedSize;
-            foreach (var card in SortedStack.Reverse())
+            var lead = target.Top;
+            var rankDiff = lead.Rank - Top.Rank;
+
+            if (rankDiff <= 0)
             {
-                if (card.IsBelow(target.Top))
-                {
-                    break;
-                }
-                else
-                {
-                    movable--;
-                }
+                return 0;
+            }
+            if (SortedSize < rankDiff)
+            {
+                return 0;
+            }
+            if ((rankDiff & 1) == (Top.Color == lead.Color ? 1 : 0))
+            {
+                return 0;
             }
 
-            return movable;
+            return rankDiff;
         }
 
         public Tableau Clone() => new Tableau
