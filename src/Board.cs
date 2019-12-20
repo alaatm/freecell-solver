@@ -100,8 +100,9 @@ namespace FreeCellSolver
                         var targetTableau = Tableaus[t2];
                         var moveSize = tableau.CountMovable(targetTableau);
                         var maxAllowedMoves = moveSize == 1 ? 1 : MaxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
+                        var uselessMove = tableau.Size == moveSize && targetTableau.IsEmpty; // Do not move an entire column to an empty one
 
-                        if (moveSize > 0 && maxAllowedMoves >= moveSize)
+                        if (!uselessMove && moveSize > 0 && maxAllowedMoves >= moveSize)
                         {
                             moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, moveSize));
                         }
@@ -254,13 +255,6 @@ namespace FreeCellSolver
 
                 if (targetTableau.IsEmpty)
                 {
-                    // Do not move the single card/sorted stack of a tableau to an empty one
-                    if (move.Type == MoveType.TableauToTableau && Tableaus[move.From].Size == move.Size)
-                    {
-                        LastMoveRating = -RATING_FOUNDATION;
-                        return false;
-                    }
-
                     var followup = false;
 
                     // Reward a move to an empty tableau that can be followed by another move from reserve
