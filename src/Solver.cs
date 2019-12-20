@@ -22,8 +22,10 @@ namespace FreeCellSolver
 
         public Solver(Func<Board, bool> solvedCondition) => _solvedCondition = solvedCondition;
 
-        internal int SolveCore(Board board, int depth, int movesSinceFoundation, HashSet<int> visitedHashes)
+        internal int SolveCore(Board board, int depth, int movesSinceFoundation, HashSet<int> visited)
         {
+            visited.Add(board.GetHashCode());
+
             if (SolvedBoard != null)
             {
                 return 0;
@@ -74,13 +76,12 @@ namespace FreeCellSolver
                         break;
                     }
 
-                    if (visitedHashes.Contains(b.GetHashCode()))
+                    if (visited.Contains(b.GetHashCode()))
                     {
                         continue;
                     }
 
-                    visitedHashes.Add(b.GetHashCode());
-                    jumpDepth = SolveCore(b, depth + 1, movesSinceFoundation, visitedHashes);
+                    jumpDepth = SolveCore(b, depth + 1, movesSinceFoundation, visited);
                 }
             }
 
