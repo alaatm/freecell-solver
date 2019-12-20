@@ -8,7 +8,7 @@ namespace FreeCellSolver.Extensions
 {
     public static class TableausExtensions
     {
-        public static SKImage ToImage(this Tableaus deal)
+        public static SKImage ToImage(this Tableaus tableaus)
         {
             // From tableau's ToImage()
             const float partialOffset = 0.27f;
@@ -22,7 +22,7 @@ namespace FreeCellSolver.Extensions
             using var canvas = new SKCanvas(bmp);
             for (var i = 0; i < 8; i++)
             {
-                var tableauImage = deal[i].ToImage();
+                var tableauImage = tableaus[i].ToImage();
                 if (tableauImage != null)
                 {
                     canvas.DrawImage(

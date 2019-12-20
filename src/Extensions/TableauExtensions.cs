@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using SkiaSharp;
 using FreeCellSolver.Drawing;
 
@@ -22,10 +21,10 @@ namespace FreeCellSolver.Extensions
 
             var bmp = new SKBitmap(width, height);
             using var canvas = new SKCanvas(bmp);
-            for (var i = tableau.Size - 1; i > 0; i++)
+            for (var i = tableau.Size - 1; i >= 0; i--)
             {
                 var card = tableau[i];
-                canvas.DrawImage(card.ToImage(), 0, topOffset * i);
+                canvas.DrawImage(card.ToImage(), 0, topOffset * (tableau.Size - i - 1));
             }
 
             return SKImage.FromBitmap(bmp);
