@@ -5,6 +5,7 @@ namespace FreeCellSolver
 {
     public class Reserve
     {
+        private int _freeCount = 4;
         private readonly List<Card> _state = new List<Card>
         {
             null,
@@ -15,23 +16,9 @@ namespace FreeCellSolver
 
         public Card this[int i] => _state[i];
 
-        public int FreeCount
-        {
-            get
-            {
-                var freeCount = 0;
-                for (var i = 0; i < _state.Count; i++)
-                {
-                    if (_state[i] == null)
-                    {
-                        freeCount++;
-                    }
-                }
-                return freeCount;
-            }
-        }
+        public int FreeCount => _freeCount;
 
-        public int OccupiedCount => 4 - FreeCount;
+        public int OccupiedCount => 4 - _freeCount;
 
         public Reserve(Card card1, Card card2, Card card3, Card card4)
         {
@@ -40,6 +27,7 @@ namespace FreeCellSolver
             Debug.Assert((card3 != card1 && card3 != card2 && card3 != card4 && card3 != null) || card3 == null);
             Debug.Assert((card4 != card1 && card4 != card2 && card4 != card3 && card4 != null) || card4 == null);
 
+            _freeCount = 4;
             _state[0] = card1;
             _state[1] = card2;
             _state[2] = card3;
@@ -85,6 +73,8 @@ namespace FreeCellSolver
         {
             Debug.Assert(CanInsert(index, card));
             _state[index] = card;
+            _freeCount--;
+            Debug.Assert(_freeCount >= 0 && _freeCount <= 4);
         }
 
         public void Remove(Card card)
@@ -92,6 +82,8 @@ namespace FreeCellSolver
             Debug.Assert(_state.Contains(card));
             var index = _state.IndexOf(card);
             _state[index] = null;
+            _freeCount++;
+            Debug.Assert(_freeCount >= 0 && _freeCount <= 4);
         }
 
         public void Move(Card card, Tableau tableau)
@@ -108,6 +100,6 @@ namespace FreeCellSolver
             foundation.Push(card);
         }
 
-        public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]);
+        public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]) { _freeCount = this._freeCount };
     }
 }
