@@ -55,11 +55,11 @@ namespace FreeCellSolver
             _state[7] = tableau8.Clone();
         }
 
-        public bool CanReceive(Card card)
+        public bool CanReceive(Card card, Tableau exclude)
         {
             for (var i = 0; i < 8 && card != null; i++)
             {
-                if (_state[i].CanPush(card))
+                if (exclude != _state[i] && _state[i].CanPush(card))
                 {
                     return true;
                 }

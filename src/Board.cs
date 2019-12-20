@@ -18,6 +18,8 @@ namespace FreeCellSolver
 
         public int LastMoveRating { get; private set; }
 
+        public int MaxAllowedMoveSize => Reserve.FreeCount + Tableaus.EmptyTableauCount + 1;
+
         private Board() { }
 
         public Board(Tableaus tableaus) : this(tableaus, null, null) { }
@@ -93,10 +95,22 @@ namespace FreeCellSolver
 
                 for (var t2 = 0; t2 < 8; t2++)
                 {
-                    var targetTableau = Tableaus[t2];
-                    if (targetTableau.IsEmpty || tableau.Top.IsBelow(targetTableau.Top))
+                    if (t1 != t2)
                     {
-                        moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2));
+                        var targetTableau = Tableaus[t2];
+                        var maxAllowedMoves = MaxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
+
+                        var sortedSize = tableau.SortedSize;
+                        do
+                        {
+                            if (maxAllowedMoves >= sortedSize)
+                            {
+                                if (targetTableau.IsEmpty || tableau[sortedSize - 1].IsBelow(targetTableau.Top))
+                                {
+                                    moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, sortedSize));
+                                }
+                            }
+                        } while (--sortedSize > 0);
                     }
                 }
             }
@@ -152,7 +166,7 @@ namespace FreeCellSolver
                     Tableaus[move.From].Move(Reserve, move.To);
                     break;
                 case MoveType.TableauToTableau:
-                    Tableaus[move.From].Move(Tableaus[move.To], 1);
+                    Tableaus[move.From].Move(Tableaus[move.To], move.Size);
                     break;
                 case MoveType.ReserveToFoundation:
                     var card = Reserve[move.From];
@@ -200,23 +214,23 @@ namespace FreeCellSolver
                 cardToBeMoved = sourceTableau.Top;
 
                 // Reward emptying tableau slot
-                if (sourceTableau.Size == 1)
+                if (sourceTableau.Size == move.Size)
                 {
                     LastMoveRating += RATING_OPENTABLEAU;
                 }
 
                 // Reward unburing foundation targets
-                for (var i = 1; i < sourceTableau.Size; i++)
+                for (var i = move.Size; i < sourceTableau.Size; i++)
                 {
                     if (Foundation.CanPush(sourceTableau[i]))
                     {
-                        LastMoveRating += Math.Max(1, RATING_FREEFOUNDATIONTARGET - ((i - 1) * 3));
+                        LastMoveRating += Math.Max(1, RATING_FREEFOUNDATIONTARGET - ((i - move.Size) * 3));
                     }
                 }
 
                 // Reward a newly discovered tableau-to-tableau move
-                var cardToBeTop = sourceTableau.Size > 1 ? sourceTableau[1] : null;
-                if (Tableaus.CanReceive(cardToBeTop))
+                var cardToBeTop = sourceTableau.Size > move.Size ? sourceTableau[move.Size] : null;
+                if (Tableaus.CanReceive(cardToBeTop, sourceTableau))
                 {
                     LastMoveRating += RATING_FREETABLEAUTARGET;
                 }
@@ -232,22 +246,22 @@ namespace FreeCellSolver
             if (move.Type == MoveType.ReserveToTableau || move.Type == MoveType.TableauToTableau)
             {
                 // Reward any move to tableau
-                LastMoveRating += RATING_TABLEAU;
+                LastMoveRating += RATING_TABLEAU + /* Reward more for moving sorted stacks */ move.Size - 1;
                 var targetTableau = Tableaus[move.To];
 
-                // Punish buring foundation target
+                // Punish buring foundation target, penalty is higher on bottom cards
                 for (var i = 0; i < targetTableau.Size; i++)
                 {
                     if (Foundation.CanPush(targetTableau[i]))
                     {
-                        LastMoveRating += RATING_BURYFOUNDATIONTARGET * (targetTableau.Size - i); // make the penalty higher on bottom cards
+                        LastMoveRating += RATING_BURYFOUNDATIONTARGET * (targetTableau.Size + move.Size - i - 1);
                     }
                 }
 
                 if (targetTableau.IsEmpty)
                 {
-                    // Do not move the single card of a tableau to an empty one
-                    if (move.Type == MoveType.TableauToTableau && Tableaus[move.From].Size == 1)
+                    // Do not move the single card/sorted stack of a tableau to an empty one
+                    if (move.Type == MoveType.TableauToTableau && Tableaus[move.From].Size == move.Size)
                     {
                         LastMoveRating = -RATING_FOUNDATION;
                         return false;
