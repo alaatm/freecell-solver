@@ -31,7 +31,7 @@ namespace FreeCellSolver
             {
                 var emptyCount = 0;
 
-                for (var i = 0; i < _state.Count; i++)
+                for (var i = 0; i < 8; i++)
                 {
                     if (_state[i].IsEmpty)
                     {

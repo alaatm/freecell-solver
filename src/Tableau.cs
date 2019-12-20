@@ -21,40 +21,10 @@ namespace FreeCellSolver
         public Card Top => IsEmpty ? null : _stack.Peek();
 
         /// <summary>
-        /// Returns sorted cards that are only at the top of the stack
+        /// Returns sorted cards that are only at the bottom of the stack
         /// </summary>
         /// <value></value>
-        public int SortedSize
-        {
-            get
-            {
-                if (IsEmpty)
-                {
-                    return 0;
-                }
-
-                var sortedSize = 1;
-                for (var i = 0; i < _stack.Size - 1; i++)
-                {
-                    if (i == _stack.Size)
-                    {
-                        break;
-                    }
-
-                    var card = _stack[i];
-                    if (card.IsBelow(_stack[i + 1]))
-                    {
-                        sortedSize++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                return sortedSize;
-            }
-        }
+        public int SortedSize { get; private set; }
 
         public Tableau(string cards)
         {
@@ -64,6 +34,8 @@ namespace FreeCellSolver
             {
                 _stack.Push(new Card(cards.Substring(i, 2)));
             }
+
+            SortedSize = CountSorted();
         }
 
         public Tableau(IEnumerable<Card> cards)
@@ -72,6 +44,8 @@ namespace FreeCellSolver
             {
                 _stack.Push(card);
             }
+
+            SortedSize = CountSorted();
         }
 
         public Tableau() { }
@@ -88,12 +62,22 @@ namespace FreeCellSolver
         {
             Debug.Assert(CanPush(card));
             _stack.Push(card);
+            SortedSize++;
+            Debug.Assert(SortedSize >= 1 && SortedSize <= _stack.Size);
         }
 
         public Card Pop()
         {
             Debug.Assert(CanPop());
-            return _stack.Pop();
+            var card = _stack.Pop();
+
+            if (--SortedSize < 1)
+            {
+                SortedSize = CountSorted();
+            }
+
+            Debug.Assert((SortedSize >= 1 && SortedSize <= _stack.Size) || (IsEmpty && SortedSize == 0));
+            return card;
         }
 
         public void Move(Tableau target, int requestedCount)
@@ -159,8 +143,38 @@ namespace FreeCellSolver
 
         public Tableau Clone() => new Tableau
         {
-            _stack = _stack.Clone()
+            _stack = _stack.Clone(),
+            SortedSize = this.SortedSize,
         };
+
+        private int CountSorted()
+        {
+            if (IsEmpty)
+            {
+                return 0;
+            }
+
+            var sortedSize = 1;
+            for (var i = 0; i < _stack.Size - 1; i++)
+            {
+                if (i == _stack.Size)
+                {
+                    break;
+                }
+
+                var card = _stack[i];
+                if (card.IsBelow(_stack[i + 1]))
+                {
+                    sortedSize++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return sortedSize;
+        }
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableau other) => other == null
