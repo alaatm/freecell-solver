@@ -98,9 +98,9 @@ namespace FreeCellSolver
                     if (t1 != t2)
                     {
                         var targetTableau = Tableaus[t2];
-                        var maxAllowedMoves = MaxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
-
                         var sortedSize = tableau.SortedSize;
+                        var maxAllowedMoves = sortedSize == 1 ? 1 : MaxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
+
                         do
                         {
                             if (maxAllowedMoves >= sortedSize)
