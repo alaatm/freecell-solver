@@ -45,7 +45,7 @@ namespace FreeCellSolver
             movesSinceFoundation = foundFoundation ? 0 : ++movesSinceFoundation;
 
             var scale = 1f;
-            if (movesSinceFoundation >= 20)
+            if (movesSinceFoundation >= 18)
             {
                 scale = 0.7f;
             }
