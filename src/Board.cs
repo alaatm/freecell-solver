@@ -10,6 +10,8 @@ namespace FreeCellSolver
 {
     public class Board : IEquatable<Board>
     {
+        private int _emptyTableauCount;
+
         public int MovesSinceFoundation { get; private set; }
         public List<Move> Moves { get; private set; } = new List<Move>();
         public Reserve Reserve { get; private set; }
@@ -19,17 +21,20 @@ namespace FreeCellSolver
 
         public int LastMoveRating { get; private set; }
 
-        public int MaxAllowedMoveSize => Reserve.FreeCount + Tableaus.EmptyTableauCount + 1;
+        public int MaxAllowedMoveSize => Reserve.FreeCount + _emptyTableauCount + 1;
 
         private Board() { }
 
         public Board(Tableaus tableaus) : this(tableaus, null, null) { }
 
-        public Board(Tableaus tableaus, Reserve reserve, Foundation foundation)
+        public Board(Tableaus tableaus, Reserve reserve, Foundation foundation) : this(tableaus, reserve, foundation, tableaus.EmptyTableauCount) { }
+
+        private Board(Tableaus tableaus, Reserve reserve, Foundation foundation, int emptyTableauCount)
         {
             Tableaus = tableaus.Clone();
             Reserve = reserve?.Clone() ?? new Reserve();
             Foundation = foundation?.Clone() ?? new Foundation();
+            _emptyTableauCount = emptyTableauCount;
         }
 
         public (List<Move> moves, bool foundationFound) GetValidMoves(bool haltWhenFoundationFound)
@@ -157,15 +162,23 @@ namespace FreeCellSolver
             {
                 case MoveType.TableauToFoundation:
                     MovesSinceFoundation = 0;
-                    Tableaus[move.From].Move(Foundation);
+                    var t = Tableaus[move.From];
+                    t.Move(Foundation);
+                    _emptyTableauCount += t.IsEmpty ? 1 : 0;
                     break;
                 case MoveType.TableauToReserve:
                     MovesSinceFoundation++;
-                    Tableaus[move.From].Move(Reserve, move.To);
+                    t = Tableaus[move.From];
+                    t.Move(Reserve, move.To);
+                    _emptyTableauCount += t.IsEmpty ? 1 : 0;
                     break;
                 case MoveType.TableauToTableau:
                     MovesSinceFoundation++;
-                    Tableaus[move.From].Move(Tableaus[move.To], move.Size);
+                    var t1 = Tableaus[move.From];
+                    var t2 = Tableaus[move.To];
+                    t1.Move(t2, move.Size);
+                    _emptyTableauCount += t1.IsEmpty ? 1 : 0;
+                    _emptyTableauCount -= t2.Size == move.Size ? 1 : 0;
                     break;
                 case MoveType.ReserveToFoundation:
                     MovesSinceFoundation = 0;
@@ -175,7 +188,9 @@ namespace FreeCellSolver
                 case MoveType.ReserveToTableau:
                     MovesSinceFoundation++;
                     card = Reserve[move.From];
-                    Reserve.Move(card, Tableaus[move.To]);
+                    t = Tableaus[move.To];
+                    Reserve.Move(card, t);
+                    _emptyTableauCount -= t.Size == 1 ? 1 : 0;
                     break;
             }
 
@@ -183,6 +198,9 @@ namespace FreeCellSolver
                 Tableaus.CardCount
                 + Reserve.OccupiedCount
                 + Foundation.CountPlaced == 52);
+
+            Debug.Assert(_emptyTableauCount == Tableaus.EmptyTableauCount);
+            Debug.Assert(_emptyTableauCount >= 0 && _emptyTableauCount <= 8);
         }
 
         private void RateMove(Move move)
@@ -304,6 +322,7 @@ namespace FreeCellSolver
         public Board Clone()
         {
             var board = new Board(Tableaus, Reserve, Foundation);
+            board._emptyTableauCount = _emptyTableauCount;
             board.MovesSinceFoundation = MovesSinceFoundation;
             board.Moves = Moves.ToList();
             return board;
