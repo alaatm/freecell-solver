@@ -21,16 +21,26 @@ namespace FreeCellSolver
 
         public Board SolvedBoard { get; private set; }
 
-        public static Task<Board> SolveAsync(Board board) => SolveAsync(board, b => b.IsSolved);
+        public static Task<Board> SolveAsync(Board board, SolveMethod method) => SolveAsync(board, method, b => b.IsSolved);
 
-        public static async Task<Board> SolveAsync(Board board, Func<Board, bool> solvedCondition)
+        public static async Task<Board> SolveAsync(Board board, SolveMethod method, Func<Board, bool> solvedCondition)
         {
             var solver = new Solver(solvedCondition);
             var states = ParallelSolver.GetStates(board, Environment.ProcessorCount);
-            Console.WriteLine($"Using {states.Count} cores");
+            Console.WriteLine($"Solver: {method.ToString()} - using {states.Count} cores");
 
-            // var tasks = states.Select(b => Task.Run(() => solver.SolveDFSRecursive(b, 0, new HashSet<int>())));
-            var tasks = states.Select(b => Task.Run(() => solver.SolveDFSStack(b)));
+            IEnumerable<Task> tasks = null;
+
+            switch (method)
+            {
+                case SolveMethod.DFSRecursive:
+                    tasks = states.Select(b => Task.Run(() => solver.SolveDFSRecursive(b, 0, new HashSet<int>())));
+                    break;
+                case SolveMethod.DFSStack:
+                    tasks = states.Select(b => Task.Run(() => solver.SolveDFSStack(b)));
+                    break;
+            }
+
             await Task.WhenAll(tasks);
             return solver.SolvedBoard;
         }

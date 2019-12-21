@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace FreeCellSolver
 {
+    public enum SolveMethod
+    {
+        DFSStack,
+        DFSRecursive,
+    }
+
     public class Solver
     {
         private const int _maxDepth = 200;
@@ -11,13 +17,23 @@ namespace FreeCellSolver
 
         public Board SolvedBoard { get; private set; }
 
-        public static Board Solve(Board board) => Solve(board, b => b.IsSolved);
+        public static Board Solve(Board board, SolveMethod method) => Solve(board, method, b => b.IsSolved);
 
-        public static Board Solve(Board board, Func<Board, bool> solvedCondition)
+        public static Board Solve(Board board, SolveMethod method, Func<Board, bool> solvedCondition)
         {
             var solver = new Solver(solvedCondition);
-            // solver.SolveDFSRecursive(board, 0, new HashSet<int>());
-            solver.SolveDFSStack(board);
+            Console.WriteLine($"Solver: {method.ToString()}");
+
+            switch (method)
+            {
+                case SolveMethod.DFSRecursive:
+                    solver.SolveDFSRecursive(board, 0, new HashSet<int>());
+                    break;
+                case SolveMethod.DFSStack:
+                    solver.SolveDFSStack(board);
+                    break;
+            }
+
             return solver.SolvedBoard;
         }
 
