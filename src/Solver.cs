@@ -16,7 +16,7 @@ namespace FreeCellSolver
         public static Board Solve(Board board, Func<Board, bool> solvedCondition)
         {
             var solver = new Solver(solvedCondition);
-            // solver.SolveDFSRecursive(board, 0, 0, new HashSet<int>());
+            // solver.SolveDFSRecursive(board, 0, new HashSet<int>());
             solver.SolveDFSStack(board);
             return solver.SolvedBoard;
         }
@@ -84,7 +84,7 @@ namespace FreeCellSolver
             }
         }
 
-        internal int SolveDFSRecursive(Board board, int depth, int movesSinceFoundation, HashSet<int> visited)
+        internal int SolveDFSRecursive(Board board, int depth, HashSet<int> visited)
         {
             visited.Add(board.GetHashCode());
 
@@ -106,10 +106,8 @@ namespace FreeCellSolver
 
             var (moves, foundFoundation) = board.GetValidMoves(true);
 
-            movesSinceFoundation = foundFoundation ? 0 : ++movesSinceFoundation;
-
             var scale = 1f;
-            if (movesSinceFoundation >= 18)
+            if (board.MovesSinceFoundation >= 17 && !foundFoundation)
             {
                 scale = 0.7f;
             }
@@ -138,7 +136,7 @@ namespace FreeCellSolver
                         continue;
                     }
 
-                    jumpDepth = SolveDFSRecursive(b, depth + 1, movesSinceFoundation, visited);
+                    jumpDepth = SolveDFSRecursive(b, depth + 1, visited);
                 }
             }
 
