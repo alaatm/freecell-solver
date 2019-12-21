@@ -33,6 +33,8 @@ namespace FreeCellSolver
 
         public (List<Move> moves, bool foundationFound) GetValidMoves(bool haltWhenFoundationFound)
         {
+            var lastMove = Moves.Count > 0 ? Moves[Moves.Count - 1] : null;
+
             var moves = new List<Move>();
             var reserveToFoundationFound = false;
             var tableauToFoundationFound = false;
@@ -78,7 +80,11 @@ namespace FreeCellSolver
                         var tableau = Tableaus[t];
                         if (Reserve.CanMove(card, tableau))
                         {
-                            moves.Add(Move.Get(MoveType.ReserveToTableau, r, t));
+                            var move = Move.Get(MoveType.ReserveToTableau, r, t);
+                            if (!move.IsReverseOf(lastMove))
+                            {
+                                moves.Add(move);
+                            }
                         }
                     }
                 }
@@ -104,7 +110,11 @@ namespace FreeCellSolver
 
                         if (!uselessMove && moveSize > 0 && maxAllowedMoves >= moveSize)
                         {
-                            moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, moveSize));
+                            var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
+                            if (!move.IsReverseOf(lastMove))
+                            {
+                                moves.Add(move);
+                            }
                         }
                     }
                 }
@@ -122,34 +132,24 @@ namespace FreeCellSolver
                 var (canInsert, r) = Reserve.CanInsert(tableau.Top);
                 if (canInsert)
                 {
-                    moves.Add(Move.Get(MoveType.TableauToReserve, t, r));
+                    var move = Move.Get(MoveType.TableauToReserve, t, r);
+                    if (!move.IsReverseOf(lastMove))
+                    {
+                        moves.Add(move);
+                    }
                 }
             }
 
             return (moves, reserveToFoundationFound || tableauToFoundationFound);
         }
 
-        public bool ShouldMove(Move move)
-        {
-            // Do not move if this is an exact opposite of the previous move
-            if (Moves.Count > 0 && Moves[Moves.Count - 1].IsReverseOf(move))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool ExecuteMove(Move move, bool rate = false)
+        public void ExecuteMove(Move move, bool rate = false)
         {
             Moves.Add(move);
 
             if (rate)
             {
-                if (!RateMove(move))
-                {
-                    return false;
-                }
+                RateMove(move);
             }
 
             switch (move.Type)
@@ -177,11 +177,9 @@ namespace FreeCellSolver
                 Tableaus.CardCount
                 + Reserve.OccupiedCount
                 + Foundation.CountPlaced == 52);
-
-            return true;
         }
 
-        private bool RateMove(Move move)
+        private void RateMove(Move move)
         {
             const int RATING_FOUNDATION = 1000;
             const int RATING_CLOSEDTABLEAUFOLLOWUP = 20;
@@ -295,8 +293,6 @@ namespace FreeCellSolver
             {
                 LastMoveRating += RATING_RESERVE;
             }
-
-            return true;
         }
 
         public Board Clone()

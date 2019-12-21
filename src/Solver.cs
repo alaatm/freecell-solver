@@ -52,23 +52,18 @@ namespace FreeCellSolver
                 scale = 0.7f;
             }
 
-            var addedBoards = new List<Board>();
-            foreach (var move in moves)
-            {
-                if (board.ShouldMove(move))
-                {
-                    var next = board.Clone();
-                    if (next.ExecuteMove(move, true))
-                    {
-                        addedBoards.Add(next);
-                    }
-                }
-            }
-
             var jumpDepth = -1;
 
             if (scale == 1)
             {
+                var addedBoards = new List<Board>();
+                foreach (var move in moves)
+                {
+                    var next = board.Clone();
+                    next.ExecuteMove(move, true);
+                    addedBoards.Add(next);
+                }
+
                 foreach (var b in addedBoards.OrderByDescending(p => p.LastMoveRating))
                 {
                     if (jumpDepth != -1 && jumpDepth < depth)
@@ -89,7 +84,7 @@ namespace FreeCellSolver
             {
                 jumpDepth = (int)Math.Ceiling(depth * scale);
             }
-            if (addedBoards.Count == 0)
+            if (moves.Count == 0)
             {
                 jumpDepth = (int)Math.Ceiling(depth * 0.7f);
             }
