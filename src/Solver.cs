@@ -12,14 +12,17 @@ namespace FreeCellSolver
 
     public class Solver
     {
+        private static object _lock = new object();
+
         private const int _maxDepth = 200;
         private Func<Board, bool> _solvedCondition;
 
         public Board SolvedBoard { get; private set; }
+        public int TotalVisitedNodes { get; private set; }
 
-        public static Board Solve(Board board, SolveMethod method) => Solve(board, method, b => b.IsSolved);
+        public static Solver Solve(Board board, SolveMethod method) => Solve(board, method, b => b.IsSolved);
 
-        public static Board Solve(Board board, SolveMethod method, Func<Board, bool> solvedCondition)
+        public static Solver Solve(Board board, SolveMethod method, Func<Board, bool> solvedCondition)
         {
             var solver = new Solver(solvedCondition);
             Console.WriteLine($"Solver: {method.ToString()}");
@@ -34,7 +37,7 @@ namespace FreeCellSolver
                     break;
             }
 
-            return solver.SolvedBoard;
+            return solver;
         }
 
         public Solver(Func<Board, bool> solvedCondition) => _solvedCondition = solvedCondition;
@@ -71,8 +74,12 @@ namespace FreeCellSolver
 
                 if (_solvedCondition(board))
                 {
-                    SolvedBoard = board;
-                    break;
+                    lock (_lock)
+                    {
+                        SolvedBoard = board;
+                        TotalVisitedNodes = visited.Count;
+                        break;
+                    }
                 }
 
                 visited.Add(hc);
@@ -116,8 +123,12 @@ namespace FreeCellSolver
 
             if (_solvedCondition(board))
             {
-                SolvedBoard = board;
-                return 0;
+                lock (_lock)
+                {
+                    SolvedBoard = board;
+                    TotalVisitedNodes = visited.Count;
+                    return 0;
+                }
             }
 
             var (moves, foundFoundation) = board.GetValidMoves(true);

@@ -21,9 +21,9 @@ namespace FreeCellSolver
 
         public Board SolvedBoard { get; private set; }
 
-        public static Task<Board> SolveAsync(Board board, SolveMethod method) => SolveAsync(board, method, b => b.IsSolved);
+        public static Task<Solver> SolveAsync(Board board, SolveMethod method) => SolveAsync(board, method, b => b.IsSolved);
 
-        public static async Task<Board> SolveAsync(Board board, SolveMethod method, Func<Board, bool> solvedCondition)
+        public static async Task<Solver> SolveAsync(Board board, SolveMethod method, Func<Board, bool> solvedCondition)
         {
             var solver = new Solver(solvedCondition);
             var states = ParallelSolver.GetStates(board, Environment.ProcessorCount);
@@ -42,7 +42,7 @@ namespace FreeCellSolver
             }
 
             await Task.WhenAll(tasks);
-            return solver.SolvedBoard;
+            return solver;
         }
 
         public ParallelSolver(Func<Board, bool> solvedCondition) => _solvedCondition = solvedCondition;
