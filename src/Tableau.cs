@@ -86,16 +86,15 @@ namespace FreeCellSolver
             Debug.Assert(this != target);
             Debug.Assert(requestedCount <= CountMovable(target));
 
-            var poppedCards = new List<Card>();
+            var poppedCards = new Card[requestedCount];
             for (var i = 0; i < requestedCount; i++)
             {
-                poppedCards.Add(Pop());
+                poppedCards[i] = Pop();
             }
 
-            poppedCards.Reverse();
-            foreach (var card in poppedCards)
+            for (var i = poppedCards.Length - 1; i >= 0; i--)
             {
-                target.Push(card);
+                target.Push(poppedCards[i]);
             }
         }
 
