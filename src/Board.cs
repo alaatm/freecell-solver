@@ -10,6 +10,7 @@ namespace FreeCellSolver
 {
     public class Board : IEquatable<Board>
     {
+        public int MovesSinceFoundation { get; private set; }
         public List<Move> Moves { get; private set; } = new List<Move>();
         public Reserve Reserve { get; private set; }
         public Foundation Foundation { get; private set; }
@@ -155,19 +156,24 @@ namespace FreeCellSolver
             switch (move.Type)
             {
                 case MoveType.TableauToFoundation:
+                    MovesSinceFoundation = 0;
                     Tableaus[move.From].Move(Foundation);
                     break;
                 case MoveType.TableauToReserve:
+                    MovesSinceFoundation++;
                     Tableaus[move.From].Move(Reserve, move.To);
                     break;
                 case MoveType.TableauToTableau:
+                    MovesSinceFoundation++;
                     Tableaus[move.From].Move(Tableaus[move.To], move.Size);
                     break;
                 case MoveType.ReserveToFoundation:
+                    MovesSinceFoundation = 0;
                     var card = Reserve[move.From];
                     Reserve.Move(card, Foundation);
                     break;
                 case MoveType.ReserveToTableau:
+                    MovesSinceFoundation++;
                     card = Reserve[move.From];
                     Reserve.Move(card, Tableaus[move.To]);
                     break;
@@ -298,6 +304,7 @@ namespace FreeCellSolver
         public Board Clone()
         {
             var board = new Board(Tableaus, Reserve, Foundation);
+            board.MovesSinceFoundation = MovesSinceFoundation;
             board.Moves = Moves.ToList();
             return board;
         }

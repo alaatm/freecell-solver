@@ -16,13 +16,75 @@ namespace FreeCellSolver
         public static Board Solve(Board board, Func<Board, bool> solvedCondition)
         {
             var solver = new Solver(solvedCondition);
-            solver.SolveCore(board, 0, 0, new HashSet<int>());
+            // solver.SolveDFSRecursive(board, 0, 0, new HashSet<int>());
+            solver.SolveDFSStack(board);
             return solver.SolvedBoard;
         }
 
         public Solver(Func<Board, bool> solvedCondition) => _solvedCondition = solvedCondition;
 
-        internal int SolveCore(Board board, int depth, int movesSinceFoundation, HashSet<int> visited)
+        internal void SolveDFSStack(Board root)
+        {
+            var visited = new HashSet<int>();
+            var jumpDepth = 0;
+
+            var stack = new Stack<Board>();
+            stack.Push(root);
+
+            while (stack.Count > 0)
+            {
+                if (SolvedBoard != null)
+                {
+                    return;
+                }
+
+                var board = stack.Pop();
+                var depth = board.Moves.Count;
+
+                if (jumpDepth != 0 && jumpDepth < depth - 1)
+                {
+                    continue;
+                }
+                jumpDepth = 0;
+
+                var hc = board.GetHashCode();
+                if (visited.Contains(hc) || depth > _maxDepth)
+                {
+                    continue;
+                }
+
+                if (_solvedCondition(board))
+                {
+                    SolvedBoard = board;
+                    break;
+                }
+
+                visited.Add(hc);
+                var (moves, foundFoundation) = board.GetValidMoves(true);
+
+                if ((board.MovesSinceFoundation >= 17 && !foundFoundation) || moves.Count == 0)
+                {
+                    jumpDepth = (int)Math.Ceiling(depth * 0.7f);
+                    continue;
+                }
+
+                var addedBoards = new List<Board>();
+                // We're adding in reverse so that we maintain the order of states in case of equal last move rate
+                for (var i = moves.Count - 1; i >= 0; i--)
+                {
+                    var next = board.Clone();
+                    next.ExecuteMove(moves[i], true);
+                    addedBoards.Add(next);
+                }
+
+                foreach (var b in addedBoards.OrderBy(p => p.LastMoveRating))
+                {
+                    stack.Push(b);
+                }
+            }
+        }
+
+        internal int SolveDFSRecursive(Board board, int depth, int movesSinceFoundation, HashSet<int> visited)
         {
             visited.Add(board.GetHashCode());
 
@@ -76,7 +138,7 @@ namespace FreeCellSolver
                         continue;
                     }
 
-                    jumpDepth = SolveCore(b, depth + 1, movesSinceFoundation, visited);
+                    jumpDepth = SolveDFSRecursive(b, depth + 1, movesSinceFoundation, visited);
                 }
             }
 

@@ -29,7 +29,8 @@ namespace FreeCellSolver
             var states = ParallelSolver.GetStates(board, Environment.ProcessorCount);
             Console.WriteLine($"Using {states.Count} cores");
 
-            var tasks = states.Select(b => Task.Run(() => solver.SolveCore(b, 0, 0, new HashSet<int>())));
+            // var tasks = states.Select(b => Task.Run(() => solver.SolveDFSRecursive(b, 0, 0, new HashSet<int>())));
+            var tasks = states.Select(b => Task.Run(() => solver.SolveDFSStack(b)));
             await Task.WhenAll(tasks);
             return solver.SolvedBoard;
         }
