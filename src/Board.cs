@@ -1,3 +1,4 @@
+#define ALL_POSSIBLE_TT_MOVES
 using System;
 using System.IO;
 using System.Linq;
@@ -109,14 +110,32 @@ namespace FreeCellSolver
                     if (t1 != t2)
                     {
                         var targetTableau = Tableaus[t2];
-                        var moveSize = tableau.CountMovable(targetTableau);
+                        var targetTableauEmpty = targetTableau.IsEmpty;
+                        var movable = tableau.CountMovable(targetTableau);
+                        var moveSize = movable;
+#if ALL_POSSIBLE_TT_MOVES
+                        /* No need to get target top when moveSize is 1 since we won't be calling IsBelow() */
+                        var targetTop = moveSize > 1 ? targetTableau.Top : null;
+#endif
 
+#if ALL_POSSIBLE_TT_MOVES
                         while (moveSize > 0)
+#else
+                        if (moveSize > 0)
+#endif
                         {
-                            var maxAllowedMoves = moveSize == 1 ? 1 : _maxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
-                            var uselessMove = tableau.Size == moveSize && targetTableau.IsEmpty; // Do not move an entire column to an empty one
+#if ALL_POSSIBLE_TT_MOVES
+                            /* Only call IsBelow() when we have to */
+                            var canMove = moveSize == movable || targetTableauEmpty || tableau[moveSize - 1].IsBelow(targetTop);
+#endif
+                            var maxAllowedMoves = moveSize == 1 ? 1 : _maxAllowedMoveSize - (targetTableauEmpty ? 1 : 0);
+                            var uselessMove = tableau.Size == moveSize && targetTableauEmpty; // Do not move an entire column to an empty one
 
+#if ALL_POSSIBLE_TT_MOVES
+                            if (canMove && !uselessMove && maxAllowedMoves >= moveSize)
+#else
                             if (!uselessMove && maxAllowedMoves >= moveSize)
+#endif
                             {
                                 var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
                                 if (!move.IsReverseOf(lastMove))
@@ -125,7 +144,9 @@ namespace FreeCellSolver
                                 }
                             }
 
+#if ALL_POSSIBLE_TT_MOVES
                             moveSize--;
+#endif
                         }
                     }
                 }
