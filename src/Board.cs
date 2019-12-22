@@ -11,6 +11,7 @@ namespace FreeCellSolver
     public class Board : IEquatable<Board>
     {
         private int _emptyTableauCount;
+        private int _maxAllowedMoveSize => Reserve.FreeCount + _emptyTableauCount + 1;
 
         public int MovesSinceFoundation { get; private set; }
         public List<Move> Moves { get; private set; } = new List<Move>();
@@ -20,8 +21,6 @@ namespace FreeCellSolver
         public bool IsSolved => Foundation.IsComplete;
 
         public int LastMoveRating { get; private set; }
-
-        public int MaxAllowedMoveSize => Reserve.FreeCount + _emptyTableauCount + 1;
 
         private Board() { }
 
@@ -111,16 +110,22 @@ namespace FreeCellSolver
                     {
                         var targetTableau = Tableaus[t2];
                         var moveSize = tableau.CountMovable(targetTableau);
-                        var maxAllowedMoves = moveSize == 1 ? 1 : MaxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
-                        var uselessMove = tableau.Size == moveSize && targetTableau.IsEmpty; // Do not move an entire column to an empty one
 
-                        if (!uselessMove && moveSize > 0 && maxAllowedMoves >= moveSize)
+                        while (moveSize > 0)
                         {
-                            var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
-                            if (!move.IsReverseOf(lastMove))
+                            var maxAllowedMoves = moveSize == 1 ? 1 : _maxAllowedMoveSize - (targetTableau.IsEmpty ? 1 : 0);
+                            var uselessMove = tableau.Size == moveSize && targetTableau.IsEmpty; // Do not move an entire column to an empty one
+
+                            if (!uselessMove && maxAllowedMoves >= moveSize)
                             {
-                                moves.Add(move);
+                                var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
+                                if (!move.IsReverseOf(lastMove))
+                                {
+                                    moves.Add(move);
+                                }
                             }
+
+                            moveSize--;
                         }
                     }
                 }
