@@ -1,53 +1,20 @@
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 
-namespace FreeCellSolver
+namespace FreeCellSolver.Solvers
 {
-    public class BP
+    internal static class ParallelHelper
     {
-        public Board Board { get; set; }
-        public Board Parent { get; set; }
-
-        public BP(Board board) => Board = board;
-        public BP(Board board, Board parent) => (Board, Parent) = (board, parent);
-    }
-
-    public class ParallelSolver
-    {
-        private const int _maxDepth = 200;
-        private Func<Board, bool> _solvedCondition;
-
-        public Board SolvedBoard { get; private set; }
-
-        public static Task<Solver> SolveAsync(Board board, SolveMethod method) => SolveAsync(board, method, b => b.IsSolved);
-
-        public static async Task<Solver> SolveAsync(Board board, SolveMethod method, Func<Board, bool> solvedCondition)
+        public class BP
         {
-            var solver = new Solver(solvedCondition);
-            var states = ParallelSolver.GetStates(board, Environment.ProcessorCount);
-            Console.WriteLine($"Solver: {method.ToString()} - using {states.Count} cores");
+            public Board Board { get; set; }
+            public Board Parent { get; set; }
 
-            IEnumerable<Task> tasks = null;
-
-            switch (method)
-            {
-                case SolveMethod.DFSRecursive:
-                    tasks = states.Select(b => Task.Run(() => solver.SolveDFSRecursive(b, 0, new HashSet<int>())));
-                    break;
-                case SolveMethod.DFSStack:
-                    tasks = states.Select(b => Task.Run(() => solver.SolveDFSStack(b)));
-                    break;
-            }
-
-            await Task.WhenAll(tasks);
-            return solver;
+            public BP(Board board) => Board = board;
+            public BP(Board board, Board parent) => (Board, Parent) = (board, parent);
         }
 
-        public ParallelSolver(Func<Board, bool> solvedCondition) => _solvedCondition = solvedCondition;
-
-        private static List<Board> GetStates(Board initialBoard, int num)
+        internal static List<Board> GetStates(Board initialBoard, int num)
         {
             var tree = new Dictionary<int, List<BP>>() { { 0, new List<BP> { new BP(initialBoard) } } };
             var depth = 0;

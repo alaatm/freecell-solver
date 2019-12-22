@@ -1,4 +1,4 @@
-#define ALL_POSSIBLE_TT_MOVES
+// #define ALL_POSSIBLE_TT_MOVES
 using System;
 using System.IO;
 using System.Linq;
