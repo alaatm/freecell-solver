@@ -58,6 +58,13 @@ namespace FreeCellSolver
 
         public bool CanMove(Foundation foundation) => !IsEmpty && foundation.CanPush(Top);
 
+        public bool CanMove(Tableau target, int requestedCount) =>
+            !IsEmpty
+            && this != target
+            && requestedCount > 0
+            && requestedCount <= CountMovable(target)
+            && target.CanPush(this[requestedCount - 1]);
+
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
@@ -82,9 +89,7 @@ namespace FreeCellSolver
 
         public void Move(Tableau target, int requestedCount)
         {
-            Debug.Assert(!IsEmpty);
-            Debug.Assert(this != target);
-            Debug.Assert(requestedCount <= CountMovable(target));
+            Debug.Assert(CanMove(target, requestedCount));
 
             var poppedCards = new Card[requestedCount];
             for (var i = 0; i < requestedCount; i++)
