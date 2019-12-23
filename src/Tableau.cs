@@ -115,6 +115,8 @@ namespace FreeCellSolver
 
         public int CountMovable(Tableau target)
         {
+            Debug.Assert(this != target);
+
             if (IsEmpty)
             {
                 return 0;
