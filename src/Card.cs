@@ -39,14 +39,14 @@ namespace FreeCellSolver
     {
         private static char[] _suits = SUITS.ToCharArray();
         private static char[] _ranks = RANKS.ToCharArray();
+        private readonly int _rawValue;
 
         public const string SUITS = "CDHS";
         public const string RANKS = "A23456789TJQK";
 
-        public readonly int Num;
-        public Suit Suit => (Suit)(Num & 3);
-        public Rank Rank => (Rank)(Num >> 2);
-        public Color Color => Suit == Suit.Hearts || Suit == Suit.Diamonds ? Color.Red : Color.Black;
+        public Suit Suit { get; private set; }
+        public Rank Rank { get; private set; }
+        public Color Color { get; private set; }
 
         public Card(string card) : this(
             (Suit)Array.IndexOf(_suits, card[1]),
@@ -59,7 +59,10 @@ namespace FreeCellSolver
         public Card(int num)
         {
             Debug.Assert(num >= 0 && num < 52, "Invalid card.");
-            Num = num;
+            _rawValue = num;
+            Suit = (Suit)(_rawValue & 3);
+            Rank = (Rank)(_rawValue >> 2);
+            Color = Suit == Suit.Hearts || Suit == Suit.Diamonds ? Color.Red : Color.Black;
         }
 
         public bool IsAbove(Card foundationTop)
