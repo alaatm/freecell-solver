@@ -13,7 +13,6 @@ namespace FreeCellSolver
         static async Task Main(string[] args)
         {
             GCSettings.LatencyMode = GCLatencyMode.LowLatency;
-
             await ProcessArgsAsync(args);
         }
 
@@ -22,7 +21,11 @@ namespace FreeCellSolver
             if (args.Length > 0)
             {
                 var arg = args[0];
-                if (arg == "--full")
+                if (arg == "--32k")
+                {
+                    await RunFullBenchmarksAsync(DfsSolveMethod.Stack, 32000);
+                }
+                else if (arg == "--full")
                 {
                     await RunFullBenchmarksAsync(DfsSolveMethod.Recursive);
                     await RunFullBenchmarksAsync(DfsSolveMethod.Stack);
@@ -52,7 +55,7 @@ namespace FreeCellSolver
             }
         }
 
-        static async Task RunFullBenchmarksAsync(DfsSolveMethod method)
+        static async Task RunFullBenchmarksAsync(DfsSolveMethod method, int count = 1500)
         {
             var logFile = method switch
             {
@@ -61,14 +64,16 @@ namespace FreeCellSolver
                 _ => null,
             };
 
+            logFile += count == 32000 ? "-32k" : "";
+
             var fs = File.CreateText($@"C:\personal-projs\freecell-solver\{logFile}.log");
             var sw = new Stopwatch();
-            for (var i = 1; i < 285; i++)
+            for (var i = 1; i <= count; i++)
             {
                 fs.WriteLine($"Attempting deal #{i}");
                 sw.Restart();
                 var b = await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(i)), method);
-                fs.WriteLine($"{(b != null ? "Done" : "Bailed")} in {sw.Elapsed}");
+                fs.WriteLine($"{(b.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed}");
                 await fs.FlushAsync();
                 GC.Collect();
             }
@@ -111,7 +116,7 @@ namespace FreeCellSolver
             PrintSummary(s, sw);
             GC.Collect();
 
-            if (print)
+            if (print && s.SolvedBoard != null)
             {
                 var path = $@"C:\personal-projs\freecell-solver\_temp\{dealNum}\{method}";
                 Directory.CreateDirectory(path);
