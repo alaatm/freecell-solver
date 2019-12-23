@@ -1,9 +1,11 @@
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
 {
-    public class Reserve
+    public class Reserve : IEquatable<Reserve>
     {
         private readonly List<Card> _state = new List<Card>
         {
@@ -99,5 +101,26 @@ namespace FreeCellSolver
         }
 
         public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]) { FreeCount = this.FreeCount };
+
+        #region Equality overrides and overloads
+        public bool Equals([AllowNull] Reserve other) => other == null
+            ? false
+            : _state[0] == other._state[0]
+                && _state[1] == other._state[1]
+                && _state[2] == other._state[2]
+                && _state[3] == other._state[3];
+
+        public override bool Equals(object obj) => obj is Reserve deal && Equals(deal);
+
+        public override int GetHashCode() => HashCode.Combine(
+            _state[0],
+            _state[1],
+            _state[2],
+            _state[3]);
+
+        public static bool operator ==(Reserve a, Reserve b) => Equals(a, b);
+
+        public static bool operator !=(Reserve a, Reserve b) => !(a == b);
+        #endregion
     }
 }

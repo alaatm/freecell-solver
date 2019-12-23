@@ -370,21 +370,17 @@ namespace FreeCellSolver
         }
 
         #region Equality overrides and overloads
+        // 2 boards are equal when their reserve, foundation and cascade piles are the same
+        // regardless of how that state was reached (i.e. regardless of the set of executed moves)
         public bool Equals([AllowNull] Board other) => other == null
             ? false
-            : Moves.SequenceEqual(other.Moves) && Tableaus == other.Tableaus;
+            : Reserve == other.Reserve
+                && Foundation == other.Foundation
+                && Tableaus == other.Tableaus;
 
         public override bool Equals(object obj) => obj is Board board && Equals(board);
 
-        public override int GetHashCode()
-        {
-            var hc = Tableaus.GetHashCode();
-            foreach (var move in Moves)
-            {
-                hc = HashCode.Combine(hc, move.GetHashCode());
-            }
-            return hc;
-        }
+        public override int GetHashCode() => HashCode.Combine(Reserve, Foundation, Tableaus);
 
         public static bool operator ==(Board a, Board b) => Equals(a, b);
 

@@ -1,9 +1,11 @@
+using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
 {
-    public class Foundation
+    public class Foundation : IEquatable<Foundation>
     {
         private readonly Dictionary<Suit, int> _state = new Dictionary<Suit, int>()
         {
@@ -44,5 +46,26 @@ namespace FreeCellSolver
         }
 
         public Foundation Clone() => new Foundation(_state[Suit.Hearts], _state[Suit.Clubs], _state[Suit.Diamonds], _state[Suit.Spades]);
+
+        #region Equality overrides and overloads
+        public bool Equals([AllowNull] Foundation other) => other == null
+            ? false
+            : _state[Suit.Hearts] == other._state[Suit.Hearts]
+                && _state[Suit.Clubs] == other._state[Suit.Clubs]
+                && _state[Suit.Diamonds] == other._state[Suit.Diamonds]
+                && _state[Suit.Spades] == other._state[Suit.Spades];
+
+        public override bool Equals(object obj) => obj is Foundation deal && Equals(deal);
+
+        public override int GetHashCode() => HashCode.Combine(
+            _state[Suit.Hearts],
+            _state[Suit.Clubs],
+            _state[Suit.Diamonds],
+            _state[Suit.Spades]);
+
+        public static bool operator ==(Foundation a, Foundation b) => Equals(a, b);
+
+        public static bool operator !=(Foundation a, Foundation b) => !(a == b);
+        #endregion
     }
 }
