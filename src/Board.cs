@@ -273,7 +273,7 @@ namespace FreeCellSolver
 
                 // Reward a newly discovered tableau-to-tableau move
                 var cardToBeTop = sourceTableau.Size > move.Size ? sourceTableau[move.Size] : null;
-                if (Tableaus.CanReceive(cardToBeTop, sourceTableau))
+                if (Tableaus.CanReceive(cardToBeTop, move.From))
                 {
                     LastMoveRating += RATING_FREETABLEAUTARGET;
                 }
