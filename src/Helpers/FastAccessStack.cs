@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-
 namespace FreeCellSolver
 {
     /// <summary>
-    /// This implementation lacks many error checks but good enough for our purpose.
+    /// This implementation has no error checks but good enough for our purpose.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class FastAccessStack<T>
@@ -26,47 +21,20 @@ namespace FreeCellSolver
             _array = new T[capacity];
         }
 
-        public T Peek()
-        {
-            var size = _size - 1;
-            T[] array = _array;
-
-            if ((uint)size >= (uint)array.Length)
-            {
-                ThrowForEmptyStack();
-            }
-
-            return array[size];
-        }
+        public T Peek() => _array[_size - 1];
 
         public void Push(T item)
         {
-            var size = _size;
-            T[] array = _array;
-
-            if ((uint)size < (uint)array.Length)
-            {
-                array[size] = item;
-                _size = size + 1;
-            }
+            _array[_size] = item;
+            _size++;
         }
 
         public T Pop()
         {
-            var size = _size - 1;
-            T[] array = _array;
+            _size--;
+            T item = _array[_size];
+            _array[_size] = default;
 
-            if ((uint)size >= (uint)array.Length)
-            {
-                ThrowForEmptyStack();
-            }
-
-            _size = size;
-            T item = array[size];
-            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
-            {
-                array[size] = default!;
-            }
             return item;
         }
 
@@ -94,12 +62,6 @@ namespace FreeCellSolver
             _array.CopyTo(clone._array, 0);
             clone._size = _size;
             return clone;
-        }
-
-        private void ThrowForEmptyStack()
-        {
-            Debug.Assert(_size == 0);
-            throw new InvalidOperationException("The stack is empty.");
         }
     }
 }
