@@ -70,22 +70,6 @@ namespace FreeCellSolver
             return item;
         }
 
-        public IEnumerable<T> Take(int count)
-        {
-            for (var i = 0; i < count; i++)
-            {
-                yield return _array[_size - i - 1];
-            }
-        }
-
-        public IEnumerable<T> Reverse()
-        {
-            for (var i = 0; i < _size; i++)
-            {
-                yield return _array[i];
-            }
-        }
-
         public bool SequenceEqual(FastAccessStack<T> other)
         {
             if (_size != other._size)

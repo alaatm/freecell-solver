@@ -16,8 +16,6 @@ namespace FreeCellSolver
 
         public Card this[int index] => _stack[index];
 
-        public IEnumerable<Card> SortedStack => _stack.Take(SortedSize);
-
         public Card Top => IsEmpty ? null : _stack.Peek();
 
         /// <summary>
