@@ -29,7 +29,7 @@ namespace FreeCellSolver.Solvers
         public static Dfs Run(Board board, DfsSolveMethod method, int maxDepth, float backTrackPercent)
         {
             var dfs = new Dfs(board, maxDepth, backTrackPercent);
-            Console.WriteLine($"Solver: {method.ToString()}");
+            Console.WriteLine($"Solver: DFS-{method.ToString()}");
 
             switch (method)
             {
@@ -58,7 +58,7 @@ namespace FreeCellSolver.Solvers
             {
                 case DfsSolveMethod.Recursive:
                     // Note we start at depth of move count for parallel
-                    tasks = tasks = states.Select((b, i) => Task.Run(() => dfs.DfsRecursive(b, b.Moves.Count, new HashSet<int>(), i)));
+                    tasks = states.Select((b, i) => Task.Run(() => dfs.DfsRecursive(b, b.Moves.Count, new HashSet<int>(), i)));
                     break;
                 case DfsSolveMethod.Stack:
                     tasks = states.Select((b, i) => Task.Run(() => dfs.DfsStack(b, i)));
