@@ -107,47 +107,49 @@ namespace FreeCellSolver
 
                 for (var t2 = 0; t2 < 8; t2++)
                 {
-                    if (t1 != t2)
+                    if (t1 == t2)
                     {
-                        var targetTableau = Tableaus[t2];
-                        var targetTableauEmpty = targetTableau.IsEmpty;
-                        var movable = tableau.CountMovable(targetTableau);
-                        var moveSize = movable;
+                        continue;
+                    }
+
+                    var targetTableau = Tableaus[t2];
+                    var targetTableauEmpty = targetTableau.IsEmpty;
+                    var movable = tableau.CountMovable(targetTableau);
+                    var moveSize = movable;
 #if ALL_POSSIBLE_TT_MOVES
-                        /* No need to get target top when moveSize is 1 since we won't be calling IsBelow() */
-                        var targetTop = moveSize > 1 ? targetTableau.Top : null;
+                    /* No need to get target top when moveSize is 1 since we won't be calling IsBelow() */
+                    var targetTop = moveSize > 1 ? targetTableau.Top : null;
 #endif
 
 #if ALL_POSSIBLE_TT_MOVES
-                        while (moveSize > 0)
+                    while (moveSize > 0)
 #else
-                        if (moveSize > 0)
+                    if (moveSize > 0)
+#endif
+                    {
+#if ALL_POSSIBLE_TT_MOVES
+                        /* Only call IsBelow() when we have to */
+                        var canMove = moveSize == movable || targetTableauEmpty || tableau[moveSize - 1].IsBelow(targetTop);
+#endif
+                        var maxAllowedMoves = moveSize == 1 ? 1 : _maxAllowedMoveSize - (targetTableauEmpty ? 1 : 0);
+                        var uselessMove = tableau.Size == moveSize && targetTableauEmpty; // Do not move an entire column to an empty one
+
+#if ALL_POSSIBLE_TT_MOVES
+                        if (canMove && !uselessMove && maxAllowedMoves >= moveSize)
+#else
+                        if (!uselessMove && maxAllowedMoves >= moveSize)
 #endif
                         {
-#if ALL_POSSIBLE_TT_MOVES
-                            /* Only call IsBelow() when we have to */
-                            var canMove = moveSize == movable || targetTableauEmpty || tableau[moveSize - 1].IsBelow(targetTop);
-#endif
-                            var maxAllowedMoves = moveSize == 1 ? 1 : _maxAllowedMoveSize - (targetTableauEmpty ? 1 : 0);
-                            var uselessMove = tableau.Size == moveSize && targetTableauEmpty; // Do not move an entire column to an empty one
-
-#if ALL_POSSIBLE_TT_MOVES
-                            if (canMove && !uselessMove && maxAllowedMoves >= moveSize)
-#else
-                            if (!uselessMove && maxAllowedMoves >= moveSize)
-#endif
+                            var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
+                            if (!move.IsReverseOf(lastMove))
                             {
-                                var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
-                                if (!move.IsReverseOf(lastMove))
-                                {
-                                    moves.Add(move);
-                                }
+                                moves.Add(move);
                             }
+                        }
 
 #if ALL_POSSIBLE_TT_MOVES
-                            moveSize--;
+                        moveSize--;
 #endif
-                        }
                     }
                 }
             }
