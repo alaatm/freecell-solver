@@ -81,15 +81,27 @@ namespace FreeCellSolver
 
                 if (card != null)
                 {
+                    var alreadyMovedToEmpty = false;
                     for (var t = 0; t < 8; t++)
                     {
                         var tableau = Tableaus[t];
+                        var emptyTarget = tableau.IsEmpty;
+
                         if (Reserve.CanMove(card, tableau))
                         {
                             var move = Move.Get(MoveType.ReserveToTableau, r, t);
                             if (!move.IsReverseOf(lastMove))
                             {
-                                moves.Add(move);
+                                if (emptyTarget && alreadyMovedToEmpty)
+                                {
+                                    // Skip move to empty when we've already made a similar
+                                    // move to another empty tableau
+                                }
+                                else
+                                {
+                                    moves.Add(move);
+                                    alreadyMovedToEmpty = emptyTarget ? true : alreadyMovedToEmpty;
+                                }
                             }
                         }
                     }
@@ -105,6 +117,7 @@ namespace FreeCellSolver
                     continue;
                 }
 
+                var alreadyMovedToEmpty = false;
                 for (var t2 = 0; t2 < 8; t2++)
                 {
                     if (t1 == t2)
@@ -130,7 +143,16 @@ namespace FreeCellSolver
                             var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
                             if (!move.IsReverseOf(lastMove))
                             {
-                                moves.Add(move);
+                                if (emptyTarget && alreadyMovedToEmpty)
+                                {
+                                    // Skip move to empty when we've already made a similar
+                                    // move to another empty tableau
+                                }
+                                else
+                                {
+                                    moves.Add(move);
+                                    alreadyMovedToEmpty = emptyTarget ? true : alreadyMovedToEmpty;
+                                }
                             }
                         }
 
