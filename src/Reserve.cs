@@ -32,6 +32,11 @@ namespace FreeCellSolver
             _state[1] = card2;
             _state[2] = card3;
             _state[3] = card4;
+
+            FreeCount -= card1 != null ? 1 : 0;
+            FreeCount -= card2 != null ? 1 : 0;
+            FreeCount -= card3 != null ? 1 : 0;
+            FreeCount -= card4 != null ? 1 : 0;
         }
 
         public Reserve() { }
@@ -100,7 +105,7 @@ namespace FreeCellSolver
             foundation.Push(card);
         }
 
-        public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]) { FreeCount = this.FreeCount };
+        public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]);
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Reserve other) => other == null

@@ -45,7 +45,11 @@ namespace FreeCellSolver
             _state[card.Suit]++;
         }
 
-        public Foundation Clone() => new Foundation(_state[Suit.Hearts], _state[Suit.Clubs], _state[Suit.Diamonds], _state[Suit.Spades]);
+        public Foundation Clone() => new Foundation(
+            _state[Suit.Hearts],
+            _state[Suit.Clubs],
+            _state[Suit.Diamonds],
+            _state[Suit.Spades]);
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Foundation other) => other == null
