@@ -142,6 +142,8 @@ namespace FreeCellSolver
                 return 0;
             }
 
+            Debug.Assert(target.CanPush(this[rankDiff - 1]));
+
             return rankDiff;
         }
 
