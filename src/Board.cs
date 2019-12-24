@@ -78,18 +78,21 @@ namespace FreeCellSolver
             for (var r = 0; r < 4 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound)); r++)
             {
                 var card = Reserve[r];
-                if (card != null)
+
+                if (card == null)
                 {
-                    for (var t = 0; t < 8; t++)
+                    continue;
+                }
+
+                for (var t = 0; t < 8; t++)
+                {
+                    var tableau = Tableaus[t];
+                    if (Reserve.CanMove(card, tableau))
                     {
-                        var tableau = Tableaus[t];
-                        if (Reserve.CanMove(card, tableau))
+                        var move = Move.Get(MoveType.ReserveToTableau, r, t);
+                        if (!move.IsReverseOf(lastMove))
                         {
-                            var move = Move.Get(MoveType.ReserveToTableau, r, t);
-                            if (!move.IsReverseOf(lastMove))
-                            {
-                                moves.Add(move);
-                            }
+                            moves.Add(move);
                         }
                     }
                 }
