@@ -79,20 +79,18 @@ namespace FreeCellSolver
             {
                 var card = Reserve[r];
 
-                if (card == null)
+                if (card != null)
                 {
-                    continue;
-                }
-
-                for (var t = 0; t < 8; t++)
-                {
-                    var tableau = Tableaus[t];
-                    if (Reserve.CanMove(card, tableau))
+                    for (var t = 0; t < 8; t++)
                     {
-                        var move = Move.Get(MoveType.ReserveToTableau, r, t);
-                        if (!move.IsReverseOf(lastMove))
+                        var tableau = Tableaus[t];
+                        if (Reserve.CanMove(card, tableau))
                         {
-                            moves.Add(move);
+                            var move = Move.Get(MoveType.ReserveToTableau, r, t);
+                            if (!move.IsReverseOf(lastMove))
+                            {
+                                moves.Add(move);
+                            }
                         }
                     }
                 }
