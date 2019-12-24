@@ -193,6 +193,8 @@ namespace FreeCellSolver
                     t1.Move(t2, move.Size);
                     _emptyTableauCount += t1.IsEmpty ? 1 : 0;
                     _emptyTableauCount -= t2.Size == move.Size ? 1 : 0;
+
+                    Debug.Assert(move.Size <= _maxAllowedMoveSize - (Tableaus[move.To].IsEmpty ? 1 : 0));
                     break;
                 case MoveType.ReserveToFoundation:
                     MovesSinceFoundation = 0;
