@@ -113,20 +113,19 @@ namespace FreeCellSolver
                     }
 
                     var targetTableau = Tableaus[t2];
-                    var targetTableauEmpty = targetTableau.IsEmpty;
-                    var movable = tableau.CountMovable(targetTableau);
-                    var moveSize = movable;
+                    var emptyTarget = targetTableau.IsEmpty;
+                    var moveSize = tableau.CountMovable(targetTableau);
+                    var maxAllowedMoveSize = _maxAllowedMoveSize - (emptyTarget ? 1 : 0);
+                    var canMove = true;
                     /* No need to get target top when moveSize is 1 since we won't be calling IsBelow() */
                     var targetTop = moveSize > 1 ? targetTableau.Top : null;
 
                     while (moveSize > 0)
                     {
-                        /* Only call IsBelow() when we have to */
-                        var canMove = moveSize == movable || targetTableauEmpty || tableau[moveSize - 1].IsBelow(targetTop);
-                        var maxAllowedMoves = moveSize == 1 ? 1 : _maxAllowedMoveSize - (targetTableauEmpty ? 1 : 0);
-                        var uselessMove = tableau.Size == moveSize && targetTableauEmpty; // Do not move an entire column to an empty one
+                        // Do not move an entire column to an empty one
+                        var uselessMove = tableau.Size == moveSize && emptyTarget;
 
-                        if (canMove && !uselessMove && maxAllowedMoves >= moveSize)
+                        if (canMove && maxAllowedMoveSize >= moveSize && !uselessMove)
                         {
                             var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
                             if (!move.IsReverseOf(lastMove))
@@ -135,7 +134,10 @@ namespace FreeCellSolver
                             }
                         }
 
-                        moveSize--;
+                        if (--moveSize > 0)
+                        {
+                            canMove = emptyTarget || tableau[moveSize - 1].IsBelow(targetTop);
+                        }
                     }
                 }
             }
