@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Runtime;
 using System.Diagnostics;
@@ -23,12 +23,15 @@ namespace FreeCellSolver
                 var arg = args[0];
                 if (arg == "--32k")
                 {
-                    await RunFullBenchmarksAsync(DfsSolveMethod.Stack, 32000);
+                    await RunFullBenchmarksAsync(DfsSolveMethod.Stack, 32000, "");
                 }
                 else if (arg == "--full")
                 {
-                    await RunFullBenchmarksAsync(DfsSolveMethod.Recursive);
-                    await RunFullBenchmarksAsync(DfsSolveMethod.Stack);
+                    var tag = args.Length == 3 && (args[1] == "-t" || args[1] == "--tag") ? args[2] : "current";
+
+                    await RunFullBenchmarksAsync(DfsSolveMethod.Recursive, 1500, tag);
+                    await RunFullBenchmarksAsync(DfsSolveMethod.Stack, 1500, tag);
+                    PrintBenchmarksSummary();
                 }
                 else if (arg == "--short")
                 {
@@ -47,6 +50,10 @@ namespace FreeCellSolver
                     await RunSingleBenchmarksAsync(DfsSolveMethod.Recursive, dealNum, print);
                     await RunSingleBenchmarksAsync(DfsSolveMethod.Stack, dealNum, print);
                 }
+                else if (arg == "--print-summary")
+                {
+                    PrintBenchmarksSummary();
+                }
             }
             else
             {
@@ -55,25 +62,26 @@ namespace FreeCellSolver
             }
         }
 
-        static async Task RunFullBenchmarksAsync(DfsSolveMethod method, int count = 1500)
+        static async Task RunFullBenchmarksAsync(DfsSolveMethod method, int count, string tag)
         {
             var logFile = method switch
             {
-                DfsSolveMethod.Recursive => "current-recursive",
-                DfsSolveMethod.Stack => "current-stack",
+                DfsSolveMethod.Recursive => "dfs-recursive",
+                DfsSolveMethod.Stack => "dfs-stack",
                 _ => null,
             };
 
             logFile += count == 32000 ? "-32k" : "";
+            logFile += String.IsNullOrWhiteSpace(tag) ? "" : $"-{tag}";
 
-            var fs = File.CreateText($@"C:\personal-projs\freecell-solver\{logFile}.log");
+            var fs = File.CreateText($@"C:\personal-projs\freecell-solver\benchmarks\{logFile}.log");
             var sw = new Stopwatch();
             for (var i = 1; i <= count; i++)
             {
                 fs.WriteLine($"Attempting deal #{i}");
                 sw.Restart();
-                var b = await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(i)), method);
-                fs.WriteLine($"{(b.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed}");
+                var s = await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(i)), method);
+                fs.WriteLine($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - visited nodes: {s.TotalVisitedNodes,0:n0}");
                 await fs.FlushAsync();
                 GC.Collect();
             }
@@ -130,7 +138,7 @@ namespace FreeCellSolver
             var sw = new Stopwatch();
             Console.WriteLine($"Processing extremly fast board");
             sw.Restart();
-            PrintSummary(Dfs.Run(BoardExtensions.GetExtremlyFastBoard(), method), sw);
+            PrintSummary(Dfs.Run(new Board(Deal.FromDealNum(2)), method), sw);
             GC.Collect();
         }
 
@@ -138,6 +146,36 @@ namespace FreeCellSolver
         {
             Console.WriteLine($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - initial id: {s.SolvedFromId} - visited nodes: {s.TotalVisitedNodes,0:n0}");
             Console.WriteLine();
+        }
+
+        static void PrintBenchmarksSummary()
+        {
+            var logFiles = Directory.GetFiles($@"C:\personal-projs\freecell-solver\benchmarks", "*.log").Select(f => new { Path = f, CreateDate = File.GetCreationTime(f) });
+            var len = logFiles.Select(f => Path.GetFileNameWithoutExtension(f.Path).Length).Max();
+
+            foreach (var log in logFiles.OrderBy(p => p.CreateDate))
+            {
+                var path = log.Path;
+                var lines = File.ReadAllLines(path);
+
+                var count = lines.Length / 2;
+                var failed = lines.Count(p => p.IndexOf("bailed") >= 0);
+                var ts = new TimeSpan();
+                var nc = 0;
+
+                for (var l = 1; l < lines.Length; l += 2)
+                {
+                    var idxStart = lines[l].IndexOf("in ") + "in ".Length;
+                    var length = lines[l].IndexOf(" - ", idxStart) - idxStart;
+                    ts = ts.Add(TimeSpan.Parse(lines[l].Substring(idxStart, length)));
+
+                    idxStart = lines[l].IndexOf("visited nodes: ") + "visited nodes: ".Length;
+                    nc += int.Parse(lines[l].Substring(idxStart).Replace(",", ""));
+                }
+
+                var testName = $"{Path.GetFileNameWithoutExtension(path)}".PadRight(len + 1);
+                Console.WriteLine($"{testName}: {ts} - visited: {nc,0:n0} - total: {count,0:n0} - failed: {failed,0:n0}");
+            }
         }
     }
 }
