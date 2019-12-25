@@ -11,6 +11,9 @@ namespace FreeCellSolver
 {
     public class Board : IEquatable<Board>
     {
+        // Used only for post moves asserts
+        private IEnumerable<Card> _allCards => Foundation.AllCards().Concat(Reserve.AllCards()).Concat(Tableaus.AllCards());
+
         private int _emptyTableauCount;
         private int _maxAllowedMoveSize => Reserve.FreeCount + _emptyTableauCount + 1;
 
@@ -235,11 +238,8 @@ namespace FreeCellSolver
                     break;
             }
 
-            Debug.Assert(
-                Tableaus.CardCount
-                + Reserve.OccupiedCount
-                + Foundation.CountPlaced == 52);
-
+            // Assert count and uniqueness
+            Debug.Assert(new HashSet<Card>(_allCards).Count == 52);
             Debug.Assert(_emptyTableauCount == Tableaus.EmptyTableauCount);
             Debug.Assert(_emptyTableauCount >= 0 && _emptyTableauCount <= 8);
         }

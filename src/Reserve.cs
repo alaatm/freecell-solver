@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
@@ -19,8 +20,6 @@ namespace FreeCellSolver
         public Card this[int i] => _state[i];
 
         public int FreeCount { get; private set; } = 4;
-
-        public int OccupiedCount => 4 - FreeCount;
 
         public Reserve(Card card1, Card card2, Card card3, Card card4)
         {
@@ -119,6 +118,9 @@ namespace FreeCellSolver
 
             return sb.ToString();
         }
+
+        // Used only for post moves asserts
+        internal IEnumerable<Card> AllCards() => _state.Where(c => c != null);
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Reserve other) => other == null

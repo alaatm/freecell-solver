@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
@@ -184,6 +185,9 @@ namespace FreeCellSolver
 
             return sb.ToString();
         }
+
+        // Used only for post moves asserts
+        internal IEnumerable<Card> AllCards() => _stack.All();
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableau other) => other == null

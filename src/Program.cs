@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using FreeCellSolver.Solvers;
 using System.Collections.Generic;
+using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
 {

@@ -43,10 +43,10 @@ namespace FreeCellSolver.Extensions
             ConsoleErrorWriter.Set();
             var stdErr = Console.Error;
 
-            var totalCardCount = deal.CardCount;
-            if (totalCardCount != 52)
+            var uniqueCardCount = new HashSet<Card>(deal.AllCards()).Count();
+            if (uniqueCardCount != 52)
             {
-                stdErr.WriteLine($"Total card count is invalid, should be '52' but is '{totalCardCount}'.");
+                stdErr.WriteLine($"Total unique card count is invalid, should be '52' but is '{uniqueCardCount}'.");
                 isValid = false;
             }
 

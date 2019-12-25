@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Collections.Generic;
+
 namespace FreeCellSolver
 {
     /// <summary>
@@ -63,5 +66,7 @@ namespace FreeCellSolver
             clone._size = _size;
             return clone;
         }
+
+        internal IEnumerable<T> All() => _array.Take(_size);
     }
 }

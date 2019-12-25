@@ -22,9 +22,6 @@ namespace FreeCellSolver
 
         public Tableau this[int index] => _state[index];
 
-        public int CardCount
-            => _state[0].Size + _state[1].Size + _state[2].Size + _state[3].Size + _state[4].Size + _state[5].Size + _state[6].Size + _state[7].Size;
-
         public int EmptyTableauCount
         {
             get
@@ -68,6 +65,16 @@ namespace FreeCellSolver
             return false;
         }
 
+        public Tableaus Clone() => new Tableaus(
+            _state[0],
+            _state[1],
+            _state[2],
+            _state[3],
+            _state[4],
+            _state[5],
+            _state[6],
+            _state[7]);
+
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -89,15 +96,8 @@ namespace FreeCellSolver
             return sb.ToString();
         }
 
-        public Tableaus Clone() => new Tableaus(
-            _state[0],
-            _state[1],
-            _state[2],
-            _state[3],
-            _state[4],
-            _state[5],
-            _state[6],
-            _state[7]);
+        // Used only for post moves asserts
+        internal IEnumerable<Card> AllCards() => _state.SelectMany(t => t.AllCards());
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableaus other) => other == null

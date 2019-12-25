@@ -18,9 +18,8 @@ namespace FreeCellSolver
 
         public int this[Suit s] => _state[s];
 
-        public bool IsComplete => CountPlaced == 52;
-
-        public int CountPlaced => _state[Suit.Hearts] + _state[Suit.Clubs] + _state[Suit.Diamonds] + _state[Suit.Spades] + 4;
+        public bool IsComplete =>
+            _state[Suit.Hearts] + _state[Suit.Clubs] + _state[Suit.Diamonds] + _state[Suit.Spades] + 4 == 52;
 
         public Foundation(int heartsTop, int clubsTop, int diamondsTop, int spadesTop)
         {
@@ -66,6 +65,18 @@ namespace FreeCellSolver
             sb.Append(s == -1 ? "--" : (s + 1).ToString().PadLeft(2));
 
             return sb.ToString();
+        }
+
+        // Used only for post moves asserts
+        internal IEnumerable<Card> AllCards()
+        {
+            foreach (var suit in Suits.Values)
+            {
+                for (var r = 0; r <= _state[suit]; r++)
+                {
+                    yield return Card.Get(suit, (Rank)r);
+                }
+            }
         }
 
         #region Equality overrides and overloads
