@@ -1,10 +1,11 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using FreeCellSolver.Solvers;
-using FreeCellSolver.Extensions;
+using System.Collections.Generic;
 
 namespace FreeCellSolver
 {
@@ -31,7 +32,7 @@ namespace FreeCellSolver
 
                     await RunFullBenchmarksAsync(DfsSolveMethod.Recursive, 1500, tag);
                     await RunFullBenchmarksAsync(DfsSolveMethod.Stack, 1500, tag);
-                    PrintBenchmarksSummary();
+                    await PrintBenchmarksSummaryAsync();
                 }
                 else if (arg == "--short")
                 {
@@ -52,7 +53,7 @@ namespace FreeCellSolver
                 }
                 else if (arg == "--print-summary")
                 {
-                    PrintBenchmarksSummary();
+                    await PrintBenchmarksSummaryAsync();
                 }
             }
             else
@@ -74,7 +75,20 @@ namespace FreeCellSolver
             logFile += count == 32000 ? "-32k" : "";
             logFile += String.IsNullOrWhiteSpace(tag) ? "" : $"-{tag}";
 
-            var fs = File.CreateText($@"C:\personal-projs\freecell-solver\benchmarks\{logFile}.log");
+            var path = $@"C:\personal-projs\freecell-solver\benchmarks\{logFile}.log";
+
+            if (File.Exists(path))
+            {
+                Console.WriteLine("A log with the same tag name already exists. Are you sure you want to continue? [Y] [N]");
+                var answer = Console.ReadKey(true);
+                if (answer.Key == ConsoleKey.N)
+                {
+                    Console.WriteLine("Operation cancelled.");
+                    return;
+                }
+            }
+
+            using var fs = File.CreateText(path);
             var sw = new Stopwatch();
             for (var i = 1; i <= count; i++)
             {
@@ -148,18 +162,18 @@ namespace FreeCellSolver
             Console.WriteLine();
         }
 
-        static void PrintBenchmarksSummary()
+        static async Task PrintBenchmarksSummaryAsync()
         {
+            var tests = new List<(DateTime createDate, string name, TimeSpan ts, int total, int visited, int failed)>();
             var logFiles = Directory.GetFiles($@"C:\personal-projs\freecell-solver\benchmarks", "*.log").Select(f => new { Path = f, CreateDate = File.GetCreationTime(f) });
             var len = logFiles.Select(f => Path.GetFileNameWithoutExtension(f.Path).Length).Max();
 
-            foreach (var log in logFiles.OrderBy(p => p.CreateDate))
+            foreach (var log in logFiles)
             {
-                var path = log.Path;
-                var lines = File.ReadAllLines(path);
+                var lines = await File.ReadAllLinesAsync(log.Path);
 
                 var count = lines.Length / 2;
-                var failed = lines.Count(p => p.IndexOf("bailed") >= 0);
+                var failed = lines.Count(p => p.IndexOf("Bailed") >= 0);
                 var ts = new TimeSpan();
                 var nc = 0;
 
@@ -173,8 +187,23 @@ namespace FreeCellSolver
                     nc += int.Parse(lines[l].Substring(idxStart).Replace(",", ""));
                 }
 
-                var testName = $"{Path.GetFileNameWithoutExtension(path)}".PadRight(len + 1);
-                Console.WriteLine($"{testName}: {ts} - visited: {nc,0:n0} - total: {count,0:n0} - failed: {failed,0:n0}");
+                tests.Add((log.CreateDate, Path.GetFileNameWithoutExtension(log.Path), ts, count, nc, failed));
+            }
+
+            var maxLenName = tests.Select(p => p.name.Length).Max() + 1;
+            var maxLenVisited = tests.Select(p => p.visited.ToString().Length).Max();
+            var maxLenTotal = tests.Select(p => p.total.ToString().Length).Max();
+            var maxLenFailed = tests.Select(p => p.failed.ToString().Length).Max();
+
+            foreach (var (createDate, name, ts, total, visited, failed) in tests.OrderBy(p => p.createDate))
+            {
+                var d = createDate.ToString("dd-MM-yy HH:mm:ss");
+                var n = name.PadRight(maxLenName);
+                var v = visited.ToString("n0").PadLeft(maxLenVisited);
+                var c = total.ToString("n0").PadLeft(maxLenTotal);
+                var f = failed.ToString("n0").PadLeft(maxLenFailed);
+
+                Console.WriteLine($"{d} - {n}: {ts} - visited: {v} - total: {c} - failed: {f}");
             }
         }
     }
