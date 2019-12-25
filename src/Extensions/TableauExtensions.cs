@@ -8,7 +8,7 @@ namespace FreeCellSolver.Extensions
     {
         public static SKImage ToImage(this Tableau tableau)
         {
-            const float partialOffset = 0.27f;
+            const float partialOffset = 0.26f;
             var topOffset = (int)Math.Round(DeckImage.CardHeight * partialOffset, 0);
 
             if (tableau.IsEmpty)

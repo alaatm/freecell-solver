@@ -18,7 +18,7 @@ namespace FreeCellSolver.Extensions
             var spacing = 70;
 
             var width = DeckImage.CardWidth * 8 + spacing * 7;
-            var height = (6 * topOffset) + DeckImage.CardHeight;
+            var height = (10 * topOffset) + DeckImage.CardHeight;
 
             var bmp = new SKBitmap(width, height);
             using var canvas = new SKCanvas(bmp);
