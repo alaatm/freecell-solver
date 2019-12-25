@@ -51,27 +51,17 @@ namespace FreeCellSolver
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
             {
-                var card = Reserve[r];
-                if (card != null)
+                if (Reserve.CanMove(r, Foundation))
                 {
-                    if (Foundation.CanPush(card))
-                    {
-                        moves.Add(Move.Get(MoveType.ReserveToFoundation, r));
-                        reserveToFoundationFound = true;
-                    }
+                    moves.Add(Move.Get(MoveType.ReserveToFoundation, r));
+                    reserveToFoundationFound = true;
                 }
             }
 
             // 2. Tableau -> Foundation
             for (var t = 0; t < 8; t++)
             {
-                var tableau = Tableaus[t];
-                if (tableau.IsEmpty)
-                {
-                    continue;
-                }
-
-                if (Foundation.CanPush(tableau.Top))
+                if (Tableaus[t].CanMove(Foundation))
                 {
                     moves.Add(Move.Get(MoveType.TableauToFoundation, t));
                     tableauToFoundationFound = true;
@@ -81,31 +71,31 @@ namespace FreeCellSolver
             // 3. Reserve -> Tableau
             for (var r = 0; r < 4 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound)); r++)
             {
-                var card = Reserve[r];
-
-                if (card != null)
+                if (Reserve[r] == null)
                 {
-                    var alreadyMovedToEmpty = false;
-                    for (var t = 0; t < 8; t++)
-                    {
-                        var tableau = Tableaus[t];
-                        var emptyTarget = tableau.IsEmpty;
+                    continue;
+                }
 
-                        if (Reserve.CanMove(card, tableau))
+                var alreadyMovedToEmpty = false;
+                for (var t = 0; t < 8; t++)
+                {
+                    var tableau = Tableaus[t];
+                    var emptyTarget = tableau.IsEmpty;
+
+                    if (Reserve.CanMove(r, tableau))
+                    {
+                        var move = Move.Get(MoveType.ReserveToTableau, r, t);
+                        if (!move.IsReverseOf(lastMove))
                         {
-                            var move = Move.Get(MoveType.ReserveToTableau, r, t);
-                            if (!move.IsReverseOf(lastMove))
+                            if (emptyTarget && alreadyMovedToEmpty)
                             {
-                                if (emptyTarget && alreadyMovedToEmpty)
-                                {
-                                    // Skip move to empty when we've already made a similar
-                                    // move to another empty tableau
-                                }
-                                else
-                                {
-                                    moves.Add(move);
-                                    alreadyMovedToEmpty = emptyTarget ? true : alreadyMovedToEmpty;
-                                }
+                                // Skip move to empty when we've already made a similar
+                                // move to another empty tableau
+                            }
+                            else
+                            {
+                                moves.Add(move);
+                                alreadyMovedToEmpty = emptyTarget ? true : alreadyMovedToEmpty;
                             }
                         }
                     }
@@ -171,14 +161,7 @@ namespace FreeCellSolver
             // 5. Tableau -> Reserve
             for (var t = 0; t < 8 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); t++)
             {
-                var tableau = Tableaus[t];
-                if (tableau.IsEmpty)
-                {
-                    continue;
-                }
-
-                var (canInsert, r) = Reserve.CanInsert(tableau.Top);
-                if (canInsert)
+                if (Tableaus[t].CanMove(Reserve, out var r))
                 {
                     var move = Move.Get(MoveType.TableauToReserve, t, r);
                     if (!move.IsReverseOf(lastMove))
@@ -226,14 +209,12 @@ namespace FreeCellSolver
                     break;
                 case MoveType.ReserveToFoundation:
                     MovesSinceFoundation = 0;
-                    var card = Reserve[move.From];
-                    Reserve.Move(card, Foundation);
+                    Reserve.Move(move.From, Foundation);
                     break;
                 case MoveType.ReserveToTableau:
                     MovesSinceFoundation++;
-                    card = Reserve[move.From];
                     t = Tableaus[move.To];
-                    Reserve.Move(card, t);
+                    Reserve.Move(move.From, t);
                     _emptyTableauCount -= t.Size == 1 ? 1 : 0;
                     break;
             }

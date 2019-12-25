@@ -43,11 +43,15 @@ namespace FreeCellSolver
 
         public bool CanPop() => !IsEmpty;
 
-        public bool CanMove(Reserve reserve, int index) => !IsEmpty && reserve.CanInsert(index, Top);
+        public bool CanMove(Reserve reserve, out int index)
+        {
+            index = -1;
+            return CanPop() && reserve.CanInsert(out index);
+        }
 
-        public bool CanMove(Foundation foundation) => !IsEmpty && foundation.CanPush(Top);
+        public bool CanMove(Foundation foundation) => CanPop() && foundation.CanPush(Top);
 
-        public bool CanMove(Tableau target, int requestedCount) =>
+        private bool CanMove(Tableau target, int requestedCount) =>
             !IsEmpty
             && this != target
             && requestedCount > 0
@@ -94,7 +98,7 @@ namespace FreeCellSolver
 
         public void Move(Reserve reserve, int index)
         {
-            Debug.Assert(CanMove(reserve, index));
+            Debug.Assert(CanMove(reserve, out var idx) && idx == index);
             reserve.Insert(index, Pop());
         }
 

@@ -41,68 +41,49 @@ namespace FreeCellSolver
 
         public Reserve() { }
 
-        public (bool canInsert, int index) CanInsert(Card card)
+        public bool CanInsert(out int index)
         {
-            Debug.Assert(!_state.Contains(card));
-            return FreeCount > 0
-                ? (true, _state.IndexOf(null))
-                : (false, -1);
+            index = _state.IndexOf(null);
+            return FreeCount > 0;
         }
 
-        public bool CanInsert(int index, Card card)
-        {
-            Debug.Assert(!_state.Contains(card));
-            Debug.Assert(index >= 0 && index < 4);
-            return _state[index] == null;
-        }
+        private bool CanRemove(int index) => _state[index] != null;
 
-        public bool CanMove(Card card, Tableau tableau)
-        {
-            Debug.Assert(_state.Contains(card));
+        public bool CanMove(int index, Tableau tableau)
+            => CanRemove(index) && tableau.CanPush(_state[index]);
 
-            if (tableau.IsEmpty)
-            {
-                return true;
-            }
-
-            return card.IsBelow(tableau.Top);
-        }
-
-        public bool CanMove(Card card, Foundation foundation)
-        {
-            Debug.Assert(_state.Contains(card));
-            return foundation.CanPush(card);
-        }
+        public bool CanMove(int index, Foundation foundation)
+            => CanRemove(index) && foundation.CanPush(_state[index]);
 
         public void Insert(int index, Card card)
         {
-            Debug.Assert(CanInsert(index, card));
+            Debug.Assert(CanInsert(out var idx) && idx == index);
             _state[index] = card;
             FreeCount--;
             Debug.Assert(FreeCount >= 0 && FreeCount <= 4);
         }
 
-        public void Remove(Card card)
+        private Card Remove(int index)
         {
-            Debug.Assert(_state.Contains(card));
-            var index = _state.IndexOf(card);
-            _state[index] = null;
             FreeCount++;
+            Debug.Assert(CanRemove(index));
             Debug.Assert(FreeCount >= 0 && FreeCount <= 4);
+
+            var card = _state[index];
+            _state[index] = null;
+            return card;
         }
 
-        public void Move(Card card, Tableau tableau)
+        public void Move(int index, Tableau tableau)
         {
-            Debug.Assert(CanMove(card, tableau));
-            Remove(card);
-            tableau.Push(card);
+            Debug.Assert(CanMove(index, tableau));
+            tableau.Push(Remove(index));
         }
 
-        public void Move(Card card, Foundation foundation)
+        public void Move(int index, Foundation foundation)
         {
-            Debug.Assert(CanMove(card, foundation));
-            Remove(card);
-            foundation.Push(card);
+            Debug.Assert(CanMove(index, foundation));
+            foundation.Push(Remove(index));
         }
 
         public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]);
