@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using System.Text;
 using System.Diagnostics;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
@@ -24,19 +24,9 @@ namespace FreeCellSolver
         /// <value></value>
         public int SortedSize { get; private set; }
 
-        public Tableau(string cards)
-        {
-            Debug.Assert(cards.Length % 2 == 0);
+        public Tableau(params string[] cards) : this(cards.Select(c => Card.Get(c)).ToArray()) { }
 
-            for (var i = 0; i < cards.Length; i += 2)
-            {
-                _stack.Push(Card.Get(cards.Substring(i, 2)));
-            }
-
-            SortedSize = CountSorted();
-        }
-
-        public Tableau(IEnumerable<Card> cards)
+        public Tableau(params Card[] cards)
         {
             foreach (var card in cards)
             {

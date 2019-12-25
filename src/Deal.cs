@@ -36,7 +36,7 @@ namespace FreeCellSolver
             var tableaus = new List<Tableau>();
             for (var c = 0; c < 8; c++)
             {
-                tableaus.Add(new Tableau(tableaus_[c].Select(n => Card.Get(n)).ToList()));
+                tableaus.Add(new Tableau(tableaus_[c].Select(n => Card.Get(n)).ToArray()));
             }
 
             return new Tableaus(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]);
@@ -67,7 +67,7 @@ namespace FreeCellSolver
             var tableaus = new List<Tableau>();
             for (var c = 0; c < 8; c++)
             {
-                tableaus.Add(new Tableau(tableaus_[c].Select(n => Card.Get(n)).ToList()));
+                tableaus.Add(new Tableau(tableaus_[c].Select(n => Card.Get(n)).ToArray()));
             }
 
             return new Tableaus(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]);
