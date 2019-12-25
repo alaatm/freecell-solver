@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
@@ -37,6 +38,8 @@ namespace FreeCellSolver
 
     public class Card : IEquatable<Card>
     {
+        private static Dictionary<int, Card> _allCards = new Dictionary<int, Card>();
+
         private static char[] _suits = SUITS.ToCharArray();
         private static char[] _ranks = RANKS.ToCharArray();
         private readonly int _rawValue;
@@ -48,22 +51,38 @@ namespace FreeCellSolver
         public Rank Rank { get; private set; }
         public Color Color { get; private set; }
 
-        public Card(string card) : this(
-            (Suit)Array.IndexOf(_suits, card[1]),
-            (Rank)Array.IndexOf(_ranks, card[0]))
-        { }
-
-        public Card(Suit suit, Rank rank) : this((int)suit + ((int)rank << 2))
-        { }
-
-        public Card(int num)
+        static Card()
         {
-            Debug.Assert(num >= 0 && num < 52, "Invalid card.");
-            _rawValue = num;
+            // Pre-generate all cards
+            foreach (var suit in Suits.Values)
+            {
+                foreach (var rank in Ranks.Values)
+                {
+                    var card = new Card((int)suit + ((int)rank << 2));
+                    _allCards.Add(card._rawValue, card);
+                }
+            }
+        }
+
+        private Card(int rawValue)
+        {
+            Debug.Assert(rawValue >= 0 && rawValue < 52, "Invalid card.");
+            _rawValue = rawValue;
             Suit = (Suit)(_rawValue & 3);
             Rank = (Rank)(_rawValue >> 2);
             Color = Suit == Suit.Hearts || Suit == Suit.Diamonds ? Color.Red : Color.Black;
         }
+
+        // Note no error checks are made!
+        public static Card Get(int rawValue) => _allCards[rawValue];
+
+        // Note no error checks are made!
+        public static Card Get(string card) => _allCards[
+            Array.IndexOf(_suits, card[1]) +
+            Array.IndexOf(_ranks, card[0]) << 2];
+
+        // Note no error checks are made!
+        public static Card Get(Suit suit, Rank rank) => _allCards[(int)suit + ((int)rank << 2)];
 
         public bool IsAbove(Card foundationTop)
             => Suit == foundationTop.Suit && Rank == foundationTop.Rank + 1;

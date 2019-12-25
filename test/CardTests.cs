@@ -7,7 +7,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_ctor_using_string()
         {
-            var card = new Card("4H");
+            var card = Card.Get("4H");
 
             Assert.Equal(Suit.Hearts, card.Suit);
             Assert.Equal(Rank.R4, card.Rank);
@@ -17,7 +17,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_ctor_using_explicit_values()
         {
-            var card = new Card(Suit.Hearts, Rank.R4);
+            var card = Card.Get(Suit.Hearts, Rank.R4);
 
             Assert.Equal(Suit.Hearts, card.Suit);
             Assert.Equal(Rank.R4, card.Rank);
@@ -30,8 +30,8 @@ namespace FreeCellSolver.Test
         [InlineData("3S", "AS", false)]  // 3 of spades -> ace of spades
         public void IsAbove_returns_whether_card_is_above_another_for_foundation_stack(string check, string against, bool expectedIsAbove)
         {
-            var cardToCheck = new Card(check);
-            Assert.Equal(expectedIsAbove, cardToCheck.IsAbove(new Card(against)));
+            var cardToCheck = Card.Get(check);
+            Assert.Equal(expectedIsAbove, cardToCheck.IsAbove(Card.Get(against)));
         }
 
         [Theory]
@@ -44,15 +44,15 @@ namespace FreeCellSolver.Test
         [InlineData("3S", "4D", true)]    // 3 of spades -> 5 of diamonds
         public void IsBelow_returns_whether_card_is_can_stack_above_tableau_top_card(string check, string against, bool expectedIsBelow)
         {
-            var cardToCheck = new Card(check);
-            Assert.Equal(expectedIsBelow, cardToCheck.IsBelow(new Card(against)));
+            var cardToCheck = Card.Get(check);
+            Assert.Equal(expectedIsBelow, cardToCheck.IsBelow(Card.Get(against)));
         }
 
         [Fact]
         public void EqualityTest()
         {
-            var ks1 = new Card("KS");
-            var ks2 = new Card("KS");
+            var ks1 = Card.Get("KS");
+            var ks2 = Card.Get("KS");
 
             Assert.True(ks1 == ks2);
             Assert.True(ks1.Equals(ks2));

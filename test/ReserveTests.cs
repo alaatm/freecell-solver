@@ -89,7 +89,7 @@ namespace FreeCellSolver.Test
         [InlineData("AS", "2S", false)]
         public void CanMove_returns_whether_card_can_be_moved_to_tableau_or_not(string cardToMove, string topCardAtTarget, bool expectedCanRemove)
         {
-            var card = new Card(cardToMove);
+            var card = Card.Get(cardToMove);
             var tableau = new Tableau(topCardAtTarget);
 
             var reserve = new Reserve();
@@ -104,11 +104,11 @@ namespace FreeCellSolver.Test
         [InlineData("2C", 0, true)]
         public void CanMove_returns_whether_card_can_be_moved_to_foundation_or_not(string cardToMove, int clubsTop, bool expectedCanRemove)
         {
-            var card = new Card(cardToMove);
+            var card = Card.Get(cardToMove);
             var foundation = new Foundation();
             for (var i = -1; i < clubsTop; i++)
             {
-                foundation.Push(new Card(Suit.Clubs, (Rank)i + 1));
+                foundation.Push(Card.Get(Suit.Clubs, (Rank)i + 1));
             }
 
             var reserve = new Reserve();

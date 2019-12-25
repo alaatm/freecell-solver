@@ -1,4 +1,3 @@
-using System.Linq;
 using SkiaSharp;
 using FreeCellSolver.Drawing;
 
@@ -8,8 +7,6 @@ namespace FreeCellSolver.Extensions
     {
         public static SKImage ToImage(this Foundation foundation)
         {
-            var suits = Suits.All().ToList();
-
             var spacing = 60;
             var width = DeckImage.CardWidth * 4 + spacing * 3;
             var height = DeckImage.CardHeight;
@@ -18,12 +15,12 @@ namespace FreeCellSolver.Extensions
             using var canvas = new SKCanvas(bmp);
             using var paint = new SKPaint { Color = new SKColor(255, 255, 255, 82) };
             using var bgPaint = new SKPaint { Color = SKColor.Parse("1b5e20") };
-            for (var i = 0; i < suits.Count; i++)
+            for (var i = 0; i < Suits.Values.Length; i++)
             {
                 var x = i * DeckImage.CardWidth + i * spacing;
-                var suit = suits[i];
+                var suit = Suits.Values[i];
                 var rank = foundation[suit];
-                var card = rank >= 0 ? new Card(suit, (Rank)rank) : null;
+                var card = rank >= 0 ? Card.Get(suit, (Rank)rank) : null;
 
                 if (card != null)
                 {

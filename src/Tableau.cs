@@ -1,8 +1,8 @@
 using System;
+using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace FreeCellSolver
 {
@@ -30,7 +30,7 @@ namespace FreeCellSolver
 
             for (var i = 0; i < cards.Length; i += 2)
             {
-                _stack.Push(new Card(cards.Substring(i, 2)));
+                _stack.Push(Card.Get(cards.Substring(i, 2)));
             }
 
             SortedSize = CountSorted();

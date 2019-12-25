@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Collections.Generic;
 using SkiaSharp;
 using FreeCellSolver.Drawing;
 
@@ -66,20 +68,25 @@ namespace FreeCellSolver.Extensions
                 }
             }
 
-            var deck = Deck.Get();
+            var added = new Dictionary<int, List<Card>>();
 
             for (var t = 0; t < 8; t++)
             {
+                added.Add(t, new List<Card>());
+
                 var tableau = deal[t];
                 for (var i = 0; i < tableau.Size; i++)
                 {
                     var card = tableau[i];
-                    if (!deck.Contains(card))
+                    foreach (var key in added.Keys)
                     {
-                        stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableau #{i + 1}");
-                        isValid = false;
+                        if (added[key].Contains(card))
+                        {
+                            stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableaus '{key + 1}' and '{i + 1}'");
+                            isValid = false;
+                        }
                     }
-                    deck.Remove(card);
+                    added[t].Add(card);
                 }
             }
 

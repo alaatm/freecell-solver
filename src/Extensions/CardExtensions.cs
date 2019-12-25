@@ -6,64 +6,64 @@ namespace FreeCellSolver.Extensions
     public static class Cards
     {
         // Spades
-        public static Card AceOfSpades => new Card("AS");
-        public static Card TwoOfSpades => new Card("2S");
-        public static Card ThreeOfSpades => new Card("3S");
-        public static Card FourOfSpades => new Card("4S");
-        public static Card FiveOfSpades => new Card("5S");
-        public static Card SixOfSpades => new Card("6S");
-        public static Card SevenOfSpades => new Card("7S");
-        public static Card EightfSpades => new Card("8S");
-        public static Card NineOfSpades => new Card("9S");
-        public static Card TenOfSpades => new Card("TS");
-        public static Card JackOfSpades => new Card("JS");
-        public static Card QueenOfSpades => new Card("QS");
-        public static Card KingOfSpades => new Card("KS");
+        public static Card AceOfSpades => Card.Get("AS");
+        public static Card TwoOfSpades => Card.Get("2S");
+        public static Card ThreeOfSpades => Card.Get("3S");
+        public static Card FourOfSpades => Card.Get("4S");
+        public static Card FiveOfSpades => Card.Get("5S");
+        public static Card SixOfSpades => Card.Get("6S");
+        public static Card SevenOfSpades => Card.Get("7S");
+        public static Card EightfSpades => Card.Get("8S");
+        public static Card NineOfSpades => Card.Get("9S");
+        public static Card TenOfSpades => Card.Get("TS");
+        public static Card JackOfSpades => Card.Get("JS");
+        public static Card QueenOfSpades => Card.Get("QS");
+        public static Card KingOfSpades => Card.Get("KS");
 
         // Hearts
-        public static Card AceOfHearts => new Card("AH");
-        public static Card TwoOfHearts => new Card("2H");
-        public static Card ThreeOfHearts => new Card("3H");
-        public static Card FourOfHearts => new Card("4H");
-        public static Card FiveOfHearts => new Card("5H");
-        public static Card SixOfHearts => new Card("6H");
-        public static Card SevenOfHearts => new Card("7H");
-        public static Card EightfHearts => new Card("8H");
-        public static Card NineOfHearts => new Card("9H");
-        public static Card TenOfHearts => new Card("TH");
-        public static Card JackOfHearts => new Card("JH");
-        public static Card QueenOfHearts => new Card("QH");
-        public static Card KingOfHearts => new Card("KH");
+        public static Card AceOfHearts => Card.Get("AH");
+        public static Card TwoOfHearts => Card.Get("2H");
+        public static Card ThreeOfHearts => Card.Get("3H");
+        public static Card FourOfHearts => Card.Get("4H");
+        public static Card FiveOfHearts => Card.Get("5H");
+        public static Card SixOfHearts => Card.Get("6H");
+        public static Card SevenOfHearts => Card.Get("7H");
+        public static Card EightfHearts => Card.Get("8H");
+        public static Card NineOfHearts => Card.Get("9H");
+        public static Card TenOfHearts => Card.Get("TH");
+        public static Card JackOfHearts => Card.Get("JH");
+        public static Card QueenOfHearts => Card.Get("QH");
+        public static Card KingOfHearts => Card.Get("KH");
 
         // Diamonds
-        public static Card AceOfDiamonds => new Card("AD");
-        public static Card TwoOfDiamonds => new Card("2D");
-        public static Card ThreeOfDiamonds => new Card("3D");
-        public static Card FourOfDiamonds => new Card("4D");
-        public static Card FiveOfDiamonds => new Card("5D");
-        public static Card SixOfDiamonds => new Card("6D");
-        public static Card SevenOfDiamonds => new Card("7D");
-        public static Card EightfDiamonds => new Card("8D");
-        public static Card NineOfDiamonds => new Card("9D");
-        public static Card TenOfDiamonds => new Card("TD");
-        public static Card JackOfDiamonds => new Card("JD");
-        public static Card QueenOfDiamonds => new Card("QD");
-        public static Card KingOfDiamonds => new Card("KD");
+        public static Card AceOfDiamonds => Card.Get("AD");
+        public static Card TwoOfDiamonds => Card.Get("2D");
+        public static Card ThreeOfDiamonds => Card.Get("3D");
+        public static Card FourOfDiamonds => Card.Get("4D");
+        public static Card FiveOfDiamonds => Card.Get("5D");
+        public static Card SixOfDiamonds => Card.Get("6D");
+        public static Card SevenOfDiamonds => Card.Get("7D");
+        public static Card EightfDiamonds => Card.Get("8D");
+        public static Card NineOfDiamonds => Card.Get("9D");
+        public static Card TenOfDiamonds => Card.Get("TD");
+        public static Card JackOfDiamonds => Card.Get("JD");
+        public static Card QueenOfDiamonds => Card.Get("QD");
+        public static Card KingOfDiamonds => Card.Get("KD");
 
         // Clubs
-        public static Card AceOfClubs => new Card("AC");
-        public static Card TwoOfClubs => new Card("2C");
-        public static Card ThreeOfClubs => new Card("3C");
-        public static Card FourOfClubs => new Card("4C");
-        public static Card FiveOfClubs => new Card("5C");
-        public static Card SixOfClubs => new Card("6C");
-        public static Card SevenOfClubs => new Card("7C");
-        public static Card EightfClubs => new Card("8C");
-        public static Card NineOfClubs => new Card("9C");
-        public static Card TenOfClubs => new Card("TC");
-        public static Card JackOfClubs => new Card("JC");
-        public static Card QueenOfClubs => new Card("QC");
-        public static Card KingOfClubs => new Card("KC");
+        public static Card AceOfClubs => Card.Get("AC");
+        public static Card TwoOfClubs => Card.Get("2C");
+        public static Card ThreeOfClubs => Card.Get("3C");
+        public static Card FourOfClubs => Card.Get("4C");
+        public static Card FiveOfClubs => Card.Get("5C");
+        public static Card SixOfClubs => Card.Get("6C");
+        public static Card SevenOfClubs => Card.Get("7C");
+        public static Card EightfClubs => Card.Get("8C");
+        public static Card NineOfClubs => Card.Get("9C");
+        public static Card TenOfClubs => Card.Get("TC");
+        public static Card JackOfClubs => Card.Get("JC");
+        public static Card QueenOfClubs => Card.Get("QC");
+        public static Card KingOfClubs => Card.Get("KC");
 
         public static SKImage ToImage(this Card card)
             => DeckImage.Instance.GetCard(card.Suit, card.Rank);
