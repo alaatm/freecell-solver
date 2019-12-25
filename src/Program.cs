@@ -192,9 +192,9 @@ namespace FreeCellSolver
             }
 
             var maxLenName = tests.Select(p => p.name.Length).Max() + 1;
-            var maxLenVisited = tests.Select(p => p.visited.ToString().Length).Max();
-            var maxLenTotal = tests.Select(p => p.total.ToString().Length).Max();
-            var maxLenFailed = tests.Select(p => p.failed.ToString().Length).Max();
+            var maxLenVisited = tests.Select(p => p.visited.ToString("n0").Length).Max();
+            var maxLenTotal = tests.Select(p => p.total.ToString("n0").Length).Max();
+            var maxLenFailed = tests.Select(p => p.failed.ToString("n0").Length).Max();
 
             foreach (var (createDate, name, ts, total, visited, failed) in tests.OrderBy(p => p.createDate))
             {
