@@ -84,11 +84,8 @@ namespace FreeCellSolver.Solvers
 
                 if (board.IsSolved || SolvedBoard != null)
                 {
-                    lock (this)
-                    {
-                        Finalize(board, visited.Count, stateId);
-                        break;
-                    }
+                    Finalize(board, visited.Count, stateId);
+                    break;
                 }
 
                 if (jumpDepth != 0 && jumpDepth < depth - 1)
@@ -125,11 +122,8 @@ namespace FreeCellSolver.Solvers
 
             if (board.IsSolved || SolvedBoard != null)
             {
-                lock (this)
-                {
-                    Finalize(board, visited.Count, stateId);
-                    return 0;
-                }
+                Finalize(board, visited.Count, stateId);
+                return 0;
             }
 
             if (depth > _maxDepth)
@@ -165,11 +159,14 @@ namespace FreeCellSolver.Solvers
 
         private void Finalize(Board board, int visitedCount, int stateId)
         {
-            if (SolvedBoard == null)
+            lock (this)
             {
-                SolvedBoard = board;
-                TotalVisitedNodes = visitedCount;
-                SolvedFromId = stateId;
+                if (SolvedBoard == null)
+                {
+                    SolvedBoard = board;
+                    TotalVisitedNodes = visitedCount;
+                    SolvedFromId = stateId;
+                }
             }
         }
     }
