@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using FreeCellSolver.Extensions;
+using System.Text;
 
 namespace FreeCellSolver
 {
@@ -366,6 +367,18 @@ namespace FreeCellSolver
             board.MovesSinceFoundation = MovesSinceFoundation;
             board.Moves = Moves.ToList();
             return board;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(Foundation.ToString());
+            sb.AppendLine();
+            sb.AppendLine(Reserve.ToString());
+            sb.AppendLine();
+            sb.Append(Tableaus.ToString());
+
+            return sb.ToString();
         }
 
         public void PrintMoves(string path, Tableaus originalDeal)

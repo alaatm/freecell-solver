@@ -71,16 +71,16 @@ namespace FreeCellSolver
         public override string ToString()
         {
             var sb = new StringBuilder();
+            sb.AppendLine("01 02 03 04 05 06 07 08");
+            sb.AppendLine("-- -- -- -- -- -- -- --");
+
             for (var r = 0; r < _state.Max(t => t.Size); r++)
             {
                 for (var c = 0; c < 8; c++)
                 {
                     var size = _state[c].Size;
-                    if (size > r)
-                    {
-                        sb.Append(_state[c][size - r - 1].ToString());
-                    }
-                    sb.Append(" ");
+                    sb.Append(size > r ? _state[c][size - r - 1].ToString() : "  ");
+                    sb.Append(c < 7 ? " " : "");
                 }
 
                 sb.Append(Environment.NewLine);

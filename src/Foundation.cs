@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace FreeCellSolver
 {
@@ -50,6 +51,22 @@ namespace FreeCellSolver
             _state[Suit.Clubs],
             _state[Suit.Diamonds],
             _state[Suit.Spades]);
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            var h = _state[Suit.Hearts];
+            var c = _state[Suit.Clubs];
+            var d = _state[Suit.Diamonds];
+            var s = _state[Suit.Spades];
+            sb.AppendLine("HH CC DD SS");
+            sb.Append((h == -1 ? "--" : (h + 1).ToString().PadLeft(2)) + " ");
+            sb.Append((c == -1 ? "--" : (c + 1).ToString().PadLeft(2)) + " ");
+            sb.Append((d == -1 ? "--" : (d + 1).ToString().PadLeft(2)) + " ");
+            sb.Append(s == -1 ? "--" : (s + 1).ToString().PadLeft(2));
+
+            return sb.ToString();
+        }
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Foundation other) => other == null

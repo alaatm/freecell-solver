@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace FreeCellSolver
 {
@@ -106,6 +107,18 @@ namespace FreeCellSolver
         }
 
         public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]);
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("01 02 03 04");
+            sb.Append((_state[0]?.ToString() ?? "--") + " ");
+            sb.Append((_state[1]?.ToString() ?? "--") + " ");
+            sb.Append((_state[2]?.ToString() ?? "--") + " ");
+            sb.Append(_state[3]?.ToString() ?? "--");
+
+            return sb.ToString();
+        }
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Reserve other) => other == null

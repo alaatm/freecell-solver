@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace FreeCellSolver
 {
@@ -180,6 +181,18 @@ namespace FreeCellSolver
             }
 
             return sortedSize;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+
+            for (var i = Size - 1; i >= 0; i--)
+            {
+                sb.AppendLine(_stack[i].ToString());
+            }
+
+            return sb.ToString();
         }
 
         #region Equality overrides and overloads
