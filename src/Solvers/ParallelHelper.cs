@@ -28,7 +28,7 @@ namespace FreeCellSolver.Solvers
                         tree.Add(depth, new List<BP>());
                     }
 
-                    var (moves, _) = bp.Board.GetValidMoves(true);
+                    var (moves, _) = bp.Board.GetValidMoves(false);
                     foreach (var move in moves)
                     {
                         var next = bp.Board.Clone();
