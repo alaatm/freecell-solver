@@ -437,6 +437,81 @@ namespace FreeCellSolver
             }
         }
 
+        public void ComputeScore()
+        {
+            // HSDH
+            var numBuried = 0;
+
+            for (var t = 0; t < 8; t++)
+            {
+                var tableau = Tableaus[t];
+                for (var c = 0; c < Tableaus[t].Size; c++)
+                {
+                    var card = tableau[c];
+                    if (Foundation.CanPush(card))
+                    {
+                        numBuried += c;
+                    }
+                }
+            }
+
+            if (Reserve.FreeCount == 0 || Tableaus.EmptyTableauCount == 0)
+            {
+                numBuried *= 2;
+            }
+
+            var f0 = Foundation[Suit.Hearts] + 1;
+            var f1 = Foundation[Suit.Clubs] + 1;
+            var f2 = Foundation[Suit.Diamonds] + 1;
+            var f3 = Foundation[Suit.Spades] + 1;
+
+            var lowestHome = Math.Min(Math.Min(Math.Min(f0, f1), f2), f3);
+            var highestHome = Math.Max(Math.Max(Math.Max(f0, f1), f2), f3);
+
+            var gn = MoveCount + (26 - f0 - f1 - f2 - f3);
+            var hsdh = gn + numBuried;
+
+            // NumWellPlaced
+            var numArranged = 0;
+            var valueOfTopCards = 0;
+            var valueOfBottomCards = 0;
+            for (var t = 0; t < 8; t++)
+            {
+                var tableau = Tableaus[t];
+
+                numArranged += tableau.SortedSize;
+                valueOfTopCards += (int)(tableau.Top?.Rank ?? 0);
+                valueOfBottomCards += (int)(tableau[tableau.Size - 1]?.Rank ?? 0);
+            }
+
+            // NumCardsNotAtFoundations
+            var diffToGoal = 52 - (f0 + f1 + f2 + f3);
+
+            // DifferenceFromTop
+            var diffFromTop = (valueOfTopCards / 8) - ((f0 + f1 + f2 + f3) / 4);
+
+            // LowestFoundationCard
+            var lowestHomeCard = 12 - lowestHome;
+
+            // HighestFoundationCard
+            var highestHomeCard = highestHome;
+
+            // DifferenceFoundation
+            var diffFoundation = highestHome - lowestHome;
+
+            // SumOfBottomCards
+            var sumBottomCards = 100 - valueOfBottomCards;
+
+            Score = Math.Round((hsdh * 0.01)
+                + (numArranged * 0.01)
+                + (diffToGoal * 0.09)
+                + (diffFromTop * 0.77)
+                + (lowestHomeCard * 0.01)
+                + (highestHomeCard * 0.08)
+                + (diffFoundation * 0.01)
+                + (sumBottomCards * 0.02), 4);
+        }
+
         public Board Clone() => new Board(this);
 
         public override string ToString()
