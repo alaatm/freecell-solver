@@ -9,15 +9,15 @@ namespace FreeCellSolver
 {
     public class Tableau : IEquatable<Tableau>
     {
-        private FastAccessStack<Card> _stack = new FastAccessStack<Card>(19);
+        private FastAccessStack<Card> _state = new FastAccessStack<Card>(19);
 
-        public int Size => _stack.Size;
+        public int Size => _state.Size;
 
-        public bool IsEmpty => _stack.Size == 0;
+        public bool IsEmpty => _state.Size == 0;
 
-        public Card this[int index] => _stack[index];
+        public Card this[int index] => _state[index];
 
-        public Card Top => IsEmpty ? null : _stack.Peek();
+        public Card Top => IsEmpty ? null : _state.Peek();
 
         /// <summary>
         /// Returns sorted cards that are only at the bottom of the stack
@@ -31,7 +31,7 @@ namespace FreeCellSolver
         {
             foreach (var card in cards)
             {
-                _stack.Push(card);
+                _state.Push(card);
             }
 
             SortedSize = CountSorted();
@@ -67,7 +67,7 @@ namespace FreeCellSolver
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
-            _stack.Push(card);
+            _state.Push(card);
             SortedSize++;
             Debug.Assert(SortedSize == CountSorted());
         }
@@ -75,7 +75,7 @@ namespace FreeCellSolver
         public Card Pop()
         {
             Debug.Assert(CanPop());
-            var card = _stack.Pop();
+            var card = _state.Pop();
 
             if (--SortedSize < 1)
             {
@@ -160,12 +160,12 @@ namespace FreeCellSolver
                 var poppedCards = new Card[move.Size];
                 for (var i = 0; i < move.Size; i++)
                 {
-                    poppedCards[i] = _stack.Pop();
+                    poppedCards[i] = _state.Pop();
                 }
 
                 for (var i = poppedCards.Length - 1; i >= 0; i--)
                 {
-                    board.Tableaus[move.From]._stack.Push(poppedCards[i]);
+                    board.Tableaus[move.From]._state.Push(poppedCards[i]);
                 }
             }
 
@@ -175,13 +175,13 @@ namespace FreeCellSolver
 
         internal void UndoPop(Card card)
         {
-            _stack.Push(card);
+            _state.Push(card);
             SortedSize = CountSorted();
         }
 
         public Tableau Clone() => new Tableau
         {
-            _stack = _stack.Clone(),
+            _state = _state.Clone(),
             SortedSize = this.SortedSize,
         };
 
@@ -193,15 +193,15 @@ namespace FreeCellSolver
             }
 
             var sortedSize = 1;
-            for (var i = 0; i < _stack.Size - 1; i++)
+            for (var i = 0; i < _state.Size - 1; i++)
             {
-                if (i == _stack.Size)
+                if (i == _state.Size)
                 {
                     break;
                 }
 
-                var card = _stack[i];
-                if (card.IsBelow(_stack[i + 1]))
+                var card = _state[i];
+                if (card.IsBelow(_state[i + 1]))
                 {
                     sortedSize++;
                 }
@@ -220,28 +220,28 @@ namespace FreeCellSolver
 
             for (var i = Size - 1; i >= 0; i--)
             {
-                sb.AppendLine(_stack[i].ToString());
+                sb.AppendLine(_state[i].ToString());
             }
 
             return sb.ToString();
         }
 
         // Used only for post moves asserts
-        internal IEnumerable<Card> AllCards() => _stack.All();
+        internal IEnumerable<Card> AllCards() => _state.All();
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableau other) => other == null
             ? false
-            : _stack.SequenceEqual(other._stack);
+            : _state.SequenceEqual(other._state);
 
         public override bool Equals(object obj) => obj is Tableau tableau && Equals(tableau);
 
         public override int GetHashCode()
         {
             var hc = 27;
-            for (var i = 0; i < _stack.Size; i++)
+            for (var i = 0; i < _state.Size; i++)
             {
-                var card = _stack[i];
+                var card = _state[i];
                 hc = HashCode.Combine(hc, card.GetHashCode());
             }
             return hc;
