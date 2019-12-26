@@ -9,20 +9,14 @@ namespace FreeCellSolver
     /// <typeparam name="T"></typeparam>
     public class FastAccessStack<T>
     {
-        private int _initialCapacity = 0;
+        private static int _initialCapacity = 19;
 
-        private T[] _array;
+        private T[] _array = new T[_initialCapacity];
         private int _size;
 
         public int Size => _size;
 
         public T this[int index] => _array[_size - index - 1];
-
-        public FastAccessStack(int capacity)
-        {
-            _initialCapacity = capacity;
-            _array = new T[capacity];
-        }
 
         public T Peek() => _array[_size - 1];
 
@@ -61,7 +55,7 @@ namespace FreeCellSolver
 
         public FastAccessStack<T> Clone()
         {
-            var clone = new FastAccessStack<T>(_initialCapacity);
+            var clone = new FastAccessStack<T>();
             _array.CopyTo(clone._array, 0);
             clone._size = _size;
             return clone;

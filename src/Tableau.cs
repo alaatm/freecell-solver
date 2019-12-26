@@ -9,7 +9,7 @@ namespace FreeCellSolver
 {
     public class Tableau : IEquatable<Tableau>
     {
-        private FastAccessStack<Card> _state = new FastAccessStack<Card>(19);
+        private FastAccessStack<Card> _state = new FastAccessStack<Card>();
 
         public int Size => _state.Size;
 
