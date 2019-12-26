@@ -8,47 +8,47 @@ namespace FreeCellSolver
 {
     public class Foundation : IEquatable<Foundation>
     {
-        private readonly Dictionary<Suit, int> _state = new Dictionary<Suit, int>()
+        private readonly int[] _state = new int[]
         {
-            { Suit.Clubs, -1 },
-            { Suit.Diamonds, -1 },
-            { Suit.Hearts, -1 },
-            { Suit.Spades, -1 },
+            -1, // Suit.Clubs
+            -1, // Suit.Diamonds
+            -1, // Suit.Hearts
+            -1, // Suit.Spades
         };
 
-        public int this[Suit s] => _state[s];
+        public int this[Suit s] => _state[(int)s];
 
         public bool IsComplete =>
-            _state[Suit.Hearts] + _state[Suit.Clubs] + _state[Suit.Diamonds] + _state[Suit.Spades] + 4 == 52;
+            _state[0] + _state[1] + _state[2] + _state[3] + 4 == 52;
 
-        public Foundation(int heartsTop, int clubsTop, int diamondsTop, int spadesTop)
+        public Foundation(int clubsTop, int diamondsTop, int heartsTop, int spadesTop)
         {
-            Debug.Assert(heartsTop >= -1 && heartsTop < 13);
             Debug.Assert(clubsTop >= -1 && clubsTop < 13);
             Debug.Assert(diamondsTop >= -1 && diamondsTop < 13);
+            Debug.Assert(heartsTop >= -1 && heartsTop < 13);
             Debug.Assert(spadesTop >= -1 && spadesTop < 13);
 
-            _state[Suit.Hearts] = heartsTop;
-            _state[Suit.Clubs] = clubsTop;
-            _state[Suit.Diamonds] = diamondsTop;
-            _state[Suit.Spades] = spadesTop;
+            _state[0] = clubsTop;
+            _state[1] = diamondsTop;
+            _state[2] = heartsTop;
+            _state[3] = spadesTop;
         }
 
         public Foundation() { }
 
         public bool CanPush(Card card)
-            => _state[card.Suit] == (int)card.Rank - 1;
+            => _state[(int)card.Suit] == (int)card.Rank - 1;
 
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
-            _state[card.Suit]++;
+            _state[(int)card.Suit]++;
         }
 
         internal void Undo(Move move, Board board)
         {
-            var suit = (Suit)move.To;
-            var card = Card.Get(suit, (Rank)_state[suit]);
+            var suit = move.To;
+            var card = Card.Get((Suit)suit, (Rank)_state[suit]);
 
             if (move.Type == MoveType.ReserveToFoundation)
             {
@@ -63,22 +63,22 @@ namespace FreeCellSolver
         }
 
         public Foundation Clone() => new Foundation(
-            _state[Suit.Hearts],
-            _state[Suit.Clubs],
-            _state[Suit.Diamonds],
-            _state[Suit.Spades]);
+            _state[0],
+            _state[1],
+            _state[2],
+            _state[3]);
 
         public override string ToString()
         {
             var sb = new StringBuilder();
-            var h = _state[Suit.Hearts];
-            var c = _state[Suit.Clubs];
-            var d = _state[Suit.Diamonds];
-            var s = _state[Suit.Spades];
-            sb.AppendLine("HH CC DD SS");
-            sb.Append((h == -1 ? "--" : (h + 1).ToString().PadLeft(2)) + " ");
+            var c = _state[0];
+            var d = _state[1];
+            var h = _state[2];
+            var s = _state[3];
+            sb.AppendLine("CC DD HH SS");
             sb.Append((c == -1 ? "--" : (c + 1).ToString().PadLeft(2)) + " ");
             sb.Append((d == -1 ? "--" : (d + 1).ToString().PadLeft(2)) + " ");
+            sb.Append((h == -1 ? "--" : (h + 1).ToString().PadLeft(2)) + " ");
             sb.Append(s == -1 ? "--" : (s + 1).ToString().PadLeft(2));
 
             return sb.ToString();
@@ -89,7 +89,7 @@ namespace FreeCellSolver
         {
             foreach (var suit in Suits.Values)
             {
-                for (var r = 0; r <= _state[suit]; r++)
+                for (var r = 0; r <= _state[(int)suit]; r++)
                 {
                     yield return Card.Get(suit, (Rank)r);
                 }
@@ -99,18 +99,18 @@ namespace FreeCellSolver
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Foundation other) => other == null
             ? false
-            : _state[Suit.Hearts] == other._state[Suit.Hearts]
-                && _state[Suit.Clubs] == other._state[Suit.Clubs]
-                && _state[Suit.Diamonds] == other._state[Suit.Diamonds]
-                && _state[Suit.Spades] == other._state[Suit.Spades];
+            : _state[0] == other._state[0]
+                && _state[1] == other._state[1]
+                && _state[2] == other._state[2]
+                && _state[3] == other._state[3];
 
         public override bool Equals(object obj) => obj is Foundation deal && Equals(deal);
 
         public override int GetHashCode() => HashCode.Combine(
-            _state[Suit.Hearts],
-            _state[Suit.Clubs],
-            _state[Suit.Diamonds],
-            _state[Suit.Spades]);
+            _state[0],
+            _state[1],
+            _state[2],
+            _state[3]);
 
         public static bool operator ==(Foundation a, Foundation b) => Equals(a, b);
 

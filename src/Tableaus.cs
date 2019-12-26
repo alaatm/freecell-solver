@@ -8,7 +8,7 @@ namespace FreeCellSolver
 {
     public class Tableaus : IEquatable<Tableaus>
     {
-        private List<Tableau> _state = new List<Tableau>(8)
+        private Tableau[] _state = new Tableau[]
         {
             null,
             null,

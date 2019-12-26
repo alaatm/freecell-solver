@@ -9,7 +9,7 @@ namespace FreeCellSolver
 {
     public class Reserve : IEquatable<Reserve>
     {
-        private readonly List<Card> _state = new List<Card>
+        private readonly Card[] _state = new Card[]
         {
             null,
             null,
@@ -43,7 +43,7 @@ namespace FreeCellSolver
 
         public bool CanInsert(out int index)
         {
-            index = _state.IndexOf(null);
+            index = Array.IndexOf(_state, null);
             return FreeCount > 0;
         }
 
