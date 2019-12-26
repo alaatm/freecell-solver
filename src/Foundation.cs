@@ -45,6 +45,23 @@ namespace FreeCellSolver
             _state[card.Suit]++;
         }
 
+        internal void Undo(Move move, Board board)
+        {
+            var suit = (Suit)move.To;
+            var card = Card.Get(suit, (Rank)_state[suit]);
+
+            if (move.Type == MoveType.ReserveToFoundation)
+            {
+                _state[suit]--;
+                board.Reserve.UndoRemove(move.From, card);
+            }
+            else if (move.Type == MoveType.TableauToFoundation)
+            {
+                _state[suit]--;
+                board.Tableaus[move.From].UndoPop(card);
+            }
+        }
+
         public Foundation Clone() => new Foundation(
             _state[Suit.Hearts],
             _state[Suit.Clubs],

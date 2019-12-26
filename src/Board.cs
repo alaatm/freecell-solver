@@ -174,6 +174,46 @@ namespace FreeCellSolver
             return (moves, reserveToFoundationFound || tableauToFoundationFound);
         }
 
+        public void UndoLastMove()
+        {
+            var lastMove = Moves[Moves.Count - 1];
+            if (lastMove == null)
+            {
+                return;
+            }
+
+            Moves.RemoveAt(Moves.Count - 1);
+
+            switch (lastMove.Type)
+            {
+                case MoveType.TableauToFoundation:
+                    Foundation.Undo(lastMove, this);
+                    _emptyTableauCount -= Tableaus[lastMove.From].Size == 1 ? 1 : 0;
+                    break;
+                case MoveType.TableauToReserve:
+                    Reserve.Undo(lastMove, this);
+                    _emptyTableauCount -= Tableaus[lastMove.From].Size == 1 ? 1 : 0;
+                    break;
+                case MoveType.TableauToTableau:
+                    Tableaus[lastMove.To].Undo(lastMove, this);
+                    _emptyTableauCount -= Tableaus[lastMove.From].Size == lastMove.Size ? 1 : 0;
+                    _emptyTableauCount += Tableaus[lastMove.To].IsEmpty ? 1 : 0;
+                    break;
+                case MoveType.ReserveToFoundation:
+                    Foundation.Undo(lastMove, this);
+                    break;
+                case MoveType.ReserveToTableau:
+                    Tableaus[lastMove.To].Undo(lastMove, this);
+                    _emptyTableauCount += Tableaus[lastMove.To].IsEmpty ? 1 : 0;
+                    break;
+            }
+
+            // Assert count and uniqueness
+            Debug.Assert(new HashSet<Card>(_allCards).Count == 52);
+            Debug.Assert(_emptyTableauCount == Tableaus.EmptyTableauCount);
+            Debug.Assert(_emptyTableauCount >= 0 && _emptyTableauCount <= 8);
+        }
+
         public void ExecuteMove(Move move, bool rate = false)
         {
             Moves.Add(move);

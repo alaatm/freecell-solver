@@ -149,6 +149,36 @@ namespace FreeCellSolver
             return rankDiff;
         }
 
+        internal void Undo(Move move, Board board)
+        {
+            if (move.Type == MoveType.ReserveToTableau)
+            {
+                board.Reserve.UndoRemove(move.From, Pop());
+            }
+            else if (move.Type == MoveType.TableauToTableau)
+            {
+                var poppedCards = new Card[move.Size];
+                for (var i = 0; i < move.Size; i++)
+                {
+                    poppedCards[i] = _stack.Pop();
+                }
+
+                for (var i = poppedCards.Length - 1; i >= 0; i--)
+                {
+                    board.Tableaus[move.From]._stack.Push(poppedCards[i]);
+                }
+            }
+
+            SortedSize = CountSorted();
+            board.Tableaus[move.From].SortedSize = board.Tableaus[move.From].CountSorted();
+        }
+
+        internal void UndoPop(Card card)
+        {
+            _stack.Push(card);
+            SortedSize = CountSorted();
+        }
+
         public Tableau Clone() => new Tableau
         {
             _stack = _stack.Clone(),
