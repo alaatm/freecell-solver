@@ -65,17 +65,18 @@ namespace FreeCellSolver
             Debug.Assert(CanInsert(out var idx) && idx == index);
             _state[index] = card;
             FreeCount--;
-            Debug.Assert(FreeCount >= 0 && FreeCount <= 4);
+            Debug.Assert(FreeCount == _state.Count(c => c == null));
         }
 
         private Card Remove(int index)
         {
             FreeCount++;
             Debug.Assert(CanRemove(index));
-            Debug.Assert(FreeCount >= 0 && FreeCount <= 4);
 
             var card = _state[index];
             _state[index] = null;
+            Debug.Assert(FreeCount == _state.Count(c => c == null));
+
             return card;
         }
 
