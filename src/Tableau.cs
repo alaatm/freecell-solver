@@ -238,13 +238,14 @@ namespace FreeCellSolver
 
         public override int GetHashCode()
         {
-            var hc = 27;
+            var hash = new HashCode();
+
             for (var i = 0; i < _state.Size; i++)
             {
-                var card = _state[i];
-                hc = HashCode.Combine(hc, card.GetHashCode());
+                hash.Add(_state[i]);
             }
-            return hc;
+
+            return hash.ToHashCode();
         }
 
         public static bool operator ==(Tableau a, Tableau b) => Equals(a, b);

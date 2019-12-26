@@ -113,15 +113,15 @@ namespace FreeCellSolver
 
         public override bool Equals(object obj) => obj is Tableaus deal && Equals(deal);
 
-        public override int GetHashCode()
-        {
-            var hc = _state[0].GetHashCode();
-            for (var i = 1; i < _state.Count; i++)
-            {
-                hc = HashCode.Combine(hc, _state[i].GetHashCode());
-            }
-            return hc;
-        }
+        public override int GetHashCode() => HashCode.Combine(
+            _state[0],
+            _state[1],
+            _state[2],
+            _state[3],
+            _state[4],
+            _state[5],
+            _state[6],
+            _state[7]);
 
         public static bool operator ==(Tableaus a, Tableaus b) => Equals(a, b);
 
