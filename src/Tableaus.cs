@@ -102,7 +102,14 @@ namespace FreeCellSolver
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableaus other) => other == null
             ? false
-            : _state.SequenceEqual(other._state);
+            : _state[0] == other._state[0]
+                && _state[1] == other._state[1]
+                && _state[2] == other._state[2]
+                && _state[3] == other._state[3]
+                && _state[4] == other._state[4]
+                && _state[5] == other._state[5]
+                && _state[6] == other._state[6]
+                && _state[7] == other._state[7];
 
         public override bool Equals(object obj) => obj is Tableaus deal && Equals(deal);
 
