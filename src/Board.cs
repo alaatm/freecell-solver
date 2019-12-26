@@ -51,9 +51,9 @@ namespace FreeCellSolver
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
             {
-                if (Reserve.CanMove(r, Foundation))
+                if (Reserve.CanMove(r, Foundation, out var f))
                 {
-                    moves.Add(Move.Get(MoveType.ReserveToFoundation, r));
+                    moves.Add(Move.Get(MoveType.ReserveToFoundation, r, f));
                     reserveToFoundationFound = true;
                 }
             }
@@ -61,9 +61,9 @@ namespace FreeCellSolver
             // 2. Tableau -> Foundation
             for (var t = 0; t < 8; t++)
             {
-                if (Tableaus[t].CanMove(Foundation))
+                if (Tableaus[t].CanMove(Foundation, out var f))
                 {
-                    moves.Add(Move.Get(MoveType.TableauToFoundation, t));
+                    moves.Add(Move.Get(MoveType.TableauToFoundation, t, f));
                     tableauToFoundationFound = true;
                 }
             }

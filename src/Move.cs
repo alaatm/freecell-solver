@@ -1,7 +1,5 @@
-using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
 {
@@ -15,7 +13,7 @@ namespace FreeCellSolver
         ReserveToTableau,
     }
 
-    public class Move : IEquatable<Move>
+    public class Move
     {
         private static Dictionary<(MoveType, int, int, int), Move> _possibleMoves = new Dictionary<(MoveType, int, int, int), Move>();
 
@@ -36,7 +34,10 @@ namespace FreeCellSolver
             for (var r = 0; r < 4; r++)
             {
                 var mt = MoveType.ReserveToFoundation;
-                _possibleMoves.Add((mt, r, -1, 1), new Move(mt, r));
+                for (var f = 0; f < 4; f++)
+                {
+                    _possibleMoves.Add((mt, r, f, 1), new Move(mt, r, f));
+                }
 
                 mt = MoveType.ReserveToTableau;
                 for (var t = 0; t < 8; t++)
@@ -48,7 +49,10 @@ namespace FreeCellSolver
             for (var t = 0; t < 8; t++)
             {
                 var mt = MoveType.TableauToFoundation;
-                _possibleMoves.Add((mt, t, -1, 1), new Move(mt, t));
+                for (var f = 0; f < 4; f++)
+                {
+                    _possibleMoves.Add((mt, t, f, 1), new Move(mt, t, f));
+                }
 
                 mt = MoveType.TableauToReserve;
                 for (var r = 0; r < 4; r++)
@@ -70,9 +74,9 @@ namespace FreeCellSolver
             }
         }
 
-        public static Move Get(MoveType moveType, int from, int to = -1, int size = 1) => _possibleMoves[(moveType, from, to, size)];
+        public static Move Get(MoveType moveType, int from, int to, int size = 1) => _possibleMoves[(moveType, from, to, size)];
 
-        internal Move(MoveType type, int from, int to = -1, int size = 1)
+        internal Move(MoveType type, int from, int to, int size = 1)
         {
             Type = type;
             From = from;
@@ -101,20 +105,5 @@ namespace FreeCellSolver
             Debug.Assert(false);
             return null;
         }
-
-        #region Equality overrides and overloads
-        private int? _hashCode = null;
-        public bool Equals([AllowNull] Move other) => other == null
-            ? false
-            : Type == other.Type && From == other.From && To == other.To && Size == other.Size;
-
-        public override bool Equals(object obj) => obj is Move move && Equals(move);
-
-        public override int GetHashCode() => _hashCode ??= HashCode.Combine(Type, From, To, Size);
-
-        public static bool operator ==(Move a, Move b) => Equals(a, b);
-
-        public static bool operator !=(Move a, Move b) => !(a == b);
-        #endregion
     }
 }

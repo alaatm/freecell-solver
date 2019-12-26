@@ -10,9 +10,9 @@ namespace FreeCellSolver
     {
         private readonly Dictionary<Suit, int> _state = new Dictionary<Suit, int>()
         {
-            { Suit.Hearts, -1 },
             { Suit.Clubs, -1 },
             { Suit.Diamonds, -1 },
+            { Suit.Hearts, -1 },
             { Suit.Spades, -1 },
         };
 

@@ -49,7 +49,13 @@ namespace FreeCellSolver
             return CanPop() && reserve.CanInsert(out index);
         }
 
-        public bool CanMove(Foundation foundation) => CanPop() && foundation.CanPush(Top);
+        public bool CanMove(Foundation foundation, out int targetIndex)
+        {
+            var card = Top;
+            var canMove = CanPop() && foundation.CanPush(card);
+            targetIndex = canMove ? (int)card.Suit : -1;
+            return canMove;
+        }
 
         private bool CanMove(Tableau target, int requestedCount) =>
             !IsEmpty
@@ -63,7 +69,7 @@ namespace FreeCellSolver
             Debug.Assert(CanPush(card));
             _stack.Push(card);
             SortedSize++;
-            Debug.Assert(SortedSize >= 1 && SortedSize <= _stack.Size);
+            Debug.Assert(SortedSize == CountSorted());
         }
 
         public Card Pop()
@@ -76,7 +82,7 @@ namespace FreeCellSolver
                 SortedSize = CountSorted();
             }
 
-            Debug.Assert((SortedSize >= 1 && SortedSize <= _stack.Size) || (IsEmpty && SortedSize == 0));
+            Debug.Assert(SortedSize == CountSorted());
             return card;
         }
 
@@ -104,7 +110,7 @@ namespace FreeCellSolver
 
         public void Move(Foundation foundation)
         {
-            Debug.Assert(CanMove(foundation));
+            Debug.Assert(CanMove(foundation, out _));
             foundation.Push(Pop());
         }
 
