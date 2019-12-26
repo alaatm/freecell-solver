@@ -59,6 +59,7 @@ namespace FreeCellSolver
                 foreach (var rank in Ranks.Values)
                 {
                     var card = new Card((int)suit + ((int)rank << 2));
+                    card._hashCode = HashCode.Combine(card.Suit, card.Rank);
                     _allCards.Add(card._rawValue, card);
                 }
             }
@@ -94,14 +95,14 @@ namespace FreeCellSolver
             => $"{_ranks[(int)Rank]}{_suits[(int)Suit]}";
 
         #region Equality overrides and overloads
-        private int? _hashCode = null;
+        private int _hashCode = 0;
         public bool Equals([AllowNull] Card other) => other == null
             ? false
             : Suit == other.Suit && Rank == other.Rank;
 
         public override bool Equals(object obj) => obj is Card card && Equals(card);
 
-        public override int GetHashCode() => _hashCode ??= HashCode.Combine(Suit, Rank);
+        public override int GetHashCode() => _hashCode;
 
         public static bool operator ==(Card a, Card b) => Equals(a, b);
 
