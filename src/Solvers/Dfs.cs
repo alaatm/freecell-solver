@@ -13,7 +13,6 @@ namespace FreeCellSolver.Solvers
 
     public class Dfs
     {
-        private readonly Board _board;
         private readonly int _maxDepth;
         private readonly float _backTrackPercent;
 
@@ -21,14 +20,14 @@ namespace FreeCellSolver.Solvers
         public int TotalVisitedNodes { get; private set; }
         public int SolvedFromId { get; private set; }
 
-        public Dfs(Board board, int maxDepth, float backTrackPercent)
-            => (_board, _maxDepth, _backTrackPercent) = (board, maxDepth, backTrackPercent);
+        public Dfs(int maxDepth, float backTrackPercent)
+            => (_maxDepth, _backTrackPercent) = (maxDepth, backTrackPercent);
 
         public static Dfs Run(Board board, DfsSolveMethod method) => Run(board, method, 200, 0.7f);
 
         public static Dfs Run(Board board, DfsSolveMethod method, int maxDepth, float backTrackPercent)
         {
-            var dfs = new Dfs(board, maxDepth, backTrackPercent);
+            var dfs = new Dfs(maxDepth, backTrackPercent);
             Console.WriteLine($"Solver: DFS-{method.ToString()}");
 
             switch (method)
@@ -48,7 +47,7 @@ namespace FreeCellSolver.Solvers
 
         public static async Task<Dfs> RunParallelAsync(Board board, DfsSolveMethod method, int maxDepth, float backTrackPercent)
         {
-            var dfs = new Dfs(board, maxDepth, backTrackPercent);
+            var dfs = new Dfs(maxDepth, backTrackPercent);
             var states = ParallelHelper.GetStates(board, Environment.ProcessorCount);
             Console.WriteLine($"Solver: DFS-{method.ToString()} - using {states.Count} cores");
 
