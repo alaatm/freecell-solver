@@ -15,7 +15,7 @@ namespace FreeCellSolver
 
     public class Move
     {
-        private static Dictionary<(MoveType, int, int, int), Move> _possibleMoves = new Dictionary<(MoveType, int, int, int), Move>();
+        private static readonly Dictionary<(MoveType, int, int, int), Move> _possibleMoves = new Dictionary<(MoveType, int, int, int), Move>();
 
         public MoveType Type { get; private set; }
         public int From { get; private set; }

@@ -38,10 +38,10 @@ namespace FreeCellSolver
 
     public class Card : IEquatable<Card>
     {
-        private static Card[] _allCards = new Card[52];
+        private static readonly Card[] _allCards = new Card[52];
 
-        private static char[] _suits = SUITS.ToCharArray();
-        private static char[] _ranks = RANKS.ToCharArray();
+        private static readonly char[] _suits = SUITS.ToCharArray();
+        private static readonly char[] _ranks = RANKS.ToCharArray();
 
         public const string SUITS = "CDHS";
         public const string RANKS = "A23456789TJQK";

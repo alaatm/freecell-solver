@@ -9,9 +9,9 @@ namespace FreeCellSolver
     /// </summary>
     public class FastAccessStack
     {
-        private static int _capacity = 19;
+        private static readonly int _capacity = 19;
 
-        private short[] _array = new short[_capacity];
+        private readonly short[] _array = new short[_capacity];
         private int _size;
 
         public int Size => _size;
