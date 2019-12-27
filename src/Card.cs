@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
@@ -38,7 +37,7 @@ namespace FreeCellSolver
 
     public class Card : IEquatable<Card>
     {
-        private static Dictionary<int, Card> _allCards = new Dictionary<int, Card>();
+        private static Card[] _allCards = new Card[52];
 
         private static char[] _suits = SUITS.ToCharArray();
         private static char[] _ranks = RANKS.ToCharArray();
@@ -54,13 +53,13 @@ namespace FreeCellSolver
         static Card()
         {
             // Pre-generate all cards
-            foreach (var suit in Suits.Values)
+            var c = 0;
+            foreach (var rank in Ranks.Values)
             {
-                foreach (var rank in Ranks.Values)
+                foreach (var suit in Suits.Values)
                 {
                     var card = new Card((int)suit + ((int)rank << 2));
-                    card._hashCode = HashCode.Combine(card.Suit, card.Rank);
-                    _allCards.Add(card._rawValue, card);
+                    _allCards[c++] = card;
                 }
             }
         }
@@ -80,7 +79,7 @@ namespace FreeCellSolver
         // Note no error checks are made!
         public static Card Get(string card) => _allCards[
             Array.IndexOf(_suits, card[1]) +
-            Array.IndexOf(_ranks, card[0]) << 2];
+            (Array.IndexOf(_ranks, card[0]) << 2)];
 
         // Note no error checks are made!
         public static Card Get(Suit suit, Rank rank) => _allCards[(int)suit + ((int)rank << 2)];
@@ -95,14 +94,13 @@ namespace FreeCellSolver
             => $"{_ranks[(int)Rank]}{_suits[(int)Suit]}";
 
         #region Equality overrides and overloads
-        private int _hashCode = 0;
         public bool Equals([AllowNull] Card other) => other == null
             ? false
             : Suit == other.Suit && Rank == other.Rank;
 
         public override bool Equals(object obj) => obj is Card card && Equals(card);
 
-        public override int GetHashCode() => _hashCode;
+        public override int GetHashCode() => _rawValue;
 
         public static bool operator ==(Card a, Card b) => Equals(a, b);
 
