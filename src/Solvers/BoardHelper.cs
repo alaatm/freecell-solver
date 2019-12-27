@@ -7,7 +7,7 @@ namespace FreeCellSolver.Solvers
     {
         public static (IEnumerable<Board> edges, bool backtrack) GetEdges(this Board board, bool reverse = false)
         {
-            var (moves, foundFoundation) = board.GetValidMoves(true);
+            var (moves, foundFoundation) = board.GetValidMoves();
 
             if (moves.Count == 0 || (board.MovesSinceFoundation >= 17 && !foundFoundation))
             {

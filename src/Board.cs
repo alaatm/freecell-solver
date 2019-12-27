@@ -40,13 +40,12 @@ namespace FreeCellSolver
             _emptyTableauCount = emptyTableauCount;
         }
 
-        public (List<Move> moves, bool foundationFound) GetValidMoves(bool haltWhenFoundationFound)
+        public (List<Move> moves, bool foundationFound) GetValidMoves()
         {
             var lastMove = Moves.Count > 0 ? Moves[Moves.Count - 1] : null;
 
             var moves = new List<Move>();
-            var reserveToFoundationFound = false;
-            var tableauToFoundationFound = false;
+            var foundationFound = false;
 
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
@@ -54,7 +53,7 @@ namespace FreeCellSolver
                 if (Reserve.CanMove(r, Foundation, out var f))
                 {
                     moves.Add(Move.Get(MoveType.ReserveToFoundation, r, f));
-                    reserveToFoundationFound = true;
+                    foundationFound = true;
                 }
             }
 
@@ -64,12 +63,12 @@ namespace FreeCellSolver
                 if (Tableaus[t].CanMove(Foundation, out var f))
                 {
                     moves.Add(Move.Get(MoveType.TableauToFoundation, t, f));
-                    tableauToFoundationFound = true;
+                    foundationFound = true;
                 }
             }
 
             // 3. Reserve -> Tableau
-            for (var r = 0; r < 4 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !reserveToFoundationFound)); r++)
+            for (var r = 0; r < 4; r++)
             {
                 if (Reserve[r] == null)
                 {
@@ -103,7 +102,7 @@ namespace FreeCellSolver
             }
 
             // 4. Tableau -> Tableau
-            for (var t1 = 0; t1 < 8 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); t1++)
+            for (var t1 = 0; t1 < 8; t1++)
             {
                 var tableau = Tableaus[t1];
                 if (tableau.IsEmpty)
@@ -159,7 +158,7 @@ namespace FreeCellSolver
             }
 
             // 5. Tableau -> Reserve
-            for (var t = 0; t < 8 && (!haltWhenFoundationFound || (haltWhenFoundationFound && !tableauToFoundationFound)); t++)
+            for (var t = 0; t < 8; t++)
             {
                 if (Tableaus[t].CanMove(Reserve, out var r))
                 {
@@ -171,7 +170,7 @@ namespace FreeCellSolver
                 }
             }
 
-            return (moves, reserveToFoundationFound || tableauToFoundationFound);
+            return (moves, foundationFound);
         }
 
         public void ExecuteMove(Move move, bool rate = false)
