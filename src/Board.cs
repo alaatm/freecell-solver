@@ -226,11 +226,12 @@ namespace FreeCellSolver
 
         public void UndoLastMove()
         {
-            var lastMove = Moves[Moves.Count - 1];
-            if (lastMove == null)
+            if (Moves.Count == 0)
             {
                 return;
             }
+
+            var lastMove = Moves[Moves.Count - 1];
 
             Moves.RemoveAt(Moves.Count - 1);
 
