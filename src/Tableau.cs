@@ -17,7 +17,7 @@ namespace FreeCellSolver
 
         public Card this[int index] => Card.Get(_state[index]);
 
-        public Card Top => IsEmpty ? null : Card.Get(_state.Peek());
+        public Card Top => _state.Size == 0 ? null : Card.Get(_state.Peek());
 
         /// <summary>
         /// Returns sorted cards that are only at the bottom of the stack
@@ -39,9 +39,9 @@ namespace FreeCellSolver
 
         public Tableau() { }
 
-        public bool CanPush(Card card) => IsEmpty || card.IsBelow(Top);
+        public bool CanPush(Card card) => _state.Size == 0 || card.IsBelow(Top);
 
-        public bool CanPop() => !IsEmpty;
+        public bool CanPop() => _state.Size > 0;
 
         public bool CanMove(Reserve reserve, out int index)
         {
@@ -58,7 +58,7 @@ namespace FreeCellSolver
         }
 
         private bool CanMove(Tableau target, int requestedCount) =>
-            !IsEmpty
+            _state.Size > 0
             && this != target
             && requestedCount > 0
             && requestedCount <= CountMovable(target)
@@ -118,18 +118,21 @@ namespace FreeCellSolver
         {
             Debug.Assert(this != target);
 
-            if (IsEmpty)
+            if (_state.Size == 0)
             {
                 return 0;
             }
 
-            if (target.IsEmpty)
+            if (target._state.Size == 0)
             {
                 return SortedSize;
             }
 
-            var lead = target.Top;
-            var rankDiff = lead.Rank - Top.Rank;
+            // We can safely peek because we already check for emptiness above
+            var top = Card.Get(_state.Peek());
+            var lead = Card.Get(target._state.Peek());
+
+            var rankDiff = lead.Rank - top.Rank;
 
             if (rankDiff <= 0)
             {
@@ -139,7 +142,7 @@ namespace FreeCellSolver
             {
                 return 0;
             }
-            if ((rankDiff & 1) == (Top.Color == lead.Color ? 1 : 0))
+            if ((rankDiff & 1) == (top.Color == lead.Color ? 1 : 0))
             {
                 return 0;
             }
@@ -187,7 +190,7 @@ namespace FreeCellSolver
 
         private int CountSorted()
         {
-            if (IsEmpty)
+            if (_state.Size == 0)
             {
                 return 0;
             }
