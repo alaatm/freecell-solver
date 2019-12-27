@@ -8,7 +8,7 @@ namespace FreeCellSolver
 {
     public class Foundation : IEquatable<Foundation>
     {
-        private readonly int[] _state = new int[]
+        private readonly short[] _state = new short[]
         {
             -1, // Suit.Clubs
             -1, // Suit.Diamonds
@@ -16,12 +16,12 @@ namespace FreeCellSolver
             -1, // Suit.Spades
         };
 
-        public int this[Suit s] => _state[(int)s];
+        public short this[Suit s] => _state[(short)s];
 
         public bool IsComplete =>
             _state[0] + _state[1] + _state[2] + _state[3] + 4 == 52;
 
-        public Foundation(int clubsTop, int diamondsTop, int heartsTop, int spadesTop)
+        public Foundation(short clubsTop, short diamondsTop, short heartsTop, short spadesTop)
         {
             Debug.Assert(clubsTop >= -1 && clubsTop < 13);
             Debug.Assert(diamondsTop >= -1 && diamondsTop < 13);
@@ -37,12 +37,12 @@ namespace FreeCellSolver
         public Foundation() { }
 
         public bool CanPush(Card card)
-            => _state[(int)card.Suit] == (int)card.Rank - 1;
+            => _state[(short)card.Suit] == (short)card.Rank - 1;
 
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
-            _state[(int)card.Suit]++;
+            _state[(short)card.Suit]++;
         }
 
         internal void Undo(Move move, Board board)

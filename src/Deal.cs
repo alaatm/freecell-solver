@@ -20,17 +20,17 @@ namespace FreeCellSolver
                 cards.Swap(i, pos);
             }
 
-            var tableaus_ = new int[8][];
+            var tableaus_ = new short[8][];
 
             for (var i = 0; i < cards.Count; i++)
             {
-                var c = i % 8;
-                var r = i / 8;
+                var c = (short)(i % 8);
+                var r = (short)(i / 8);
                 if (c == i)
                 {
-                    tableaus_[i] = new int[c < 4 ? 7 : 6];
+                    tableaus_[i] = new short[c < 4 ? 7 : 6];
                 }
-                tableaus_[c][r] = cards[i];
+                tableaus_[c][r] = (short)cards[i];
             }
 
             var tableaus = new List<Tableau>();

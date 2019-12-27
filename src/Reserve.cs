@@ -9,7 +9,7 @@ namespace FreeCellSolver
 {
     public class Reserve : IEquatable<Reserve>
     {
-        private readonly int[] _state = new int[]
+        private readonly short[] _state = new short[]
         {
             -1,
             -1,
@@ -21,7 +21,7 @@ namespace FreeCellSolver
 
         public int FreeCount { get; private set; } = 4;
 
-        public Reserve(int card1, int card2, int card3, int card4)
+        public Reserve(short card1, short card2, short card3, short card4)
         {
             Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != -1) || card1 == -1);
             Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != -1) || card2 == -1);
@@ -43,7 +43,7 @@ namespace FreeCellSolver
 
         public bool CanInsert(out int index)
         {
-            index = Array.IndexOf(_state, -1);
+            index = Array.IndexOf(_state, (short)-1);
             return FreeCount > 0;
         }
 
@@ -56,7 +56,7 @@ namespace FreeCellSolver
         {
             var card = Card.Get(_state[index]);
             var canMove = CanRemove(index) && foundation.CanPush(card);
-            targetIndex = canMove ? (int)card.Suit : -1;
+            targetIndex = canMove ? (short)card.Suit : -1;
             return canMove;
         }
 

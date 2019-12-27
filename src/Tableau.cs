@@ -160,7 +160,7 @@ namespace FreeCellSolver
             }
             else if (move.Type == MoveType.TableauToTableau)
             {
-                var poppedCards = new int[move.Size];
+                var poppedCards = new short[move.Size];
                 for (var i = 0; i < move.Size; i++)
                 {
                     poppedCards[i] = _state.Pop();

@@ -46,7 +46,7 @@ namespace FreeCellSolver
         public const string SUITS = "CDHS";
         public const string RANKS = "A23456789TJQK";
 
-        public int RawValue { get; private set; }
+        public short RawValue { get; private set; }
         public Suit Suit { get; private set; }
         public Rank Rank { get; private set; }
         public Color Color { get; private set; }
@@ -59,13 +59,13 @@ namespace FreeCellSolver
             {
                 foreach (var suit in Suits.Values)
                 {
-                    var card = new Card((int)suit + ((int)rank << 2));
+                    var card = new Card((short)((short)suit + ((short)rank << 2)));
                     _allCards[c++] = card;
                 }
             }
         }
 
-        private Card(int rawValue)
+        private Card(short rawValue)
         {
             Debug.Assert(rawValue >= 0 && rawValue < 52, "Invalid card.");
             RawValue = rawValue;
@@ -76,7 +76,7 @@ namespace FreeCellSolver
 
         // Note no error checks are made!
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Card Get(int rawValue) => rawValue < 0 ? null : _allCards[rawValue];
+        public static Card Get(short rawValue) => rawValue < 0 ? null : _allCards[rawValue];
 
         // Note no error checks are made!
         public static Card Get(string card) => _allCards[
@@ -84,7 +84,7 @@ namespace FreeCellSolver
             (Array.IndexOf(_ranks, card[0]) << 2)];
 
         // Note no error checks are made!
-        public static Card Get(Suit suit, Rank rank) => _allCards[(int)suit + ((int)rank << 2)];
+        public static Card Get(Suit suit, Rank rank) => _allCards[(short)suit + ((short)rank << 2)];
 
         public bool IsAbove(Card foundationTop)
             => Suit == foundationTop.Suit && Rank == foundationTop.Rank + 1;
@@ -93,7 +93,7 @@ namespace FreeCellSolver
             => Color != tableauTop.Color && Rank + 1 == tableauTop.Rank;
 
         public override string ToString()
-            => $"{_ranks[(int)Rank]}{_suits[(int)Suit]}";
+            => $"{_ranks[(short)Rank]}{_suits[(short)Suit]}";
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Card other) => other == null
