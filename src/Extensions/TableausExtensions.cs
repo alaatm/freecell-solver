@@ -96,7 +96,7 @@ namespace FreeCellSolver.Extensions
 
     public class ConsoleErrorWriter : TextWriter
     {
-        private TextWriter _stdErr;
+        private readonly TextWriter _stdErr;
 
         public ConsoleErrorWriter(TextWriter stdErr) => _stdErr = stdErr;
 

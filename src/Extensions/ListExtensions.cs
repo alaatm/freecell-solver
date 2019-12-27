@@ -10,15 +10,12 @@ namespace FreeCellSolver.Extensions
         {
             [ThreadStatic] private static Random Local;
 
-            public static Random Rand
-            {
-                get { return Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId))); }
-            }
+            public static Random Rand => Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId)));
         }
 
         public static void Swap<T>(this IList<T> list, int indexA, int indexB)
         {
-            T tmp = list[indexA];
+            var tmp = list[indexA];
             list[indexA] = list[indexB];
             list[indexB] = tmp;
         }
@@ -30,7 +27,7 @@ namespace FreeCellSolver.Extensions
             {
                 n--;
                 var k = ThreadSafeRandom.Rand.Next(n + 1);
-                T value = list[k];
+                var value = list[k];
                 list[k] = list[n];
                 list[n] = value;
             }

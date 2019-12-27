@@ -67,9 +67,7 @@ namespace FreeCellSolver.Solvers
             }
 
             var boards = stateList.OrderByDescending(p => p.Count).FirstOrDefault(p => p.Count < num);
-            return boards != null
-                ? boards
-                : tree.OrderByDescending(p => p.Value.Count).FirstOrDefault(p => p.Value.Count < 16).Value.Select(p => p.Board).ToList();
+            return boards ?? tree.OrderByDescending(p => p.Value.Count).FirstOrDefault(p => p.Value.Count < 16).Value.Select(p => p.Board).ToList();
         }
     }
 }
