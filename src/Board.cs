@@ -40,12 +40,12 @@ namespace FreeCellSolver
             _emptyTableauCount = emptyTableauCount;
         }
 
-        public (List<Move> moves, bool foundationFound) GetValidMoves()
+        public List<Move> GetValidMoves(out bool foundationFound)
         {
             var lastMove = Moves.Count > 0 ? Moves[Moves.Count - 1] : null;
 
             var moves = new List<Move>();
-            var foundationFound = false;
+            foundationFound = false;
 
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
@@ -170,7 +170,7 @@ namespace FreeCellSolver
                 }
             }
 
-            return (moves, foundationFound);
+            return moves;
         }
 
         public void ExecuteMove(Move move, bool rate = false)
