@@ -9,52 +9,52 @@ namespace FreeCellSolver
 {
     public class Reserve : IEquatable<Reserve>
     {
-        private readonly Card[] _state = new Card[]
+        private readonly int[] _state = new int[]
         {
-            null,
-            null,
-            null,
-            null,
+            -1,
+            -1,
+            -1,
+            -1,
         };
 
-        public Card this[int i] => _state[i];
+        public Card this[int i] => Card.Get(_state[i]);
 
         public int FreeCount { get; private set; } = 4;
 
-        public Reserve(Card card1, Card card2, Card card3, Card card4)
+        public Reserve(int card1, int card2, int card3, int card4)
         {
-            Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != null) || card1 == null);
-            Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != null) || card2 == null);
-            Debug.Assert((card3 != card1 && card3 != card2 && card3 != card4 && card3 != null) || card3 == null);
-            Debug.Assert((card4 != card1 && card4 != card2 && card4 != card3 && card4 != null) || card4 == null);
+            Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != -1) || card1 == -1);
+            Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != -1) || card2 == -1);
+            Debug.Assert((card3 != card1 && card3 != card2 && card3 != card4 && card3 != -1) || card3 == -1);
+            Debug.Assert((card4 != card1 && card4 != card2 && card4 != card3 && card4 != -1) || card4 == -1);
 
             _state[0] = card1;
             _state[1] = card2;
             _state[2] = card3;
             _state[3] = card4;
 
-            FreeCount -= card1 != null ? 1 : 0;
-            FreeCount -= card2 != null ? 1 : 0;
-            FreeCount -= card3 != null ? 1 : 0;
-            FreeCount -= card4 != null ? 1 : 0;
+            FreeCount -= card1 != -1 ? 1 : 0;
+            FreeCount -= card2 != -1 ? 1 : 0;
+            FreeCount -= card3 != -1 ? 1 : 0;
+            FreeCount -= card4 != -1 ? 1 : 0;
         }
 
         public Reserve() { }
 
         public bool CanInsert(out int index)
         {
-            index = Array.IndexOf(_state, null);
+            index = Array.IndexOf(_state, -1);
             return FreeCount > 0;
         }
 
-        private bool CanRemove(int index) => _state[index] != null;
+        private bool CanRemove(int index) => _state[index] != -1;
 
         public bool CanMove(int index, Tableau tableau)
-            => CanRemove(index) && tableau.CanPush(_state[index]);
+            => CanRemove(index) && tableau.CanPush(Card.Get(_state[index]));
 
         public bool CanMove(int index, Foundation foundation, out int targetIndex)
         {
-            var card = _state[index];
+            var card = Card.Get(_state[index]);
             var canMove = CanRemove(index) && foundation.CanPush(card);
             targetIndex = canMove ? (int)card.Suit : -1;
             return canMove;
@@ -63,9 +63,9 @@ namespace FreeCellSolver
         public void Insert(int index, Card card)
         {
             Debug.Assert(CanInsert(out var idx) && idx == index);
-            _state[index] = card;
+            _state[index] = card.RawValue;
             FreeCount--;
-            Debug.Assert(FreeCount == _state.Count(c => c == null));
+            Debug.Assert(FreeCount == _state.Count(c => c == -1));
         }
 
         private Card Remove(int index)
@@ -74,10 +74,10 @@ namespace FreeCellSolver
             Debug.Assert(CanRemove(index));
 
             var card = _state[index];
-            _state[index] = null;
-            Debug.Assert(FreeCount == _state.Count(c => c == null));
+            _state[index] = -1;
+            Debug.Assert(FreeCount == _state.Count(c => c == -1));
 
-            return card;
+            return Card.Get(card);
         }
 
         public void Move(int index, Tableau tableau)
@@ -102,28 +102,33 @@ namespace FreeCellSolver
 
         internal void UndoRemove(int index, Card card)
         {
-            Debug.Assert(_state[index] == null);
-            _state[index] = card;
+            Debug.Assert(_state[index] == -1);
+            _state[index] = card.RawValue;
             FreeCount--;
-            Debug.Assert(FreeCount == _state.Count(c => c == null));
+            Debug.Assert(FreeCount == _state.Count(c => c == -1));
         }
 
         public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]);
 
         public override string ToString()
         {
+            var c1 = _state[0] >= 0 ? Card.Get(_state[0]) : null;
+            var c2 = _state[1] >= 0 ? Card.Get(_state[1]) : null;
+            var c3 = _state[2] >= 0 ? Card.Get(_state[2]) : null;
+            var c4 = _state[3] >= 0 ? Card.Get(_state[3]) : null;
+
             var sb = new StringBuilder();
             sb.AppendLine("01 02 03 04");
-            sb.Append((_state[0]?.ToString() ?? "--") + " ");
-            sb.Append((_state[1]?.ToString() ?? "--") + " ");
-            sb.Append((_state[2]?.ToString() ?? "--") + " ");
-            sb.Append(_state[3]?.ToString() ?? "--");
+            sb.Append((c1?.ToString() ?? "--") + " ");
+            sb.Append((c2?.ToString() ?? "--") + " ");
+            sb.Append((c3?.ToString() ?? "--") + " ");
+            sb.Append(c4?.ToString() ?? "--");
 
             return sb.ToString();
         }
 
         // Used only for post moves asserts
-        internal IEnumerable<Card> AllCards() => _state.Where(c => c != null);
+        internal IEnumerable<Card> AllCards() => _state.Where(c => c != -1).Select(c => Card.Get(c));
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Reserve other) => other == null
