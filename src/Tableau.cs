@@ -9,15 +9,15 @@ namespace FreeCellSolver
 {
     public class Tableau : IEquatable<Tableau>
     {
-        private FastAccessStack<Card> _state = new FastAccessStack<Card>();
+        private FastAccessStack _state = new FastAccessStack();
 
         public int Size => _state.Size;
 
         public bool IsEmpty => _state.Size == 0;
 
-        public Card this[int index] => _state[index];
+        public Card this[int index] => Card.Get(_state[index]);
 
-        public Card Top => IsEmpty ? null : _state.Peek();
+        public Card Top => IsEmpty ? null : Card.Get(_state.Peek());
 
         /// <summary>
         /// Returns sorted cards that are only at the bottom of the stack
@@ -31,7 +31,7 @@ namespace FreeCellSolver
         {
             foreach (var card in cards)
             {
-                _state.Push(card);
+                _state.Push(card.RawValue);
             }
 
             SortedSize = CountSorted();
@@ -67,7 +67,7 @@ namespace FreeCellSolver
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
-            _state.Push(card);
+            _state.Push(card.RawValue);
             SortedSize++;
             Debug.Assert(SortedSize == CountSorted());
         }
@@ -83,7 +83,7 @@ namespace FreeCellSolver
             }
 
             Debug.Assert(SortedSize == CountSorted());
-            return card;
+            return Card.Get(card);
         }
 
         public void Move(Tableau target, int requestedCount)
@@ -157,7 +157,7 @@ namespace FreeCellSolver
             }
             else if (move.Type == MoveType.TableauToTableau)
             {
-                var poppedCards = new Card[move.Size];
+                var poppedCards = new int[move.Size];
                 for (var i = 0; i < move.Size; i++)
                 {
                     poppedCards[i] = _state.Pop();
@@ -175,7 +175,7 @@ namespace FreeCellSolver
 
         internal void UndoPop(Card card)
         {
-            _state.Push(card);
+            _state.Push(card.RawValue);
             SortedSize = CountSorted();
         }
 
@@ -201,7 +201,7 @@ namespace FreeCellSolver
                 }
 
                 var card = _state[i];
-                if (card.IsBelow(_state[i + 1]))
+                if (Card.Get(card).IsBelow(Card.Get(_state[i + 1])))
                 {
                     sortedSize++;
                 }
@@ -220,14 +220,14 @@ namespace FreeCellSolver
 
             for (var i = Size - 1; i >= 0; i--)
             {
-                sb.AppendLine(_state[i].ToString());
+                sb.AppendLine(Card.Get(_state[i]).ToString());
             }
 
             return sb.ToString();
         }
 
         // Used only for post moves asserts
-        internal IEnumerable<Card> AllCards() => _state.All();
+        internal IEnumerable<Card> AllCards() => _state.All().Select(c => Card.Get(c));
 
         #region Equality overrides and overloads
         public bool Equals([AllowNull] Tableau other) => other == null

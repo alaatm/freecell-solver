@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver
 {
@@ -41,11 +42,11 @@ namespace FreeCellSolver
 
         private static char[] _suits = SUITS.ToCharArray();
         private static char[] _ranks = RANKS.ToCharArray();
-        private readonly int _rawValue;
 
         public const string SUITS = "CDHS";
         public const string RANKS = "A23456789TJQK";
 
+        public int RawValue { get; private set; }
         public Suit Suit { get; private set; }
         public Rank Rank { get; private set; }
         public Color Color { get; private set; }
@@ -67,14 +68,15 @@ namespace FreeCellSolver
         private Card(int rawValue)
         {
             Debug.Assert(rawValue >= 0 && rawValue < 52, "Invalid card.");
-            _rawValue = rawValue;
-            Suit = (Suit)(_rawValue & 3);
-            Rank = (Rank)(_rawValue >> 2);
+            RawValue = rawValue;
+            Suit = (Suit)(RawValue & 3);
+            Rank = (Rank)(RawValue >> 2);
             Color = Suit == Suit.Hearts || Suit == Suit.Diamonds ? Color.Red : Color.Black;
         }
 
         // Note no error checks are made!
-        public static Card Get(int rawValue) => _allCards[rawValue];
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Card Get(int rawValue) => rawValue < 0 ? null : _allCards[rawValue];
 
         // Note no error checks are made!
         public static Card Get(string card) => _allCards[
@@ -100,7 +102,7 @@ namespace FreeCellSolver
 
         public override bool Equals(object obj) => obj is Card card && Equals(card);
 
-        public override int GetHashCode() => _rawValue;
+        public override int GetHashCode() => RawValue;
 
         public static bool operator ==(Card a, Card b) => Equals(a, b);
 
