@@ -80,7 +80,9 @@ namespace FreeCellSolver
         public Card Pop()
         {
             Debug.Assert(CanPop());
-            var card = _state[--Size];
+            var size = --Size;
+            var card = _state[size];
+            _state[size] = 0;
 
             if (--SortedSize < 1)
             {
@@ -170,7 +172,9 @@ namespace FreeCellSolver
                 var poppedCards = new short[move.Size];
                 for (var i = 0; i < move.Size; i++)
                 {
-                    poppedCards[i] = _state[--Size];
+                    var size = --Size;
+                    poppedCards[i] = _state[size];
+                    _state[size] = 0;
                 }
 
                 for (var i = poppedCards.Length - 1; i >= 0; i--)
