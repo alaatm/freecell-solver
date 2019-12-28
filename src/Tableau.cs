@@ -38,7 +38,7 @@ namespace FreeCellSolver
             SortedSize = CountSorted();
         }
 
-        public Tableau() { }
+        private Tableau() { }
 
         public bool CanPush(Card card)
         {
