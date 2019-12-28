@@ -14,8 +14,7 @@ namespace FreeCellSolver
         // Used only for post moves asserts
         private IEnumerable<Card> _allCards => Foundation.AllCards().Concat(Reserve.AllCards()).Concat(Tableaus.AllCards());
 
-        private int _emptyTableauCount;
-        private int _maxAllowedMoveSize => Reserve.FreeCount + _emptyTableauCount + 1;
+        private int _maxAllowedMoveSize => Reserve.FreeCount + Tableaus.EmptyTableauCount + 1;
 
         public int MovesSinceFoundation { get; private set; }
         public List<Move> Moves { get; private set; }
@@ -26,14 +25,13 @@ namespace FreeCellSolver
 
         public int LastMoveRating { get; private set; }
 
-        private Board(Tableaus tableaus, Reserve reserve, Foundation foundation, List<Move> moves, int movesSinceFoundation, int emptyTableauCount)
+        private Board(Tableaus tableaus, Reserve reserve, Foundation foundation, List<Move> moves, int movesSinceFoundation)
         {
             Tableaus = tableaus.Clone();
             Reserve = reserve.Clone();
             Foundation = foundation.Clone();
             Moves = moves.ToList();
             MovesSinceFoundation = movesSinceFoundation;
-            _emptyTableauCount = emptyTableauCount;
         }
 
         public Board(Tableaus tableaus)
@@ -42,7 +40,6 @@ namespace FreeCellSolver
             Reserve = new Reserve();
             Foundation = new Foundation();
             Moves = new List<Move>();
-            _emptyTableauCount = tableaus.EmptyTableauCount;
         }
 
         public List<Move> GetValidMoves(out bool foundationFound)
@@ -51,6 +48,8 @@ namespace FreeCellSolver
 
             var moves = new List<Move>();
             foundationFound = false;
+
+            var maxAllowedMoveSizeCache = _maxAllowedMoveSize;
 
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
@@ -127,7 +126,7 @@ namespace FreeCellSolver
                     var targetTableau = Tableaus[t2];
                     var emptyTarget = targetTableau.IsEmpty;
                     var moveSize = tableau.CountMovable(targetTableau);
-                    var maxAllowedMoveSize = _maxAllowedMoveSize - (emptyTarget ? 1 : 0);
+                    var maxAllowedMoveSize = maxAllowedMoveSizeCache - (emptyTarget ? 1 : 0);
                     var canMove = true;
                     /* No need to get target top when moveSize is 1 since we won't be calling IsBelow() */
                     var targetTop = moveSize > 1 ? targetTableau.Top : null;
@@ -194,21 +193,17 @@ namespace FreeCellSolver
                     MovesSinceFoundation = 0;
                     var t = Tableaus[move.From];
                     t.Move(Foundation);
-                    _emptyTableauCount += t.IsEmpty ? 1 : 0;
                     break;
                 case MoveType.TableauToReserve:
                     MovesSinceFoundation++;
                     t = Tableaus[move.From];
                     t.Move(Reserve, move.To);
-                    _emptyTableauCount += t.IsEmpty ? 1 : 0;
                     break;
                 case MoveType.TableauToTableau:
                     MovesSinceFoundation++;
                     var t1 = Tableaus[move.From];
                     var t2 = Tableaus[move.To];
                     t1.Move(t2, move.Size);
-                    _emptyTableauCount += t1.IsEmpty ? 1 : 0;
-                    _emptyTableauCount -= t2.Size == move.Size ? 1 : 0;
 
                     Debug.Assert(move.Size <= _maxAllowedMoveSize - (Tableaus[move.To].IsEmpty ? 1 : 0));
                     break;
@@ -220,14 +215,11 @@ namespace FreeCellSolver
                     MovesSinceFoundation++;
                     t = Tableaus[move.To];
                     Reserve.Move(move.From, t);
-                    _emptyTableauCount -= t.Size == 1 ? 1 : 0;
                     break;
             }
 
             // Assert count and uniqueness
             Debug.Assert(new HashSet<Card>(_allCards).Count == 52);
-            Debug.Assert(_emptyTableauCount == Tableaus.EmptyTableauCount);
-            Debug.Assert(_emptyTableauCount >= 0 && _emptyTableauCount <= 8);
         }
 
         public void UndoLastMove()
@@ -245,30 +237,23 @@ namespace FreeCellSolver
             {
                 case MoveType.TableauToFoundation:
                     Foundation.Undo(lastMove, this);
-                    _emptyTableauCount -= Tableaus[lastMove.From].Size == 1 ? 1 : 0;
                     break;
                 case MoveType.TableauToReserve:
                     Reserve.Undo(lastMove, this);
-                    _emptyTableauCount -= Tableaus[lastMove.From].Size == 1 ? 1 : 0;
                     break;
                 case MoveType.TableauToTableau:
                     Tableaus[lastMove.To].Undo(lastMove, this);
-                    _emptyTableauCount -= Tableaus[lastMove.From].Size == lastMove.Size ? 1 : 0;
-                    _emptyTableauCount += Tableaus[lastMove.To].IsEmpty ? 1 : 0;
                     break;
                 case MoveType.ReserveToFoundation:
                     Foundation.Undo(lastMove, this);
                     break;
                 case MoveType.ReserveToTableau:
                     Tableaus[lastMove.To].Undo(lastMove, this);
-                    _emptyTableauCount += Tableaus[lastMove.To].IsEmpty ? 1 : 0;
                     break;
             }
 
             // Assert count and uniqueness
             Debug.Assert(new HashSet<Card>(_allCards).Count == 52);
-            Debug.Assert(_emptyTableauCount == Tableaus.EmptyTableauCount);
-            Debug.Assert(_emptyTableauCount >= 0 && _emptyTableauCount <= 8);
         }
 
         private void RateMove(Move move)
@@ -390,7 +375,7 @@ namespace FreeCellSolver
         }
 
         public Board Clone()
-            => new Board(Tableaus, Reserve, Foundation, Moves, MovesSinceFoundation, _emptyTableauCount);
+            => new Board(Tableaus, Reserve, Foundation, Moves, MovesSinceFoundation);
 
         public override string ToString()
         {
