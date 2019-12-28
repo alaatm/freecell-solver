@@ -34,7 +34,7 @@ namespace FreeCellSolver
             // Console.WriteLine(sw.Elapsed);
             // return;
 
-            // Dfs.Run(new Board(Deal.FromDealNum(285)), DfsSolveMethod.Stack);
+            // Dfs.Run(new Board(Deal.FromDealNum(169)), DfsSolveMethod.Stack);
             // await RunSingleBenchmarksAsync(DfsSolveMethod.Stack, 5979);
             await ProcessArgsAsync(args);
         }
