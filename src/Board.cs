@@ -290,16 +290,17 @@ namespace FreeCellSolver
             if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.TableauToReserve || move.Type == MoveType.TableauToTableau)
             {
                 var sourceTableau = Tableaus[move.From];
+                var sourceTableauSize = sourceTableau.Size;
                 cardToBeMoved = sourceTableau.Top;
 
                 // Reward emptying tableau slot
-                if (sourceTableau.Size == move.Size)
+                if (sourceTableauSize == move.Size)
                 {
                     LastMoveRating += RATING_OPENTABLEAU;
                 }
 
                 // Reward unburing foundation targets
-                for (var i = move.Size; i < sourceTableau.Size; i++)
+                for (var i = move.Size; i < sourceTableauSize; i++)
                 {
                     if (Foundation.CanPush(sourceTableau[i]))
                     {
@@ -308,7 +309,7 @@ namespace FreeCellSolver
                 }
 
                 // Reward a newly discovered tableau-to-tableau move
-                var cardToBeTop = sourceTableau.Size > move.Size ? sourceTableau[move.Size] : null;
+                var cardToBeTop = sourceTableauSize > move.Size ? sourceTableau[move.Size] : null;
                 if (Tableaus.CanReceive(cardToBeTop, move.From))
                 {
                     LastMoveRating += RATING_FREETABLEAUTARGET;
@@ -327,17 +328,18 @@ namespace FreeCellSolver
                 // Reward any move to tableau
                 LastMoveRating += RATING_TABLEAU + /* Reward more for moving sorted stacks */ move.Size - 1;
                 var targetTableau = Tableaus[move.To];
+                var targetTableauSize = targetTableau.Size;
 
                 // Punish buring foundation target, penalty is higher on bottom cards
-                for (var i = 0; i < targetTableau.Size; i++)
+                for (var i = 0; i < targetTableauSize; i++)
                 {
                     if (Foundation.CanPush(targetTableau[i]))
                     {
-                        LastMoveRating += RATING_BURYFOUNDATIONTARGET * (targetTableau.Size + move.Size - i - 1);
+                        LastMoveRating += RATING_BURYFOUNDATIONTARGET * (targetTableauSize + move.Size - i - 1);
                     }
                 }
 
-                if (targetTableau.IsEmpty)
+                if (targetTableauSize == 0)
                 {
                     var followup = false;
 
