@@ -385,11 +385,11 @@ namespace FreeCellSolver
 
         public Board Clone()
         {
-            var board = new Board(Tableaus, Reserve, Foundation);
-            board._emptyTableauCount = _emptyTableauCount;
-            board.MovesSinceFoundation = MovesSinceFoundation;
-            board.Moves = Moves.ToList();
-            return board;
+            var clone = new Board(Tableaus, Reserve, Foundation);
+            clone._emptyTableauCount = _emptyTableauCount;
+            clone.MovesSinceFoundation = MovesSinceFoundation;
+            clone.Moves = Moves.ToList();
+            return clone;
         }
 
         public override string ToString()
