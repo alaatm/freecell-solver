@@ -18,7 +18,7 @@ namespace FreeCellSolver
         private int _maxAllowedMoveSize => Reserve.FreeCount + _emptyTableauCount + 1;
 
         public int MovesSinceFoundation { get; private set; }
-        public List<Move> Moves { get; private set; } = new List<Move>();
+        public List<Move> Moves { get; private set; }
         public Reserve Reserve { get; private set; }
         public Foundation Foundation { get; private set; }
         public Tableaus Tableaus { get; private set; }
@@ -26,18 +26,23 @@ namespace FreeCellSolver
 
         public int LastMoveRating { get; private set; }
 
-        private Board() { }
-
-        public Board(Tableaus tableaus) : this(tableaus, null, null) { }
-
-        public Board(Tableaus tableaus, Reserve reserve, Foundation foundation) : this(tableaus, reserve, foundation, tableaus.EmptyTableauCount) { }
-
-        private Board(Tableaus tableaus, Reserve reserve, Foundation foundation, int emptyTableauCount)
+        private Board(Tableaus tableaus, Reserve reserve, Foundation foundation, List<Move> moves, int movesSinceFoundation, int emptyTableauCount)
         {
             Tableaus = tableaus.Clone();
-            Reserve = reserve?.Clone() ?? new Reserve();
-            Foundation = foundation?.Clone() ?? new Foundation();
+            Reserve = reserve.Clone();
+            Foundation = foundation.Clone();
+            Moves = moves.ToList();
+            MovesSinceFoundation = movesSinceFoundation;
             _emptyTableauCount = emptyTableauCount;
+        }
+
+        public Board(Tableaus tableaus)
+        {
+            Tableaus = tableaus.Clone();
+            Reserve = new Reserve();
+            Foundation = new Foundation();
+            Moves = new List<Move>();
+            _emptyTableauCount = tableaus.EmptyTableauCount;
         }
 
         public List<Move> GetValidMoves(out bool foundationFound)
@@ -384,13 +389,7 @@ namespace FreeCellSolver
         }
 
         public Board Clone()
-        {
-            var clone = new Board(Tableaus, Reserve, Foundation);
-            clone._emptyTableauCount = _emptyTableauCount;
-            clone.MovesSinceFoundation = MovesSinceFoundation;
-            clone.Moves = Moves.ToList();
-            return clone;
-        }
+            => new Board(Tableaus, Reserve, Foundation, Moves, MovesSinceFoundation, _emptyTableauCount);
 
         public override string ToString()
         {
