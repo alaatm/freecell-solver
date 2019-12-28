@@ -124,6 +124,7 @@ namespace FreeCellSolver
         public int CountMovable(Tableau target)
         {
             Debug.Assert(this != target);
+
             var size = Size;
             var targetSize = target.Size;
 
@@ -259,8 +260,9 @@ namespace FreeCellSolver
         public override int GetHashCode()
         {
             var hash = new HashCode();
+            var size = Size;
 
-            for (var i = 0; i < Size; i++)
+            for (var i = 0; i < size; i++)
             {
                 hash.Add(_state[i]);
             }

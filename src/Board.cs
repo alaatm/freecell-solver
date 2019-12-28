@@ -110,7 +110,8 @@ namespace FreeCellSolver
             for (var t1 = 0; t1 < 8; t1++)
             {
                 var tableau = Tableaus[t1];
-                if (tableau.IsEmpty)
+                var tableauSize = tableau.Size;
+                if (tableauSize == 0)
                 {
                     continue;
                 }
@@ -134,7 +135,7 @@ namespace FreeCellSolver
                     while (moveSize > 0)
                     {
                         // Do not move an entire column to an empty one
-                        var uselessMove = tableau.Size == moveSize && emptyTarget;
+                        var uselessMove = tableauSize == moveSize && emptyTarget;
 
                         if (canMove && maxAllowedMoveSize >= moveSize && !uselessMove)
                         {
