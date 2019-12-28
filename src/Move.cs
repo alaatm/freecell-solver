@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver
 {
@@ -74,6 +75,7 @@ namespace FreeCellSolver
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Move Get(MoveType moveType, int from, int to, int size = 1) => _possibleMoves[(moveType, from, to, size)];
 
         internal Move(MoveType type, int from, int to, int size = 1)
