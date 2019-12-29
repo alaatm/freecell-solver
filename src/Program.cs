@@ -168,7 +168,7 @@ namespace FreeCellSolver
         static async Task PrintBenchmarksSummaryAsync()
         {
             var tests = new List<(DateTime createDate, string name, TimeSpan ts, int total, int visited, int failed)>();
-            var logFiles = Directory.GetFiles($@"C:\personal-projs\freecell-solver\benchmarks", "*.log").Select(f => new { Path = f, CreateDate = File.GetCreationTime(f) });
+            var logFiles = Directory.GetFiles($@"C:\personal-projs\freecell-solver\benchmarks", "*.log").Select(f => new { Path = f, CreateDate = File.GetLastWriteTime(f) });
             var len = logFiles.Select(f => Path.GetFileNameWithoutExtension(f.Path).Length).Max();
 
             foreach (var log in logFiles)
