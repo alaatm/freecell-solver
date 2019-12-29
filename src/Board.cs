@@ -497,16 +497,14 @@ namespace FreeCellSolver
                 var t1 = tableaus[i];
                 var size1 = t1.Size;
                 var sortedSize1 = t1.SortedSize;
-                var unsortedSize1 = size1 - sortedSize1;
                 var top1 = size1 > 0 ? t1[0] : null;
 
                 var t2 = otherTableaus[i];
                 var size2 = t2.Size;
                 var sortedSize2 = t2.SortedSize;
-                var unsortedSize2 = size2 - sortedSize2;
                 var top2 = size2 > 0 ? t2[0] : null;
 
-                if (top1 != top2 || size1 != size2 || sortedSize1 != sortedSize2 || unsortedSize1 != unsortedSize2)
+                if (top1 != top2 || size1 != size2 || sortedSize1 != sortedSize2)
                 {
                     return false;
                 }
