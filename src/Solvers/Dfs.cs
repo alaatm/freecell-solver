@@ -23,6 +23,7 @@ namespace FreeCellSolver.Solvers
         public Dfs(int maxDepth, float backTrackPercent)
             => (_maxDepth, _backTrackPercent) = (maxDepth, backTrackPercent);
 
+        // Non-parallel version used primarilly for debugging
         public static Dfs Run(Board board, DfsSolveMethod method) => Run(board, method, 200, 0.7f);
 
         public static Dfs Run(Board board, DfsSolveMethod method, int maxDepth, float backTrackPercent)
@@ -47,24 +48,38 @@ namespace FreeCellSolver.Solvers
 
         public static async Task<Dfs> RunParallelAsync(Board board, DfsSolveMethod method, int maxDepth, float backTrackPercent)
         {
+            var attempt = 0;
+            var backTrackStep = 0.0501f;
             var dfs = new Dfs(maxDepth, backTrackPercent);
             var states = ParallelHelper.GetStates(board, Environment.ProcessorCount);
-            Console.WriteLine($"Solver: DFS-{method.ToString()} - using {states.Count} cores");
 
-            IEnumerable<Task> tasks = null;
-
-            switch (method)
+            while (dfs.SolvedBoard == null && dfs._backTrackPercent < 1f)
             {
-                case DfsSolveMethod.Recursive:
-                    // Note we start at depth of move count for parallel
-                    tasks = states.Select((b, i) => Task.Run(() => dfs.DfsRecursive(b, b.Moves.Count, new HashSet<int>(), i)));
+                Console.WriteLine($"Solver: DFS-{method.ToString()} - using {states.Count} cores - attempt #{++attempt}");
+                IEnumerable<Task> tasks = null;
+
+                switch (method)
+                {
+                    case DfsSolveMethod.Recursive:
+                        // Note we start at depth of move count for parallel
+                        tasks = states.Select((b, i) => Task.Run(() => dfs.DfsRecursive(b.Clone(), b.Moves.Count, new HashSet<int>(), i)));
+                        break;
+                    case DfsSolveMethod.Stack:
+                        tasks = states.Select((b, i) => Task.Run(() => dfs.DfsStack(b.Clone(), i)));
+                        break;
+                }
+
+                await Task.WhenAll(tasks);
+
+                if (dfs.SolvedBoard != null)
+                {
                     break;
-                case DfsSolveMethod.Stack:
-                    tasks = states.Select((b, i) => Task.Run(() => dfs.DfsStack(b, i)));
-                    break;
+                }
+
+                dfs = new Dfs(maxDepth, backTrackPercent + backTrackStep);
+                backTrackStep += 0.0501f;
             }
 
-            await Task.WhenAll(tasks);
             return dfs;
         }
 
