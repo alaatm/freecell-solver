@@ -7,7 +7,7 @@ namespace FreeCellSolver.Solvers
     {
         public static (IEnumerable<Board> edges, bool backtrack) GetEdges(this Board board, bool reverse = false)
         {
-            var moves = board.GetValidMoves(out var foundFoundation);
+            var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
 
             if (moves.Count == 0 || (board.MovesSinceFoundation >= 17 && !foundFoundation))
             {
@@ -21,7 +21,7 @@ namespace FreeCellSolver.Solvers
                 for (var i = moves.Count - 1; i >= 0; i--)
                 {
                     var next = board.Clone();
-                    next.ExecuteMove(moves[i], true);
+                    next.ExecuteMove(moves[i], !autoMove);
                     addedBoards.Add(next);
                 }
             }
@@ -30,7 +30,7 @@ namespace FreeCellSolver.Solvers
                 foreach (var move in moves)
                 {
                     var next = board.Clone();
-                    next.ExecuteMove(move, true);
+                    next.ExecuteMove(move, !autoMove);
                     addedBoards.Add(next);
                 }
             }

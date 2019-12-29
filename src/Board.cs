@@ -41,39 +41,60 @@ namespace FreeCellSolver
             Moves = new List<Move>();
         }
 
-        public List<Move> GetValidMoves(out bool foundationFound)
+        public List<Move> GetValidMoves(out bool foundationFound, out bool autoMove)
         {
-            var lastMove = Moves.Count > 0 ? Moves[Moves.Count - 1] : null;
+            var tableaus = Tableaus;
+            var reserve = Reserve;
+            var foundation = Foundation;
+
+            var currentMoves = Moves;
+            var currentMovesCount = currentMoves.Count;
+
+            var lastMove = currentMovesCount > 0 ? currentMoves[currentMovesCount - 1] : null;
 
             var moves = new List<Move>();
-            foundationFound = false;
+            foundationFound = autoMove = false;
 
             var maxAllowedMoveSizeCache = _maxAllowedMoveSize;
 
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
             {
-                if (Reserve.CanMove(r, Foundation, out var f))
+                if (reserve.CanMove(r, foundation, out var f))
                 {
                     moves.Add(Move.Get(MoveType.ReserveToFoundation, r, f));
                     foundationFound = true;
+
+                    if (IsAutoMove(reserve[r]))
+                    {
+                        autoMove = true;
+                        Debug.Assert(moves.Count == 1);
+                        return moves;
+                    }
                 }
             }
 
             // 2. Tableau -> Foundation
             for (var t = 0; t < 8; t++)
             {
-                if (Tableaus[t].CanMove(Foundation, out var f))
+                var tableau = tableaus[t];
+                if (tableau.CanMove(foundation, out var f))
                 {
                     moves.Add(Move.Get(MoveType.TableauToFoundation, t, f));
                     foundationFound = true;
+
+                    if (IsAutoMove(tableau[0]))
+                    {
+                        autoMove = true;
+                        return new List<Move> { moves[moves.Count - 1] };
+                    }
                 }
             }
 
             // 3. Reserve -> Tableau
             for (var r = 0; r < 4; r++)
             {
-                if (Reserve[r] == null)
+                if (reserve[r] == null)
                 {
                     continue;
                 }
@@ -81,10 +102,10 @@ namespace FreeCellSolver
                 var alreadyMovedToEmpty = false;
                 for (var t = 0; t < 8; t++)
                 {
-                    var tableau = Tableaus[t];
+                    var tableau = tableaus[t];
                     var emptyTarget = tableau.IsEmpty;
 
-                    if (Reserve.CanMove(r, tableau))
+                    if (reserve.CanMove(r, tableau))
                     {
                         var move = Move.Get(MoveType.ReserveToTableau, r, t);
                         if (!move.IsReverseOf(lastMove))
@@ -107,8 +128,9 @@ namespace FreeCellSolver
             // 4. Tableau -> Tableau
             for (var t1 = 0; t1 < 8; t1++)
             {
-                var tableau = Tableaus[t1];
+                var tableau = tableaus[t1];
                 var tableauSize = tableau.Size;
+
                 if (tableauSize == 0)
                 {
                     continue;
@@ -122,7 +144,7 @@ namespace FreeCellSolver
                         continue;
                     }
 
-                    var targetTableau = Tableaus[t2];
+                    var targetTableau = tableaus[t2];
                     var emptyTarget = targetTableau.IsEmpty;
                     var moveSize = tableau.CountMovable(targetTableau);
                     var maxAllowedMoveSize = maxAllowedMoveSizeCache - (emptyTarget ? 1 : 0);
@@ -164,7 +186,7 @@ namespace FreeCellSolver
             // 5. Tableau -> Reserve
             for (var t = 0; t < 8; t++)
             {
-                if (Tableaus[t].CanMove(Reserve, out var r))
+                if (tableaus[t].CanMove(reserve, out var r))
                 {
                     var move = Move.Get(MoveType.TableauToReserve, t, r);
                     if (!move.IsReverseOf(lastMove))
@@ -175,6 +197,30 @@ namespace FreeCellSolver
             }
 
             return moves;
+
+            // reserve -> foundation or tableau -> foundation. Return true if:
+            // rank is R2 or Ace 
+            // or all lower cards of opposite color are already at foundation
+            bool IsAutoMove(Card card)
+            {
+                var rank = (int)card.Rank;
+
+                if (rank <= (int)Rank.R2)
+                {
+                    return true;
+                }
+
+                if (card.Color == Color.Black)
+                {
+                    return foundation[Suit.Diamonds] >= rank - 1
+                    && foundation[Suit.Hearts] >= rank - 1;
+                }
+                else
+                {
+                    return foundation[Suit.Clubs] >= rank - 1
+                    && foundation[Suit.Spades] >= rank - 1;
+                }
+            }
         }
 
         public void ExecuteMove(Move move, bool rate = false)
@@ -271,6 +317,10 @@ namespace FreeCellSolver
             LastMoveRating = 0;
             Card cardToBeMoved = null;
 
+            var tableaus = Tableaus;
+            var reserve = Reserve;
+            var foundation = Foundation;
+
             // Reward move to foundation
             if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.ReserveToFoundation)
             {
@@ -279,7 +329,7 @@ namespace FreeCellSolver
 
             if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.TableauToReserve || move.Type == MoveType.TableauToTableau)
             {
-                var sourceTableau = Tableaus[move.From];
+                var sourceTableau = tableaus[move.From];
                 var sourceTableauSize = sourceTableau.Size;
                 cardToBeMoved = sourceTableau.Top;
 
@@ -292,7 +342,7 @@ namespace FreeCellSolver
                 // Reward unburing foundation targets
                 for (var i = move.Size; i < sourceTableauSize; i++)
                 {
-                    if (Foundation.CanPush(sourceTableau[i]))
+                    if (foundation.CanPush(sourceTableau[i]))
                     {
                         LastMoveRating += Math.Max(1, RATING_FREEFOUNDATIONTARGET - ((i - move.Size) * 3));
                     }
@@ -300,7 +350,7 @@ namespace FreeCellSolver
 
                 // Reward a newly discovered tableau-to-tableau move
                 var cardToBeTop = sourceTableauSize > move.Size ? sourceTableau[move.Size] : null;
-                if (Tableaus.CanReceive(cardToBeTop, move.From))
+                if (tableaus.CanReceive(cardToBeTop, move.From))
                 {
                     LastMoveRating += RATING_FREETABLEAUTARGET;
                 }
@@ -310,20 +360,20 @@ namespace FreeCellSolver
             if (move.Type == MoveType.ReserveToFoundation || move.Type == MoveType.ReserveToTableau)
             {
                 LastMoveRating += RATING_OPENRESERVE;
-                cardToBeMoved = Reserve[move.From];
+                cardToBeMoved = reserve[move.From];
             }
 
             if (move.Type == MoveType.ReserveToTableau || move.Type == MoveType.TableauToTableau)
             {
                 // Reward any move to tableau
                 LastMoveRating += RATING_TABLEAU + /* Reward more for moving sorted stacks */ move.Size - 1;
-                var targetTableau = Tableaus[move.To];
+                var targetTableau = tableaus[move.To];
                 var targetTableauSize = targetTableau.Size;
 
                 // Punish buring foundation target, penalty is higher on bottom cards
                 for (var i = 0; i < targetTableauSize; i++)
                 {
-                    if (Foundation.CanPush(targetTableau[i]))
+                    if (foundation.CanPush(targetTableau[i]))
                     {
                         LastMoveRating += RATING_BURYFOUNDATIONTARGET * (targetTableauSize + move.Size - i - 1);
                     }
@@ -336,7 +386,7 @@ namespace FreeCellSolver
                     // Reward a move to an empty tableau that can be followed by another move from reserve
                     for (var i = 0; i < 4; i++)
                     {
-                        var card = Reserve[i];
+                        var card = reserve[i];
                         if (card != null)
                         {
                             if (card.IsBelow(cardToBeMoved))
@@ -350,7 +400,7 @@ namespace FreeCellSolver
                     // Reward a move to an empty tableau that can be followed by another move from tableaus
                     for (var i = 0; i < 8; i++)
                     {
-                        var card = Tableaus[i].Top;
+                        var card = tableaus[i].Top;
                         if (card?.IsBelow(cardToBeMoved) ?? false)
                         {
                             LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + (int)card.Rank;
@@ -409,6 +459,14 @@ namespace FreeCellSolver
                 return false;
             }
 
+            var tableaus = Tableaus;
+            var reserve = Reserve;
+            var foundation = Foundation;
+
+            var otherTableaus = other.Tableaus;
+            var otherReserve = other.Reserve;
+            var otherFoundation = other.Foundation;
+
             for (var i = 0; i < 4; i++)
             {
                 // TODO: This actually might report inequal where GetHashCode() return same value
@@ -424,11 +482,11 @@ namespace FreeCellSolver
                 // Equals()                      --> returns false
                 //
                 // For above case, we want to report equality.
-                if (Reserve[i]?.RawValue != other.Reserve[i]?.RawValue)
+                if (reserve[i]?.RawValue != otherReserve[i]?.RawValue)
                 {
                     return false;
                 }
-                if (Foundation[(Suit)i] != other.Foundation[(Suit)i])
+                if (foundation[(Suit)i] != otherFoundation[(Suit)i])
                 {
                     return false;
                 }
@@ -436,13 +494,13 @@ namespace FreeCellSolver
 
             for (var i = 0; i < 8; i++)
             {
-                var t1 = Tableaus[i];
+                var t1 = tableaus[i];
                 var size1 = t1.Size;
                 var sortedSize1 = t1.SortedSize;
                 var unsortedSize1 = size1 - sortedSize1;
                 var top1 = size1 > 0 ? t1[0] : null;
 
-                var t2 = other.Tableaus[i];
+                var t2 = otherTableaus[i];
                 var size2 = t2.Size;
                 var sortedSize2 = t2.SortedSize;
                 var unsortedSize2 = size2 - sortedSize2;
@@ -461,13 +519,16 @@ namespace FreeCellSolver
 
         public override int GetHashCode()
         {
+            var tableaus = Tableaus;
+            var reserve = Reserve;
+
             unchecked
             {
                 var hash = 0;
 
                 for (var i = 0; i < 4; i++)
                 {
-                    var r = Reserve[i];
+                    var r = reserve[i];
                     if (r != null)
                     {
                         hash += _reserveRand[r.RawValue];
@@ -476,7 +537,7 @@ namespace FreeCellSolver
 
                 for (var i = 0; i < 8; i++)
                 {
-                    var t = Tableaus[i];
+                    var t = tableaus[i];
                     var size = t.Size;
                     var sortedSize = t.SortedSize;
                     var unsortedSize = size - sortedSize;
