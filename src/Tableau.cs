@@ -177,9 +177,10 @@ namespace FreeCellSolver
                     _state[size] = 0;
                 }
 
+                var target = board.Tableaus[move.From];
                 for (var i = poppedCards.Length - 1; i >= 0; i--)
                 {
-                    board.Tableaus[move.From]._state[Size++] = poppedCards[i];
+                    target._state[target.Size++] = poppedCards[i];
                 }
             }
 
