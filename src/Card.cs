@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver
@@ -36,7 +35,7 @@ namespace FreeCellSolver
         RK = 12,
     }
 
-    public class Card : IEquatable<Card>
+    public class Card
     {
         private static readonly Card[] _allCards = new Card[52];
 
@@ -94,19 +93,5 @@ namespace FreeCellSolver
 
         public override string ToString()
             => $"{_ranks[(short)Rank]}{_suits[(short)Suit]}";
-
-        #region Equality overrides and overloads
-        public bool Equals([AllowNull] Card other) => other == null
-            ? false
-            : Suit == other.Suit && Rank == other.Rank;
-
-        public override bool Equals(object obj) => obj is Card card && Equals(card);
-
-        public override int GetHashCode() => RawValue;
-
-        public static bool operator ==(Card a, Card b) => Equals(a, b);
-
-        public static bool operator !=(Card a, Card b) => !(a == b);
-        #endregion
     }
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
@@ -403,17 +402,127 @@ namespace FreeCellSolver
         }
 
         #region Equality overrides and overloads
-        // 2 boards are equal when their reserve, foundation and cascade piles are the same
-        // regardless of how that state was reached (i.e. regardless of the set of executed moves)
-        public bool Equals([AllowNull] Board other) => other == null
-            ? false
-            : Reserve == other.Reserve
-                && Foundation == other.Foundation
-                && Tableaus == other.Tableaus;
+        public bool Equals(Board other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            for (var i = 0; i < 4; i++)
+            {
+                // TODO: This actually might report inequal where GetHashCode() return same value
+                // when we have same cards at reserve but at different positions. Chance is very low
+                // but consider making both methods return persistent values.
+                //
+                // i.e.
+                // Reserve1 [ 4C, --, --, 5H ]
+                // Reserve2 [ 4C, 5H, --, -- ]
+                // and everything else is same on both boards.
+                //
+                // GetHashCode() for both boards --> returns same value
+                // Equals()                      --> returns false
+                //
+                // For above case, we want to report equality.
+                if (Reserve[i]?.RawValue != other.Reserve[i]?.RawValue)
+                {
+                    return false;
+                }
+                if (Foundation[(Suit)i] != other.Foundation[(Suit)i])
+                {
+                    return false;
+                }
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                var t1 = Tableaus[i];
+                var size1 = t1.Size;
+                var sortedSize1 = t1.SortedSize;
+                var unsortedSize1 = size1 - sortedSize1;
+                var top1 = size1 > 0 ? t1[0] : null;
+
+                var t2 = other.Tableaus[i];
+                var size2 = t2.Size;
+                var sortedSize2 = t2.SortedSize;
+                var unsortedSize2 = size2 - sortedSize2;
+                var top2 = size2 > 0 ? t2[0] : null;
+
+                if (top1 != top2 || size1 != size2 || sortedSize1 != sortedSize2 || unsortedSize1 != unsortedSize2)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         public override bool Equals(object obj) => obj is Board board && Equals(board);
 
-        public override int GetHashCode() => HashCode.Combine(Reserve, Foundation, Tableaus);
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hash = 0;
+
+                for (var i = 0; i < 4; i++)
+                {
+                    var r = Reserve[i];
+                    if (r != null)
+                    {
+                        hash += _reserveRand[r.RawValue];
+                    }
+                }
+
+                for (var i = 0; i < 8; i++)
+                {
+                    var t = Tableaus[i];
+                    var size = t.Size;
+                    var sortedSize = t.SortedSize;
+                    var unsortedSize = size - sortedSize;
+
+                    hash += _tableauUnsortedRand[i][unsortedSize];
+                    hash += _tableauSortedRand[i][sortedSize];
+                    if (size > 0)
+                    {
+                        hash += _tableauTopRand[i][t[0].RawValue];
+                    }
+                }
+
+                return hash;
+            }
+        }
+
+        static readonly Random _rnd = new Random();
+        static readonly int[] _reserveRand = new int[52];
+        static readonly int[][] _tableauUnsortedRand = new int[8][];
+        static readonly int[][] _tableauSortedRand = new int[8][];
+        static readonly int[][] _tableauTopRand = new int[8][];
+
+        static Board()
+        {
+            InitHashRand(52, _reserveRand);
+
+            for (var i = 0; i < 8; i++)
+            {
+                _tableauUnsortedRand[i] = new int[8];
+                InitHashRand(8, _tableauUnsortedRand[i]);
+
+                _tableauSortedRand[i] = new int[14];
+                InitHashRand(14, _tableauSortedRand[i]);
+
+                _tableauTopRand[i] = new int[52];
+                InitHashRand(52, _tableauTopRand[i]);
+            }
+        }
+
+        static void InitHashRand(int count, int[] rand)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                rand[i] = _rnd.Next();
+            }
+        }
 
         public static bool operator ==(Board a, Board b) => Equals(a, b);
 

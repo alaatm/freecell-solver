@@ -8,14 +8,6 @@ using FreeCellSolver.Solvers;
 using System.Collections.Generic;
 using FreeCellSolver.Extensions;
 
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
-/// TODO Jagged arrays for TABLUES/COLS 
-/////////////////////////////////////////////////////
-/// TODO ThreadStatic _moves and return slice 0..mc
-/////////////////////////////////////////////////////
-/////////////////////////////////////////////////////
-
 namespace FreeCellSolver
 {
     class Program
@@ -23,17 +15,6 @@ namespace FreeCellSolver
         static async Task/* void*/ Main(string[] args)
         {
             GCSettings.LatencyMode = GCLatencyMode.LowLatency;
-            // var b = new Board(Deal.FromDealNum(1));
-            // var sw = new Stopwatch();
-
-            // sw.Restart();
-            // for (var i = 0; i < 1000_000; i++)
-            // {
-            //     b.Tableaus.GetHashCode();
-            // }
-            // Console.WriteLine(sw.Elapsed);
-            // return;
-
             // Dfs.Run(new Board(Deal.FromDealNum(169)), DfsSolveMethod.Stack);
             // await RunSingleBenchmarksAsync(DfsSolveMethod.Stack, 5979);
             await ProcessArgsAsync(args);

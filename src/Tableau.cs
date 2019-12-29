@@ -3,11 +3,10 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
 {
-    public class Tableau : IEquatable<Tableau>
+    public class Tableau
     {
         private const int _capacity = 19;
         private readonly short[] _state = new short[_capacity];
@@ -249,30 +248,5 @@ namespace FreeCellSolver
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards() => _state.Take(Size).Select(c => Card.Get(c));
-
-        #region Equality overrides and overloads
-        public bool Equals([AllowNull] Tableau other) => other == null
-            ? false
-            : _state.SequenceEqual(other._state);
-
-        public override bool Equals(object obj) => obj is Tableau tableau && Equals(tableau);
-
-        public override int GetHashCode()
-        {
-            var hash = new HashCode();
-            var size = Size;
-
-            for (var i = 0; i < size; i++)
-            {
-                hash.Add(_state[i]);
-            }
-
-            return hash.ToHashCode();
-        }
-
-        public static bool operator ==(Tableau a, Tableau b) => Equals(a, b);
-
-        public static bool operator !=(Tableau a, Tableau b) => !(a == b);
-        #endregion
     }
 }

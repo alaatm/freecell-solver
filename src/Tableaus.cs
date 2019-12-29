@@ -2,11 +2,10 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FreeCellSolver
 {
-    public class Tableaus : IEquatable<Tableaus>
+    public class Tableaus
     {
         private readonly Tableau[] _state = new Tableau[]
         {
@@ -98,34 +97,5 @@ namespace FreeCellSolver
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards() => _state.SelectMany(t => t.AllCards());
-
-        #region Equality overrides and overloads
-        public bool Equals([AllowNull] Tableaus other) => other == null
-            ? false
-            : _state[0] == other._state[0]
-                && _state[1] == other._state[1]
-                && _state[2] == other._state[2]
-                && _state[3] == other._state[3]
-                && _state[4] == other._state[4]
-                && _state[5] == other._state[5]
-                && _state[6] == other._state[6]
-                && _state[7] == other._state[7];
-
-        public override bool Equals(object obj) => obj is Tableaus deal && Equals(deal);
-
-        public override int GetHashCode() => HashCode.Combine(
-            _state[0],
-            _state[1],
-            _state[2],
-            _state[3],
-            _state[4],
-            _state[5],
-            _state[6],
-            _state[7]);
-
-        public static bool operator ==(Tableaus a, Tableaus b) => Equals(a, b);
-
-        public static bool operator !=(Tableaus a, Tableaus b) => !(a == b);
-        #endregion
     }
 }
