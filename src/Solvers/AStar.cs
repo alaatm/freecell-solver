@@ -1,106 +1,116 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace FreeCellSolver.Solvers
 {
     public class AStar
     {
+        private static ConcurrentDictionary<int, byte> _closed;
+
         private readonly Board _board;
         private readonly int _maxDepth;
 
         public Board SolvedBoard { get; private set; }
-        public int TotalVisitedNodes { get; private set; }
         public int SolvedFromId { get; private set; }
+        public int VisitedNodes => _closed.Count;
 
         public AStar(Board board, int maxDepth)
             => (_board, _maxDepth) = (board, maxDepth);
 
-        public static AStar Run(Board board, int maxDepth)
+        public static AStar Run(Board board)
         {
-            var astar = new AStar(board, maxDepth);
             Console.WriteLine($"Solver: A*");
 
+            const int maxDepth = 200;
+
+            var clone = board.Clone();
+            clone.AutoPlay();
+
+            // Should obviously use a local HashSet<int> here but we don't care much about this
+            // non parallel version, its only here for debugging.
+            _closed = new ConcurrentDictionary<int, byte>(1, 1000);
+
+            var astar = new AStar(clone, maxDepth);
             astar.Search(board, 0);
             return astar;
         }
 
-        public static async Task<AStar> RunParallelAsync(Board board, int maxDepth)
+        public static async Task<AStar> RunParallelAsync(Board board)
         {
-            var astar = new AStar(board, maxDepth);
-            var states = ParallelHelper.GetStates(board, Environment.ProcessorCount);
+            const int maxDepth = 200;
+
+            var clone = board.Clone();
+            clone.AutoPlay();
+
+            var states = ParallelHelper.GetStates(clone, Environment.ProcessorCount);
             Console.WriteLine($"Solver: A* - using {states.Count} cores");
 
-            var tasks = states.Select((b, i) => Task.Run(() => astar.Search(b, i)));
+            _closed = new ConcurrentDictionary<int, byte>(states.Count, 1000);
+            var astar = new AStar(board, maxDepth);
 
+            var tasks = states.Select((b, i) => Task.Run(() => astar.Search(b, i)));
             await Task.WhenAll(tasks);
             return astar;
         }
 
         private void Search(Board root, int stateId)
         {
-            var open = new StateScoreTree();
-            var closed = new HashSet<int>();
+            var open = new StateCostTree();
 
-            root.ComputeScore();
             open.Add(root);
 
             while (open.Count != 0)
             {
-                var board = open.Remove();
+                var board = open.RemoveMin();
 
                 if (board.IsSolved || SolvedBoard != null)
                 {
-                    Finalize(board, closed.Count, stateId);
+                    Finalize(board, stateId);
                     break;
                 }
 
-                closed.Add(board.GetHashCode());
+                _closed.AddOrUpdate(board.GetHashCode(), (byte)1, (k, v) => (byte)1);
 
-                if (board.Moves.Count > _maxDepth)
+                if (board.MoveCount > _maxDepth)
                 {
                     continue;
                 }
 
-                var (moves, _) = board.GetValidMoves(false);
-
-                foreach (var move in moves)
+                foreach (var move in board.GetValidMoves(out _))
                 {
                     var next = board.Clone();
-                    next.ExecuteMove(move, false, false);
+                    next.ExecuteMove(move, board);
 
-                    if (closed.Contains(next.GetHashCode()))
+                    if (_closed.ContainsKey(next.GetHashCode()))
                     {
                         continue;
                     }
 
-                    next.ComputeScore();
+                    next.ComputeCost(false);
 
-                    var exist = open.GetValue(next);
-                    if (exist == null || next.Score < exist.Score)
+                    var existing = open.GetValue(next);
+                    if (existing == null || next.Cost < existing.Cost)
                     {
-                        if (exist != null)
+                        if (existing != null)
                         {
-                            open.Remove(exist);
+                            open.Remove(existing);
                         }
 
                         open.Add(next);
                     }
                 }
             }
-
-            var x = "";
         }
 
-        private void Finalize(Board board, int visitedCount, int stateId)
+        private void Finalize(Board board, int stateId)
         {
             lock (this)
             {
                 if (SolvedBoard == null)
                 {
                     SolvedBoard = board;
-                    TotalVisitedNodes = visitedCount;
                     SolvedFromId = stateId;
                 }
             }

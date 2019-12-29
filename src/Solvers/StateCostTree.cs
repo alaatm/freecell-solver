@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace FreeCellSolver.Solvers
 {
-    public class StateScoreTree
+    public class StateCostTree
     {
         private HashSet<Board> _hash = new HashSet<Board>();
-        private SortedDictionary<double, List<Board>> _scoreMap = new SortedDictionary<double, List<Board>>();
+        private SortedDictionary<int, List<Board>> _costMap = new SortedDictionary<int, List<Board>>();
 
         public int Count => _hash.Count;
 
@@ -14,18 +14,18 @@ namespace FreeCellSolver.Solvers
         {
             _hash.Add(board);
 
-            var score = board.Score;
-            if (!_scoreMap.ContainsKey(score))
+            var cost = board.Cost;
+            if (!_costMap.ContainsKey(cost))
             {
-                _scoreMap.Add(score, new List<Board>());
+                _costMap.Add(cost, new List<Board>());
             }
 
-            _scoreMap[score].Add(board);
+            _costMap[cost].Add(board);
         }
 
-        public Board Remove()
+        public Board RemoveMin()
         {
-            var min = _scoreMap.ElementAt(0);
+            var min = _costMap.ElementAt(0);
 
             var best = min.Value[0];
             min.Value.Remove(best);
@@ -33,7 +33,7 @@ namespace FreeCellSolver.Solvers
 
             if (min.Value.Count == 0)
             {
-                _scoreMap.Remove(min.Key);
+                _costMap.Remove(min.Key);
             }
 
             return best;
@@ -53,13 +53,13 @@ namespace FreeCellSolver.Solvers
                 return false;
             }
 
-            var score = board.Score;
-            var list = _scoreMap[score];
+            var cost = board.Cost;
+            var list = _costMap[cost];
             list.Remove(board);
 
             if (list.Count == 0)
             {
-                _scoreMap.Remove(score);
+                _costMap.Remove(cost);
             }
 
             return true;

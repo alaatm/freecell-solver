@@ -72,7 +72,6 @@ namespace FreeCellSolver.Solvers
                     backTrackPercent + backTrackPercentStep * attempt);
 
                 var tasks = states.Select((b, i) => Task.Run(() => dfs.Search(b, i)));
-
                 await Task.WhenAll(tasks);
                 attempt++;
             } while (dfs.SolvedBoard == null && dfs._backTrackPercent + backTrackPercentStep < 1f);

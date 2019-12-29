@@ -13,7 +13,16 @@ namespace FreeCellSolver
     {
         static async Task /*void*/ Main(string[] args)
         {
-            await ProcessArgsAsync(args);
+            var sw = new Stopwatch();
+            for (var i = 1; i <= 200; i++)
+            {
+                sw.Restart();
+                var s = await AStar.RunParallelAsync(Board.FromDealNum(i));
+                Console.Write($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - initial id: {s.SolvedFromId} - visited nodes: {s.VisitedNodes,0:n0}");
+                Console.WriteLine(s.SolvedBoard != null ? $" - #moves: {s.SolvedBoard.MoveCount}" : "");
+                Console.WriteLine();
+            }
+            // await ProcessArgsAsync(args);
         }
 
         static async Task ProcessArgsAsync(string[] args)
