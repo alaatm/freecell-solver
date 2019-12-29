@@ -19,10 +19,6 @@ namespace FreeCellSolver
 
         public Card Top => Size == 0 ? null : Card.Get(_state[Size - 1]);
 
-        /// <summary>
-        /// Returns sorted cards that are only at the bottom of the stack
-        /// </summary>
-        /// <value></value>
         public int SortedSize { get; private set; }
 
         public Tableau(params string[] cards) : this(cards.Select(c => Card.Get(c)).ToArray()) { }
@@ -208,21 +204,24 @@ namespace FreeCellSolver
 
         private int CountSorted()
         {
-            if (Size == 0)
+            var size = Size;
+
+            if (size == 0)
             {
                 return 0;
             }
 
             var sortedSize = 1;
-            for (var i = 0; i < Size - 1; i++)
+            for (var i = 0; i < size - 1; i++)
             {
-                if (i == Size)
+                if (i == size)
                 {
                     break;
                 }
 
-                var card = this[i];
-                if (card.IsBelow(this[i + 1]))
+                var current = Card.Get(_state[size - i - 1]);
+                var above = Card.Get(_state[size - (i + 1) - 1]);
+                if (current.IsBelow(above))
                 {
                     sortedSize++;
                 }
