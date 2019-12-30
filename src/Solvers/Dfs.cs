@@ -14,21 +14,22 @@ namespace FreeCellSolver.Solvers
     public class Dfs
     {
         private readonly int _maxDepth;
+        private readonly int _maxMovesSinceFoundation;
         private readonly float _backTrackPercent;
 
         public Board SolvedBoard { get; private set; }
         public int TotalVisitedNodes { get; private set; }
         public int SolvedFromId { get; private set; }
 
-        public Dfs(int maxDepth, float backTrackPercent)
-            => (_maxDepth, _backTrackPercent) = (maxDepth, backTrackPercent);
+        public Dfs(int maxDepth, int maxMovesSinceFoundation, float backTrackPercent)
+            => (_maxDepth, _maxMovesSinceFoundation, _backTrackPercent) = (maxDepth, maxMovesSinceFoundation, backTrackPercent);
 
         // Non-parallel version used primarilly for debugging
         public static Dfs Run(Board board, DfsSolveMethod method) => Run(board, method, 200, 0.7f);
 
         public static Dfs Run(Board board, DfsSolveMethod method, int maxDepth, float backTrackPercent)
         {
-            var dfs = new Dfs(maxDepth, backTrackPercent);
+            var dfs = new Dfs(maxDepth, 17, backTrackPercent);
             Console.WriteLine($"Solver: DFS-{method.ToString()}");
 
             switch (method)
@@ -50,7 +51,10 @@ namespace FreeCellSolver.Solvers
         {
             var attempt = 0;
             var backTrackStep = 0.0501f;
-            var dfs = new Dfs(maxDepth, backTrackPercent);
+            var maxMovesSinceFoundation = 17;
+            var maxMovesSinceFoundationStep = 5;
+
+            var dfs = new Dfs(maxDepth, maxMovesSinceFoundation, backTrackPercent);
             var states = ParallelHelper.GetStates(board, Environment.ProcessorCount);
 
             while (dfs.SolvedBoard == null && dfs._backTrackPercent < 1f)
@@ -76,8 +80,9 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
-                dfs = new Dfs(maxDepth, backTrackPercent + backTrackStep);
+                dfs = new Dfs(maxDepth, maxMovesSinceFoundation + maxMovesSinceFoundationStep, backTrackPercent + backTrackStep);
                 backTrackStep += 0.0501f;
+                maxMovesSinceFoundationStep += 5;
             }
 
             return dfs;
@@ -117,7 +122,7 @@ namespace FreeCellSolver.Solvers
 
                 var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
 
-                if (moves.Count == 0 || (board.MovesSinceFoundation >= 17 && !foundFoundation))
+                if (moves.Count == 0 || (board.MovesSinceFoundation >= _maxMovesSinceFoundation && !foundFoundation))
                 {
                     jumpDepth = (int)Math.Ceiling(depth * _backTrackPercent);
                     continue;
@@ -159,7 +164,7 @@ namespace FreeCellSolver.Solvers
 
             var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
 
-            if (moves.Count == 0 || (board.MovesSinceFoundation >= 17 && !foundFoundation))
+            if (moves.Count == 0 || (board.MovesSinceFoundation >= _maxMovesSinceFoundation && !foundFoundation))
             {
                 return (int)Math.Ceiling(depth * _backTrackPercent);
             }
