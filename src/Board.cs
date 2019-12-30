@@ -152,6 +152,8 @@ namespace FreeCellSolver
                     /* No need to get target top when moveSize is 1 since we won't be calling IsBelow() */
                     var targetTop = moveSize > 1 ? targetTableau.Top : null;
 
+                    var didMove = false;
+
                     while (moveSize > 0)
                     {
                         // Do not move an entire column to an empty one
@@ -170,7 +172,7 @@ namespace FreeCellSolver
                                 else
                                 {
                                     moves.Add(move);
-                                    alreadyMovedToEmpty = emptyTarget ? true : alreadyMovedToEmpty;
+                                    didMove = true;
                                 }
                             }
                         }
@@ -180,6 +182,8 @@ namespace FreeCellSolver
                             canMove = emptyTarget || tableau[moveSize - 1].IsBelow(targetTop);
                         }
                     }
+
+                    alreadyMovedToEmpty = emptyTarget && didMove ? true : alreadyMovedToEmpty;
                 }
             }
 
