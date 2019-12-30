@@ -13,7 +13,7 @@ namespace FreeCellSolver
 
     public class Move
     {
-        private static Move[] _possibleMoves = new Move[816];
+        private static readonly Move[] _possibleMoves = new Move[816];
 
         public MoveType Type { get; private set; }
         public int From { get; private set; }
