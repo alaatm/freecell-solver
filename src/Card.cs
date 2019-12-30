@@ -1,6 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver
 {
@@ -74,7 +73,6 @@ namespace FreeCellSolver
         }
 
         // Note no error checks are made!
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Card Get(short rawValue) => rawValue < 0 ? null : _allCards[rawValue];
 
         // Note no error checks are made!

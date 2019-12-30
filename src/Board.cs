@@ -62,7 +62,7 @@ namespace FreeCellSolver
             {
                 if (reserve.CanMove(r, foundation, out var f))
                 {
-                    moves.Add(Move.Get(MoveType.ReserveToFoundation, r, f));
+                    moves.Add(new Move(MoveType.ReserveToFoundation, r, f));
                     foundationFound = true;
 
                     if (IsAutoMove(reserve[r]))
@@ -80,7 +80,7 @@ namespace FreeCellSolver
                 var tableau = tableaus[t];
                 if (tableau.CanMove(foundation, out var f))
                 {
-                    moves.Add(Move.Get(MoveType.TableauToFoundation, t, f));
+                    moves.Add(new Move(MoveType.TableauToFoundation, t, f));
                     foundationFound = true;
 
                     if (IsAutoMove(tableau[0]))
@@ -107,7 +107,7 @@ namespace FreeCellSolver
 
                     if (reserve.CanMove(r, tableau))
                     {
-                        var move = Move.Get(MoveType.ReserveToTableau, r, t);
+                        var move = new Move(MoveType.ReserveToTableau, r, t);
                         if (!move.IsReverseOf(lastMove))
                         {
                             if (emptyTarget && alreadyMovedToEmpty)
@@ -159,7 +159,7 @@ namespace FreeCellSolver
 
                         if (canMove && maxAllowedMoveSize >= moveSize && !uselessMove)
                         {
-                            var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
+                            var move = new Move(MoveType.TableauToTableau, t1, t2, moveSize);
                             if (!move.IsReverseOf(lastMove))
                             {
                                 if (emptyTarget && alreadyMovedToEmpty)
@@ -188,7 +188,7 @@ namespace FreeCellSolver
             {
                 if (tableaus[t].CanMove(reserve, out var r))
                 {
-                    var move = Move.Get(MoveType.TableauToReserve, t, r);
+                    var move = new Move(MoveType.TableauToReserve, t, r);
                     if (!move.IsReverseOf(lastMove))
                     {
                         moves.Add(move);

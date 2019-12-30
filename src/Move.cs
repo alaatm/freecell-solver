@@ -1,12 +1,9 @@
 using System.Diagnostics;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver
 {
     public enum MoveType
     {
-        None,
         TableauToFoundation,
         TableauToReserve,
         TableauToTableau,
@@ -16,70 +13,20 @@ namespace FreeCellSolver
 
     public class Move
     {
-        private static readonly Dictionary<(MoveType, int, int, int), Move> _possibleMoves = new Dictionary<(MoveType, int, int, int), Move>();
-
         public MoveType Type { get; private set; }
         public int From { get; private set; }
         public int To { get; private set; }
         public int Size { get; private set; }
 
-        static Move()
-        {
-            // Cache all possible moves
-            // Reserve -> foundation
-            // Reserve -> tableau
-            // Tableau -> foundation
-            // Tableau -> reserve
-            // Tableau -> tableau
-
-            for (var r = 0; r < 4; r++)
-            {
-                var mt = MoveType.ReserveToFoundation;
-                for (var f = 0; f < 4; f++)
-                {
-                    _possibleMoves.Add((mt, r, f, 1), new Move(mt, r, f));
-                }
-
-                mt = MoveType.ReserveToTableau;
-                for (var t = 0; t < 8; t++)
-                {
-                    _possibleMoves.Add((mt, r, t, 1), new Move(mt, r, t));
-                }
-            }
-
-            for (var t = 0; t < 8; t++)
-            {
-                var mt = MoveType.TableauToFoundation;
-                for (var f = 0; f < 4; f++)
-                {
-                    _possibleMoves.Add((mt, t, f, 1), new Move(mt, t, f));
-                }
-
-                mt = MoveType.TableauToReserve;
-                for (var r = 0; r < 4; r++)
-                {
-                    _possibleMoves.Add((mt, t, r, 1), new Move(mt, t, r));
-                }
-
-                mt = MoveType.TableauToTableau;
-                for (var t2 = 0; t2 < 8; t2++)
-                {
-                    if (t != t2)
-                    {
-                        for (var count = 1; count < 13; count++)
-                        {
-                            _possibleMoves.Add((mt, t, t2, count), new Move(mt, t, t2, count));
-                        }
-                    }
-                }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Move Get(MoveType moveType, int from, int to, int size = 1) => _possibleMoves[(moveType, from, to, size)];
-
         internal Move(MoveType type, int from, int to, int size = 1)
         {
+            Debug.Assert(
+                (type == MoveType.ReserveToFoundation && (from >= 0 && from < 4 && to >= 0 && to < 4 && size == 1)) ||
+                (type == MoveType.ReserveToTableau && (from >= 0 && from < 4 && to >= 0 && to < 8 && size == 1)) ||
+                ((type == MoveType.TableauToFoundation || type == MoveType.TableauToReserve) && (from >= 0 && from < 8 && to >= 0 && to < 4 && size == 1)) ||
+                (type == MoveType.TableauToTableau && (from != to && from >= 0 && from < 8 && to >= 0 && to < 8 && size >= 1 & size < 11))
+            );
+
             Type = type;
             From = from;
             To = to;

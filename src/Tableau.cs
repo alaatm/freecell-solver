@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver
 {
@@ -122,7 +121,6 @@ namespace FreeCellSolver
             foundation.Push(Pop());
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public int CountMovable(Tableau target)
         {
             Debug.Assert(this != target);
