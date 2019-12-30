@@ -115,15 +115,25 @@ namespace FreeCellSolver.Solvers
                 }
                 visited.Add(hc);
 
-                var (edges, backtrack) = board.GetEdges(true);
+                var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
 
-                if (backtrack)
+                if (moves.Count == 0 || (board.MovesSinceFoundation >= 17 && !foundFoundation))
                 {
                     jumpDepth = (int)Math.Ceiling(depth * _backTrackPercent);
                     continue;
                 }
 
-                foreach (var b in edges)
+                var addedBoards = new Board[moves.Count];
+
+                var c = 0;
+                for (var i = moves.Count - 1; i >= 0; i--)
+                {
+                    var next = board.Clone();
+                    next.ExecuteMove(moves[i], !autoMove);
+                    addedBoards[c++] = next;
+                }
+
+                foreach (var b in addedBoards.OrderBy(p => p.LastMoveRating))
                 {
                     stack.Push(b);
                 }
@@ -146,14 +156,25 @@ namespace FreeCellSolver.Solvers
             }
 
             visited.Add(board.GetHashCode());
-            var (edges, backtrack) = board.GetEdges();
 
-            if (backtrack)
+            var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
+
+            if (moves.Count == 0 || (board.MovesSinceFoundation >= 17 && !foundFoundation))
             {
                 return (int)Math.Ceiling(depth * _backTrackPercent);
             }
 
-            foreach (var b in edges)
+            var addedBoards = new Board[moves.Count];
+
+            var c = 0;
+            foreach (var move in moves)
+            {
+                var next = board.Clone();
+                next.ExecuteMove(move, !autoMove);
+                addedBoards[c++] = next;
+            }
+
+            foreach (var b in addedBoards.OrderByDescending(p => p.LastMoveRating))
             {
                 if (jumpDepth != -1 && jumpDepth < depth)
                 {
