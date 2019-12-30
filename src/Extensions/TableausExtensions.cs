@@ -82,7 +82,7 @@ namespace FreeCellSolver.Extensions
                     {
                         if (added[key].Contains(card))
                         {
-                            stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableaus '{key + 1}' and '{i + 1}'");
+                            stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableaus '{key + 1}' and '{t + 1}'");
                             isValid = false;
                         }
                     }

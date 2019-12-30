@@ -22,7 +22,12 @@ namespace FreeCellSolver
 
         public int SortedSize { get; private set; }
 
-        public Tableau(params string[] cards) : this(cards.Select(c => Card.Get(c)).ToArray()) { }
+        public Tableau(string cards) : this(
+            new[] { 0 }.SelectMany(i => cards
+                .GroupBy(_ => i++ / 2)
+                .Select(g => Card.Get(String.Join("", g)))
+            ).ToArray())
+        { }
 
         public Tableau(params Card[] cards)
         {
