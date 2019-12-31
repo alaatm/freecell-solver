@@ -13,13 +13,13 @@ namespace FreeCellSolver
 
         public int Size { get; private set; }
 
+        public int SortedSize { get; private set; }
+
         public bool IsEmpty => Size == 0;
 
         public Card this[int index] => Card.Get(_state[Size - index - 1]);
 
         public Card Top => Size == 0 ? null : Card.Get(_state[Size - 1]);
-
-        public int SortedSize { get; private set; }
 
         public Tableau(string cards) : this(
             new[] { 0 }.SelectMany(i => cards
