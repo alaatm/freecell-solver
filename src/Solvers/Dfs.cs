@@ -138,7 +138,10 @@ namespace FreeCellSolver.Solvers
                     addedBoards[c++] = next;
                 }
 
-                foreach (var b in addedBoards.OrderBy(p => p.LastMoveRating))
+                // Asc sort
+                Array.Sort(addedBoards, (x, y) => x.LastMoveRating - y.LastMoveRating);
+
+                foreach (var b in addedBoards)
                 {
                     stack.Push(b);
                 }
@@ -179,7 +182,10 @@ namespace FreeCellSolver.Solvers
                 addedBoards[c++] = next;
             }
 
-            foreach (var b in addedBoards.OrderByDescending(p => p.LastMoveRating))
+            // Desc sort
+            Array.Sort(addedBoards, (x, y) => y.LastMoveRating - x.LastMoveRating);
+
+            foreach (var b in addedBoards)
             {
                 if (jumpDepth != -1 && jumpDepth < depth)
                 {
