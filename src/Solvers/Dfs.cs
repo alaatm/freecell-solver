@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver.Solvers
 {
@@ -138,7 +139,10 @@ namespace FreeCellSolver.Solvers
                     addedBoards[c++] = next;
                 }
 
-                foreach (var b in addedBoards.OrderBy(p => p.LastMoveRating))
+                // Asc order
+                addedBoards.InsertionSort((x, y) => x.LastMoveRating - y.LastMoveRating);
+
+                foreach (var b in addedBoards)
                 {
                     stack.Push(b);
                 }
@@ -179,7 +183,10 @@ namespace FreeCellSolver.Solvers
                 addedBoards[c++] = next;
             }
 
-            foreach (var b in addedBoards.OrderByDescending(p => p.LastMoveRating))
+            // Desc order
+            addedBoards.InsertionSort((x, y) => y.LastMoveRating - x.LastMoveRating);
+
+            foreach (var b in addedBoards)
             {
                 if (jumpDepth != -1 && jumpDepth < depth)
                 {
