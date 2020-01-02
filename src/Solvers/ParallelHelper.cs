@@ -5,34 +5,25 @@ namespace FreeCellSolver.Solvers
 {
     internal static class ParallelHelper
     {
-        public class BP
+        internal static HashSet<Board> GetStates(Board initialBoard, int num)
         {
-            public Board Board { get; set; }
-            public Board Parent { get; set; }
-
-            public BP(Board board) => Board = board;
-            public BP(Board board, Board parent) => (Board, Parent) = (board, parent);
-        }
-
-        internal static List<Board> GetStates(Board initialBoard, int num)
-        {
-            var tree = new Dictionary<int, List<BP>>() { { 0, new List<BP> { new BP(initialBoard) } } };
+            var tree = new Dictionary<int, HashSet<Board>>() { { 0, new HashSet<Board> { initialBoard } } };
             var depth = 0;
 
             while (true)
             {
-                foreach (var bp in tree[depth++])
+                foreach (var b in tree[depth++])
                 {
                     if (!tree.ContainsKey(depth))
                     {
-                        tree.Add(depth, new List<BP>());
+                        tree.Add(depth, new HashSet<Board>());
                     }
 
-                    foreach (var move in bp.Board.GetValidMoves(out _, out _))
+                    foreach (var move in b.GetValidMoves(out _, out _))
                     {
-                        var next = bp.Board.Clone();
-                        next.ExecuteMove(move);
-                        tree[depth].Add(new BP(next, bp.Board));
+                        var next = b.Clone();
+                        next.ExecuteMove(move, b);
+                        tree[depth].Add(next);
                     }
                 }
 
@@ -42,31 +33,16 @@ namespace FreeCellSolver.Solvers
                 }
             }
 
-            var stateList = new List<List<Board>>();
-
-            var count = 0;
-            var parents = tree[depth - 1].Select(t => t.Board).ToList();
-            for (var i = 0; i < parents.Count; i++)
+            var nominees = new List<HashSet<Board>>();
+            foreach (var node in tree[depth - 1])
             {
-                var boardList = new List<Board>();
-
-                var prevChilds = 0;
-                for (var j = 0; j < i; j++)
-                {
-                    boardList.AddRange(tree[depth].Where(t => t.Parent == parents[j]).Select(t => t.Board));
-                }
-
-                var parent = parents[i];
-                var children = tree[depth].Where(t => t.Parent == parent).ToList();
-                boardList.AddRange(children.Select(t => t.Board));
-                boardList.AddRange(parents.Skip(i + 1));
-
-                count = prevChilds + children.Count + parents.Count - (i + 1);
-                stateList.Add(boardList);
+                var descendants = tree[depth].Where(t => t.Prev == node);
+                var adjacents = tree[depth - 1].Where(n => n != node);
+                nominees.Add(new HashSet<Board>(descendants.Concat(adjacents)));
             }
 
-            var boards = stateList.OrderByDescending(p => p.Count).FirstOrDefault(p => p.Count < num);
-            return boards ?? tree.OrderByDescending(p => p.Value.Count).FirstOrDefault(p => p.Value.Count < 16).Value.Select(p => p.Board).ToList();
+            var boards = nominees.OrderByDescending(p => p.Count).FirstOrDefault(p => p.Count <= num);
+            return boards ?? tree[depth - 1];
         }
     }
 }
