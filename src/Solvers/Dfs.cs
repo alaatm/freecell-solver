@@ -6,12 +6,6 @@ using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver.Solvers
 {
-    public enum DfsSolveMethod
-    {
-        Recursive,
-        Stack,
-    }
-
     public class Dfs
     {
         private readonly int _maxDepth;
@@ -26,29 +20,19 @@ namespace FreeCellSolver.Solvers
             => (_maxDepth, _maxMovesSinceFoundation, _backTrackPercent) = (maxDepth, maxMovesSinceFoundation, backTrackPercent);
 
         // Non-parallel version used primarilly for debugging
-        public static Dfs Run(Board board, DfsSolveMethod method) => Run(board, method, 200, 0.7f);
+        public static Dfs Run(Board board) => Run(board, 200, 0.7f);
 
-        public static Dfs Run(Board board, DfsSolveMethod method, int maxDepth, float backTrackPercent)
+        public static Dfs Run(Board board, int maxDepth, float backTrackPercent)
         {
             var dfs = new Dfs(maxDepth, 17, backTrackPercent);
-            Console.WriteLine($"Solver: DFS-{method.ToString()}");
-
-            switch (method)
-            {
-                case DfsSolveMethod.Recursive:
-                    dfs.DfsRecursive(board.Clone(), 0, new HashSet<int>(), 0);
-                    break;
-                case DfsSolveMethod.Stack:
-                    dfs.DfsStack(board.Clone(), 0);
-                    break;
-            }
-
+            Console.WriteLine($"Solver: DFS");
+            dfs.Search(board.Clone(), 0);
             return dfs;
         }
 
-        public static Task<Dfs> RunParallelAsync(Board board, DfsSolveMethod method) => RunParallelAsync(board, method, 200, 0.7f);
+        public static Task<Dfs> RunParallelAsync(Board board) => RunParallelAsync(board, 200, 0.7f);
 
-        public static async Task<Dfs> RunParallelAsync(Board board, DfsSolveMethod method, int maxDepth, float backTrackPercent)
+        public static async Task<Dfs> RunParallelAsync(Board board, int maxDepth, float backTrackPercent)
         {
             var attempt = 0;
             var backTrackStep = 0.0501f;
@@ -60,19 +44,8 @@ namespace FreeCellSolver.Solvers
 
             while (dfs.SolvedBoard == null && dfs._backTrackPercent < 1f)
             {
-                Console.WriteLine($"Solver: DFS-{method.ToString()} - using {states.Count} cores - attempt #{++attempt}");
-                IEnumerable<Task> tasks = null;
-
-                switch (method)
-                {
-                    case DfsSolveMethod.Recursive:
-                        // Note we start at depth of move count for parallel
-                        tasks = states.Select((b, i) => Task.Run(() => dfs.DfsRecursive(b, b.MoveCount, new HashSet<int>(), i)));
-                        break;
-                    case DfsSolveMethod.Stack:
-                        tasks = states.Select((b, i) => Task.Run(() => dfs.DfsStack(b, i)));
-                        break;
-                }
+                Console.WriteLine($"Solver: DFS - using {states.Count} cores - attempt #{++attempt}");
+                var tasks = states.Select((b, i) => Task.Run(() => dfs.Search(b, i)));
 
                 await Task.WhenAll(tasks);
 
@@ -89,7 +62,7 @@ namespace FreeCellSolver.Solvers
             return dfs;
         }
 
-        private void DfsStack(Board root, int stateId)
+        private void Search(Board root, int stateId)
         {
             var visited = new HashSet<int>();
             var stack = new Stack<Board>();
@@ -147,61 +120,6 @@ namespace FreeCellSolver.Solvers
                     stack.Push(b);
                 }
             }
-        }
-
-        private int DfsRecursive(Board board, int depth, HashSet<int> visited, int stateId)
-        {
-            var jumpDepth = -1;
-
-            if (board.IsSolved || SolvedBoard != null)
-            {
-                Finalize(board, visited.Count, stateId);
-                return 0;
-            }
-
-            if (depth > _maxDepth)
-            {
-                return _maxDepth;
-            }
-
-            visited.Add(board.GetHashCode());
-
-            var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
-
-            if (moves.Count == 0 || (board.MovesSinceFoundation >= _maxMovesSinceFoundation && !foundFoundation))
-            {
-                return (int)Math.Ceiling(depth * _backTrackPercent);
-            }
-
-            var addedBoards = new Board[moves.Count];
-
-            var c = 0;
-            foreach (var move in moves)
-            {
-                var next = board.Clone();
-                next.ExecuteMove(move, board, !autoMove);
-                addedBoards[c++] = next;
-            }
-
-            // Desc order
-            addedBoards.InsertionSort((x, y) => y.LastMoveRating - x.LastMoveRating);
-
-            foreach (var b in addedBoards)
-            {
-                if (jumpDepth != -1 && jumpDepth < depth)
-                {
-                    break;
-                }
-
-                if (visited.Contains(b.GetHashCode()))
-                {
-                    continue;
-                }
-
-                jumpDepth = DfsRecursive(b, depth + 1, visited, stateId);
-            }
-
-            return jumpDepth;
         }
 
         private void Finalize(Board board, int visitedCount, int stateId)

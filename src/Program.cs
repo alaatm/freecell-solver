@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 using FreeCellSolver.Solvers;
 using System.Collections.Generic;
 using FreeCellSolver.Extensions;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 
 namespace FreeCellSolver
 {
     class Program
     {
-        static async Task/* void*/ Main(string[] args)
+        static async Task /*void*/ Main(string[] args)
         {
             GCSettings.LatencyMode = GCLatencyMode.LowLatency;
-            // Dfs.Run(new Board(Deal.FromDealNum(169)), DfsSolveMethod.Stack);
-            // await RunSingleBenchmarksAsync(DfsSolveMethod.Stack, 5979);
+
+            // var dfs = await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(9830)), DfsSolveMethod.Stack);
+            // await Task.Delay(0);
             await ProcessArgsAsync(args);
         }
 
@@ -27,32 +30,28 @@ namespace FreeCellSolver
                 var arg = args[0];
                 if (arg == "--32k")
                 {
-                    await RunFullBenchmarksAsync(DfsSolveMethod.Stack, 32000, "");
+                    await RunFullBenchmarksAsync(32000, "");
                 }
                 else if (arg == "--full")
                 {
                     var tag = args.Length == 3 && (args[1] == "-t" || args[1] == "--tag") ? args[2] : "current";
 
-                    await RunFullBenchmarksAsync(DfsSolveMethod.Recursive, 1500, tag);
-                    await RunFullBenchmarksAsync(DfsSolveMethod.Stack, 1500, tag);
+                    await RunFullBenchmarksAsync(1500, tag);
                     await PrintBenchmarksSummaryAsync();
                 }
                 else if (arg == "--short")
                 {
-                    await RunShortBenchmarksAsync(DfsSolveMethod.Recursive);
-                    await RunShortBenchmarksAsync(DfsSolveMethod.Stack);
+                    await RunShortBenchmarksAsync();
                 }
                 else if (arg == "--single")
                 {
-                    await RunSingleBenchmarksAsync(DfsSolveMethod.Recursive);
-                    await RunSingleBenchmarksAsync(DfsSolveMethod.Stack);
+                    await RunSingleBenchmarksAsync();
                 }
                 else if (arg == "--deal")
                 {
                     var dealNum = int.Parse(args[1]);
                     var print = args.Length > 2 && args[2] == "--print";
-                    await RunSingleBenchmarksAsync(DfsSolveMethod.Recursive, dealNum, print);
-                    await RunSingleBenchmarksAsync(DfsSolveMethod.Stack, dealNum, print);
+                    await RunSingleBenchmarksAsync(dealNum, print);
                 }
                 else if (arg == "--print-summary")
                 {
@@ -61,20 +60,13 @@ namespace FreeCellSolver
             }
             else
             {
-                RunBenchmarks(DfsSolveMethod.Recursive);
-                RunBenchmarks(DfsSolveMethod.Stack);
+                RunBenchmarks();
             }
         }
 
-        static async Task RunFullBenchmarksAsync(DfsSolveMethod method, int count, string tag)
+        static async Task RunFullBenchmarksAsync(int count, string tag)
         {
-            var logFile = method switch
-            {
-                DfsSolveMethod.Recursive => "dfs-recursive",
-                DfsSolveMethod.Stack => "dfs-stack",
-                _ => null,
-            };
-
+            var logFile = "dfs";
             logFile += count == 32000 ? "-32k" : "";
             logFile += String.IsNullOrWhiteSpace(tag) ? "" : $"-{tag}";
 
@@ -97,7 +89,7 @@ namespace FreeCellSolver
             {
                 fs.WriteLine($"Attempting deal #{i}");
                 sw.Restart();
-                var s = await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(i)), method);
+                var s = await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(i)));
                 fs.WriteLine($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - visited nodes: {s.TotalVisitedNodes,0:n0}");
                 await fs.FlushAsync();
                 GC.Collect();
@@ -105,57 +97,57 @@ namespace FreeCellSolver
             return;
         }
 
-        static async Task RunShortBenchmarksAsync(DfsSolveMethod method)
+        static async Task RunShortBenchmarksAsync()
         {
             var sw = new Stopwatch();
 
             Console.WriteLine($"Processing Deal #169 board");
             sw.Restart();
-            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(169)), method), sw);
+            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(169))), sw);
             GC.Collect();
 
             Console.WriteLine($"Processing Deal #178 board");
             sw.Restart();
-            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(178)), method), sw);
+            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(178))), sw);
             GC.Collect();
 
             Console.WriteLine($"Processing Deal #231 board");
             sw.Restart();
-            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(231)), method), sw);
+            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(231))), sw);
             GC.Collect();
 
             Console.WriteLine($"Processing Deal #261 board");
             sw.Restart();
-            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(261)), method), sw);
+            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(261))), sw);
             GC.Collect();
         }
 
-        static async Task RunSingleBenchmarksAsync(DfsSolveMethod method, int dealNum = 169, bool print = false)
+        static async Task RunSingleBenchmarksAsync(int dealNum = 169, bool print = false)
         {
             var sw = new Stopwatch();
             var b = new Board(Deal.FromDealNum(dealNum));
 
             Console.WriteLine($"Processing Deal #{dealNum} board");
             sw.Restart();
-            var s = await Dfs.RunParallelAsync(b, method);
+            var s = await Dfs.RunParallelAsync(b);
             PrintSummary(s, sw);
             GC.Collect();
 
             if (print && s.SolvedBoard != null)
             {
-                var path = $@"C:\personal-projs\freecell-solver\_temp\{dealNum}\{method}";
+                var path = $@"C:\personal-projs\freecell-solver\_temp\{dealNum}";
                 Directory.CreateDirectory(path);
                 Console.WriteLine($"Printing moves to {path}");
                 s.SolvedBoard.PrintMoves(path, b.Tableaus);
             }
         }
 
-        static void RunBenchmarks(DfsSolveMethod method)
+        static void RunBenchmarks()
         {
             var sw = new Stopwatch();
             Console.WriteLine($"Processing extremly fast board");
             sw.Restart();
-            PrintSummary(Dfs.Run(new Board(Deal.FromDealNum(2)), method), sw);
+            PrintSummary(Dfs.Run(new Board(Deal.FromDealNum(2))), sw);
             GC.Collect();
         }
 
