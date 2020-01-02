@@ -36,10 +36,10 @@ namespace FreeCellSolver.Solvers
             switch (method)
             {
                 case DfsSolveMethod.Recursive:
-                    dfs.DfsRecursive(board, 0, new HashSet<int>(), 0);
+                    dfs.DfsRecursive(board.Clone(), 0, new HashSet<int>(), 0);
                     break;
                 case DfsSolveMethod.Stack:
-                    dfs.DfsStack(board, 0);
+                    dfs.DfsStack(board.Clone(), 0);
                     break;
             }
 
@@ -56,7 +56,7 @@ namespace FreeCellSolver.Solvers
             var maxMovesSinceFoundationStep = 5;
 
             var dfs = new Dfs(maxDepth, maxMovesSinceFoundation, backTrackPercent);
-            var states = ParallelHelper.GetStates(board, Environment.ProcessorCount);
+            var states = ParallelHelper.GetStates(board.Clone(), Environment.ProcessorCount);
 
             while (dfs.SolvedBoard == null && dfs._backTrackPercent < 1f)
             {
@@ -67,10 +67,10 @@ namespace FreeCellSolver.Solvers
                 {
                     case DfsSolveMethod.Recursive:
                         // Note we start at depth of move count for parallel
-                        tasks = states.Select((b, i) => Task.Run(() => dfs.DfsRecursive(b.Clone(), b.Moves.Count, new HashSet<int>(), i)));
+                        tasks = states.Select((b, i) => Task.Run(() => dfs.DfsRecursive(b, b.MoveCount, new HashSet<int>(), i)));
                         break;
                     case DfsSolveMethod.Stack:
-                        tasks = states.Select((b, i) => Task.Run(() => dfs.DfsStack(b.Clone(), i)));
+                        tasks = states.Select((b, i) => Task.Run(() => dfs.DfsStack(b, i)));
                         break;
                 }
 
@@ -100,7 +100,7 @@ namespace FreeCellSolver.Solvers
             while (stack.Count > 0)
             {
                 var board = stack.Pop();
-                var depth = board.Moves.Count;
+                var depth = board.MoveCount;
 
                 if (board.IsSolved || SolvedBoard != null)
                 {
@@ -135,7 +135,7 @@ namespace FreeCellSolver.Solvers
                 for (var i = moves.Count - 1; i >= 0; i--)
                 {
                     var next = board.Clone();
-                    next.ExecuteMove(moves[i], !autoMove);
+                    next.ExecuteMove(moves[i], board, !autoMove);
                     addedBoards[c++] = next;
                 }
 
@@ -179,7 +179,7 @@ namespace FreeCellSolver.Solvers
             foreach (var move in moves)
             {
                 var next = board.Clone();
-                next.ExecuteMove(move, !autoMove);
+                next.ExecuteMove(move, board, !autoMove);
                 addedBoards[c++] = next;
             }
 

@@ -16,7 +16,10 @@ namespace FreeCellSolver
         private int _maxAllowedMoveSize => Reserve.FreeCount + Tableaus.EmptyTableauCount + 1;
 
         public int MovesSinceFoundation { get; private set; }
-        public List<Move> Moves { get; private set; }
+        public int MoveCount { get; private set; }
+        public Move LastMove { get; private set; }
+        public Board Prev { get; private set; }
+
         public Reserve Reserve { get; private set; }
         public Foundation Foundation { get; private set; }
         public Tableaus Tableaus { get; private set; }
@@ -24,21 +27,23 @@ namespace FreeCellSolver
 
         public int LastMoveRating { get; private set; }
 
-        private Board(Tableaus tableaus, Reserve reserve, Foundation foundation, List<Move> moves, int movesSinceFoundation)
-        {
-            Tableaus = tableaus.Clone();
-            Reserve = reserve.Clone();
-            Foundation = foundation.Clone();
-            Moves = moves.ToList();
-            MovesSinceFoundation = movesSinceFoundation;
-        }
-
         public Board(Tableaus tableaus)
         {
             Tableaus = tableaus.Clone();
             Reserve = new Reserve();
             Foundation = new Foundation();
-            Moves = new List<Move>();
+        }
+
+        private Board(Board copy)
+        {
+            Tableaus = copy.Tableaus.Clone();
+            Reserve = copy.Reserve.Clone();
+            Foundation = copy.Foundation.Clone();
+
+            MovesSinceFoundation = copy.MovesSinceFoundation;
+            MoveCount = copy.MoveCount;
+            LastMove = copy.LastMove;
+            Prev = copy.Prev;
         }
 
         public List<Move> GetValidMoves(out bool foundationFound, out bool autoMove)
@@ -46,11 +51,7 @@ namespace FreeCellSolver
             var tableaus = Tableaus;
             var reserve = Reserve;
             var foundation = Foundation;
-
-            var currentMoves = Moves;
-            var currentMovesCount = currentMoves.Count;
-
-            var lastMove = currentMovesCount > 0 ? currentMoves[currentMovesCount - 1] : null;
+            var lastMove = LastMove;
 
             var moves = new List<Move>();
             foundationFound = autoMove = false;
@@ -227,9 +228,11 @@ namespace FreeCellSolver
             }
         }
 
-        public void ExecuteMove(Move move, bool rate = false)
+        public void ExecuteMove(Move move, Board prev, bool rate = false)
         {
-            Moves.Add(move);
+            MoveCount++;
+            LastMove = move;
+            Prev = prev;
 
             if (rate)
             {
@@ -271,16 +274,20 @@ namespace FreeCellSolver
             Debug.Assert(new HashSet<Card>(_allCards).Count == 52);
         }
 
-        public void UndoLastMove()
+        public void Undo()
         {
-            if (Moves.Count == 0)
+            var lastMove = LastMove;
+
+            if (lastMove == null)
             {
                 return;
             }
 
-            var lastMove = Moves[Moves.Count - 1];
+            var prev = Prev;
 
-            Moves.RemoveAt(Moves.Count - 1);
+            MoveCount--;
+            Prev = prev.Prev;
+            LastMove = prev.LastMove;
 
             switch (lastMove.Type)
             {
@@ -427,8 +434,7 @@ namespace FreeCellSolver
             }
         }
 
-        public Board Clone()
-            => new Board(Tableaus, Reserve, Foundation, Moves, MovesSinceFoundation);
+        public Board Clone() => new Board(this);
 
         public override string ToString()
         {
@@ -448,12 +454,35 @@ namespace FreeCellSolver
             replayBoard.ToImage().Save(Path.Join(path, "0.jpg"));
 
             var i = 1;
-            foreach (var move in Moves)
+            foreach (var move in GetMoves())
             {
-                replayBoard.ExecuteMove(move);
+                replayBoard.ExecuteMove(move, null);
                 replayBoard.ToImage().Save(Path.Join(path, $"{i++}.jpg"));
             }
         }
+
+        private IEnumerable<Move> GetMoves()
+        {
+            if (Prev == null)
+            {
+                yield break;
+            }
+
+            var prev = this;
+            var moves = new Stack<Move>();
+
+            do
+            {
+                moves.Push(prev.LastMove);
+                prev = prev.Prev;
+            } while (prev.Prev != null);
+
+            foreach (var move in moves)
+            {
+                yield return move;
+            }
+        }
+
 
         #region Equality overrides and overloads
         public bool Equals(Board other)
