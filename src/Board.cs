@@ -228,16 +228,11 @@ namespace FreeCellSolver
             }
         }
 
-        public void ExecuteMove(Move move, Board prev, bool rate = false)
+        public void ExecuteMove(Move move, Board prev)
         {
             MoveCount++;
             LastMove = move;
             Prev = prev;
-
-            if (rate)
-            {
-                RateMove(move);
-            }
 
             switch (move.Type)
             {
@@ -312,7 +307,7 @@ namespace FreeCellSolver
             Debug.Assert(new HashSet<Card>(_allCards).Count == 52);
         }
 
-        private void RateMove(Move move)
+        public void RateMove(Move move)
         {
             const int RATING_FOUNDATION = 1000;
             const int RATING_CLOSEDTABLEAUFOLLOWUP = 20;

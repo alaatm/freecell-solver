@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using FreeCellSolver.Extensions;
@@ -95,6 +96,7 @@ namespace FreeCellSolver.Solvers
                 closed.Add(hc);
 
                 var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
+                Debug.Assert(autoMove && moves.Count == 0 || true);
 
                 if (moves.Count == 0 || (board.MovesSinceFoundation >= _maxMovesSinceFoundation && !foundFoundation))
                 {
@@ -108,7 +110,11 @@ namespace FreeCellSolver.Solvers
                 for (var i = moves.Count - 1; i >= 0; i--)
                 {
                     var next = board.Clone();
-                    next.ExecuteMove(moves[i], board, !autoMove);
+                    if (!autoMove)
+                    {
+                        next.RateMove(moves[i]);
+                    }
+                    next.ExecuteMove(moves[i], board);
                     addedBoards[c++] = next;
                 }
 
