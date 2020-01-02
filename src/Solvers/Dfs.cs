@@ -64,20 +64,20 @@ namespace FreeCellSolver.Solvers
 
         private void Search(Board root, int stateId)
         {
-            var visited = new HashSet<int>();
-            var stack = new Stack<Board>();
+            var closed = new HashSet<int>();
+            var open = new Stack<Board>();
             var jumpDepth = 0;
 
-            stack.Push(root);
+            open.Push(root);
 
-            while (stack.Count > 0)
+            while (open.Count > 0)
             {
-                var board = stack.Pop();
+                var board = open.Pop();
                 var depth = board.MoveCount;
 
                 if (board.IsSolved || SolvedBoard != null)
                 {
-                    Finalize(board, visited.Count, stateId);
+                    Finalize(board, closed.Count, stateId);
                     break;
                 }
 
@@ -88,11 +88,11 @@ namespace FreeCellSolver.Solvers
                 jumpDepth = 0;
 
                 var hc = board.GetHashCode();
-                if (visited.Contains(hc) || depth > _maxDepth)
+                if (closed.Contains(hc) || depth > _maxDepth)
                 {
                     continue;
                 }
-                visited.Add(hc);
+                closed.Add(hc);
 
                 var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
 
@@ -117,7 +117,7 @@ namespace FreeCellSolver.Solvers
 
                 foreach (var b in addedBoards)
                 {
-                    stack.Push(b);
+                    open.Push(b);
                 }
             }
         }
