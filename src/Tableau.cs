@@ -243,7 +243,7 @@ namespace FreeCellSolver
         {
             var sb = new StringBuilder();
 
-            for (var i = Size - 1; i >= 0; i--)
+            for (var i = 0; i < Size; i++)
             {
                 sb.AppendLine(Card.Get(_state[i]).ToString());
             }
