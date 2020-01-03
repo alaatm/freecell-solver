@@ -3,19 +3,21 @@ using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver.Solvers
 {
     public class Dfs
     {
+        private static ConcurrentDictionary<int, byte> _closed;
+
         private readonly int _maxDepth;
         private readonly int _maxMovesSinceFoundation;
         private readonly float _backTrackPercent;
 
         public Board SolvedBoard { get; private set; }
         public int VisitedNodes { get; private set; }
-        public int TotalVisitedNodes { get; private set; }
         public int SolvedFromId { get; private set; }
 
         public Dfs(int maxDepth, int maxMovesSinceFoundation, float backTrackPercent)
@@ -27,6 +29,10 @@ namespace FreeCellSolver.Solvers
             const int maxDepth = 200;
             const int maxMovesSinceFoundation = 17;
             const float backTrackPercent = 0.7f;
+
+            // Should obviously use a local HashSet<int> here but we don't care much about this
+            // non parallel version, its only here for debugging.
+            _closed = new ConcurrentDictionary<int, byte>(1, 1000);
 
             var dfs = new Dfs(maxDepth, maxMovesSinceFoundation, backTrackPercent);
             Console.WriteLine($"Solver: DFS");
@@ -50,6 +56,8 @@ namespace FreeCellSolver.Solvers
 
             do
             {
+                _closed = new ConcurrentDictionary<int, byte>(states.Count, 1000);
+
                 dfs = new Dfs(
                     maxDepth,
                     maxMovesSinceFoundation + maxMovesSinceFoundationStep * attempt,
@@ -66,7 +74,6 @@ namespace FreeCellSolver.Solvers
 
         private void Search(Board root, int stateId)
         {
-            var closed = new HashSet<int>();
             var open = new Stack<Board>();
             var jumpDepth = 0;
 
@@ -79,7 +86,7 @@ namespace FreeCellSolver.Solvers
 
                 if (board.IsSolved || SolvedBoard != null)
                 {
-                    Finalize(board, closed.Count, stateId);
+                    Finalize(board, stateId);
                     break;
                 }
 
@@ -90,11 +97,11 @@ namespace FreeCellSolver.Solvers
                 jumpDepth = 0;
 
                 var hc = board.GetHashCode();
-                if (closed.Contains(hc) || depth > _maxDepth)
+                if (_closed.ContainsKey(hc) || depth > _maxDepth)
                 {
                     continue;
                 }
-                closed.Add(hc);
+                _closed.AddOrUpdate(hc, (byte)1, (k, v) => (byte)1);
 
                 var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
                 Debug.Assert(autoMove && moves.Count == 1 || !autoMove);
@@ -127,21 +134,16 @@ namespace FreeCellSolver.Solvers
                     open.Push(b);
                 }
             }
-
-            lock (this)
-            {
-                TotalVisitedNodes += closed.Count;
-            }
         }
 
-        private void Finalize(Board board, int visitedCount, int stateId)
+        private void Finalize(Board board, int stateId)
         {
             lock (this)
             {
                 if (SolvedBoard == null)
                 {
                     SolvedBoard = board;
-                    VisitedNodes = visitedCount;
+                    VisitedNodes = _closed.Count;
                     SolvedFromId = stateId;
                 }
             }

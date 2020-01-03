@@ -84,7 +84,7 @@ namespace FreeCellSolver
                 fs.WriteLine($"Attempting deal #{i}");
                 sw.Restart();
                 var s = await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(i)));
-                fs.WriteLine($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - visited nodes: {s.VisitedNodes,0:n0} - total visited nodes: {s.TotalVisitedNodes,0:n0}");
+                fs.WriteLine($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - visited nodes: {s.VisitedNodes,0:n0}");
                 await fs.FlushAsync();
                 GC.Collect();
             }
@@ -147,13 +147,14 @@ namespace FreeCellSolver
 
         static void PrintSummary(Dfs s, Stopwatch sw)
         {
-            Console.WriteLine($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - initial id: {s.SolvedFromId} - visited nodes: {s.VisitedNodes,0:n0} - total visited nodes: {s.TotalVisitedNodes,0:n0}");
+            Console.Write($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - initial id: {s.SolvedFromId} - visited nodes: {s.VisitedNodes,0:n0}");
+            Console.WriteLine(s.SolvedBoard != null ? $" - #moves: {s.SolvedBoard.MoveCount}" : "");
             Console.WriteLine();
         }
 
         static async Task PrintBenchmarksSummaryAsync()
         {
-            var tests = new List<(DateTime createDate, string name, TimeSpan ts, int total, int visited, int totalVisited, int failed)>();
+            var tests = new List<(DateTime createDate, string name, TimeSpan ts, int total, int visited, int failed)>();
             var logFiles = Directory.GetFiles($@"C:\personal-projs\freecell-solver\benchmarks", "*.log").Select(f => new { Path = f, CreateDate = File.GetLastWriteTime(f) });
             var len = logFiles.Select(f => Path.GetFileNameWithoutExtension(f.Path).Length).Max();
 
@@ -165,7 +166,6 @@ namespace FreeCellSolver
                 var failed = lines.Count(p => p.IndexOf("Bailed") >= 0);
                 var ts = new TimeSpan();
                 var nc = 0;
-                var tc = 0;
 
                 for (var l = 1; l < lines.Length; l += 2)
                 {
@@ -174,32 +174,26 @@ namespace FreeCellSolver
                     ts = ts.Add(TimeSpan.Parse(lines[l].Substring(idxStart, length)));
 
                     idxStart = lines[l].IndexOf("visited nodes: ") + "visited nodes: ".Length;
-                    length = lines[l].IndexOf(" - ", idxStart) - idxStart;
-                    nc += int.Parse(lines[l].Substring(idxStart, length).Replace(",", ""));
-
-                    idxStart = lines[l].IndexOf("total visited nodes: ") + "total visited nodes: ".Length;
-                    tc += int.Parse(lines[l].Substring(idxStart).Replace(",", ""));
+                    nc += int.Parse(lines[l].Substring(idxStart).Replace(",", ""));
                 }
 
-                tests.Add((log.CreateDate, Path.GetFileNameWithoutExtension(log.Path), ts, count, nc, tc, failed));
+                tests.Add((log.CreateDate, Path.GetFileNameWithoutExtension(log.Path), ts, count, nc, failed));
             }
 
             var maxLenName = tests.Select(p => p.name.Length).Max() + 1;
             var maxLenVisited = tests.Select(p => p.visited.ToString("n0").Length).Max();
-            var maxLenTotalVisited = tests.Select(p => p.totalVisited.ToString("n0").Length).Max();
             var maxLenTotal = tests.Select(p => p.total.ToString("n0").Length).Max();
             var maxLenFailed = tests.Select(p => p.failed.ToString("n0").Length).Max();
 
-            foreach (var (createDate, name, ts, total, visited, totalVisited, failed) in tests.OrderBy(p => p.createDate))
+            foreach (var (createDate, name, ts, total, visited, failed) in tests.OrderBy(p => p.createDate))
             {
                 var d = createDate.ToString("dd-MM-yy HH:mm:ss");
                 var n = name.PadRight(maxLenName);
                 var v = visited.ToString("n0").PadLeft(maxLenVisited);
-                var tv = totalVisited.ToString("n0").PadLeft(maxLenTotalVisited);
                 var c = total.ToString("n0").PadLeft(maxLenTotal);
                 var f = failed.ToString("n0").PadLeft(maxLenFailed);
 
-                Console.WriteLine($"{d} - {n}: {ts} - visited: {v} - total visited: {tv} - total: {c} - failed: {f}");
+                Console.WriteLine($"{d} - {n}: {ts} - visited: {v} - total: {c} - failed: {f}");
             }
         }
     }
