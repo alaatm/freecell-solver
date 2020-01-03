@@ -17,8 +17,8 @@ namespace FreeCellSolver.Solvers
         private readonly float _backTrackPercent;
 
         public Board SolvedBoard { get; private set; }
-        public int VisitedNodes { get; private set; }
         public int SolvedFromId { get; private set; }
+        public int VisitedNodes => _closed.Count;
 
         public Dfs(int maxDepth, int maxMovesSinceFoundation, float backTrackPercent)
             => (_maxDepth, _maxMovesSinceFoundation, _backTrackPercent) = (maxDepth, maxMovesSinceFoundation, backTrackPercent);
@@ -143,7 +143,6 @@ namespace FreeCellSolver.Solvers
                 if (SolvedBoard == null)
                 {
                     SolvedBoard = board;
-                    VisitedNodes = _closed.Count;
                     SolvedFromId = stateId;
                 }
             }
