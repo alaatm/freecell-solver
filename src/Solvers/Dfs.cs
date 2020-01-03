@@ -145,8 +145,6 @@ namespace FreeCellSolver.Solvers
                     VisitedNodes = visitedCount;
                     SolvedFromId = stateId;
                 }
-
-                TotalVisitedNodes += visitedCount;
             }
         }
     }
