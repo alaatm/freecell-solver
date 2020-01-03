@@ -238,20 +238,15 @@ namespace FreeCellSolver
             {
                 case MoveType.TableauToFoundation:
                     MovesSinceFoundation = 0;
-                    var t = Tableaus[move.From];
-                    t.Move(Foundation);
+                    Tableaus[move.From].Move(Foundation);
                     break;
                 case MoveType.TableauToReserve:
                     MovesSinceFoundation++;
-                    t = Tableaus[move.From];
-                    t.Move(Reserve, move.To);
+                    Tableaus[move.From].Move(Reserve, move.To);
                     break;
                 case MoveType.TableauToTableau:
                     MovesSinceFoundation++;
-                    var t1 = Tableaus[move.From];
-                    var t2 = Tableaus[move.To];
-                    t1.Move(t2, move.Size);
-
+                    Tableaus[move.From].Move(Tableaus[move.To], move.Size);
                     Debug.Assert(move.Size <= _maxAllowedMoveSize - (Tableaus[move.To].IsEmpty ? 1 : 0));
                     break;
                 case MoveType.ReserveToFoundation:
@@ -260,8 +255,7 @@ namespace FreeCellSolver
                     break;
                 case MoveType.ReserveToTableau:
                     MovesSinceFoundation++;
-                    t = Tableaus[move.To];
-                    Reserve.Move(move.From, t);
+                    Reserve.Move(move.From, Tableaus[move.To]);
                     break;
             }
 
