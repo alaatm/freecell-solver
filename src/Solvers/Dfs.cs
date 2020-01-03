@@ -22,23 +22,27 @@ namespace FreeCellSolver.Solvers
             => (_maxDepth, _maxMovesSinceFoundation, _backTrackPercent) = (maxDepth, maxMovesSinceFoundation, backTrackPercent);
 
         // Non-parallel version used primarilly for debugging
-        public static Dfs Run(Board board) => Run(board, 200, 0.7f);
-
-        public static Dfs Run(Board board, int maxDepth, float backTrackPercent)
+        public static Dfs Run(Board board)
         {
-            var dfs = new Dfs(maxDepth, 17, backTrackPercent);
+            const int maxDepth = 200;
+            const int maxMovesSinceFoundation = 17;
+            const float backTrackPercent = 0.7f;
+
+            var dfs = new Dfs(maxDepth, maxMovesSinceFoundation, backTrackPercent);
             Console.WriteLine($"Solver: DFS");
             dfs.Search(board.Clone(), 0);
             return dfs;
         }
 
-        public static Task<Dfs> RunParallelAsync(Board board) => RunParallelAsync(board, 200, 0.7f);
-
-        public static async Task<Dfs> RunParallelAsync(Board board, int maxDepth, float backTrackPercent)
+        public static async Task<Dfs> RunParallelAsync(Board board)
         {
+            const int maxDepth = 200;
+            const int maxMovesSinceFoundation = 17;
+            const float backTrackPercent = 0.7f;
+
             var attempt = 0;
-            var backTrackStep = 0.0501f;
-            var maxMovesSinceFoundation = 17;
+
+            var backTrackPercentStep = 0.0501f;
             var maxMovesSinceFoundationStep = 5;
 
             Dfs dfs;
@@ -49,18 +53,13 @@ namespace FreeCellSolver.Solvers
                 dfs = new Dfs(
                     maxDepth,
                     maxMovesSinceFoundation + maxMovesSinceFoundationStep * attempt,
-                    backTrackPercent + backTrackStep * attempt);
+                    backTrackPercent + backTrackPercentStep * attempt);
 
                 Console.WriteLine($"Solver: DFS - using {states.Count} cores - attempt #{++attempt}");
                 var tasks = states.Select((b, i) => Task.Run(() => dfs.Search(b, i)));
 
                 await Task.WhenAll(tasks);
-
-                if (dfs.SolvedBoard != null)
-                {
-                    break;
-                }
-            } while (dfs.SolvedBoard == null && dfs._backTrackPercent + backTrackStep < 1f);
+            } while (dfs.SolvedBoard == null && dfs._backTrackPercent + backTrackPercentStep < 1f);
 
             return dfs;
         }
