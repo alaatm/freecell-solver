@@ -97,7 +97,7 @@ namespace FreeCellSolver.Solvers
                 closed.Add(hc);
 
                 var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
-                Debug.Assert(autoMove && moves.Count == 0 || true);
+                Debug.Assert(autoMove && moves.Count == 1 || !autoMove);
 
                 if (moves.Count == 0 || (board.MovesSinceFoundation >= _maxMovesSinceFoundation && !foundFoundation))
                 {
