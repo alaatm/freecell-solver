@@ -14,6 +14,7 @@ namespace FreeCellSolver.Solvers
         private readonly float _backTrackPercent;
 
         public Board SolvedBoard { get; private set; }
+        public int VisitedNodes { get; private set; }
         public int TotalVisitedNodes { get; private set; }
         public int SolvedFromId { get; private set; }
 
@@ -40,11 +41,16 @@ namespace FreeCellSolver.Solvers
             var maxMovesSinceFoundation = 17;
             var maxMovesSinceFoundationStep = 5;
 
-            var dfs = new Dfs(maxDepth, maxMovesSinceFoundation, backTrackPercent);
+            Dfs dfs;
             var states = ParallelHelper.GetStates(board.Clone(), Environment.ProcessorCount);
 
-            while (dfs.SolvedBoard == null && dfs._backTrackPercent < 1f)
+            do
             {
+                dfs = new Dfs(
+                    maxDepth,
+                    maxMovesSinceFoundation + maxMovesSinceFoundationStep * attempt,
+                    backTrackPercent + backTrackStep * attempt);
+
                 Console.WriteLine($"Solver: DFS - using {states.Count} cores - attempt #{++attempt}");
                 var tasks = states.Select((b, i) => Task.Run(() => dfs.Search(b, i)));
 
@@ -54,11 +60,7 @@ namespace FreeCellSolver.Solvers
                 {
                     break;
                 }
-
-                dfs = new Dfs(maxDepth, maxMovesSinceFoundation + maxMovesSinceFoundationStep, backTrackPercent + backTrackStep);
-                backTrackStep += 0.0501f;
-                maxMovesSinceFoundationStep += 5;
-            }
+            } while (dfs.SolvedBoard == null && dfs._backTrackPercent + backTrackStep < 1f);
 
             return dfs;
         }
@@ -126,6 +128,11 @@ namespace FreeCellSolver.Solvers
                     open.Push(b);
                 }
             }
+
+            lock (this)
+            {
+                TotalVisitedNodes += closed.Count;
+            }
         }
 
         private void Finalize(Board board, int visitedCount, int stateId)
@@ -135,9 +142,11 @@ namespace FreeCellSolver.Solvers
                 if (SolvedBoard == null)
                 {
                     SolvedBoard = board;
-                    TotalVisitedNodes = visitedCount;
+                    VisitedNodes = visitedCount;
                     SolvedFromId = stateId;
                 }
+
+                TotalVisitedNodes += visitedCount;
             }
         }
     }
