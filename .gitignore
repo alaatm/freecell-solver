@@ -353,4 +353,11 @@ _temp/
 
 benchmarks/
 
+# Cake build support files
+tools/
+
+# Coverage files
+coverage/
+lcov.info
+
 refs.txt

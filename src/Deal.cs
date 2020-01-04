@@ -8,7 +8,6 @@ namespace FreeCellSolver
 {
     public static class Deal
     {
-
         public static Tableaus FromDealNum(int dealNum)
         {
             var cards = Enumerable.Range(0, 52).Reverse().ToList();
