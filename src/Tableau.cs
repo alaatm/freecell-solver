@@ -219,11 +219,6 @@ namespace FreeCellSolver
             var sortedSize = 1;
             for (var i = 0; i < size - 1; i++)
             {
-                if (i == size)
-                {
-                    break;
-                }
-
                 var current = Card.Get(_state[size - i - 1]);
                 var above = Card.Get(_state[size - (i + 1) - 1]);
                 if (current.IsBelow(above))
@@ -241,11 +236,16 @@ namespace FreeCellSolver
 
         public override string ToString()
         {
+            var size = Size;
             var sb = new StringBuilder();
 
-            for (var i = 0; i < Size; i++)
+            for (var i = 0; i < size; i++)
             {
-                sb.AppendLine(Card.Get(_state[i]).ToString());
+                sb.Append(Card.Get(_state[i]).ToString());
+                if (i < size - 1)
+                {
+                    sb.AppendLine();
+                }
             }
 
             return sb.ToString();
