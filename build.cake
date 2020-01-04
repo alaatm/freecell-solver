@@ -28,6 +28,7 @@ Task("Clean")
     CleanDirectories("./test/**/bin");
     CleanDirectories("./test/**/obj");
     CleanDirectories("./coverage/**");
+    if (FileExists("./lcov.info")) DeleteFile("./lcov.info");    
 });
 
 Task("Restore")
@@ -80,15 +81,11 @@ Task("Cover")
 
     DotNetCoreTest(".", testSettings, coverletSettings);
 
-    // Copy lcov file to root for visual code coverage on vscode
+    // Copy lcov file to root for code coverage highlight in vscode
     var lcov = GetFiles("./coverage/*.info").Single();
     CopyFile(lcov, "./lcov.info");
-});
 
-Task("Coverage")
-    .IsDependentOn("Cover")
-    .Does(() =>
-{
+    // Generate coverage report
     var opencover = GetFiles("./coverage/*.opencover.xml").Single();
     ReportGenerator(File(opencover.FullPath), Directory("./coverage"));
 });
