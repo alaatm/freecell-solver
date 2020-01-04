@@ -263,7 +263,7 @@ namespace FreeCellSolver
             }
 
             // Assert count and uniqueness
-            Debug.Assert(new HashSet<Card>(_allCards).Count == 52);
+            Debug.Assert(_allCards.Count() == 52 && new HashSet<Card>(_allCards).Count == 52);
         }
 
         public void Undo()
@@ -301,7 +301,7 @@ namespace FreeCellSolver
             }
 
             // Assert count and uniqueness
-            Debug.Assert(new HashSet<Card>(_allCards).Count == 52);
+            Debug.Assert(_allCards.Count() == 52 && new HashSet<Card>(_allCards).Count == 52);
         }
 
         public void RateMove(Move move)
