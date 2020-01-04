@@ -81,7 +81,7 @@ namespace FreeCellSolver
             {
                 fs.WriteLine($"Attempting deal #{i}");
                 sw.Restart();
-                var s = await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(i)));
+                var s = await Dfs.RunParallelAsync(Board.FromDealNum(i));
                 fs.WriteLine($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - visited nodes: {s.VisitedNodes,0:n0}");
                 await fs.FlushAsync();
                 GC.Collect();
@@ -95,29 +95,29 @@ namespace FreeCellSolver
 
             Console.WriteLine($"Processing Deal #169 board");
             sw.Restart();
-            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(169))), sw);
+            PrintSummary(await Dfs.RunParallelAsync(Board.FromDealNum(169)), sw);
             GC.Collect();
 
             Console.WriteLine($"Processing Deal #178 board");
             sw.Restart();
-            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(178))), sw);
+            PrintSummary(await Dfs.RunParallelAsync(Board.FromDealNum(178)), sw);
             GC.Collect();
 
             Console.WriteLine($"Processing Deal #231 board");
             sw.Restart();
-            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(231))), sw);
+            PrintSummary(await Dfs.RunParallelAsync(Board.FromDealNum(231)), sw);
             GC.Collect();
 
             Console.WriteLine($"Processing Deal #261 board");
             sw.Restart();
-            PrintSummary(await Dfs.RunParallelAsync(new Board(Deal.FromDealNum(261))), sw);
+            PrintSummary(await Dfs.RunParallelAsync(Board.FromDealNum(261)), sw);
             GC.Collect();
         }
 
         static async Task RunSingleBenchmarksAsync(int dealNum = 169, bool print = false)
         {
             var sw = new Stopwatch();
-            var b = new Board(Deal.FromDealNum(dealNum));
+            var b = Board.FromDealNum(dealNum);
 
             Console.WriteLine($"Processing Deal #{dealNum} board");
             sw.Restart();
@@ -139,7 +139,7 @@ namespace FreeCellSolver
             var sw = new Stopwatch();
             Console.WriteLine($"Processing extremly fast board");
             sw.Restart();
-            PrintSummary(Dfs.Run(new Board(Deal.FromDealNum(2))), sw);
+            PrintSummary(Dfs.Run(Board.FromDealNum(2)), sw);
             GC.Collect();
         }
 

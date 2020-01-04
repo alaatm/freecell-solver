@@ -46,6 +46,10 @@ namespace FreeCellSolver
             Prev = copy.Prev;
         }
 
+        public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
+
+        public static Board FromString(string deal) => BoardExtensions.FromString(deal);
+
         public List<Move> GetValidMoves(out bool foundationFound, out bool autoMove)
         {
             var tableaus = Tableaus;
