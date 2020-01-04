@@ -27,11 +27,13 @@ namespace FreeCellSolver
 
         public int LastMoveRating { get; private set; }
 
-        public Board(Tableaus tableaus)
+        public Board(Tableaus tableaus) : this(new Reserve(), new Foundation(), tableaus) { }
+
+        public Board(Reserve reserve, Foundation foundation, Tableaus tableaus)
         {
             Tableaus = tableaus.Clone();
-            Reserve = new Reserve();
-            Foundation = new Foundation();
+            Reserve = reserve.Clone();
+            Foundation = foundation.Clone();
         }
 
         private Board(Board copy)
