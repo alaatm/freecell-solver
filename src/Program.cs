@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ namespace FreeCellSolver
     {
         static async Task /*void*/ Main(string[] args)
         {
-            GCSettings.LatencyMode = GCLatencyMode.LowLatency;
             await ProcessArgsAsync(args);
         }
 
