@@ -83,9 +83,6 @@ namespace FreeCellSolver
         // Note no error checks are made!
         public static Card Get(Suit suit, Rank rank) => _allCards[(short)suit + ((short)rank << 2)];
 
-        public bool IsAbove(Card foundationTop)
-            => Suit == foundationTop.Suit && Rank == foundationTop.Rank + 1;
-
         public bool IsBelow(Card tableauTop)
             => Color != tableauTop.Color && Rank + 1 == tableauTop.Rank;
 

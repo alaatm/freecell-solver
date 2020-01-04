@@ -34,27 +34,5 @@ namespace FreeCellSolver.Extensions
 
             return list;
         }
-
-        public static int Times<T>(this IEnumerable<T> list, T val)
-        {
-            var c = 0;
-            foreach (var v in list)
-            {
-                if (v.Equals(val))
-                {
-                    c++;
-                }
-            }
-
-            return c;
-        }
-
-        public static Stack<T> Clone<T>(this Stack<T> original)
-        {
-            var arr = new T[original.Count];
-            original.CopyTo(arr, 0);
-            Array.Reverse(arr);
-            return new Stack<T>(arr);
-        }
     }
 }
