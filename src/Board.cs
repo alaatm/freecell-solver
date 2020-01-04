@@ -73,8 +73,7 @@ namespace FreeCellSolver
                     if (IsAutoMove(reserve[r]))
                     {
                         autoMove = true;
-                        Debug.Assert(moves.Count == 1);
-                        return moves;
+                        return new List<Move> { moves[moves.Count - 1] };
                     }
                 }
             }
@@ -222,12 +221,12 @@ namespace FreeCellSolver
                 if (card.Color == Color.Black)
                 {
                     return foundation[Suit.Diamonds] >= rank - 1
-                    && foundation[Suit.Hearts] >= rank - 1;
+                        && foundation[Suit.Hearts] >= rank - 1;
                 }
                 else
                 {
                     return foundation[Suit.Clubs] >= rank - 1
-                    && foundation[Suit.Spades] >= rank - 1;
+                        && foundation[Suit.Spades] >= rank - 1;
                 }
             }
         }
