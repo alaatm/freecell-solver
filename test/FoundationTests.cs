@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace FreeCellSolver.Test
@@ -7,49 +8,63 @@ namespace FreeCellSolver.Test
         [Fact]
         public void State_is_initialized_to_empty_foundation()
         {
-            var foundation = new Foundation();
+            var f = new Foundation();
 
-            foreach (var suit in Suits.Values)
+            for (var i = 0; i < 4; i++)
             {
-                Assert.Equal(-1, foundation[suit]);
+                Assert.Equal(-1, f[(Suit)i]);
             }
-        }
-
-        [Theory]
-        [InlineData(Rank.Ace, -1, true)]  // Ace to empty
-        [InlineData(Rank.R2, -1, false)]  // Two to empty
-        [InlineData(Rank.R2, 1, true)]    // Two to ace
-        public void CanPush_returns_whether_card_can_be_pushed_or_not(Rank rankToPush, int currentTop, bool expectedCanPush)
-        {
-            var suit = Suit.Spades;
-            var foundation = new Foundation();
-
-            for (var r = 0; r < currentTop; r++)
-            {
-                foundation.Push(Card.Get(suit, (Rank)r));
-            }
-
-            Assert.Equal(expectedCanPush, foundation.CanPush(Card.Get(suit, rankToPush)));
         }
 
         [Fact]
-        public void PushTest()
+        public void Indexer_returns_value_of_specified_suit()
         {
-            var foundation = new Foundation();
-
-            foreach (var suit in Suits.Values)
-            {
-                Assert.Equal(-1, foundation[suit]);
-
-                foreach (var rank in Ranks.Values)
-                {
-                    var card = Card.Get(suit, rank);
-                    foundation.Push(card);
-
-                    Assert.Equal((int)rank, foundation[suit]);
-                    Assert.Equal((int)rank, foundation[suit]);
-                }
-            }
+            var f = new Foundation(5, -1, -1, -1);
+            Assert.Equal(5, f[Suit.Clubs]);
         }
+
+        [Fact]
+        public void IsComplete_returns_whether_foundation_is_complete()
+        {
+            // Complete
+            Assert.True(new Foundation(12, 12, 12, 12).IsComplete);
+            // Missing King of Spades
+            Assert.False(new Foundation(12, 12, 12, 11).IsComplete);
+        }
+
+        [Fact]
+        public void CanPush_returns_whether_card_can_be_pushed()
+        {
+            var f = new Foundation(-1, -1, -1, -1);
+
+            Assert.True(f.CanPush(Card.Get("AC")));
+            Assert.False(f.CanPush(Card.Get("2C")));
+        }
+
+        [Fact]
+        public void Push_pushes_card_to_foundation_slot()
+        {
+            var f = new Foundation(-1, -1, -1, -1);
+
+            Assert.Equal(-1, f[Suit.Clubs]);
+            f.Push(Card.Get("AC"));
+            Assert.Equal(0, f[Suit.Clubs]);
+        }
+
+        [Fact]
+        public void Clone_clones_object()
+        {
+            var f = new Foundation(0, 3, -1, 2);
+            var clone = f.Clone();
+
+            Assert.Equal(0, clone[Suit.Clubs]);
+            Assert.Equal(3, clone[Suit.Diamonds]);
+            Assert.Equal(-1, clone[Suit.Hearts]);
+            Assert.Equal(2, clone[Suit.Spades]);
+        }
+
+        [Fact]
+        public void ToString_returns_string_representation()
+            => Assert.Equal($"CC DD HH SS{Environment.NewLine}AC 4D -- KS", new Foundation(0, 3, -1, 12).ToString());
     }
 }

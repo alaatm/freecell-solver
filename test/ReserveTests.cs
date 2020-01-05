@@ -1,172 +1,151 @@
-// using FreeCellSolver.Extensions;
-// using Xunit;
+using System;
+using FreeCellSolver.Extensions;
+using Xunit;
 
-// namespace FreeCellSolver.Test
-// {
-//     public class ReserveTests
-//     {
-//         [Fact]
-//         public void State_is_initialized_to_empty_reserve()
-//         {
-//             var reserve = new Reserve();
+namespace FreeCellSolver.Test
+{
+    public class ReserveTests
+    {
+        [Fact]
+        public void State_is_initialized_to_empty_reserve()
+        {
+            var r = new Reserve();
 
-//             for (var i = 0; i < 4; i++)
-//             {
-//                 Assert.Null(reserve[i]);
-//             }
-//         }
+            for (var i = 0; i < 4; i++)
+            {
+                Assert.Null(r[i]);
+            }
+        }
 
-//         [Fact]
-//         public void FreeCount_returns_free_cell_count()
-//         {
-//             var reserve = new Reserve();
+        [Fact]
+        public void Indexer_returns_value_of_specified_slot()
+        {
+            var r = new Reserve(1, -1, 2, -1);
+            Assert.Equal(2, r[2].RawValue);
+        }
 
-//             Assert.Equal(4, reserve.FreeCount);
+        [Fact]
+        public void FreeCount_is_properly_initialized()
+        {
+            // empty reserve
+            Assert.Equal(4, new Reserve().FreeCount);
+            // 2 spots occupied, 2 free
+            Assert.Equal(2, new Reserve(1, -1, 2, -1).FreeCount);
+        }
 
-//             reserve.Insert(0, Cards.KingOfSpades);
-//             Assert.Equal(3, reserve.FreeCount);
+        [Fact]
+        public void CanInsert_returns_whether_card_can_be_inserted_along_with_target_index()
+        {
+            // Index 2 free
+            var r = new Reserve(0, 1, -1, 2);
+            Assert.True(r.CanInsert(out var index));
+            Assert.Equal(2, index);
 
-//             reserve.Insert(1, Cards.KingOfHearts);
-//             Assert.Equal(2, reserve.FreeCount);
+            // Full
+            r = new Reserve(0, 1, 5, 2);
+            Assert.False(r.CanInsert(out index));
+            Assert.Equal(-1, index);
+        }
 
-//             reserve.Insert(2, Cards.KingOfDiamonds);
-//             Assert.Equal(1, reserve.FreeCount);
+        [Fact]
+        public void CanMove_returns_whether_card_can_be_moved_to_tableau()
+        {
+            // Move 5H to empty tableau
+            var r = new Reserve(Card.Get("5H").RawValue, -1, -1, -1);
+            var t = new Tableau("");
+            Assert.True(r.CanMove(0, t));
 
-//             reserve.Insert(3, Cards.KingOfClubs);
-//             Assert.Equal(0, reserve.FreeCount);
-//         }
+            // Move 5H below 6S
+            t = new Tableau("6C");
+            Assert.True(r.CanMove(0, t));
 
-//         [Fact]
-//         public void CanInsert_returns_whether_card_can_be_inserted_along_with_target_index()
-//         {
-//             var reserve = new Reserve();
-//             reserve.Insert(0, Cards.AceOfClubs);
-//             reserve.Insert(2, Cards.AceOfDiamonds);
-//             reserve.Insert(3, Cards.AceOfHearts);
+            // Can't move 5H below 9C
+            t = new Tableau("9C");
+            Assert.False(r.CanMove(0, t));
 
-//             var canInsert = reserve.CanInsert(out var index);
-//             Assert.Equal(1, index);
-//             Assert.True(canInsert);
-//         }
+            // Can't move empty slot
+            r = new Reserve(-1, -1, -1, -1);
+            Assert.False(r.CanMove(0, t));
+        }
 
-//         [Theory]
-//         [InlineData(4, 0, false)]
-//         [InlineData(4, 1, false)]
-//         [InlineData(4, 2, false)]
-//         [InlineData(4, 3, false)]
-//         [InlineData(3, 0, false)]
-//         [InlineData(3, 1, false)]
-//         [InlineData(3, 2, false)]
-//         [InlineData(3, 3, true)]
-//         [InlineData(2, 0, false)]
-//         [InlineData(2, 1, false)]
-//         [InlineData(2, 2, true)]
-//         [InlineData(2, 3, true)]
-//         [InlineData(1, 0, false)]
-//         [InlineData(1, 1, true)]
-//         [InlineData(1, 2, true)]
-//         [InlineData(1, 3, true)]
-//         [InlineData(0, 0, true)]
-//         [InlineData(0, 1, true)]
-//         [InlineData(0, 2, true)]
-//         [InlineData(0, 3, true)]
-//         public void CanInsert_returns_whether_card_can_be_inserted_or_not(int occupiedCellsCount, int insertAt, bool expectedCanInsert)
-//         {
-//             var cards = new[] { Cards.KingOfSpades, Cards.KingOfHearts, Cards.KingOfDiamonds, Cards.KingOfClubs };
+        [Fact]
+        public void CanMove_returns_whether_card_can_be_moved_to_foundation_or_not()
+        {
+            // Move AC to empty foundation
+            var r = new Reserve(Card.Get("AC").RawValue, -1, -1, -1);
+            var f = new Foundation();
+            Assert.True(r.CanMove(0, f, out var idx));
+            Assert.Equal(Suit.Clubs, (Suit)idx);
 
-//             var reserve = new Reserve();
-//             for (var i = 0; i < occupiedCellsCount; i++)
-//             {
-//                 reserve.Insert(i, cards[i]);
-//             }
+            // Can't move 2C to empty foundation
+            r = new Reserve(Card.Get("2C").RawValue, -1, -1, -1);
+            Assert.False(r.CanMove(0, f, out idx));
+            Assert.Equal(-1, idx);
 
-//             Assert.Equal(expectedCanInsert, reserve.CanInsert(insertAt, Cards.AceOfSpades));
-//         }
+            // Can't move empty slot
+            r = new Reserve(-1, -1, -1, -1);
+            Assert.False(r.CanMove(0, f, out idx));
+            Assert.Equal(-1, idx);
+        }
 
-//         [Theory]
-//         [InlineData("AS", "", true)]    // Empty target tableau
-//         [InlineData("AS", "2H", true)]
-//         [InlineData("AS", "2S", false)]
-//         public void CanMove_returns_whether_card_can_be_moved_to_tableau_or_not(string cardToMove, string topCardAtTarget, bool expectedCanRemove)
-//         {
-//             var card = Card.Get(cardToMove);
-//             var tableau = new Tableau(topCardAtTarget);
+        [Fact]
+        public void Insert_inserts_card_and_maintains_freeCount()
+        {
+            var r = new Reserve();
 
-//             var reserve = new Reserve();
-//             reserve.Insert(0, card);
+            r.Insert(0, Card.Get("3H"));
+            Assert.Equal(Card.Get("3H"), r[0]);
+            Assert.Equal(3, r.FreeCount);
 
-//             Assert.Equal(expectedCanRemove, reserve.CanMove(card, tableau));
-//         }
+            r.Insert(1, Card.Get("5D"));
+            Assert.Equal(Card.Get("5D"), r[1]);
+            Assert.Equal(2, r.FreeCount);
+        }
 
-//         [Theory]
-//         [InlineData("AC", -1, true)]    // Empty foundation slot
-//         [InlineData("2C", -1, false)]
-//         [InlineData("2C", 0, true)]
-//         public void CanMove_returns_whether_card_can_be_moved_to_foundation_or_not(string cardToMove, int clubsTop, bool expectedCanRemove)
-//         {
-//             var card = Card.Get(cardToMove);
-//             var foundation = new Foundation();
-//             for (var i = -1; i < clubsTop; i++)
-//             {
-//                 foundation.Push(Card.Get(Suit.Clubs, (Rank)i + 1));
-//             }
+        [Fact]
+        public void Move_moves_card_to_tableau()
+        {
+            var t = new Tableau("5H");
+            var r = new Reserve(Card.Get("4S").RawValue, -1, -1, -1);
 
-//             var reserve = new Reserve();
-//             reserve.Insert(0, card);
+            r.Move(0, t);
 
-//             Assert.Equal(expectedCanRemove, reserve.CanMove(card, foundation));
-//         }
+            Assert.Null(r[0]);
+            Assert.Equal(4, r.FreeCount);
+            Assert.Equal(2, t.Size);
+            Assert.Equal(2, t.SortedSize);
+            Assert.Equal(Card.Get("4S"), t.Top);
+        }
 
-//         [Fact]
-//         public void Insert_inserts_card()
-//         {
-//             var reserve = new Reserve();
-//             var index = 2;
-//             var card = Cards.FiveOfClubs;
+        [Fact]
+        public void Move_moves_card_to_foundation()
+        {
+            var card = Cards.AceOfClubs;
+            var f = new Foundation();
+            var r = new Reserve(Card.Get("AC").RawValue, -1, -1, -1);
 
-//             reserve.Insert(index, card);
-//             Assert.Equal(card, reserve[index]);
-//         }
+            r.Move(0, f);
 
-//         [Fact]
-//         public void Remove_removes_card()
-//         {
-//             var reserve = new Reserve();
-//             var index = 2;
-//             var card = Cards.FiveOfClubs;
+            Assert.Null(r[0]);
+            Assert.Equal(4, r.FreeCount);
+            Assert.Equal(0, f[Suit.Clubs]);
+        }
 
-//             reserve.Insert(index, card);
-//             reserve.Remove(card);
-//             Assert.Null(reserve[index]);
-//         }
+        [Fact]
+        public void Clone_clones_object()
+        {
+            var r = new Reserve(0, 3, -1, 2);
+            var clone = r.Clone();
 
-//         [Fact]
-//         public void Move_moves_card_to_tableau()
-//         {
-//             var card = Cards.AceOfDiamonds;
-//             var tableau = new Tableau("2C");
-//             var reserve = new Reserve();
-//             reserve.Insert(1, card);
+            Assert.Equal(r.FreeCount, clone.FreeCount);
+            Assert.Equal(0, clone[0].RawValue);
+            Assert.Equal(3, clone[1].RawValue);
+            Assert.Null(clone[2]);
+            Assert.Equal(2, clone[3].RawValue);
+        }
 
-//             reserve.Move(card, tableau);
-
-//             Assert.Equal(4, reserve.FreeCount);
-//             Assert.Equal(2, tableau.Size);
-//             Assert.Equal(card, tableau.Top);
-//         }
-
-//         [Fact]
-//         public void Move_moves_card_to_foundation()
-//         {
-//             var card = Cards.AceOfClubs;
-//             var foundation = new Foundation();
-//             var reserve = new Reserve();
-//             reserve.Insert(1, card);
-
-//             reserve.Move(card, foundation);
-
-//             Assert.Equal(4, reserve.FreeCount);
-//             Assert.Equal(0, foundation[Suit.Clubs]);
-//         }
-//     }
-// }
+        [Fact]
+        public void ToString_returns_string_representation()
+            => Assert.Equal($"01 02 03 04{Environment.NewLine}-- 5H -- KD", new Reserve(-1, Card.Get("5H").RawValue, -1, Card.Get("KD").RawValue).ToString());
+    }
+}

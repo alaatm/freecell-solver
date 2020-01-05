@@ -5,58 +5,56 @@ namespace FreeCellSolver.Test
     public class CardTests
     {
         [Fact]
-        public void Can_ctor_using_string()
+        public void Can_get_card_by_rawValue()
         {
-            var card = Card.Get("4H");
-
-            Assert.Equal(Suit.Hearts, card.Suit);
-            Assert.Equal(Rank.R4, card.Rank);
-            Assert.Equal("4H", card.ToString());
+            for (var i = 0; i < 52; i++)
+            {
+                var card = Card.Get((short)i);
+                Assert.Equal((Suit)(i & 3), card.Suit);
+                Assert.Equal((Rank)(i >> 2), card.Rank);
+            }
         }
 
         [Fact]
-        public void Can_ctor_using_explicit_values()
+        public void Can_get_card_by_string()
         {
-            var card = Card.Get(Suit.Hearts, Rank.R4);
+            Assert.Equal("CDHS", Card.SUITS);
+            Assert.Equal("A23456789TJQK", Card.RANKS);
 
-            Assert.Equal(Suit.Hearts, card.Suit);
-            Assert.Equal(Rank.R4, card.Rank);
-            Assert.Equal("4H", card.ToString());
-        }
-
-        [Theory]
-        [InlineData("3S", "2S", true)]   // 3 of spades -> 2 of spades
-        [InlineData("3H", "2S", false)]  // 3 of hearts -> 2 of spades
-        [InlineData("3S", "AS", false)]  // 3 of spades -> ace of spades
-        public void IsAbove_returns_whether_card_is_above_another_for_foundation_stack(string check, string against, bool expectedIsAbove)
-        {
-            var cardToCheck = Card.Get(check);
-            Assert.Equal(expectedIsAbove, cardToCheck.IsAbove(Card.Get(against)));
-        }
-
-        [Theory]
-        [InlineData("3S", "2S", false)]   // 3 of spades -> 2 of spades
-        [InlineData("3S", "2H", false)]   // 3 of spades -> 2 of hearts
-        [InlineData("3S", "3C", false)]   // 3 of spades -> 3 of clubs
-        [InlineData("3S", "3H", false)]   // 3 of spades -> 3 of hearts
-        [InlineData("3S", "4S", false)]   // 3 of spades -> 4 of clubs
-        [InlineData("3S", "4H", true)]    // 3 of spades -> 5 of hearts
-        [InlineData("3S", "4D", true)]    // 3 of spades -> 5 of diamonds
-        public void IsBelow_returns_whether_card_is_can_stack_above_tableau_top_card(string check, string against, bool expectedIsBelow)
-        {
-            var cardToCheck = Card.Get(check);
-            Assert.Equal(expectedIsBelow, cardToCheck.IsBelow(Card.Get(against)));
+            foreach (var r in Card.RANKS)
+            {
+                foreach (var s in Card.SUITS)
+                {
+                    var card = Card.Get($"{r}{s}");
+                    Assert.Equal(Card.SUITS.IndexOf(s), (int)card.Suit);
+                    Assert.Equal(Card.RANKS.IndexOf(r), (int)card.Rank);
+                }
+            }
         }
 
         [Fact]
-        public void EqualityTest()
+        public void Can_get_card_by_suit_and_rank()
         {
-            var ks1 = Card.Get("KS");
-            var ks2 = Card.Get("KS");
-
-            Assert.True(ks1 == ks2);
-            Assert.True(ks1.Equals(ks2));
-            Assert.True(object.Equals(ks1, ks2));
+            foreach (var r in Ranks.Values)
+            {
+                foreach (var s in Suits.Values)
+                {
+                    var card = Card.Get(s, r);
+                    Assert.Equal(s, card.Suit);
+                    Assert.Equal(r, card.Rank);
+                }
+            }
         }
+
+        [Theory]
+        [InlineData("3S", "4S", false)]
+        [InlineData("3S", "3H", false)]
+        [InlineData("3S", "4H", true)]
+        public void IsBelow_returns_whether_card_can_go_below_specfied_tableau_top(string check, string top, bool expectedIsBelow)
+            => Assert.Equal(expectedIsBelow, Card.Get(check).IsBelow(Card.Get(top)));
+
+        [Fact]
+        public void ToString_returns_string_representation()
+            => Assert.Equal("AS", Card.Get("AS").ToString());
     }
 }

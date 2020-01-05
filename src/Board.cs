@@ -149,10 +149,9 @@ namespace FreeCellSolver
                     var targetTableau = tableaus[t2];
                     var emptyTarget = targetTableau.IsEmpty;
                     var moveSize = tableau.CountMovable(targetTableau);
-                    // Note we left shift on number of non-target empty tableaus to enable super moves
+                    // Left shift freeCount+1 on number of non-target empty tableaus to get max move size
                     // i.e. 0 free, 2 empty tableaus that are not the target:
                     // maxAllowedMoveSize is 0+1 << 2 = 4
-                    // Normal allowed move size is 2 but we can use both empty tableaus to make double 2 card stack moves.
                     var maxAllowedMoveSize = freeCount << (emptyTarget ? emptyTableauCount - 1 : emptyTableauCount);
                     var canMove = true;
                     /* No need to get target top when moveSize is 1 since we won't be calling IsBelow() */
