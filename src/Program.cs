@@ -137,9 +137,9 @@ namespace FreeCellSolver
         static void RunBenchmarks()
         {
             var sw = new Stopwatch();
-            Console.WriteLine($"Processing extremly fast board");
+            Console.WriteLine($"Processing Deal #1566");
             sw.Restart();
-            PrintSummary(Dfs.Run(Board.FromDealNum(2)), sw);
+            PrintSummary(Dfs.Run(Board.FromDealNum(1566)), sw);
             GC.Collect();
         }
 
