@@ -36,62 +36,6 @@ namespace FreeCellSolver.Extensions
 
             return SKImage.FromBitmap(bmp);
         }
-
-        public static bool IsValid(this Tableaus deal)
-        {
-            var isValid = true;
-            ConsoleErrorWriter.Set();
-            var stdErr = Console.Error;
-
-            var uniqueCardCount = new HashSet<Card>(deal.AllCards()).Count();
-            if (uniqueCardCount != 52)
-            {
-                stdErr.WriteLine($"Total unique card count is invalid, should be '52' but is '{uniqueCardCount}'.");
-                isValid = false;
-            }
-
-            for (var i = 0; i < 4; i++)
-            {
-                if (deal[i].Size != 7)
-                {
-                    stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
-                    isValid = false;
-                }
-            }
-
-            for (var i = 4; i < 8; i++)
-            {
-                if (deal[i].Size != 6)
-                {
-                    stdErr.WriteLine($"Tableau #{i + 1} has incorrect number of cards.");
-                    isValid = false;
-                }
-            }
-
-            var added = new Dictionary<int, List<Card>>();
-
-            for (var t = 0; t < 8; t++)
-            {
-                added.Add(t, new List<Card>());
-
-                var tableau = deal[t];
-                for (var i = 0; i < tableau.Size; i++)
-                {
-                    var card = tableau[i];
-                    foreach (var key in added.Keys)
-                    {
-                        if (added[key].Contains(card))
-                        {
-                            stdErr.WriteLine($"Card '{card.ToString()}' is duplicate at tableaus '{key + 1}' and '{t + 1}'");
-                            isValid = false;
-                        }
-                    }
-                    added[t].Add(card);
-                }
-            }
-
-            return isValid;
-        }
     }
 
     public class ConsoleErrorWriter : TextWriter

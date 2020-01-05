@@ -110,5 +110,34 @@ namespace FreeCellSolver.Extensions
 
             return new Board(new Tableaus(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));
         }
+
+        public static bool IsValid(this Board board)
+        {
+            var isValid = true;
+            ConsoleErrorWriter.Set();
+            var stdErr = Console.Error;
+
+            var allCards = Enumerable.Range(0, 52).Select(c => Card.Get((short)c));
+
+            var boardCards = board.AllCards.ToList();
+            var uniqueCards = new HashSet<Card>(board.AllCards);
+
+            if (uniqueCards.Count != 52)
+            {
+                var missing = String.Join(", ", allCards.Except(uniqueCards).Select(c => $"'{c.ToString()}'"));
+                stdErr.WriteLine($"Invalid card count, should be '52' but found '{uniqueCards.Count}' cards.");
+                stdErr.WriteLine($"The following card(s) are missing: {missing}");
+                isValid = false;
+            }
+            else if (boardCards.Count != 52)
+            {
+                var duplicates = String.Join(", ", boardCards.GroupBy(x => x.RawValue).Where(g => g.Count() > 1).Select(g => $"'{Card.Get(g.Key).ToString()}'"));
+                stdErr.WriteLine($"Invalid card count, should be '52' but found '{boardCards.Count}' cards.");
+                stdErr.WriteLine($"The following card(s) are duplicates: {duplicates}");
+                isValid = false;
+            }
+
+            return isValid;
+        }
     }
 }
