@@ -69,15 +69,16 @@ namespace FreeCellSolver
         public override string ToString()
         {
             var sb = new StringBuilder();
-            var c = _state[0];
-            var d = _state[1];
-            var h = _state[2];
-            var s = _state[3];
             sb.AppendLine("CC DD HH SS");
-            sb.Append((c == -1 ? "--" : (c + 1).ToString().PadLeft(2)) + " ");
-            sb.Append((d == -1 ? "--" : (d + 1).ToString().PadLeft(2)) + " ");
-            sb.Append((h == -1 ? "--" : (h + 1).ToString().PadLeft(2)) + " ");
-            sb.Append(s == -1 ? "--" : (s + 1).ToString().PadLeft(2));
+            for (var i = 0; i < 4; i++)
+            {
+                var value = _state[i];
+                sb.Append((value == -1 ? "--" : Card.Get((Suit)i, (Rank)value).ToString()));
+                if (i < 3)
+                {
+                    sb.Append(" ");
+                }
+            }
 
             return sb.ToString();
         }

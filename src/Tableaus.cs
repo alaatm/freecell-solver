@@ -80,7 +80,9 @@ namespace FreeCellSolver
             sb.AppendLine("01 02 03 04 05 06 07 08");
             sb.AppendLine("-- -- -- -- -- -- -- --");
 
-            for (var r = 0; r < _state.Max(t => t.Size); r++)
+            var maxSize = _state.Max(t => t.Size);
+
+            for (var r = 0; r < maxSize; r++)
             {
                 for (var c = 0; c < 8; c++)
                 {
@@ -89,7 +91,10 @@ namespace FreeCellSolver
                     sb.Append(c < 7 ? " " : "");
                 }
 
-                sb.Append(Environment.NewLine);
+                if (r < maxSize - 1)
+                {
+                    sb.Append(Environment.NewLine);
+                }
             }
 
             return sb.ToString();
