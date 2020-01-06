@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
@@ -409,6 +408,35 @@ namespace FreeCellSolver
             }
         }
 
+        public IEnumerable<Move> GetMoves()
+        {
+            var moves = new Stack<Move>();
+            Traverse(b =>
+            {
+                foreach (var autoMove in b.AutoMoves?.AsEnumerable().Reverse() ?? Enumerable.Empty<Move>())
+                {
+                    moves.Push(autoMove);
+                }
+                if (b.LastMove != null)
+                {
+                    moves.Push(b.LastMove);
+                }
+            });
+
+            return moves;
+        }
+
+        public void Traverse(Action<Board> visit)
+        {
+            var prev = this;
+
+            while (prev != null)
+            {
+                visit(prev);
+                prev = prev.Prev;
+            }
+        }
+
         public Board Clone() => new Board(this);
 
         public override string ToString()
@@ -422,42 +450,6 @@ namespace FreeCellSolver
 
             return sb.ToString();
         }
-
-        public void PrintMoves(string path, Tableaus originalDeal)
-        {
-            var replayBoard = new Board(originalDeal);
-            replayBoard.ToImage().Save(Path.Join(path, "0.jpg"));
-
-            var i = 1;
-            foreach (var move in GetMoves())
-            {
-                replayBoard.ExecuteMove(move, null);
-                replayBoard.ToImage().Save(Path.Join(path, $"{i++}.jpg"));
-            }
-        }
-
-        private IEnumerable<Move> GetMoves()
-        {
-            if (Prev == null)
-            {
-                yield break;
-            }
-
-            var prev = this;
-            var moves = new Stack<Move>();
-
-            do
-            {
-                moves.Push(prev.LastMove);
-                prev = prev.Prev;
-            } while (prev.Prev != null);
-
-            foreach (var move in moves)
-            {
-                yield return move;
-            }
-        }
-
 
         #region Equality overrides and overloads
         public bool Equals(Board other)

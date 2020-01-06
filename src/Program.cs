@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using FreeCellSolver.Solvers;
+using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver
 {
@@ -130,7 +131,7 @@ namespace FreeCellSolver
                 var path = $@"C:\personal-projs\freecell-solver\_temp\{dealNum}";
                 Directory.CreateDirectory(path);
                 Console.WriteLine($"Printing moves to {path}");
-                s.SolvedBoard.PrintMoves(path, b.Tableaus);
+                s.SolvedBoard.PrintMoves(path);
             }
         }
 
@@ -146,7 +147,7 @@ namespace FreeCellSolver
         static void PrintSummary(Dfs s, Stopwatch sw)
         {
             Console.Write($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - initial id: {s.SolvedFromId} - visited nodes: {s.VisitedNodes,0:n0}");
-            Console.WriteLine(s.SolvedBoard != null ? $" - #moves: {s.SolvedBoard.MoveCount}" : "");
+            Console.WriteLine(s.SolvedBoard != null ? $" - #moves: {s.SolvedBoard.GetMoves().Count()}" : "");
             Console.WriteLine();
         }
 

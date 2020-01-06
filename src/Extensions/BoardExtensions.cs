@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -45,6 +46,25 @@ namespace FreeCellSolver.Extensions
             }
 
             return SKImage.FromBitmap(bmp);
+        }
+
+        public static void PrintMoves(this Board board, string path)
+        {
+            Board root = null;
+            board.Traverse(b => root = b);
+
+            if (root != null)
+            {
+                var replayBoard = root.Clone();
+                replayBoard.ToImage().Save(Path.Join(path, "0.jpg"));
+
+                var i = 1;
+                foreach (var move in board.GetMoves())
+                {
+                    replayBoard.ExecuteMove(move, null);
+                    replayBoard.ToImage().Save(Path.Join(path, $"{i++}.jpg"));
+                }
+            }
         }
 
         public static Board FromDealNum(int dealNum)

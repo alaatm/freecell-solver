@@ -814,6 +814,58 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void GetMoves_returns_moves()
+        {
+            /*
+             * 00 01 02 03 04 05 06 07 (Deal #4)
+             * -- -- -- -- -- -- -- --
+             * KS QC 3D JS 5D KD 6S 3S
+             * 2C AC KH 8C AH 9D 6C 5C
+             * 6D TS QS 4D 4H 2S QH 7S
+             * 9S 5S AS 8H 8D 4C 5H 3C
+             * TC TH 7C 3H 7H 2H JH TD
+             * JC QD KC 2D 8S 6H 9H JD
+             * 9C 7D 4S AD          
+             */
+
+            // Arrange
+            var b = Board.FromDealNum(4);
+            var c = b.Clone();
+            c.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), b);
+
+            // Act
+            var moves = c.GetMoves().ToList();
+
+            // Assert
+            Assert.Equal(3, moves.Count); // 1 manual and 2 auto
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 0, 0), moves[0]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3, 1), moves[1]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3, 1), moves[2]);
+        }
+
+        [Fact]
+        public void Traverse_traverses_states_backwards()
+        {
+            // Arrange
+            var b = Board.FromDealNum(4);
+            var c = b.Clone();
+            c.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), b);
+
+            var i = 0;
+            c.Traverse(n =>
+            {
+                if (i++ == 0)
+                {
+                    Assert.Same(c, n);
+                }
+                else
+                {
+                    Assert.Equal(b, n);
+                }
+            });
+        }
+
+        [Fact]
         public void Clone_clones_object()
         {
             Assert.True(Board.FromDealNum(5) == Board.FromDealNum(5).Clone());
