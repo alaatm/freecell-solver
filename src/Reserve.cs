@@ -91,22 +91,6 @@ namespace FreeCellSolver
             foundation.Push(Remove(index));
         }
 
-        internal void Undo(Move move, Board board)
-        {
-            if (move.Type == MoveType.TableauToReserve)
-            {
-                board.Tableaus[move.From].UndoPop(Remove(move.To));
-            }
-        }
-
-        internal void UndoRemove(int index, Card card)
-        {
-            Debug.Assert(_state[index] == -1);
-            _state[index] = card.RawValue;
-            FreeCount--;
-            Debug.Assert(FreeCount == _state.Count(c => c == -1));
-        }
-
         public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]);
 
         public override string ToString()

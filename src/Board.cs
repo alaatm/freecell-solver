@@ -287,44 +287,6 @@ namespace FreeCellSolver
             Debug.Assert(AllCards.Count() == 52 && new HashSet<Card>(AllCards).Count == 52);
         }
 
-        public void Undo()
-        {
-            var lastMove = LastMove;
-
-            if (lastMove == null)
-            {
-                return;
-            }
-
-            var prev = Prev;
-
-            MoveCount--;
-            Prev = prev.Prev;
-            LastMove = prev.LastMove;
-
-            switch (lastMove.Type)
-            {
-                case MoveType.TableauToFoundation:
-                    Foundation.Undo(lastMove, this);
-                    break;
-                case MoveType.TableauToReserve:
-                    Reserve.Undo(lastMove, this);
-                    break;
-                case MoveType.TableauToTableau:
-                    Tableaus[lastMove.To].Undo(lastMove, this);
-                    break;
-                case MoveType.ReserveToFoundation:
-                    Foundation.Undo(lastMove, this);
-                    break;
-                case MoveType.ReserveToTableau:
-                    Tableaus[lastMove.To].Undo(lastMove, this);
-                    break;
-            }
-
-            // Assert count and uniqueness
-            Debug.Assert(AllCards.Count() == 52 && new HashSet<Card>(AllCards).Count == 52);
-        }
-
         public void RateMove(Move move)
         {
             const int RATING_FOUNDATION = 1000;
