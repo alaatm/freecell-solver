@@ -121,7 +121,6 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Move_moves_card_to_foundation()
         {
-            var card = Cards.AceOfClubs;
             var f = new Foundation();
             var r = new Reserve(Card.Get("AC").RawValue, -1, -1, -1);
 
