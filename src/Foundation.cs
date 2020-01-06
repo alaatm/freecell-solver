@@ -1,4 +1,5 @@
 using System.Text;
+using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -94,14 +95,8 @@ namespace FreeCellSolver
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards()
-        {
-            foreach (var suit in Suits.Values)
-            {
-                for (var r = 0; r <= _state[(int)suit]; r++)
-                {
-                    yield return Card.Get(suit, (Rank)r);
-                }
-            }
-        }
+            => _state.SelectMany((v, i) => v > -1
+                ? Enumerable.Range(0, v + 1).Select(r => Card.Get((Suit)i, (Rank)r))
+                : Enumerable.Empty<Card>());
     }
 }

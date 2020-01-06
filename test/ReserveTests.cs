@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using FreeCellSolver.Extensions;
 using Xunit;
 
@@ -147,5 +148,19 @@ namespace FreeCellSolver.Test
         [Fact]
         public void ToString_returns_string_representation()
             => Assert.Equal($"01 02 03 04{Environment.NewLine}-- 5H -- KD", new Reserve(-1, Card.Get("5H").RawValue, -1, Card.Get("KD").RawValue).ToString());
+
+        [Fact]
+        public void AllCards_returns_all_cards()
+        {
+            var r = new Reserve(-1, Card.Get("KS").RawValue, Card.Get("QS").RawValue, -1);
+            var allCards = r.AllCards().ToList();
+
+            // Assert
+            Assert.Equal(2, allCards.Count);
+            Assert.Equal(Card.Get("KS"), allCards[0]);
+            Assert.Equal(Card.Get("QS"), allCards[1]);
+
+            Assert.Empty(new Reserve().AllCards());
+        }
     }
 }

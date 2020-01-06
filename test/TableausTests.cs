@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Xunit;
 
 namespace FreeCellSolver.Test
@@ -54,5 +55,25 @@ namespace FreeCellSolver.Test
             => Assert.Equal(
                 $"01 02 03 04 05 06 07 08{Environment.NewLine}-- -- -- -- -- -- -- --{Environment.NewLine}   KC KD KH KS QC QD   {Environment.NewLine}      9C               ",
                 new Tableaus(new Tableau(""), new Tableau("KC"), new Tableau("KD9C"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau("")).ToString());
+
+        [Fact]
+        public void AllCards_returns_all_cards()
+        {
+            var t0 = new Tableau("AC");
+            var t1 = new Tableau("AD");
+            var t3 = new Tableau("AHAS");
+            var tEmpty = new Tableau();
+            var ts = new Tableaus(t0, t1, tEmpty, t3, tEmpty, tEmpty, tEmpty, tEmpty);
+            var allCards = ts.AllCards().ToList();
+
+            // Assert
+            Assert.Equal(4, allCards.Count);
+            Assert.Equal(Card.Get("AC"), allCards[0]);
+            Assert.Equal(Card.Get("AD"), allCards[1]);
+            Assert.Equal(Card.Get("AH"), allCards[2]);
+            Assert.Equal(Card.Get("AS"), allCards[3]);
+
+            Assert.Empty(new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty).AllCards());
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using Xunit;
 
 namespace FreeCellSolver.Test
@@ -206,5 +207,19 @@ namespace FreeCellSolver.Test
 2H
 9C
 8H", new Tableau("8S2H9C8H").ToString());
+
+        [Fact]
+        public void AllCards_returns_all_cards()
+        {
+            var t = new Tableau("KSQS");
+            var allCards = t.AllCards().ToList();
+
+            // Assert
+            Assert.Equal(2, allCards.Count);
+            Assert.Equal(Card.Get("KS"), allCards[0]);
+            Assert.Equal(Card.Get("QS"), allCards[1]);
+
+            Assert.Empty(new Tableau().AllCards());
+        }
     }
 }

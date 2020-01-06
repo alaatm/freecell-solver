@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Xunit;
 
@@ -94,5 +95,23 @@ namespace FreeCellSolver.Test
         [Fact]
         public void ToString_returns_string_representation()
             => Assert.Equal($"CC DD HH SS{Environment.NewLine}AC 4D -- KS", new Foundation(0, 3, -1, 12).ToString());
+
+        [Fact]
+        public void AllCards_returns_all_cards()
+        {
+            var f = new Foundation(-1, 0, 1, 2);
+            var allCards = f.AllCards().ToList();
+
+            // Assert
+            Assert.Equal(6, allCards.Count);
+            Assert.Equal(Card.Get("AD"), allCards[0]);
+            Assert.Equal(Card.Get("AH"), allCards[1]);
+            Assert.Equal(Card.Get("2H"), allCards[2]);
+            Assert.Equal(Card.Get("AS"), allCards[3]);
+            Assert.Equal(Card.Get("2S"), allCards[4]);
+            Assert.Equal(Card.Get("3S"), allCards[5]);
+
+            Assert.Empty(new Foundation().AllCards());
+        }
     }
 }
