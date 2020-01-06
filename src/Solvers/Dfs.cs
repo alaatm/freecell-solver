@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
@@ -26,17 +25,21 @@ namespace FreeCellSolver.Solvers
         // Non-parallel version used primarilly for debugging
         public static Dfs Run(Board board)
         {
+            Console.WriteLine($"Solver: DFS");
+
             const int maxDepth = 200;
             const int maxMovesSinceFoundation = 17;
             const float backTrackPercent = 0.7f;
+
+            var clone = board.Clone();
+            clone.AutoPlay();
 
             // Should obviously use a local HashSet<int> here but we don't care much about this
             // non parallel version, its only here for debugging.
             _closed = new ConcurrentDictionary<int, byte>(1, 1000);
 
             var dfs = new Dfs(maxDepth, maxMovesSinceFoundation, backTrackPercent);
-            Console.WriteLine($"Solver: DFS");
-            dfs.Search(board.Clone(), 0);
+            dfs.Search(clone, 0);
             return dfs;
         }
 
@@ -51,11 +54,16 @@ namespace FreeCellSolver.Solvers
             var backTrackPercentStep = 0.0501f;
             var maxMovesSinceFoundationStep = 5;
 
+            var clone = board.Clone();
+            clone.AutoPlay();
+
             Dfs dfs;
-            var states = ParallelHelper.GetStates(board.Clone(), Environment.ProcessorCount);
+            var states = ParallelHelper.GetStates(clone, Environment.ProcessorCount);
 
             do
             {
+                Console.WriteLine($"Solver: DFS - using {states.Count} cores - attempt #{attempt + 1}");
+
                 _closed = new ConcurrentDictionary<int, byte>(states.Count, 1000);
 
                 dfs = new Dfs(
@@ -63,10 +71,10 @@ namespace FreeCellSolver.Solvers
                     maxMovesSinceFoundation + maxMovesSinceFoundationStep * attempt,
                     backTrackPercent + backTrackPercentStep * attempt);
 
-                Console.WriteLine($"Solver: DFS - using {states.Count} cores - attempt #{++attempt}");
                 var tasks = states.Select((b, i) => Task.Run(() => dfs.Search(b, i)));
 
                 await Task.WhenAll(tasks);
+                attempt++;
             } while (dfs.SolvedBoard == null && dfs._backTrackPercent + backTrackPercentStep < 1f);
 
             return dfs;
@@ -103,8 +111,7 @@ namespace FreeCellSolver.Solvers
                 }
                 _closed.AddOrUpdate(hc, (byte)1, (k, v) => (byte)1);
 
-                var moves = board.GetValidMoves(out var foundFoundation, out var autoMove);
-                Debug.Assert(autoMove && moves.Count == 1 || !autoMove);
+                var moves = board.GetValidMoves(out var foundFoundation);
 
                 if (board.MovesSinceFoundation >= _maxMovesSinceFoundation && !foundFoundation)
                 {
@@ -118,10 +125,7 @@ namespace FreeCellSolver.Solvers
                 for (var i = moves.Count - 1; i >= 0; i--)
                 {
                     var next = board.Clone();
-                    if (!autoMove)
-                    {
-                        next.RateMove(moves[i]);
-                    }
+                    next.RateMove(moves[i]);
                     next.ExecuteMove(moves[i], board);
                     addedBoards[c++] = next;
                 }

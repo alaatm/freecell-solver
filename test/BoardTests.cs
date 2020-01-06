@@ -16,229 +16,6 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void GetValidMoves_returns_just_auto_moves_when_found_checking_reserve_first()
-        {
-            /* 
-             * aa bb cc dd
-             * AS 5S
-             *
-             * 00 01 02 03 04 05 06 07 (Deal #2)
-             * -- -- -- -- -- -- -- --
-             * QD QC KC 3C 4C 2C KD 5C
-             * 4D JD JS 6H QS 6D 2D 9C
-             * TD JC 8C 6C 8S 4S 5D QH
-             * 7S 9D KS 7C 6S 4H AC 8H
-             * AH 9S TC 2S 3S TS 9H 2H
-             * 3H AD 7H 3D 5H 8D KH 7D
-             *       TH JH            
-             */
-
-            // Arrange
-            var b = Board.FromDealNum(2);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 1, 1), null);
-
-            // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
-
-            // Assert
-            Assert.Single(moves);
-            Assert.Equal(Move.Get(MoveType.ReserveToFoundation, 0, 3), moves[0]);
-            Assert.True(ff);
-            Assert.True(auto);
-        }
-
-        [Fact]
-        public void GetValidMoves_returns_just_auto_moves_when_found_checking_tableaus_second()
-        {
-            /*
-             * 00 01 02 03 04 05 06 07 (Deal #4)
-             * -- -- -- -- -- -- -- --
-             * KS QC 3D JS 5D KD 6S 3S
-             * 2C AC KH 8C AH 9D 6C 5C
-             * 6D TS QS 4D 4H 2S QH 7S
-             * 9S 5S AS 8H 8D 4C 5H 3C
-             * TC TH 7C 3H 7H 2H JH TD
-             * JC QD KC 2D 8S 6H 9H JD
-             * 9C 7D 4S AD          
-             */
-
-            // Arrange
-            var b = Board.FromDealNum(4);
-
-            // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
-
-            // Assert
-            Assert.Single(moves);
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3, 1), moves[0]);
-            Assert.True(ff);
-            Assert.True(auto);
-        }
-
-        [Fact]
-        public void GetValidMoves_properly_checks_auto_moves_criteria_1()
-        {
-            /*
-             * CC DD HH SS
-             * QC JD JH KS
-             *
-             * aa bb cc dd
-             * -- -- -- --
-             *
-             * 00 01 02 03 04 05 06 07
-             * -- -- -- -- -- -- -- --
-             * KC QD                  
-             *    QH                  
-             *    KH                  
-             *    KD
-             *
-             * ^ should move KC to foundation but mark as NOT auto move
-             *   because we have QD & QH not at foundation
-             */
-
-            // Arrange
-            var r = new Reserve();
-            var f = new Foundation(11, 10, 10, 12);
-            var t0 = new Tableau("KC");
-            var t1 = new Tableau("QDQHKHKD");
-            var tRest = new Tableau();
-            var ts = new Tableaus(t0, t1, tRest, tRest, tRest, tRest, tRest, tRest);
-            var b = new Board(r, f, ts);
-            Assert.True(b.IsValid());
-
-            // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
-
-            // Assert
-            Assert.Single(moves.Where(m => m.Type == MoveType.TableauToFoundation));
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0, 0), moves[0]);
-            Assert.True(ff);
-            Assert.False(auto);
-        }
-
-        [Fact]
-        public void GetValidMoves_properly_checks_auto_moves_criteria_2()
-        {
-            /*
-             * CC DD HH SS
-             * QC JD QH KS
-             *
-             * aa bb cc dd
-             * -- -- -- --
-             *
-             * 00 01 02 03 04 05 06 07
-             * -- -- -- -- -- -- -- --
-             * KC QD                  
-             *    KH                  
-             *    KD                  
-             *
-             * ^ should move KC to foundation but mark as NOT auto move
-             *   because we have QD not at foundation
-             */
-
-            // Arrange
-            var r = new Reserve();
-            var f = new Foundation(11, 10, 11, 12);
-            var t0 = new Tableau("KC");
-            var t1 = new Tableau("QDKHKD");
-            var tRest = new Tableau();
-            var ts = new Tableaus(t0, t1, tRest, tRest, tRest, tRest, tRest, tRest);
-            var b = new Board(r, f, ts);
-            Assert.True(b.IsValid());
-
-            // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
-
-            // Assert
-            Assert.Single(moves.Where(m => m.Type == MoveType.TableauToFoundation));
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0, 0), moves[0]);
-            Assert.True(ff);
-            Assert.False(auto);
-        }
-
-        [Fact]
-        public void GetValidMoves_properly_checks_auto_moves_criteria_3()
-        {
-            /*
-             * CC DD HH SS
-             * JC QD KH JS
-             *
-             * aa bb cc dd
-             * -- -- -- --
-             *
-             * 00 01 02 03 04 05 06 07
-             * -- -- -- -- -- -- -- --
-             * KD QC                  
-             *    QS                  
-             *    KC                  
-             *    KS
-             *
-             * ^ should move KD to foundation but mark as NOT auto move
-             *   because we have QC & QS not at foundation
-             */
-
-            // Arrange
-            var r = new Reserve();
-            var f = new Foundation(10, 11, 12, 10);
-            var t0 = new Tableau("KD");
-            var t1 = new Tableau("QCQSKCKS");
-            var tRest = new Tableau();
-            var ts = new Tableaus(t0, t1, tRest, tRest, tRest, tRest, tRest, tRest);
-            var b = new Board(r, f, ts);
-            Assert.True(b.IsValid());
-
-            // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
-
-            // Assert
-            Assert.Single(moves.Where(m => m.Type == MoveType.TableauToFoundation));
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0, 1), moves[0]);
-            Assert.True(ff);
-            Assert.False(auto);
-        }
-
-        [Fact]
-        public void GetValidMoves_properly_checks_auto_moves_criteria_4()
-        {
-            /*
-             * CC DD HH SS
-             * JC QD KH QS
-             *
-             * aa bb cc dd
-             * -- -- -- --
-             *
-             * 00 01 02 03 04 05 06 07
-             * -- -- -- -- -- -- -- --
-             * KD QC                  
-             *    KS                  
-             *    KC                  
-             *
-             * ^ should move KD to foundation but mark as NOT auto move
-             *   because we have QC not at foundation
-             */
-
-            // Arrange
-            var r = new Reserve();
-            var f = new Foundation(10, 11, 12, 11);
-            var t0 = new Tableau("KD");
-            var t1 = new Tableau("QCKSKC");
-            var tRest = new Tableau();
-            var ts = new Tableaus(t0, t1, tRest, tRest, tRest, tRest, tRest, tRest);
-            var b = new Board(r, f, ts);
-            Assert.True(b.IsValid());
-
-            // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
-
-            // Assert
-            Assert.Single(moves.Where(m => m.Type == MoveType.TableauToFoundation));
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0, 1), moves[0]);
-            Assert.True(ff);
-            Assert.False(auto);
-        }
-
-        [Fact]
         public void GetValidMoves_skips_similar_moves_from_reserve_to_multiple_empty_tableaus()
         {
             /*
@@ -273,12 +50,11 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Equal(4, moves.Where(m => m.Type == MoveType.ReserveToTableau && m.To == 1).Count());
             Assert.False(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -316,13 +92,12 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Equal(7, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
             Assert.All(moves.Where(m => m.Type == MoveType.TableauToTableau), m => Assert.True(m.To == 1));
             Assert.False(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -362,12 +137,11 @@ namespace FreeCellSolver.Test
             b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.ReserveToTableau && m.From == 0 && m.To == 0));
             Assert.False(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -407,12 +181,11 @@ namespace FreeCellSolver.Test
             b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 6), null);
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 6 && m.To == 0));
             Assert.False(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -448,12 +221,11 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 2 && m.Size == 4));
             Assert.False(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -495,12 +267,11 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 2 && m.To == 5 && m.Size == 3));
             Assert.False(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -541,12 +312,61 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Single(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 2 && m.To == 5 && m.Size == 4));
             Assert.False(ff);
-            Assert.False(auto);
+        }
+
+        [Fact]
+        public void GetValidMoves_returns_moves_in_correct_order()
+        {
+            /* 
+             * CC DD HH SS
+             * QC KD -- JS
+             *
+             * aa bb cc dd
+             * KC -- -- --
+             *
+             * 00 01 02 03 04 05 06 07
+             * -- -- -- -- -- -- -- --
+             * KS QS    AH            
+             *          2H            
+             *          3H            
+             *          4H            
+             *          5H            
+             *          6H            
+             *          7H            
+             *          8H            
+             *          9H            
+             *          TH            
+             *          JH            
+             *          QH            
+             *          KH            
+             */
+            var r = new Reserve(Card.Get("KC").RawValue, -1, -1, -1);
+            var f = new Foundation(11, 12, -1, 10);
+            var t0 = new Tableau("KS");
+            var t1 = new Tableau("QS");
+            var t3 = new Tableau("AH2H3H4H5H6H7H8H9HTHJHQHKH");
+            var tRest = new Tableau();
+            var ts = new Tableaus(t0, t1, tRest, t3, tRest, tRest, tRest, tRest);
+            var b = new Board(r, f, ts);
+            Assert.True(b.IsValid());
+
+            // Act
+            var moves = b.GetValidMoves(out _);
+
+            // Assert
+            Assert.Equal(MoveType.ReserveToFoundation, moves[0].Type);
+            Assert.Equal(MoveType.TableauToFoundation, moves[1].Type);
+            Assert.Equal(MoveType.ReserveToTableau, moves[2].Type);
+            Assert.Equal(MoveType.TableauToTableau, moves[3].Type);
+            Assert.Equal(MoveType.TableauToTableau, moves[4].Type);
+            Assert.Equal(MoveType.TableauToReserve, moves[5].Type);
+            Assert.Equal(MoveType.TableauToReserve, moves[6].Type);
+            Assert.Equal(MoveType.TableauToReserve, moves[7].Type);
         }
 
         [Fact]
@@ -586,14 +406,13 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Equal(2, moves.Where(m => m.Type == MoveType.ReserveToFoundation).Count());
             Assert.Equal(Move.Get(MoveType.ReserveToFoundation, 0, 0), moves[0]);
             Assert.Equal(Move.Get(MoveType.ReserveToFoundation, 1, 1), moves[1]);
             Assert.True(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -636,14 +455,13 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Equal(2, moves.Where(m => m.Type == MoveType.TableauToFoundation).Count());
             Assert.Equal(Move.Get(MoveType.TableauToFoundation, 4, 0), moves[0]);
             Assert.Equal(Move.Get(MoveType.TableauToFoundation, 6, 1), moves[1]);
             Assert.True(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -683,13 +501,12 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Single(moves.Where(m => m.Type == MoveType.ReserveToTableau));
             Assert.Equal(Move.Get(MoveType.ReserveToTableau, 1, 0), moves[2]);
             Assert.True(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -719,7 +536,7 @@ namespace FreeCellSolver.Test
             b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 3, 0), null);
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Equal(4, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
@@ -728,7 +545,6 @@ namespace FreeCellSolver.Test
             Assert.Equal(Move.Get(MoveType.TableauToTableau, 6, 2), moves[2]);
             Assert.Equal(Move.Get(MoveType.TableauToTableau, 7, 0), moves[3]);
             Assert.False(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -752,7 +568,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(984);
 
             // Act
-            var moves = b.GetValidMoves(out var ff, out var auto);
+            var moves = b.GetValidMoves(out var ff);
 
             // Assert
             Assert.Equal(8, moves.Where(m => m.Type == MoveType.TableauToReserve).Count());
@@ -765,7 +581,6 @@ namespace FreeCellSolver.Test
             Assert.Equal(Move.Get(MoveType.TableauToReserve, 6, 0), moves[11]);
             Assert.Equal(Move.Get(MoveType.TableauToReserve, 7, 0), moves[12]);
             Assert.False(ff);
-            Assert.False(auto);
         }
 
         [Fact]
@@ -805,7 +620,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(4);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 3, 1), null);
+            b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 3, 1), null, false);
 
             // Assert
             Assert.Equal(0, b.MovesSinceFoundation);
@@ -832,7 +647,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(4);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
+            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
 
             // Assert
             Assert.Equal(1, b.MovesSinceFoundation);
@@ -859,7 +674,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(4);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 4, 6), null);
+            b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 4, 6), null, false);
 
             // Assert
             Assert.Equal(1, b.MovesSinceFoundation);
@@ -887,10 +702,10 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var b = Board.FromDealNum(4);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 3, 0), null);
+            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 3, 0), null, false);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 1), null);
+            b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 1), null, false);
 
             // Assert
             Assert.Equal(0, b.MovesSinceFoundation);
@@ -918,15 +733,78 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var b = Board.FromDealNum(4);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 1, 0), null);
+            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 1, 0), null, false);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.ReserveToTableau, 0, 4), null);
+            b.ExecuteMove(Move.Get(MoveType.ReserveToTableau, 0, 4), null, false);
 
             // Assert
             Assert.Equal(2, b.MovesSinceFoundation);
             Assert.Null(b.Reserve[0]);
             Assert.Equal(Card.Get("7D").RawValue, b.Tableaus[4].Top.RawValue);
+        }
+
+        [Fact]
+        public void ExecuteMove_auto_plays_all_possible_moves_next()
+        {
+            /* 
+             * CC DD HH SS
+             * JC KD KH KS
+             *
+             * aa bb cc dd
+             * QC -- -- --
+             *
+             * 00 01 02 03 04 05 06 07
+             * -- -- -- -- -- -- -- --
+             * KC                     
+             */
+            var r = new Reserve(Card.Get("QC").RawValue, -1, -1, -1);
+            var f = new Foundation(10, 12, 12, 12);
+            var t0 = new Tableau("KC");
+            var tRest = new Tableau();
+            var ts = new Tableaus(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
+            var b = new Board(r, f, ts);
+            Assert.True(b.IsValid());
+
+            // Act
+            b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 0), null);
+
+            // Assert
+            Assert.Equal(1, b.MoveCount);
+            Assert.Equal(1, b.AutoMoves.Count);
+            Assert.True(b.IsSolved);
+            Assert.Equal(25, b.LastMoveRating);
+        }
+
+        [Fact]
+        public void AutoPlay_auto_plays_all_possible_auto_moves()
+        {
+            /* 
+             * CC DD HH SS
+             * JC KD KH KS
+             *
+             * aa bb cc dd
+             * QC -- -- --
+             *
+             * 00 01 02 03 04 05 06 07
+             * -- -- -- -- -- -- -- --
+             * KC                     
+             */
+            var r = new Reserve(Card.Get("QC").RawValue, -1, -1, -1);
+            var f = new Foundation(10, 12, 12, 12);
+            var t0 = new Tableau("KC");
+            var tRest = new Tableau();
+            var ts = new Tableaus(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
+            var b = new Board(r, f, ts);
+            Assert.True(b.IsValid());
+
+            // Act
+            b.AutoPlay();
+
+            // Assert
+            Assert.Equal(2, b.AutoMoves.Count);
+            Assert.True(b.IsSolved);
+            Assert.Equal(50, b.LastMoveRating);
         }
 
         [Fact]
@@ -941,8 +819,8 @@ namespace FreeCellSolver.Test
             Assert.True(Board.FromDealNum(5) == Board.FromDealNum(5).Clone());
 
             var b1 = Board.FromDealNum(5);
-            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
-            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null);
+            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
+            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
 
             var b2 = b1.Clone();
             Assert.True(b1 == b2);
@@ -973,16 +851,16 @@ namespace FreeCellSolver.Test
             var b2 = Board.FromDealNum(5);
             Assert.True(b1 == b2);
 
-            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
+            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
             Assert.True(b1 != b2);
 
-            b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
+            b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
             Assert.True(b1 == b2);
 
-            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null);
+            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
             Assert.True(b1 != b2);
 
-            b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null);
+            b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
             Assert.True(b1 == b2);
         }
 
@@ -995,16 +873,16 @@ namespace FreeCellSolver.Test
             var b2 = Board.FromDealNum(5);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
 
-            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
+            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
             Assert.True(b1.GetHashCode() != b2.GetHashCode());
 
-            b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
+            b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
 
-            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null);
+            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
             Assert.True(b1.GetHashCode() != b2.GetHashCode());
 
-            b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null);
+            b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
         }
     }

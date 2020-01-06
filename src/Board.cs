@@ -12,6 +12,7 @@ namespace FreeCellSolver
     {
         public int MovesSinceFoundation { get; private set; }
         public int MoveCount { get; private set; }
+        public List<Move> AutoMoves { get; private set; }
         public Move LastMove { get; private set; }
         public Board Prev { get; private set; }
 
@@ -47,7 +48,7 @@ namespace FreeCellSolver
 
         public static Board FromString(string deal) => BoardExtensions.FromString(deal);
 
-        public List<Move> GetValidMoves(out bool foundationFound, out bool autoMove)
+        public List<Move> GetValidMoves(out bool foundationFound)
         {
             var tableaus = Tableaus;
             var reserve = Reserve;
@@ -55,7 +56,7 @@ namespace FreeCellSolver
             var lastMove = LastMove;
 
             var moves = new List<Move>();
-            foundationFound = autoMove = false;
+            foundationFound = false;
 
             var freeCount = Reserve.FreeCount + 1;
             var emptyTableauCount = Tableaus.EmptyTableauCount;
@@ -67,12 +68,7 @@ namespace FreeCellSolver
                 {
                     moves.Add(Move.Get(MoveType.ReserveToFoundation, r, f));
                     foundationFound = true;
-
-                    if (IsAutoMove(reserve[r]))
-                    {
-                        autoMove = true;
-                        return new List<Move> { moves[moves.Count - 1] };
-                    }
+                    Debug.Assert(!foundation.CanAutoPlay(reserve[r]));
                 }
             }
 
@@ -84,12 +80,7 @@ namespace FreeCellSolver
                 {
                     moves.Add(Move.Get(MoveType.TableauToFoundation, t, f));
                     foundationFound = true;
-
-                    if (IsAutoMove(tableau[0]))
-                    {
-                        autoMove = true;
-                        return new List<Move> { moves[moves.Count - 1] };
-                    }
+                    Debug.Assert(!foundation.CanAutoPlay(tableau[0]));
                 }
             }
 
@@ -206,38 +197,67 @@ namespace FreeCellSolver
             }
 
             return moves;
-
-            // reserve -> foundation or tableau -> foundation. Return true if:
-            // rank is R2 or Ace 
-            // or all lower cards of opposite color are already at foundation
-            bool IsAutoMove(Card card)
-            {
-                var rank = (int)card.Rank;
-
-                if (rank <= (int)Rank.R2)
-                {
-                    return true;
-                }
-
-                if (card.Color == Color.Black)
-                {
-                    return foundation[Suit.Diamonds] >= rank - 1
-                        && foundation[Suit.Hearts] >= rank - 1;
-                }
-                else
-                {
-                    return foundation[Suit.Clubs] >= rank - 1
-                        && foundation[Suit.Spades] >= rank - 1;
-                }
-            }
         }
 
-        public void ExecuteMove(Move move, Board prev)
+        public void ExecuteMove(Move move, Board prev, bool autoPlay = true /* This flag is just to make testing easier. Should always be true*/)
         {
             MoveCount++;
             LastMove = move;
             Prev = prev;
 
+            ExecuteMoveCore(move);
+            if (autoPlay)
+            {
+                AutoPlay();
+            }
+        }
+
+        public void AutoPlay()
+        {
+            var reserve = Reserve;
+            var foundation = Foundation;
+            var tableaus = Tableaus;
+
+            var found = false;
+
+            do
+            {
+                found = false;
+
+                // 1. Reserve -> Foundation
+                for (var r = 0; r < 4; r++)
+                {
+                    var card = reserve[r];
+                    if (card != null && foundation.CanAutoPlay(card))
+                    {
+                        var move = Move.Get(MoveType.ReserveToFoundation, r, (int)card.Suit);
+                        if (AutoMoves == null) AutoMoves = new List<Move>(10);
+                        AutoMoves.Add(move);
+                        ExecuteMoveCore(move);
+                        LastMoveRating += 25;
+                        found = true;
+                    }
+                }
+
+                // 2. Tableau -> Foundation
+                for (var t = 0; t < 8; t++)
+                {
+                    var card = tableaus[t].Top;
+                    if (card != null && foundation.CanAutoPlay(card))
+                    {
+                        var move = Move.Get(MoveType.TableauToFoundation, t, (int)card.Suit);
+                        if (AutoMoves == null) AutoMoves = new List<Move>(10);
+                        AutoMoves.Add(move);
+                        ExecuteMoveCore(move);
+                        LastMoveRating += 25;
+                        found = true;
+                    }
+                }
+            } while (found);
+        }
+
+        private void ExecuteMoveCore(Move move)
+        {
             switch (move.Type)
             {
                 case MoveType.TableauToFoundation:

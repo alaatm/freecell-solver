@@ -37,6 +37,32 @@ namespace FreeCellSolver
         public bool CanPush(Card card)
             => _state[(short)card.Suit] == (short)card.Rank - 1;
 
+        public bool CanAutoPlay(Card card)
+        {
+            if (!CanPush(card))
+            {
+                return false;
+            }
+
+            var rank = (int)card.Rank;
+
+            if (rank <= (int)Rank.R2)
+            {
+                return true;
+            }
+
+            if (card.Color == Color.Black)
+            {
+                return _state[1/*Suit.Diamonds*/] >= rank - 1
+                    && _state[2/*Suit.Hearts*/] >= rank - 1;
+            }
+            else
+            {
+                return _state[0/*Suit.Clubs*/] >= rank - 1
+                    && _state[3/*Suit.Spades*/] >= rank - 1;
+            }
+        }
+
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));

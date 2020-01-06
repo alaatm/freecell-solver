@@ -19,7 +19,7 @@ namespace FreeCellSolver.Solvers
                         tree.Add(depth, new HashSet<Board>());
                     }
 
-                    foreach (var move in b.GetValidMoves(out _, out _))
+                    foreach (var move in b.GetValidMoves(out _))
                     {
                         var next = b.Clone();
                         next.ExecuteMove(move, b);
