@@ -95,17 +95,17 @@ namespace FreeCellSolver
 
         public override string ToString()
         {
-            var c1 = _state[0] >= 0 ? Card.Get(_state[0]) : null;
-            var c2 = _state[1] >= 0 ? Card.Get(_state[1]) : null;
-            var c3 = _state[2] >= 0 ? Card.Get(_state[2]) : null;
-            var c4 = _state[3] >= 0 ? Card.Get(_state[3]) : null;
-
             var sb = new StringBuilder();
             sb.AppendLine("01 02 03 04");
-            sb.Append((c1?.ToString() ?? "--") + " ");
-            sb.Append((c2?.ToString() ?? "--") + " ");
-            sb.Append((c3?.ToString() ?? "--") + " ");
-            sb.Append(c4?.ToString() ?? "--");
+            for (var i = 0; i < 4; i++)
+            {
+                var value = _state[i];
+                sb.Append((value == -1 ? "--" : Card.Get(value).ToString()));
+                if (i < 3)
+                {
+                    sb.Append(" ");
+                }
+            }
 
             return sb.ToString();
         }
