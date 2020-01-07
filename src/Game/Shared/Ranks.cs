@@ -4,6 +4,6 @@ namespace FreeCellSolver.Game.Shared
 {
     public static class Ranks
     {
-        public static Rank[] Values { get; } = (Rank[])Enum.GetValues(typeof(Rank));
+        public static Rank[] Values() => (Rank[])Enum.GetValues(typeof(Rank));
     }
 }

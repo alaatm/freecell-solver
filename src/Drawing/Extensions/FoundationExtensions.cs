@@ -16,10 +16,10 @@ namespace FreeCellSolver.Drawing.Extensions
             using var canvas = new SKCanvas(bmp);
             using var paint = new SKPaint { Color = new SKColor(255, 255, 255, 82) };
             using var bgPaint = new SKPaint { Color = SKColor.Parse("1b5e20") };
-            for (var i = 0; i < Suits.Values.Length; i++)
+            for (var i = 0; i < Suits.Values().Length; i++)
             {
                 var x = i * DeckImage.CardWidth + i * spacing;
-                var suit = Suits.Values[i];
+                var suit = Suits.Values()[i];
                 var rank = foundation[suit];
                 var card = rank >= 0 ? Card.Get(suit, (Rank)rank) : null;
 

@@ -37,9 +37,9 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_get_card_by_suit_and_rank()
         {
-            foreach (var r in Ranks.Values)
+            foreach (var r in Ranks.Values())
             {
-                foreach (var s in Suits.Values)
+                foreach (var s in Suits.Values())
                 {
                     var card = Card.Get(s, r);
                     Assert.Equal(s, card.Suit);

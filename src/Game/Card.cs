@@ -54,9 +54,9 @@ namespace FreeCellSolver.Game
         {
             // Pre-generate all cards
             var c = 0;
-            foreach (var rank in Ranks.Values)
+            foreach (var rank in Ranks.Values())
             {
-                foreach (var suit in Suits.Values)
+                foreach (var suit in Suits.Values())
                 {
                     var card = new Card((short)((short)suit + ((short)rank << 2)));
                     _allCards[c++] = card;
