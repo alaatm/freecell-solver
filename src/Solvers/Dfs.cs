@@ -7,7 +7,7 @@ using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver.Solvers
 {
-    public class Dfs
+    public class Dfs : ISolver
     {
         private static ConcurrentDictionary<int, byte> _closed;
 
@@ -23,7 +23,7 @@ namespace FreeCellSolver.Solvers
             => (_maxDepth, _maxMovesSinceFoundation, _backTrackPercent) = (maxDepth, maxMovesSinceFoundation, backTrackPercent);
 
         // Non-parallel version used primarilly for debugging
-        public static Dfs Run(Board board)
+        public static ISolver Run(Board board)
         {
             Console.WriteLine($"Solver: DFS");
 
@@ -43,7 +43,7 @@ namespace FreeCellSolver.Solvers
             return dfs;
         }
 
-        public static async Task<Dfs> RunParallelAsync(Board board)
+        public static async Task<ISolver> RunParallelAsync(Board board)
         {
             const int maxDepth = 200;
             const int maxMovesSinceFoundation = 17;

@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 
 namespace FreeCellSolver.Solvers
 {
-    public class AStar
+    public class AStar : ISolver
     {
         private static ConcurrentDictionary<int, byte> _closed;
 
@@ -19,7 +19,7 @@ namespace FreeCellSolver.Solvers
         public AStar(Board board, int maxDepth)
             => (_board, _maxDepth) = (board, maxDepth);
 
-        public static AStar Run(Board board)
+        public static ISolver Run(Board board)
         {
             Console.WriteLine($"Solver: A*");
 
@@ -37,7 +37,7 @@ namespace FreeCellSolver.Solvers
             return astar;
         }
 
-        public static async Task<AStar> RunParallelAsync(Board board)
+        public static async Task<ISolver> RunParallelAsync(Board board)
         {
             const int maxDepth = 200;
 
