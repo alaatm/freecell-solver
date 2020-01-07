@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using FreeCellSolver.Extensions;
+using FreeCellSolver.Game;
 using Xunit;
 
 namespace FreeCellSolver.Test

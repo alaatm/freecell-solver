@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace FreeCellSolver.Extensions
 {

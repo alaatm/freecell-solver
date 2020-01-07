@@ -1,3 +1,4 @@
+using FreeCellSolver.Game;
 using SkiaSharp;
 
 namespace FreeCellSolver.Drawing

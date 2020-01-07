@@ -4,8 +4,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using SkiaSharp;
+using FreeCellSolver.Extensions;
 
-namespace FreeCellSolver.Extensions
+namespace FreeCellSolver.Game.Extensions
 {
     public static class BoardExtensions
     {

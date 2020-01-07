@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 
-namespace FreeCellSolver
+namespace FreeCellSolver.Game
 {
     public class Tableaus
     {

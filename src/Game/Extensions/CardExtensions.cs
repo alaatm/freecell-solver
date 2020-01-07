@@ -1,7 +1,7 @@
 using SkiaSharp;
 using FreeCellSolver.Drawing;
 
-namespace FreeCellSolver.Extensions
+namespace FreeCellSolver.Game.Extensions
 {
     public static class CardExtensions
     {

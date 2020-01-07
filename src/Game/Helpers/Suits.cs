@@ -1,6 +1,6 @@
 using System;
 
-namespace FreeCellSolver
+namespace FreeCellSolver.Game.Helpers
 {
     public static class Suits
     {

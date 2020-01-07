@@ -1,4 +1,4 @@
-namespace FreeCellSolver
+namespace FreeCellSolver.Game.Extensions
 {
     public static class MoveExtensions
     {

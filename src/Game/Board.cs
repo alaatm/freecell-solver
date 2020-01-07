@@ -3,9 +3,9 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
-using FreeCellSolver.Extensions;
+using FreeCellSolver.Game.Extensions;
 
-namespace FreeCellSolver
+namespace FreeCellSolver.Game
 {
     public class Board : IEquatable<Board>
     {

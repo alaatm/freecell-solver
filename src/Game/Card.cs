@@ -1,7 +1,8 @@
 using System;
 using System.Diagnostics;
+using FreeCellSolver.Game.Helpers;
 
-namespace FreeCellSolver
+namespace FreeCellSolver.Game
 {
     public enum Color
     {

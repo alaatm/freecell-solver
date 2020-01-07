@@ -4,9 +4,10 @@ using System.Linq;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using FreeCellSolver.Solvers;
-using FreeCellSolver.Extensions;
 using McMaster.Extensions.CommandLineUtils;
+using FreeCellSolver.Game;
+using FreeCellSolver.Solvers;
+using FreeCellSolver.Game.Extensions;
 
 namespace FreeCellSolver
 {

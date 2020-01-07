@@ -1,3 +1,5 @@
+using FreeCellSolver.Game;
+using FreeCellSolver.Game.Helpers;
 using Xunit;
 
 namespace FreeCellSolver.Test

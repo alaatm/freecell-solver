@@ -1,12 +1,10 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Collections.Generic;
 using SkiaSharp;
 using FreeCellSolver.Drawing;
 
-namespace FreeCellSolver.Extensions
+namespace FreeCellSolver.Game.Extensions
 {
     public static class TableausExtensions
     {

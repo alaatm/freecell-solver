@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using Xunit;
-using FreeCellSolver.Extensions;
+using FreeCellSolver.Game;
+using FreeCellSolver.Game.Extensions;
 
 namespace FreeCellSolver.Test
 {

@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using FreeCellSolver.Game;
 
 namespace FreeCellSolver.Solvers
 {

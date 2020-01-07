@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace FreeCellSolver
+namespace FreeCellSolver.Game
 {
     public enum MoveType
     {

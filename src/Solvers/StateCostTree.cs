@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Collections.Generic;
+using FreeCellSolver.Game;
 
 namespace FreeCellSolver.Solvers
 {
