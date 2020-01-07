@@ -11,15 +11,16 @@ namespace FreeCellSolver.Solvers
 
         private readonly Board _board;
         private readonly int _maxDepth;
+        private readonly bool _best;
 
         public Board SolvedBoard { get; private set; }
         public int SolvedFromId { get; private set; }
         public int VisitedNodes => _closed.Count;
 
-        public AStar(Board board, int maxDepth)
-            => (_board, _maxDepth) = (board, maxDepth);
+        public AStar(Board board, int maxDepth, bool best)
+            => (_board, _maxDepth, _best) = (board, maxDepth, best);
 
-        public static ISolver Run(Board board)
+        public static ISolver Run(Board board, bool best)
         {
             Console.WriteLine($"Solver: A*");
 
@@ -32,12 +33,12 @@ namespace FreeCellSolver.Solvers
             // non parallel version, its only here for debugging.
             _closed = new ConcurrentDictionary<int, byte>(1, 1000);
 
-            var astar = new AStar(clone, maxDepth);
+            var astar = new AStar(clone, maxDepth, best);
             astar.Search(board, 0);
             return astar;
         }
 
-        public static async Task<ISolver> RunParallelAsync(Board board)
+        public static async Task<ISolver> RunParallelAsync(Board board, bool best)
         {
             const int maxDepth = 200;
 
@@ -48,7 +49,7 @@ namespace FreeCellSolver.Solvers
             Console.WriteLine($"Solver: A* - using {states.Count} cores");
 
             _closed = new ConcurrentDictionary<int, byte>(states.Count, 1000);
-            var astar = new AStar(board, maxDepth);
+            var astar = new AStar(board, maxDepth, best);
 
             var tasks = states.Select((b, i) => Task.Run(() => astar.Search(b, i)));
             await Task.WhenAll(tasks);
@@ -88,7 +89,7 @@ namespace FreeCellSolver.Solvers
                         continue;
                     }
 
-                    next.ComputeCost(false);
+                    next.ComputeCost(_best);
 
                     var existing = open.GetValue(next);
                     if (existing == null || next.Cost < existing.Cost)

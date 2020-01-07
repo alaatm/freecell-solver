@@ -43,63 +43,58 @@ namespace FreeCellSolver
             };
             app.HelpOption(inherited: true);
 
-            app.Command("run", runCmd =>
+            app.Command("benchmarks", benchmarksCmd =>
             {
-                runCmd.Description = "Runs the solver";
-                var optSolver = runCmd.Option<SolverType>("-v|--solver <solver>", "Solver type (Required)", CommandOptionType.SingleValue).IsRequired();
-                var optDeal = runCmd.Option<int>("-d|--deal <number>", "Deal number to solve", CommandOptionType.SingleValue).Accepts(n => n.Range(1, int.MaxValue));
-                var optShort = runCmd.Option("-s|--short", "Solves 4 MS freecell deals", CommandOptionType.NoValue);
-                var optFull = runCmd.Option("-f|--full", "Solves the first 1500 MS freecell deals", CommandOptionType.NoValue);
-                var optAll = runCmd.Option("-a|--all", "Solves all 32000 MS freecell deals", CommandOptionType.NoValue);
-                var optTag = runCmd.Option<string>("-t|--tag <tag>", "Tags the result file", CommandOptionType.SingleValue);
-
-                runCmd.OnExecuteAsync(async (_) =>
+                benchmarksCmd.Description = "Executes or shows benchmarks";
+                benchmarksCmd.Command("run", benchmarksRunCmd =>
                 {
-                    var opts = new[] { optDeal.HasValue(), optShort.HasValue(), optFull.HasValue(), optAll.HasValue() };
-                    if (opts.Count(o => o == true) > 1)
+                    benchmarksRunCmd.Description = "Executes benchmarks";
+                    var optSolver = benchmarksRunCmd.Option<SolverType>("-v|--solver <SOLVER>", "Solver type (Required)", CommandOptionType.SingleValue).IsRequired();
+                    var optType = benchmarksRunCmd.Option<string>("-p|--type <TYPE>", $"Executes solver against short (1500) or full (32000) deals{Environment.NewLine}Allowed values are: short, full", CommandOptionType.SingleValue).Accepts(x => x.Values("short", "full"));
+                    var optTag = benchmarksRunCmd.Option<string>("-t|--tag <TAG>", "Tags the result file", CommandOptionType.SingleValue);
+                    benchmarksRunCmd.OnExecuteAsync(async (_) =>
                     {
-                        Console.Error.WriteLine("Only one option maybe specified for this command: -d, -s, -f or -a");
-                        return 1;
-                    }
-                    else if (opts.Count(o => o == true) == 0)
-                    {
-                        Console.Error.WriteLine("One of the following options must be specified for this command: -d, -f, -s or -a.");
-                        return 1;
-                    }
+                        if (optType.ParsedValue.ToLower() == "short")
+                        {
+                            await RunBenchmarksAsync(optSolver.ParsedValue, 1500, optTag.ParsedValue);
+                            await PrintBenchmarksSummaryAsync();
+                        }
+                        else if (optType.ParsedValue.ToLower() == "full")
+                        {
+                            await RunBenchmarksAsync(optSolver.ParsedValue, 32000, optTag.ParsedValue);
+                            await PrintBenchmarksSummaryAsync();
+                        }
+                        else
+                        {
+                            throw new Exception("??");
+                        }
 
-                    if (optDeal.HasValue())
-                    {
-                        await RunSingleBenchmarksAsync(optSolver.ParsedValue, optDeal.ParsedValue);
-                    }
-                    else if (optShort.HasValue())
-                    {
-                        await RunShortBenchmarksAsync(optSolver.ParsedValue);
-                    }
-                    else if (optFull.HasValue())
-                    {
-                        await RunFullBenchmarksAsync(optSolver.ParsedValue, 1500, optTag.ParsedValue);
-                        await PrintBenchmarksSummaryAsync();
-                    }
-                    else if (optAll.HasValue())
-                    {
-                        await RunFullBenchmarksAsync(optSolver.ParsedValue, 32000, optTag.ParsedValue);
-                        await PrintBenchmarksSummaryAsync();
-                    }
-                    else
-                    {
-                        throw new Exception("??");
-                    }
+                        return 0;
+                    });
+                });
 
-                    return 0;
+                benchmarksCmd.Command("show", benchmarkShowCmd =>
+                {
+                    benchmarkShowCmd.Description = "Shows past benchmarks results";
+                    benchmarkShowCmd.OnExecuteAsync(async (_) =>
+                    {
+                        await PrintBenchmarksSummaryAsync();
+                        return 0;
+                    });
                 });
             });
 
-            app.Command("print-summary", printSummaryCmd =>
+            app.Command("run", runCmd =>
             {
-                printSummaryCmd.Description = "Prints summary from log files";
-                printSummaryCmd.OnExecuteAsync(async (_) =>
+                runCmd.Description = "Runs the solver";
+                var optSolver = runCmd.Option<SolverType>("-v|--solver <SOLVER>", "Solver type (Required)", CommandOptionType.SingleValue).IsRequired();
+                var optDeal = runCmd.Option<int>("-d|--deal <NUM>", "Deal number to solve", CommandOptionType.SingleValue).Accepts(n => n.Range(1, int.MaxValue));
+                var optBest = runCmd.Option<bool>("-b|--best", "Attempts to find a solution with the least amount of moves. Applicable only to 'AStar' solver.", CommandOptionType.NoValue);
+                var optPrint = runCmd.Option<string>("-p|--print <PATH>", "Prints moves images to specified path", CommandOptionType.SingleValue).Accepts(x => x.ExistingDirectory());
+
+                runCmd.OnExecuteAsync(async (_) =>
                 {
-                    await PrintBenchmarksSummaryAsync();
+                    await RunSingleAsync(optSolver.ParsedValue, optDeal.ParsedValue, optBest.HasValue(), optPrint.ParsedValue);
                     return 0;
                 });
             });
@@ -107,7 +102,7 @@ namespace FreeCellSolver
             return app;
         }
 
-        static async Task RunFullBenchmarksAsync(SolverType solverType, int count, string tag)
+        static async Task RunBenchmarksAsync(SolverType solverType, int count, string tag)
         {
             var logFile = solverType.ToString().ToLower();
             logFile += count == 32000 ? "-32k" : "";
@@ -139,33 +134,22 @@ namespace FreeCellSolver
             return;
         }
 
-        static async Task RunShortBenchmarksAsync(SolverType solverType)
-        {
-            var sw = new Stopwatch();
-
-            foreach (var deal in new[] { 169, 178, 231, 261 })
-            {
-                Console.WriteLine($"Processing Deal #{deal}");
-                sw.Restart();
-                PrintSummary(Console.Out, await Solver.RunParallelAsync(solverType, Board.FromDealNum(deal)), sw);
-                GC.Collect();
-            }
-        }
-
-        static async Task RunSingleBenchmarksAsync(SolverType solverType, int dealNum, bool print = false)
+        static async Task RunSingleAsync(SolverType solverType, int dealNum, bool best, string printPath)
         {
             var sw = new Stopwatch();
             var b = Board.FromDealNum(dealNum);
 
             Console.WriteLine($"Processing deal #{dealNum}");
             sw.Restart();
-            var s = await Solver.RunParallelAsync(solverType, b);
+            var s = await Solver.RunParallelAsync(solverType, b, best);
             PrintSummary(Console.Out, s, sw);
             GC.Collect();
 
-            if (print && s.SolvedBoard != null)
+            if (!String.IsNullOrWhiteSpace(printPath) && s.SolvedBoard != null)
             {
-                var path = $@"C:\personal-projs\freecell-solver\_temp\{dealNum}";
+                var path = Path.Combine(printPath, dealNum.ToString());
+                Console.WriteLine($"Printing solved board into {path}...");
+
                 Directory.CreateDirectory(path);
                 Console.WriteLine($"Printing moves to {path}");
                 s.SolvedBoard.PrintMoves(path);
