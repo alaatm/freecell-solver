@@ -4,6 +4,9 @@ namespace FreeCellSolver.Game.Shared
 {
     public static class Suits
     {
-        public static Suit[] Values() => (Suit[])Enum.GetValues(typeof(Suit));
+        private static readonly Suit[] _suits = (Suit[])Enum.GetValues(typeof(Suit));
+
+        // Warning! caller might mutate!
+        public static Suit[] Values() => _suits;
     }
 }
