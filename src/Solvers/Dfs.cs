@@ -109,7 +109,7 @@ namespace FreeCellSolver.Solvers
                 {
                     continue;
                 }
-                _closed.AddOrUpdate(hc, (byte)1, (k, v) => (byte)1);
+                _closed.AddOrUpdate(hc, 1, (k, v) => 1);
 
                 var moves = board.GetValidMoves(out var foundFoundation);
 

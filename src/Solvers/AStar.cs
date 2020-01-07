@@ -72,7 +72,7 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
-                _closed.AddOrUpdate(board.GetHashCode(), (byte)1, (k, v) => (byte)1);
+                _closed.AddOrUpdate(board.GetHashCode(), 1, (k, v) => 1);
 
                 if (board.MoveCount > _maxDepth)
                 {

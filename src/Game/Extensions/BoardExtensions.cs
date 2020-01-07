@@ -75,7 +75,7 @@ namespace FreeCellSolver.Game.Extensions
 
             for (var i = 0; i < cards.Count; i++)
             {
-                var pos = 51 - (int)((seed = (seed * 214013 + 2531011) & Int32.MaxValue) >> 16) % (52 - i);
+                var pos = 51 - ((seed = (seed * 214013 + 2531011) & Int32.MaxValue) >> 16) % (52 - i);
                 cards.Swap(i, pos);
             }
 
