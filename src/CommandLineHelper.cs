@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using FreeCellSolver.Game;
 using FreeCellSolver.Solvers.Shared;
+using FreeCellSolver.Drawing.Extensions;
 using McMaster.Extensions.CommandLineUtils;
-using FreeCellSolver.Game.Extensions;
 
-namespace FreeCellSolver
+namespace FreeCellSolver.Entry
 {
-    public static class CommandLineHelper
+    static class CommandLineHelper
     {
         public static CommandLineApplication BuildCmdParser()
         {

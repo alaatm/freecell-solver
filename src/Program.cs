@@ -2,7 +2,7 @@
 using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
 
-namespace FreeCellSolver
+namespace FreeCellSolver.Entry
 {
     class Program
     {
