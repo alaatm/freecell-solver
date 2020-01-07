@@ -22,12 +22,14 @@ namespace FreeCellSolver
             }
             catch (CommandParsingException ex)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.Error.WriteLine(ex.Message);
 
                 if (ex is UnrecognizedCommandParsingException uex && uex.NearestMatches.Any())
                 {
                     Console.Error.WriteLine($"Did you mean '{uex.NearestMatches.First()}'?");
                 }
+                Console.ResetColor();
 
                 return 1;
             }
@@ -49,7 +51,7 @@ namespace FreeCellSolver
                 {
                     benchmarksRunCmd.Description = "Executes benchmarks";
                     var optSolver = benchmarksRunCmd.Option<SolverType>("-v|--solver <SOLVER>", "Solver type (Required)", CommandOptionType.SingleValue).IsRequired();
-                    var optType = benchmarksRunCmd.Option<string>("-p|--type <TYPE>", $"Executes solver against short (1500) or full (32000) deals{Environment.NewLine}Allowed values are: short, full", CommandOptionType.SingleValue).Accepts(x => x.Values("short", "full"));
+                    var optType = benchmarksRunCmd.Option<string>("-p|--type <TYPE>", $"Executes solver against short (1500) or full (32000) deals{Environment.NewLine}Allowed values are: short, full", CommandOptionType.SingleValue).Accepts(x => x.Values("short", "full")).IsRequired();
                     var optTag = benchmarksRunCmd.Option<string>("-t|--tag <TAG>", "Tags the result file", CommandOptionType.SingleValue);
                     benchmarksRunCmd.OnExecuteAsync(async (_) =>
                     {
@@ -70,6 +72,15 @@ namespace FreeCellSolver
 
                         return 0;
                     });
+
+                    benchmarksRunCmd.OnValidationError(r =>
+                    {
+                        benchmarksRunCmd.ShowHelp();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Error.WriteLine(r.ErrorMessage);
+                        Console.ResetColor();
+                        return 1;
+                    });
                 });
 
                 benchmarksCmd.Command("show", benchmarkShowCmd =>
@@ -80,6 +91,12 @@ namespace FreeCellSolver
                         await PrintBenchmarksSummaryAsync();
                         return 0;
                     });
+                });
+
+                benchmarksCmd.OnExecute(() =>
+                {
+                    benchmarksCmd.ShowHelp();
+                    return 1;
                 });
             });
 
@@ -95,6 +112,15 @@ namespace FreeCellSolver
                 {
                     await RunSingleAsync(optSolver.ParsedValue, optDeal.ParsedValue, optBest.HasValue(), optPrint.ParsedValue);
                     return 0;
+                });
+
+                runCmd.OnValidationError(r =>
+                {
+                    runCmd.ShowHelp();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Error.WriteLine(r.ErrorMessage);
+                    Console.ResetColor();
+                    return 1;
                 });
             });
 
