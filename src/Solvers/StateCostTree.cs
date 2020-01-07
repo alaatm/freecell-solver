@@ -6,8 +6,8 @@ namespace FreeCellSolver.Solvers
 {
     public class StateCostTree
     {
-        private HashSet<Board> _hash = new HashSet<Board>();
-        private SortedDictionary<int, List<Board>> _costMap = new SortedDictionary<int, List<Board>>();
+        private readonly HashSet<Board> _hash = new HashSet<Board>();
+        private readonly SortedDictionary<int, List<Board>> _costMap = new SortedDictionary<int, List<Board>>();
 
         public int Count => _hash.Count;
 
