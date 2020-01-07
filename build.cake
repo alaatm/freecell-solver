@@ -76,7 +76,8 @@ Task("Cover")
         CollectCoverage = true,
         CoverletOutputFormat = CoverletOutputFormat.lcov | CoverletOutputFormat.opencover,
         CoverletOutputDirectory = Directory("./coverage/"),
-        CoverletOutputName=$"{DateTime.UtcNow.Ticks}",
+        CoverletOutputName = $"{DateTime.UtcNow.Ticks}",
+        Exclude = new List<string> { "[*]FreeCellSolver.Entry.*", "[*]FreeCellSolver.Drawing.*" },
     };
 
     DotNetCoreTest(".", testSettings, coverletSettings);
