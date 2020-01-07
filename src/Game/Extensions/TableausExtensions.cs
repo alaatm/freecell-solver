@@ -35,30 +35,4 @@ namespace FreeCellSolver.Game.Extensions
             return SKImage.FromBitmap(bmp);
         }
     }
-
-    public class ConsoleErrorWriter : TextWriter
-    {
-        private readonly TextWriter _stdErr;
-
-        public ConsoleErrorWriter(TextWriter stdErr) => _stdErr = stdErr;
-
-        public override void WriteLine(string value)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            _stdErr.WriteLine(value);
-            Console.ResetColor();
-        }
-
-        public override void Write(string value)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            _stdErr.Write(value);
-            Console.ResetColor();
-        }
-
-        public override Encoding Encoding => Encoding.Default;
-
-        public static void Set()
-            => Console.SetError(new ConsoleErrorWriter(Console.Error));
-    }
 }

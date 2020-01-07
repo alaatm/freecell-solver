@@ -75,7 +75,7 @@ namespace FreeCellSolver.Game.Extensions
 
             for (var i = 0; i < cards.Count; i++)
             {
-                var pos = 51 - (int)((seed = (seed * 214013 + 2531011) & int.MaxValue) >> 16) % (52 - i);
+                var pos = 51 - (int)((seed = (seed * 214013 + 2531011) & Int32.MaxValue) >> 16) % (52 - i);
                 cards.Swap(i, pos);
             }
 
@@ -135,8 +135,6 @@ namespace FreeCellSolver.Game.Extensions
         public static bool IsValid(this Board board)
         {
             var isValid = true;
-            ConsoleErrorWriter.Set();
-            var stdErr = Console.Error;
 
             var allCards = Enumerable.Range(0, 52).Select(c => Card.Get((short)c));
 
@@ -146,15 +144,15 @@ namespace FreeCellSolver.Game.Extensions
             if (uniqueCards.Count != 52)
             {
                 var missing = String.Join(", ", allCards.Except(uniqueCards).Select(c => $"'{c.ToString()}'"));
-                stdErr.WriteLine($"Invalid card count, should be '52' but found '{uniqueCards.Count}' cards.");
-                stdErr.WriteLine($"The following card(s) are missing: {missing}");
+                Console.Error.WriteLine($"Invalid card count, should be '52' but found '{uniqueCards.Count}' cards.");
+                Console.Error.WriteLine($"The following card(s) are missing: {missing}");
                 isValid = false;
             }
             else if (boardCards.Count != 52)
             {
                 var duplicates = String.Join(", ", boardCards.GroupBy(x => x.RawValue).Where(g => g.Count() > 1).Select(g => $"'{Card.Get(g.Key).ToString()}'"));
-                stdErr.WriteLine($"Invalid card count, should be '52' but found '{boardCards.Count}' cards.");
-                stdErr.WriteLine($"The following card(s) are duplicates: {duplicates}");
+                Console.Error.WriteLine($"Invalid card count, should be '52' but found '{boardCards.Count}' cards.");
+                Console.Error.WriteLine($"The following card(s) are duplicates: {duplicates}");
                 isValid = false;
             }
 
