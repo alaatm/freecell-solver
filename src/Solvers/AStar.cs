@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using FreeCellSolver.Game;
+using FreeCellSolver.Solvers.Shared;
 
 namespace FreeCellSolver.Solvers
 {

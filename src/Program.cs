@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 using FreeCellSolver.Game;
-using FreeCellSolver.Solvers;
+using FreeCellSolver.Solvers.Shared;
 using FreeCellSolver.Game.Extensions;
 
 namespace FreeCellSolver

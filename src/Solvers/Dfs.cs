@@ -3,8 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
-using FreeCellSolver.Extensions;
 using FreeCellSolver.Game;
+using FreeCellSolver.Extensions;
+using FreeCellSolver.Solvers.Shared;
 
 namespace FreeCellSolver.Solvers
 {
