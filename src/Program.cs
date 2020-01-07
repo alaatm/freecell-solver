@@ -184,7 +184,7 @@ namespace FreeCellSolver
         static void PrintSummary(TextWriter writer, ISolver s, Stopwatch sw)
         {
             writer.Write($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - initial id: {s.SolvedFromId} - visited nodes: {s.VisitedNodes,0:n0}");
-            writer.WriteLine(s.SolvedBoard != null ? $" - #moves: {s.SolvedBoard.GetMoves().Count()}" : "");
+            writer.WriteLine(s.SolvedBoard != null ? $" - #moves: {s.SolvedBoard.GetMoves().Count()}" : " - #moves: 0");
         }
 
         static async Task PrintBenchmarksSummaryAsync()
@@ -233,7 +233,7 @@ namespace FreeCellSolver
                 var c = total.ToString("n0").PadLeft(maxLenTotal);
                 var f = failed.ToString("n0").PadLeft(maxLenFailed);
 
-                Console.WriteLine($"{d} - {n}: {ts} - visited: {v} - total: {c} - failed: {f} - avg move count: {avgMoveCount}");
+                Console.WriteLine($"{d} - {n}: {ts} - visited: {v} - total: {c} - failed: {f} - avg move count: {Math.Round(avgMoveCount, 4)}");
             }
         }
     }
