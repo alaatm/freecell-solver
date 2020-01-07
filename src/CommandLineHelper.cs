@@ -206,7 +206,7 @@ namespace FreeCellSolver.Entry
             var solver = await Solver.RunParallelAsync(solverType, Board.FromDealNum(deal), best);
             _sw.Stop();
             writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
-            writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.GetMoves().Count()}" : " - #moves: 0");
+            writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.MoveCount}" : " - #moves: 0");
             await writer.FlushAsync();
             GC.Collect();
             return solver;

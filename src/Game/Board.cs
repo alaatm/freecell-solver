@@ -9,8 +9,11 @@ namespace FreeCellSolver.Game
 {
     public class Board : IEquatable<Board>
     {
+        private int _manualMoveCount;
+        private int _autoMoveCount;
+
+        public int MoveCount => _manualMoveCount + _autoMoveCount;
         public int MovesSinceFoundation { get; private set; }
-        public int MoveCount { get; private set; }
         public List<Move> AutoMoves { get; private set; }
         public Move LastMove { get; private set; }
         public Board Prev { get; private set; }
@@ -38,8 +41,9 @@ namespace FreeCellSolver.Game
             Reserve = copy.Reserve.Clone();
             Foundation = copy.Foundation.Clone();
 
+            _manualMoveCount = copy._manualMoveCount;
+            _autoMoveCount = copy._autoMoveCount;
             MovesSinceFoundation = copy.MovesSinceFoundation;
-            MoveCount = copy.MoveCount;
             LastMove = copy.LastMove;
             Prev = copy.Prev;
         }
@@ -201,7 +205,7 @@ namespace FreeCellSolver.Game
 
         public void ExecuteMove(Move move, Board prev, bool autoPlay = true /* This flag is just to make testing easier. Should always be true*/)
         {
-            MoveCount++;
+            _manualMoveCount++;
             LastMove = move;
             Prev = prev;
 
@@ -236,6 +240,7 @@ namespace FreeCellSolver.Game
                             AutoMoves = new List<Move>(10);
                         }
 
+                        _autoMoveCount++;
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
                         LastMoveRating += 25;
@@ -256,6 +261,7 @@ namespace FreeCellSolver.Game
                             AutoMoves = new List<Move>(10);
                         }
 
+                        _autoMoveCount++;
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
                         LastMoveRating += 25;
