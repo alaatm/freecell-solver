@@ -1,7 +1,7 @@
 using System.IO;
 using SkiaSharp;
 
-namespace FreeCellSolver.Extensions
+namespace FreeCellSolver.Drawing.Extensions
 {
     public static class SKImageExtensions
     {

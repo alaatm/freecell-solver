@@ -1,10 +1,8 @@
 using System;
-using System.IO;
-using System.Text;
 using SkiaSharp;
-using FreeCellSolver.Drawing;
+using FreeCellSolver.Game;
 
-namespace FreeCellSolver.Game.Extensions
+namespace FreeCellSolver.Drawing.Extensions
 {
     public static class TableausExtensions
     {

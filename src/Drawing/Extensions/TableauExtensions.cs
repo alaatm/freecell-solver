@@ -1,8 +1,8 @@
 using System;
 using SkiaSharp;
-using FreeCellSolver.Drawing;
+using FreeCellSolver.Game;
 
-namespace FreeCellSolver.Game.Extensions
+namespace FreeCellSolver.Drawing.Extensions
 {
     public static class TableauExtensions
     {

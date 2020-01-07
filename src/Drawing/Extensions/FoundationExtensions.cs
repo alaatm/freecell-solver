@@ -1,8 +1,8 @@
 using SkiaSharp;
-using FreeCellSolver.Drawing;
+using FreeCellSolver.Game;
 using FreeCellSolver.Game.Helpers;
 
-namespace FreeCellSolver.Game.Extensions
+namespace FreeCellSolver.Drawing.Extensions
 {
     public static class FoundationExtensions
     {

@@ -15,7 +15,7 @@ namespace FreeCellSolver.Drawing
 
         static DeckImage()
         {
-            using var stream = typeof(Program).Assembly.GetManifestResourceStream("FreeCellSolver.assets.deck.png");
+            using var stream = typeof(DeckImage).Assembly.GetManifestResourceStream("FreeCellSolver.assets.deck.png");
             using var bmp = SKBitmap.Decode(stream);
             Instance = new DeckImage(SKImage.FromBitmap(bmp));
         }
