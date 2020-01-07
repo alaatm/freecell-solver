@@ -859,7 +859,7 @@ namespace FreeCellSolver.Test
 
             b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 2, 1), null);
             b.ComputeCost(true);
-            Assert.Equal(68, b.Cost); // subtract 1 from one less unsorted size then add 1 for the move=68
+            Assert.Equal(69, b.Cost); // subtract 1 from one less unsorted size, add 1 from reserve then add 1 for the move=69
         }
 
         [Fact]
