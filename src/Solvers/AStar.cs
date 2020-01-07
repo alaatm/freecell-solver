@@ -10,7 +10,6 @@ namespace FreeCellSolver.Solvers
     {
         private static ConcurrentDictionary<int, byte> _closed;
 
-        private readonly Board _board;
         private readonly int _maxDepth;
         private readonly bool _best;
 
@@ -18,8 +17,8 @@ namespace FreeCellSolver.Solvers
         public int SolvedFromId { get; private set; }
         public int VisitedNodes => _closed.Count;
 
-        public AStar(Board board, int maxDepth, bool best)
-            => (_board, _maxDepth, _best) = (board, maxDepth, best);
+        public AStar(int maxDepth, bool best)
+            => (_maxDepth, _best) = (maxDepth, best);
 
         public static ISolver Run(Board board, bool best)
         {
@@ -34,8 +33,8 @@ namespace FreeCellSolver.Solvers
             // non parallel version, its only here for debugging.
             _closed = new ConcurrentDictionary<int, byte>(1, 1000);
 
-            var astar = new AStar(clone, maxDepth, best);
-            astar.Search(board, 0);
+            var astar = new AStar(maxDepth, best);
+            astar.Search(clone, 0);
             return astar;
         }
 
@@ -50,7 +49,7 @@ namespace FreeCellSolver.Solvers
             Console.WriteLine($"Solver: A* - using {states.Count} cores");
 
             _closed = new ConcurrentDictionary<int, byte>(states.Count, 1000);
-            var astar = new AStar(board, maxDepth, best);
+            var astar = new AStar(maxDepth, best);
 
             var tasks = states.Select((b, i) => Task.Run(() => astar.Search(b, i)));
             await Task.WhenAll(tasks);
