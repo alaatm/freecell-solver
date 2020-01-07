@@ -13,6 +13,8 @@ namespace FreeCellSolver.Entry
 {
     static class CommandLineHelper
     {
+        static Stopwatch _sw = new Stopwatch();
+
         public static CommandLineApplication BuildCmdParser()
         {
             var app = new CommandLineApplication()
@@ -28,9 +30,28 @@ namespace FreeCellSolver.Entry
                 benchmarksCmd.Command("run", benchmarksRunCmd =>
                 {
                     benchmarksRunCmd.Description = "Executes benchmarks";
-                    var optSolver = benchmarksRunCmd.Option<SolverType>("-v|--solver <SOLVER>", "Solver type (Required)", CommandOptionType.SingleValue).IsRequired();
-                    var optType = benchmarksRunCmd.Option<string>("-p|--type <TYPE>", $"Executes solver against short (1500) or full (32000) deals{Environment.NewLine}Allowed values are: short, full", CommandOptionType.SingleValue).Accepts(x => x.Values("short", "full")).IsRequired();
-                    var optTag = benchmarksRunCmd.Option<string>("-t|--tag <TAG>", "Tags the result file", CommandOptionType.SingleValue);
+
+                    var optSolver = benchmarksRunCmd
+                        .Option<SolverType>(
+                            "-v|--solver <SOLVER>",
+                            "Solver type (Required)",
+                            CommandOptionType.SingleValue)
+                        .IsRequired();
+
+                    var optType = benchmarksRunCmd
+                        .Option<string>(
+                            "-p|--type <TYPE>",
+                            $"Executes solver against short (1500) or full (32000) deals{Environment.NewLine}Allowed values are: short, full",
+                            CommandOptionType.SingleValue)
+                        .Accepts(x => x.Values("short", "full"))
+                        .IsRequired();
+
+                    var optTag = benchmarksRunCmd
+                        .Option<string>(
+                            "-t|--tag <TAG>",
+                            "Tags the result file",
+                            CommandOptionType.SingleValue);
+
                     benchmarksRunCmd.OnExecuteAsync(async (_) =>
                     {
                         if (optType.ParsedValue.ToLower() == "short")
@@ -81,10 +102,33 @@ namespace FreeCellSolver.Entry
             app.Command("run", runCmd =>
             {
                 runCmd.Description = "Runs the solver";
-                var optSolver = runCmd.Option<SolverType>("-v|--solver <SOLVER>", "Solver type (Required)", CommandOptionType.SingleValue).IsRequired();
-                var optDeal = runCmd.Option<int>("-d|--deal <NUM>", "Deal number to solve", CommandOptionType.SingleValue).Accepts(n => n.Range(1, Int32.MaxValue));
-                var optBest = runCmd.Option<bool>("-b|--best", "Attempts to find a solution with the least amount of moves. Applicable only to 'AStar' solver.", CommandOptionType.NoValue);
-                var optPrint = runCmd.Option<string>("-p|--print <PATH>", "Prints moves images to specified path", CommandOptionType.SingleValue).Accepts(x => x.ExistingDirectory());
+
+                var optSolver = runCmd
+                    .Option<SolverType>(
+                        "-v|--solver <SOLVER>",
+                        "Solver type (Required)",
+                        CommandOptionType.SingleValue)
+                    .IsRequired();
+
+                var optDeal = runCmd
+                    .Option<int>(
+                        "-d|--deal <NUM>",
+                        "Deal number to solve",
+                        CommandOptionType.SingleValue)
+                    .Accepts(n => n.Range(1, Int32.MaxValue));
+
+                var optBest = runCmd
+                    .Option<bool>(
+                        "-b|--best",
+                        "Attempts to find a solution with the least amount of moves. Applicable only to 'AStar' solver.",
+                        CommandOptionType.NoValue);
+
+                var optPrint = runCmd
+                    .Option<string>(
+                        "-p|--print <PATH>",
+                        "Prints moves images to specified path",
+                        CommandOptionType.SingleValue)
+                    .Accepts(x => x.ExistingDirectory());
 
                 runCmd.OnExecuteAsync(async (_) =>
                 {
@@ -125,14 +169,9 @@ namespace FreeCellSolver.Entry
             }
 
             using var fs = File.CreateText(path);
-            var sw = new Stopwatch();
             for (var i = 1; i <= count; i++)
             {
-                fs.WriteLine($"Processing deal #{i}");
-                sw.Restart();
-                PrintSummary(fs, await Solver.RunParallelAsync(solverType, Board.FromDealNum(i)), sw);
-                await fs.FlushAsync();
-                GC.Collect();
+                await ExecuteAsync(fs, solverType, i);
             }
             return;
         }
@@ -142,11 +181,7 @@ namespace FreeCellSolver.Entry
             var sw = new Stopwatch();
             var b = Board.FromDealNum(dealNum);
 
-            Console.WriteLine($"Processing deal #{dealNum}");
-            sw.Restart();
-            var s = await Solver.RunParallelAsync(solverType, b, best);
-            PrintSummary(Console.Out, s, sw);
-            GC.Collect();
+            var s = await ExecuteAsync(Console.Out, solverType, dealNum);
 
             if (!String.IsNullOrWhiteSpace(printPath) && s.SolvedBoard != null)
             {
@@ -159,19 +194,17 @@ namespace FreeCellSolver.Entry
             }
         }
 
-        static void Debug(SolverType solverType, int dealNum)
+        static async Task<ISolver> ExecuteAsync(TextWriter writer, SolverType solverType, int deal)
         {
-            var sw = new Stopwatch();
-            Console.WriteLine($"Processing deal #{dealNum}");
-            sw.Restart();
-            PrintSummary(Console.Out, Solver.Run(solverType, Board.FromDealNum(dealNum)), sw);
+            writer.WriteLine($"Processing deal #{deal}");
+            _sw.Restart();
+            var solver = await Solver.RunParallelAsync(solverType, Board.FromDealNum(deal));
+            _sw.Stop();
+            writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
+            writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.GetMoves().Count()}" : " - #moves: 0");
+            await writer.FlushAsync();
             GC.Collect();
-        }
-
-        static void PrintSummary(TextWriter writer, ISolver s, Stopwatch sw)
-        {
-            writer.Write($"{(s.SolvedBoard != null ? "Done" : "Bailed")} in {sw.Elapsed} - initial id: {s.SolvedFromId} - visited nodes: {s.VisitedNodes,0:n0}");
-            writer.WriteLine(s.SolvedBoard != null ? $" - #moves: {s.SolvedBoard.GetMoves().Count()}" : " - #moves: 0");
+            return solver;
         }
 
         static async Task PrintBenchmarksSummaryAsync()
