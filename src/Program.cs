@@ -17,10 +17,8 @@ namespace FreeCellSolver
         {
             try
             {
-                using (var app = BuildCmdParser())
-                {
-                    return app.Execute(args);
-                }
+                using var app = BuildCmdParser();
+                return app.Execute(args);
             }
             catch (CommandParsingException ex)
             {
@@ -89,7 +87,7 @@ namespace FreeCellSolver
             {
                 runCmd.Description = "Runs the solver";
                 var optSolver = runCmd.Option<SolverType>("-v|--solver <SOLVER>", "Solver type (Required)", CommandOptionType.SingleValue).IsRequired();
-                var optDeal = runCmd.Option<int>("-d|--deal <NUM>", "Deal number to solve", CommandOptionType.SingleValue).Accepts(n => n.Range(1, int.MaxValue));
+                var optDeal = runCmd.Option<int>("-d|--deal <NUM>", "Deal number to solve", CommandOptionType.SingleValue).Accepts(n => n.Range(1, Int32.MaxValue));
                 var optBest = runCmd.Option<bool>("-b|--best", "Attempts to find a solution with the least amount of moves. Applicable only to 'AStar' solver.", CommandOptionType.NoValue);
                 var optPrint = runCmd.Option<string>("-p|--print <PATH>", "Prints moves images to specified path", CommandOptionType.SingleValue).Accepts(x => x.ExistingDirectory());
 
@@ -196,10 +194,10 @@ namespace FreeCellSolver
 
                     idxStart = lines[l].IndexOf("visited nodes: ") + "visited nodes: ".Length;
                     length = lines[l].IndexOf(" - ", idxStart) - idxStart;
-                    nc += int.Parse(lines[l].Substring(idxStart, length).Replace(",", ""));
+                    nc += Int32.Parse(lines[l].Substring(idxStart, length).Replace(",", ""));
 
                     idxStart = lines[l].IndexOf("#moves: ") + "#moves: ".Length;
-                    mc += int.Parse(lines[l].Substring(idxStart));
+                    mc += Int32.Parse(lines[l].Substring(idxStart));
                 }
 
                 tests.Add((log.CreateDate, Path.GetFileNameWithoutExtension(log.Path), ts, count, nc, failed, (double)mc / count));

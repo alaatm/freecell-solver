@@ -218,8 +218,7 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var tableaus = Tableaus;
 
-            var found = false;
-
+            bool found;
             do
             {
                 found = false;
@@ -231,7 +230,12 @@ namespace FreeCellSolver.Game
                     if (card != null && foundation.CanAutoPlay(card))
                     {
                         var move = Move.Get(MoveType.ReserveToFoundation, r, (int)card.Suit);
-                        if (AutoMoves == null) AutoMoves = new List<Move>(10);
+
+                        if (AutoMoves == null)
+                        {
+                            AutoMoves = new List<Move>(10);
+                        }
+
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
                         LastMoveRating += 25;
@@ -246,7 +250,12 @@ namespace FreeCellSolver.Game
                     if (card != null && foundation.CanAutoPlay(card))
                     {
                         var move = Move.Get(MoveType.TableauToFoundation, t, (int)card.Suit);
-                        if (AutoMoves == null) AutoMoves = new List<Move>(10);
+
+                        if (AutoMoves == null)
+                        {
+                            AutoMoves = new List<Move>(10);
+                        }
+
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
                         LastMoveRating += 25;
