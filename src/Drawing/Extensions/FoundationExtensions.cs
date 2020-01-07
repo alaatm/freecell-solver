@@ -1,6 +1,6 @@
 using SkiaSharp;
 using FreeCellSolver.Game;
-using FreeCellSolver.Game.Helpers;
+using FreeCellSolver.Game.Shared;
 
 namespace FreeCellSolver.Drawing.Extensions
 {

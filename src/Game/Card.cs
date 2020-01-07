@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-using FreeCellSolver.Game.Helpers;
+using FreeCellSolver.Game.Shared;
 
 namespace FreeCellSolver.Game
 {
