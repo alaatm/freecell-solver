@@ -171,7 +171,7 @@ namespace FreeCellSolver.Entry
             using var fs = File.CreateText(path);
             for (var i = 1; i <= count; i++)
             {
-                await ExecuteAsync(fs, solverType, i);
+                await ExecuteAsync(fs, solverType, i, false);
             }
             return;
         }
@@ -181,24 +181,29 @@ namespace FreeCellSolver.Entry
             var sw = new Stopwatch();
             var b = Board.FromDealNum(dealNum);
 
-            var s = await ExecuteAsync(Console.Out, solverType, dealNum);
+            var s = await ExecuteAsync(Console.Out, solverType, dealNum, best);
 
-            if (!String.IsNullOrWhiteSpace(printPath) && s.SolvedBoard != null)
+            if (s.SolvedBoard != null)
             {
-                var path = Path.Combine(printPath, dealNum.ToString());
-                Console.WriteLine($"Printing solved board into {path}...");
+                Console.WriteLine("moves: " + String.Join("", s.SolvedBoard.GetMoves().Select(m => m.ToString())));
 
-                Directory.CreateDirectory(path);
-                Console.WriteLine($"Printing moves to {path}");
-                s.SolvedBoard.PrintMoves(path);
+                if (!String.IsNullOrWhiteSpace(printPath))
+                {
+                    var path = Path.Combine(printPath, dealNum.ToString());
+                    Console.WriteLine($"Printing solved board into {path}...");
+
+                    Directory.CreateDirectory(path);
+                    Console.WriteLine($"Printing moves to {path}");
+                    s.SolvedBoard.PrintMoves(path);
+                }
             }
         }
 
-        static async Task<ISolver> ExecuteAsync(TextWriter writer, SolverType solverType, int deal)
+        static async Task<ISolver> ExecuteAsync(TextWriter writer, SolverType solverType, int deal, bool best)
         {
             writer.WriteLine($"Processing deal #{deal}");
             _sw.Restart();
-            var solver = await Solver.RunParallelAsync(solverType, Board.FromDealNum(deal));
+            var solver = await Solver.RunParallelAsync(solverType, Board.FromDealNum(deal), best);
             _sw.Stop();
             writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
             writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.GetMoves().Count()}" : " - #moves: 0");
