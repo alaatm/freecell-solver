@@ -120,7 +120,7 @@ namespace FreeCellSolver.Entry
                 var optBest = runCmd
                     .Option<bool>(
                         "-b|--best",
-                        "Attempts to find a solution with the least amount of moves. Applicable only to 'AStar' solver.",
+                        "Attempts to find a solution with the least amount of manual moves.",
                         CommandOptionType.NoValue);
 
                 var optPrint = runCmd
