@@ -91,7 +91,7 @@ namespace FreeCellSolver.Solvers
             while (open.Count > 0)
             {
                 var board = open.Pop();
-                var depth = board.MoveCount;
+                var depth = board.ManualMoveCount;
 
                 if (board.IsSolved || SolvedBoard != null)
                 {

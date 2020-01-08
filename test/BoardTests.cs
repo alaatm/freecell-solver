@@ -585,6 +585,37 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void Moves_to_foundation_maintain_movesEstimated_and_movesSinceFoundation()
+        {
+            /*
+             * 00 01 02 03 04 05 06 07 (Deal #984)
+             * -- -- -- -- -- -- -- --
+             * 7S TC 5D QC 8C 2C JD 3C
+             * JS 9H AS AH QH AC AD JH
+             * 7H 4D KC TS 3D 6D KS 4C
+             * TH JC QS 6H 5C 2D 2S 8D
+             * KH 3H QD 2H 9C KD 3S 5H
+             * 9D 5S 6S 4H TD 6C 7D 7C
+             * 9S 4S 8S 8H            
+             */
+
+            // Arrange
+            var b = Board.FromDealNum(984);
+            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 0), null);
+            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 1), null);
+            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 2), null);
+            Assert.Equal(3, b.MovesSinceFoundation);
+            Assert.Equal(52, b.MovesEstimated);
+
+            // Act
+            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 3), null);
+
+            // Assert
+            Assert.Equal(0, b.MovesSinceFoundation);
+            Assert.Equal(51, b.MovesEstimated);
+        }
+
+        [Fact]
         public void ExecuteMove_stores_lastMove_prev_state_and_maintains_moveCount()
         {
             // Arrange
@@ -599,7 +630,7 @@ namespace FreeCellSolver.Test
             var lastMove = b2.LastMove;
             Assert.True(lastMove.Type == move.Type && lastMove.From == move.From && lastMove.To == move.To && lastMove.Size == move.Size);
             Assert.Equal(b1, b2.Prev);
-            Assert.Equal(1, b2.MoveCount);
+            Assert.Equal(1, b2.ManualMoveCount);
         }
 
         [Fact]
@@ -771,7 +802,8 @@ namespace FreeCellSolver.Test
             b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 0), null);
 
             // Assert
-            Assert.Equal(2, b.MoveCount);
+            Assert.Equal(1, b.ManualMoveCount);
+            Assert.Equal(1, b.AutoMoveCount);
             Assert.Single(b.AutoMoves);
             Assert.True(b.IsSolved);
             Assert.Equal(25, b.LastMoveRating);
@@ -803,8 +835,10 @@ namespace FreeCellSolver.Test
             b.AutoPlay();
 
             // Assert
-            Assert.Equal(2, b.AutoMoves.Count);
+            Assert.Equal(0, b.ManualMoveCount);
+            Assert.Equal(2, b.AutoMoveCount);
             Assert.Equal(2, b.MoveCount);
+            Assert.Equal(2, b.AutoMoves.Count);
             Assert.True(b.IsSolved);
             Assert.Equal(50, b.LastMoveRating);
         }
@@ -856,12 +890,8 @@ namespace FreeCellSolver.Test
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
-            b.ComputeCost(false);
+            b.ComputeCost();
             Assert.Equal(68, b.Cost);
-
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 2, 1), null);
-            b.ComputeCost(true);
-            Assert.Equal(69, b.Cost); // subtract 1 from one less unsorted size, add 1 from reserve then add 1 for the move=69
         }
 
         [Fact]
@@ -924,9 +954,14 @@ namespace FreeCellSolver.Test
             var b1 = Board.FromDealNum(5);
             b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
             b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
+            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 7, 1), null); // auto play here
 
             var b2 = b1.Clone();
             Assert.True(b1 == b2);
+            Assert.Equal(b1.ManualMoveCount, b2.ManualMoveCount);
+            Assert.Equal(b1.AutoMoveCount, b2.AutoMoveCount);
+            Assert.Equal(b1.MovesEstimated, b2.MovesEstimated);
+            Assert.Equal(b1.MovesSinceFoundation, b2.MovesSinceFoundation);
         }
 
         [Fact]

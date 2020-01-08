@@ -9,11 +9,13 @@ namespace FreeCellSolver.Game
 {
     public class Board : IEquatable<Board>
     {
-        private int _manualMoveCount;
-        private int _autoMoveCount;
-
-        public int MoveCount => _manualMoveCount + _autoMoveCount;
+        public int ManualMoveCount { get; private set; }
+        public int AutoMoveCount { get; private set; }
+        public int MovesEstimated { get; private set; }
+        public int MinMovesToGoal => ManualMoveCount + MovesEstimated;
+        public int MoveCount => ManualMoveCount + AutoMoveCount;
         public int MovesSinceFoundation { get; private set; }
+
         public List<Move> AutoMoves { get; private set; }
         public Move LastMove { get; private set; }
         public Board Prev { get; private set; }
@@ -33,6 +35,7 @@ namespace FreeCellSolver.Game
             Tableaus = tableaus.Clone();
             Reserve = reserve.Clone();
             Foundation = foundation.Clone();
+            MovesEstimated = 52 - (foundation[Suit.Clubs] + foundation[Suit.Diamonds] + foundation[Suit.Hearts] + foundation[Suit.Spades] + 4);
         }
 
         private Board(Board copy)
@@ -41,8 +44,9 @@ namespace FreeCellSolver.Game
             Reserve = copy.Reserve.Clone();
             Foundation = copy.Foundation.Clone();
 
-            _manualMoveCount = copy._manualMoveCount;
-            _autoMoveCount = copy._autoMoveCount;
+            ManualMoveCount = copy.ManualMoveCount;
+            AutoMoveCount = copy.AutoMoveCount;
+            MovesEstimated = copy.MovesEstimated;
             MovesSinceFoundation = copy.MovesSinceFoundation;
             LastMove = copy.LastMove;
             Prev = copy.Prev;
@@ -205,7 +209,7 @@ namespace FreeCellSolver.Game
 
         public void ExecuteMove(Move move, Board prev, bool autoPlay = true /* This flag is just to make testing easier. Should always be true*/)
         {
-            _manualMoveCount++;
+            ManualMoveCount++;
             LastMove = move;
             Prev = prev;
 
@@ -240,7 +244,7 @@ namespace FreeCellSolver.Game
                             AutoMoves = new List<Move>(10);
                         }
 
-                        _autoMoveCount++;
+                        AutoMoveCount++;
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
                         LastMoveRating += 25;
@@ -261,7 +265,7 @@ namespace FreeCellSolver.Game
                             AutoMoves = new List<Move>(10);
                         }
 
-                        _autoMoveCount++;
+                        AutoMoveCount++;
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
                         LastMoveRating += 25;
@@ -277,6 +281,7 @@ namespace FreeCellSolver.Game
             {
                 case MoveType.TableauToFoundation:
                     MovesSinceFoundation = 0;
+                    MovesEstimated--;
                     Tableaus[move.From].Move(Foundation);
                     break;
                 case MoveType.TableauToReserve:
@@ -290,6 +295,7 @@ namespace FreeCellSolver.Game
                     break;
                 case MoveType.ReserveToFoundation:
                     MovesSinceFoundation = 0;
+                    MovesEstimated--;
                     Reserve.Move(move.From, Foundation);
                     break;
                 case MoveType.ReserveToTableau:
@@ -424,7 +430,7 @@ namespace FreeCellSolver.Game
             }
         }
 
-        public void ComputeCost(bool includeCostFromInitial)
+        public void ComputeCost()
         {
             var foundation = Foundation;
             var tableaus = Tableaus;
@@ -443,12 +449,7 @@ namespace FreeCellSolver.Game
                 unsortedSize += t.Size - t.SortedSize;
             }
 
-            var movesEstimated = 52 - (fClubs + fDiamonds + fHearts + fSpades);
-
-            // Including move count into cost will yield better solution (less moves) but much slower processing.
-            // Consider adding as an option to A* solver
-            Cost = includeCostFromInitial ? MoveCount : 0;
-            Cost += movesEstimated + unsortedSize + (4 - Reserve.FreeCount) + colorDiff;
+            Cost = MovesEstimated + unsortedSize + (4 - Reserve.FreeCount) + colorDiff;
         }
 
         public IEnumerable<Move> GetMoves()
