@@ -226,15 +226,17 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var tableaus = Tableaus;
 
+            Board original = null;
             if (Prev == null)
             {
-                // This is the root, we need to insert a copy just before this one
-                // with the original state
-                var original = Clone();
-                Prev = original;
+                // Record original so that we can set it to Prev if this is root
+                // before we execute a move below
+                original = Clone();
             }
 
+            var autoFound = false;
             bool found;
+
             do
             {
                 found = false;
@@ -256,7 +258,7 @@ namespace FreeCellSolver.Game
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
                         LastMoveRating += 25;
-                        found = true;
+                        found = autoFound = true;
                     }
                 }
 
@@ -277,10 +279,17 @@ namespace FreeCellSolver.Game
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
                         LastMoveRating += 25;
-                        found = true;
+                        found = autoFound = true;
                     }
                 }
             } while (found);
+
+            if (Prev == null && autoFound)
+            {
+                // This is the root, we need to insert a copy just before this one
+                // with the original state
+                Prev = original;
+            }
         }
 
         private void ExecuteMoveCore(Move move)

@@ -811,7 +811,7 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void AutoPlay_on_root_appends_root_node_to_prev()
+        public void AutoPlay_on_root_appends_root_node_to_prev_when_autoMove_found()
         {
             // Arrange
             var b = Board.FromDealNum(2); // Deal #2 has an auto move right from the start
@@ -823,6 +823,15 @@ namespace FreeCellSolver.Test
             // Assert
             Assert.NotNull(b.Prev);
             Assert.Equal(clone, b.Prev);
+
+            // Arrange
+            b = Board.FromDealNum(1); // Deal #1 has no auto moves initially
+
+            // Act
+            b.AutoPlay();
+
+            // Assert
+            Assert.Null(b.Prev);
         }
 
         [Fact]
