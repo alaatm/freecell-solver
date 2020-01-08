@@ -27,15 +27,6 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void IsComplete_returns_whether_foundation_is_complete()
-        {
-            // Complete
-            Assert.True(new Foundation(12, 12, 12, 12).IsComplete);
-            // Missing King of Spades
-            Assert.False(new Foundation(12, 12, 12, 11).IsComplete);
-        }
-
-        [Fact]
         public void CanPush_returns_whether_card_can_be_pushed()
         {
             var f = new Foundation();

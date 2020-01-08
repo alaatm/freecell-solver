@@ -804,6 +804,7 @@ namespace FreeCellSolver.Test
             // Assert
             Assert.Equal(1, b.ManualMoveCount);
             Assert.Equal(1, b.AutoMoveCount);
+            Assert.Equal(2, b.MoveCount);
             Assert.Single(b.AutoMoves);
             Assert.True(b.IsSolved);
             Assert.Equal(25, b.LastMoveRating);

@@ -23,7 +23,7 @@ namespace FreeCellSolver.Game
         public Reserve Reserve { get; private set; }
         public Foundation Foundation { get; private set; }
         public Tableaus Tableaus { get; private set; }
-        public bool IsSolved => Foundation.IsComplete;
+        public bool IsSolved => MovesEstimated == 0;
 
         public int LastMoveRating { get; private set; }
         public int Cost { get; private set; }

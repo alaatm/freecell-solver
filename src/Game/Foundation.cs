@@ -17,9 +17,6 @@ namespace FreeCellSolver.Game
 
         public short this[Suit s] => _state[(short)s];
 
-        public bool IsComplete =>
-            _state[0] + _state[1] + _state[2] + _state[3] + 4 == 52;
-
         public Foundation(short clubsTop, short diamondsTop, short heartsTop, short spadesTop)
         {
             Debug.Assert(clubsTop >= -1 && clubsTop < 13);
