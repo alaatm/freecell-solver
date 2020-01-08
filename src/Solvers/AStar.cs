@@ -75,7 +75,7 @@ namespace FreeCellSolver.Solvers
 
                 _closed.AddOrUpdate(board.GetHashCode(), 1, (k, v) => 1);
 
-                if (board.MoveCount > _maxDepth)
+                if (board.ManualMoveCount >= _maxDepth)
                 {
                     continue;
                 }
@@ -90,7 +90,7 @@ namespace FreeCellSolver.Solvers
                         continue;
                     }
 
-                    next.ComputeCost(_best);
+                    next.ComputeCost();
 
                     var existing = open.GetValue(next);
                     if (existing == null || next.Cost < existing.Cost)

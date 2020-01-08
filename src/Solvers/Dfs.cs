@@ -16,16 +16,17 @@ namespace FreeCellSolver.Solvers
         private readonly int _maxDepth;
         private readonly int _maxMovesSinceFoundation;
         private readonly float _backTrackPercent;
+        private readonly bool _best;
 
         public Board SolvedBoard { get; private set; }
         public int SolvedFromId { get; private set; }
         public int VisitedNodes => _closed.Count;
 
-        public Dfs(int maxDepth, int maxMovesSinceFoundation, float backTrackPercent)
-            => (_maxDepth, _maxMovesSinceFoundation, _backTrackPercent) = (maxDepth, maxMovesSinceFoundation, backTrackPercent);
+        private Dfs(int maxDepth, int maxMovesSinceFoundation, float backTrackPercent, bool best)
+            => (_maxDepth, _maxMovesSinceFoundation, _backTrackPercent, _best) = (maxDepth, maxMovesSinceFoundation, backTrackPercent, best);
 
         // Non-parallel version used primarilly for debugging
-        public static ISolver Run(Board board)
+        public static ISolver Run(Board board, bool best)
         {
             Console.WriteLine($"Solver: DFS");
 
@@ -40,12 +41,12 @@ namespace FreeCellSolver.Solvers
             // non parallel version, its only here for debugging.
             _closed = new ConcurrentDictionary<int, byte>(1, 1000);
 
-            var dfs = new Dfs(maxDepth, maxMovesSinceFoundation, backTrackPercent);
+            var dfs = new Dfs(maxDepth, maxMovesSinceFoundation, backTrackPercent, best);
             dfs.Search(clone, 0);
             return dfs;
         }
 
-        public static async Task<ISolver> RunParallelAsync(Board board)
+        public static async Task<ISolver> RunParallelAsync(Board board, bool best)
         {
             const int maxDepth = 200;
             const int maxMovesSinceFoundation = 17;
@@ -71,7 +72,8 @@ namespace FreeCellSolver.Solvers
                 dfs = new Dfs(
                     maxDepth,
                     maxMovesSinceFoundation + maxMovesSinceFoundationStep * attempt,
-                    backTrackPercent + backTrackPercentStep * attempt);
+                    backTrackPercent + backTrackPercentStep * attempt,
+                    best);
 
                 var tasks = states.Select((b, i) => Task.Run(() => dfs.Search(b, i)));
                 await Task.WhenAll(tasks);
