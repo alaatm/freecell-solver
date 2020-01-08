@@ -59,7 +59,7 @@ namespace FreeCellSolver.Drawing.Extensions
                 var i = 1;
                 foreach (var move in board.GetMoves())
                 {
-                    replayBoard.ExecuteMove(move, null);
+                    replayBoard.ExecuteMove(move, null, /* Do not execute auto moves*/ false);
                     replayBoard.ToImage().Save(Path.Join(path, $"{i++}.jpg"));
                 }
             }

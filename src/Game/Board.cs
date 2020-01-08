@@ -207,7 +207,7 @@ namespace FreeCellSolver.Game
             return moves;
         }
 
-        public void ExecuteMove(Move move, Board prev, bool autoPlay = true /* This flag is just to make testing easier. Should always be true*/)
+        public void ExecuteMove(Move move, Board prev, bool autoPlay = true /* This flag is used for printing of moves as we don't want to execute auto plays otherwise should always be true*/)
         {
             ManualMoveCount++;
             LastMove = move;
@@ -225,6 +225,14 @@ namespace FreeCellSolver.Game
             var reserve = Reserve;
             var foundation = Foundation;
             var tableaus = Tableaus;
+
+            if (Prev == null)
+            {
+                // This is the root, we need to insert a copy just before this one
+                // with the original state
+                var original = Clone();
+                Prev = original;
+            }
 
             bool found;
             do

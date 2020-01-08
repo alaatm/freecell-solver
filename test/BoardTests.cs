@@ -811,6 +811,21 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void AutoPlay_on_root_appends_root_node_to_prev()
+        {
+            // Arrange
+            var b = Board.FromDealNum(2); // Deal #2 has an auto move right from the start
+            var clone = b.Clone();
+
+            // Act
+            b.AutoPlay();
+
+            // Assert
+            Assert.NotNull(b.Prev);
+            Assert.Equal(clone, b.Prev);
+        }
+
+        [Fact]
         public void AutoPlay_auto_plays_all_possible_auto_moves()
         {
             /* 
