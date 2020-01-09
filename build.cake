@@ -23,13 +23,11 @@ Setup(context =>
 Task("Clean")
     .Does(() =>
 {
-    CleanDirectories("./dist/debug");
-    CleanDirectories("./dist/release");
-
-    CleanDirectories("./src/**/bin");
-    CleanDirectories("./src/**/obj");
-    CleanDirectories("./test/**/bin");
-    CleanDirectories("./test/**/obj");
+    DeleteDirectories(GetDirectories("./dist/**").Concat(GetDirectories("**/bin").Concat(GetDirectories("**/obj"))), new DeleteDirectorySettings
+    {
+        Recursive = true,
+        Force = true,
+    });
     CleanDirectories("./coverage/**");
     if (FileExists("./lcov.info")) DeleteFile("./lcov.info");    
 });
