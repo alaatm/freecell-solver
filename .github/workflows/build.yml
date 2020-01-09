@@ -17,3 +17,5 @@ jobs:
         run: |
           chmod +x ./build.sh
           ./build.sh -c debug
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
