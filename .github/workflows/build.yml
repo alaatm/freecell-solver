@@ -14,4 +14,6 @@ jobs:
           dotnet-version: 3.1.100
 
       - name: run build script
-        run: ./build.sh -c debug
+        run: |
+          chmod +x ./build.sh
+          ./build.sh -c debug
