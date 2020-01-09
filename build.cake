@@ -43,25 +43,25 @@ Task("Build")
     .IsDependentOn("Restore")
     .Does(() =>
 {
-	DotNetCoreBuild(".", new DotNetCoreBuildSettings
-	{
+    DotNetCoreBuild(".", new DotNetCoreBuildSettings
+    {
         NoRestore = true,
         OutputDirectory = Directory("./dist/" + configuration),
-		Configuration = configuration,
-	});
+        Configuration = configuration,
+    });
 });
 
 Task("Test")
     .IsDependentOn("Build")
     .Does(() =>
 {
-	DotNetCoreTest(".", new DotNetCoreTestSettings 
-	{ 
+    DotNetCoreTest(".", new DotNetCoreTestSettings 
+    { 
         NoRestore = true,
         NoBuild = true,
         OutputDirectory = Directory("./dist/" + configuration),
-		Configuration = configuration,
-	});
+        Configuration = configuration,
+    });
 });
 
 Task("Cover")
@@ -69,14 +69,15 @@ Task("Cover")
     .Does(() =>
 {
     var testSettings = new DotNetCoreTestSettings 
-	{ 
+    { 
         NoRestore = true,
         NoBuild = true,
         OutputDirectory = Directory("./dist/" + configuration),
-		Configuration = configuration,
-	};
+        Configuration = configuration,
+    };
 
-    var coverletSettings = new CoverletSettings {
+    var coverletSettings = new CoverletSettings
+    {
         CollectCoverage = true,
         CoverletOutputFormat = CoverletOutputFormat.lcov | CoverletOutputFormat.opencover,
         CoverletOutputDirectory = Directory("./coverage/"),
