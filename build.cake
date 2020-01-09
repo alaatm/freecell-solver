@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////
 
 var target = Argument("target", "Default");
-var configuration = Argument("configuration", "Release");
+var configuration = Argument("configuration", "release");
 
 //////////////////////////////////////////////////////////////////////
 // PREPARATION
@@ -23,6 +23,9 @@ Setup(context =>
 Task("Clean")
     .Does(() =>
 {
+    CleanDirectories("./dist/debug");
+    CleanDirectories("./dist/release");
+
     CleanDirectories("./src/**/bin");
     CleanDirectories("./src/**/obj");
     CleanDirectories("./test/**/bin");
@@ -45,6 +48,7 @@ Task("Build")
 	DotNetCoreBuild(".", new DotNetCoreBuildSettings
 	{
         NoRestore = true,
+        OutputDirectory = Directory("./dist/" + configuration),
 		Configuration = configuration,
 	});
 });
@@ -57,6 +61,7 @@ Task("Test")
 	{ 
         NoRestore = true,
         NoBuild = true,
+        OutputDirectory = Directory("./dist/" + configuration),
 		Configuration = configuration,
 	});
 });
@@ -69,6 +74,7 @@ Task("Cover")
 	{ 
         NoRestore = true,
         NoBuild = true,
+        OutputDirectory = Directory("./dist/" + configuration),
 		Configuration = configuration,
 	};
 

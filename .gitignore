@@ -356,6 +356,9 @@ benchmarks/
 # Cake build support files
 tools/
 
+# build dir
+dist/
+
 # Coverage files
 coverage/
 lcov.info
