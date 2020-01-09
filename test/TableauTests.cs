@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using FreeCellSolver.Game;
 using Xunit;
@@ -203,11 +204,7 @@ namespace FreeCellSolver.Test
 
         [Fact]
         public void ToString_returns_string_representation()
-            => Assert.Equal(
-@"8S
-2H
-9C
-8H", new Tableau("8S2H9C8H").ToString());
+            => Assert.Equal($"8S{Environment.NewLine}2H{Environment.NewLine}9C{Environment.NewLine}8H", new Tableau("8S2H9C8H").ToString());
 
         [Fact]
         public void AllCards_returns_all_cards()
