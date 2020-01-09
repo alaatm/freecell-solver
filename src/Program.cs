@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using FreeCellSolver.Drawing.Extensions;
+using FreeCellSolver.Game;
+using FreeCellSolver.Solvers;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace FreeCellSolver.Entry
