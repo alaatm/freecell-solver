@@ -155,7 +155,11 @@ namespace FreeCellSolver.Entry
             logFile += count == 32000 ? "-32k" : "";
             logFile += String.IsNullOrWhiteSpace(tag) ? $"-{DateTime.UtcNow.Ticks}" : $"-{tag}";
 
-            var path = $@"C:\personal-projs\freecell-solver\benchmarks\{logFile}.log";
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "benchmarks", $"{logFile}.log");
+            if (!Directory.Exists(Path.GetDirectoryName(path)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            }
 
             if (File.Exists(path))
             {
@@ -214,8 +218,15 @@ namespace FreeCellSolver.Entry
 
         static async Task PrintBenchmarksSummaryAsync()
         {
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "benchmarks");
+            if (!Directory.Exists(path))
+            {
+                Console.WriteLine("No benchmark files found.");
+                return;
+            }
+
             var tests = new List<(DateTime createDate, string name, TimeSpan ts, int total, int visited, int failed, double avgMoveCount)>();
-            var logFiles = Directory.GetFiles($@"C:\personal-projs\freecell-solver\benchmarks", "*.log").Select(f => new { Path = f, CreateDate = File.GetLastWriteTime(f) });
+            var logFiles = Directory.GetFiles(path, "*.log").Select(f => new { Path = f, CreateDate = File.GetLastWriteTime(f) });
             var len = logFiles.Select(f => Path.GetFileNameWithoutExtension(f.Path).Length).Max();
 
             foreach (var log in logFiles)
