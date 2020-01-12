@@ -69,6 +69,7 @@ class ReplayBoard {
     }
 
     private stepBackward = async () => {
+        this.prev.disabled = true;
         if (this.currentPos > 0) {
             if (this.isPlaying) {
                 // Pause first
@@ -76,8 +77,9 @@ class ReplayBoard {
                 // Wait for any pending animation to complete
                 await this.delay(this.duration + 50);
             }
-            await this.undo(this.moves[--this.currentPos], this.movesAnimArray[this.currentPos]);
+            await this.undo(this.moves[--this.currentPos], this.movesAnimArray[this.currentPos], 350);
         }
+        this.prev.disabled = false;
     }
 
     private play = async () => {
@@ -90,6 +92,7 @@ class ReplayBoard {
     }
 
     private stepForward = async () => {
+        this.next.disabled = true;
         if (this.currentPos < this.moves.length) {
             if (this.isPlaying) {
                 // Pause first
@@ -97,8 +100,9 @@ class ReplayBoard {
                 // Wait for any pending animation to complete
                 await this.delay(this.duration + 50);
             }
-            await this.move(this.moves[this.currentPos++]);
+            await this.move(this.moves[this.currentPos++], 350);
         }
+        this.next.disabled = false;
     }
 
     private initializeBoard() {
@@ -140,7 +144,7 @@ class ReplayBoard {
         return parseInt((cards[cards.length - 1] as HTMLElement).dataset.value!);
     }
 
-    private async move(m: Move) {
+    private async move(m: Move, duration?: number) {
         let sourceX: number, sourceY: number, targetX: number, targetY: number;
         let translateX: number, translateY: number;
         let cards: number[];
@@ -206,12 +210,12 @@ class ReplayBoard {
         const cardEls = cards.map(v => document.getElementsByClassName(`rv${v}`)[0]);
         cardEls.forEach(el => el.setAttribute('style', el.getAttribute('style') + `z-index:${++this.zIndex}`));
 
-        const duration = this.duration;
+        duration = duration ? duration : this.duration;
         await anime({
             targets: cards.map(rv => `.rv${rv}`),
             translateX,
             translateY,
-            easing: 'easeInOutSine',
+            easing: 'easeOutQuart',
             duration,
         }).finished;
 
@@ -226,7 +230,7 @@ class ReplayBoard {
         }
     }
 
-    private async undo(m: Move, anim: { translateX: number, translateY: number }) {
+    private async undo(m: Move, anim: { translateX: number, translateY: number }, duration?: number) {
         let cards: number[];
         let target: Element;
 
@@ -256,12 +260,12 @@ class ReplayBoard {
         const cardEls = cards.map(v => document.getElementsByClassName(`rv${v}`)[0]);
         cardEls.forEach(el => el.setAttribute('style', el.getAttribute('style') + `z-index:${++this.zIndex}`));
 
-        const duration = this.duration;
+        duration = duration ? duration : this.duration;
         await anime({
             targets: cards.map(rv => `.rv${rv}`),
             translateX: -anim.translateX,
             translateY: -anim.translateY,
-            easing: 'easeInOutSine',
+            easing: 'easeOutQuart',
             duration,
         }).finished;
 
