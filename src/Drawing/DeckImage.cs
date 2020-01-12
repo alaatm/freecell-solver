@@ -6,10 +6,9 @@ namespace FreeCellSolver.Drawing
     public class DeckImage
     {
         private readonly SKImage _img;
-        private readonly int _offset = 15;
 
-        public const int CardWidth = 180;
-        public const int CardHeight = 270;
+        public const int CardWidth = 150;
+        public const int CardHeight = 225;
 
         public static DeckImage Instance { get; private set; }
 
@@ -27,8 +26,8 @@ namespace FreeCellSolver.Drawing
             var s = ~(int)suit & 3;
             var r = (int)rank;
 
-            var left = CardWidth * r + (_offset * (r + 1));
-            var top = CardHeight * s + (_offset * (s + 1));
+            var left = CardWidth * r;
+            var top = CardHeight * s;
 
             return _img.Subset(SKRectI.Create(left, top, CardWidth, CardHeight));
         }

@@ -1,3 +1,4 @@
+#addin nuget:?package=Cake.Yarn&version=0.4.6
 #addin nuget:?package=Cake.Coverlet&version=2.3.4
 #tool nuget:?package=ReportGenerator&version=4.4.0
 
@@ -23,11 +24,8 @@ Setup(context =>
 Task("Clean")
     .Does(() =>
 {
-    DeleteDirectories(GetDirectories("./dist/**").Concat(GetDirectories("**/bin").Concat(GetDirectories("**/obj"))), new DeleteDirectorySettings
-    {
-        Recursive = true,
-        Force = true,
-    });
+    CleanDirectories("./dist/debug");
+    CleanDirectories("./dist/release");
     CleanDirectories("./coverage/**");
     if (FileExists("./lcov.info")) DeleteFile("./lcov.info");    
 });
@@ -41,6 +39,7 @@ Task("Restore")
 
 Task("Build")
     .IsDependentOn("Restore")
+    .IsDependentOn("VisualizerBuild")
     .Does(() =>
 {
     DotNetCoreBuild(".", new DotNetCoreBuildSettings
@@ -49,6 +48,13 @@ Task("Build")
         OutputDirectory = Directory("./dist/" + configuration),
         Configuration = configuration,
     });
+});
+
+Task("VisualizerBuild")
+    .Does(() =>
+{
+    Yarn.FromPath("./src/visualizer").Install();
+    Yarn.FromPath("./src/visualizer").RunScript("build");
 });
 
 Task("Test")

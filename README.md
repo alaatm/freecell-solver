@@ -15,14 +15,14 @@ Make sure you have [.net core 3.0 or later SDK](https://dotnet.microsoft.com/dow
 Once built, you can solve any MS Freecell deal # with the following command:
 
 ```
-./dist/release/fc-solve run -v astar -d 1
+./dist/release/fc-solve run -s astar -d 1
 ```
 
 or run directly using dotnet run without building:
 
 ```
 cd src
-dotnet run -c release -- run -v astar -d 1
+dotnet run -c release -- run -s astar -d 1
 ```
 
 The output will be something like this:
@@ -51,22 +51,22 @@ Use the `-d <n>` to specify which deal number to solve. For example, to solve de
 
 ### Choosing which solver to use
 
-You can specify which solver to use using the `-v <SOLVER>`. The options are `astar` or `dfs`. The `astar` solver generally finds better solutions but takes more time.
+You can specify which solver to use using the `-s <SOLVER>`. The options are `astar` or `dfs`. The `astar` solver generally finds better solutions but takes more time.
 
 ```
-./dist/release/fc-solve run -v astar -d 1
+./dist/release/fc-solve run -s astar -d 1
 ```
 -or-
 ```
-./dist/release/fc-solve run -v dfs -d 1
+./dist/release/fc-solve run -s dfs -d 1
 ```
 
-### Printing moves images
+### Visualizing moves images
 
-You can ask the solver to print the images of moves using the `-p <PATH>`:
+You can ask the solver to output solution visualization using the `-v <PATH>`, this will output an html file:
 
 ```
-./dist/release/fc-solve run -v astar -d 1 -p "./path-to-print-to"
+./dist/release/fc-solve run -s astar -d 1 -v "./path-to-html"
 ```
 
 ### Other options

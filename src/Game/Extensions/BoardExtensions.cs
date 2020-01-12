@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -97,6 +98,25 @@ namespace FreeCellSolver.Game.Extensions
             }
 
             return isValid;
+        }
+
+        public static string AsJson(this Board board)
+        {
+            var json = new StringBuilder();
+            json.Append("[");
+            for (var i = 0; i < 8; i++)
+            {
+                var t = board.Tableaus[i];
+                json.Append("[");
+                for (var j = 0; j < t.Size; j++)
+                {
+                    json.Append($"{t[t.Size - j - 1].RawValue},");
+                }
+                json.Append("],");
+            }
+            json.Append("];");
+
+            return json.ToString();
         }
     }
 }

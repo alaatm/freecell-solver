@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using FreeCellSolver.Game;
+using FreeCellSolver.Drawing;
 using FreeCellSolver.Solvers.Shared;
+using FreeCellSolver.Game.Extensions;
 using FreeCellSolver.Drawing.Extensions;
 using McMaster.Extensions.CommandLineUtils;
 
@@ -33,7 +35,7 @@ namespace FreeCellSolver.Entry
 
                     var optSolver = benchmarksRunCmd
                         .Option<SolverType>(
-                            "-v|--solver <SOLVER>",
+                            "-s|--solver <SOLVER>",
                             "Solver type (Required)",
                             CommandOptionType.SingleValue)
                         .IsRequired();
@@ -105,7 +107,7 @@ namespace FreeCellSolver.Entry
 
                 var optSolver = runCmd
                     .Option<SolverType>(
-                        "-v|--solver <SOLVER>",
+                        "-s|--solver <SOLVER>",
                         "Solver type (Required)",
                         CommandOptionType.SingleValue)
                     .IsRequired();
@@ -123,16 +125,16 @@ namespace FreeCellSolver.Entry
                         "Attempts to find a solution with the least amount of manual moves.",
                         CommandOptionType.NoValue);
 
-                var optPrint = runCmd
+                var optVisualize = runCmd
                     .Option<string>(
-                        "-p|--print <PATH>",
-                        "Prints moves images to specified path",
+                        "-v|--visualize <PATH>",
+                        "Outputs an html file to visualize the solution",
                         CommandOptionType.SingleValue)
                     .Accepts(x => x.ExistingDirectory());
 
                 runCmd.OnExecuteAsync(async (_) =>
                 {
-                    await RunSingleAsync(optSolver.ParsedValue, optDeal.ParsedValue, optBest.HasValue(), optPrint.ParsedValue);
+                    await RunSingleAsync(optSolver.ParsedValue, optDeal.ParsedValue, optBest.HasValue(), optVisualize.ParsedValue);
                     return 0;
                 });
 
@@ -180,7 +182,7 @@ namespace FreeCellSolver.Entry
             return;
         }
 
-        static async Task RunSingleAsync(SolverType solverType, int dealNum, bool best, string printPath)
+        static async Task RunSingleAsync(SolverType solverType, int dealNum, bool best, string visualizePath)
         {
             var sw = new Stopwatch();
             var b = Board.FromDealNum(dealNum);
@@ -191,16 +193,38 @@ namespace FreeCellSolver.Entry
             {
                 Console.WriteLine("moves: " + String.Join("", s.SolvedBoard.GetMoves().Select(m => m.ToString())));
 
-                if (!String.IsNullOrWhiteSpace(printPath))
+                if (!String.IsNullOrWhiteSpace(visualizePath))
                 {
-                    var path = Path.Combine(printPath, dealNum.ToString());
-                    Console.WriteLine($"Printing solved board into {path}...");
-
+                    var path = Path.Combine(visualizePath, dealNum.ToString());
                     Directory.CreateDirectory(path);
-                    Console.WriteLine($"Printing moves to {path}");
-                    s.SolvedBoard.PrintMoves(path);
+                    Directory.CreateDirectory(Path.Combine(path, "assets"));
+
+                    await WriteResourceAsync("FreeCellSolver.assets.empty.png", Path.Combine(path, "assets", "empty.png"));
+                    await WriteResourceAsync("FreeCellSolver.visualizer.dist.index.min.js", Path.Combine(path, "index.min.js"));
+                    await WriteResourceAsync("FreeCellSolver.visualizer.dist.visualizer.min.html", Path.Combine(path, "visualizer.html"));
+
+                    for (var i = 0; i < 52; i++)
+                    {
+                        Card.Get((short)i).ToImage().Save(Path.Combine(path, $@"assets\\{i}.png"));
+                    }
+
+                    var html = await File.ReadAllTextAsync(Path.Combine(path, "visualizer.html"));
+                    html = html.Replace("var board=[]", $"var board={b.AsJson()}");
+                    html = html.Replace(",moves=[];", $"var moves={s.SolvedBoard.GetMoves().AsJson()}");
+                    await File.WriteAllTextAsync(Path.Combine(path, "visualizer.html"), html);
+
+                    Console.WriteLine();
+                    Console.WriteLine($"Visualizer written at '{path}'");
                 }
             }
+        }
+
+        static async Task WriteResourceAsync(string name, string dest)
+        {
+            using var stream = typeof(CommandLineHelper).Assembly.GetManifestResourceStream(name);
+            using var fs = File.Create(dest);
+            await stream.CopyToAsync(fs);
+            fs.Close();
         }
 
         static async Task<ISolver> ExecuteAsync(TextWriter writer, SolverType solverType, int deal, bool best)

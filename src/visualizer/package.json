@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "build": "yarn run build:tsc && yarn run build:combine && yarn run html:minify",
+    "build:tsc": "./node_modules/.bin/tsc",
+    "build:combine": "./node_modules/.bin/uglifyjs --comments -o ./dist/index.min.js ./node_modules/animejs/lib/anime.min.js ./dist/rb.js",
+    "html:minify": "./node_modules/.bin/minify ./visualizer.html > ./dist/visualizer.min.html"
+  },
+  "dependencies": {
+    "animejs": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/animejs": "^3.1.0",
+    "minify": "^5.0.0",
+    "typescript": "^3.7.4",
+    "uglify-js": "^3.7.4"
+  }
+}

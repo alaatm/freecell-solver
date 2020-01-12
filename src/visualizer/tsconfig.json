@@ -1,0 +1,10 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es3",
+    "lib": ["DOM", "ES2016"],
+    "sourceMap": true,
+    "strict": true,
+    "outFile": "./dist/rb.js"
+  }
+}

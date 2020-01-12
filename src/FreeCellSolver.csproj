@@ -15,6 +15,9 @@
 
   <ItemGroup>
     <EmbeddedResource Include="assets\deck.png" />
+    <EmbeddedResource Include="assets\empty.png" />
+    <EmbeddedResource Include="visualizer\dist\index.min.js" />
+    <EmbeddedResource Include="visualizer\dist\visualizer.min.html" />
   </ItemGroup>
 
 </Project>
