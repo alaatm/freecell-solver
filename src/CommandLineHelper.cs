@@ -205,7 +205,7 @@ namespace FreeCellSolver.Entry
 
                     for (var i = 0; i < 52; i++)
                     {
-                        Card.Get((short)i).ToImage().Save(Path.Combine(path, $@"assets\\{i}.png"));
+                        Card.Get((short)i).ToImage().Save(Path.Combine(path, "assets", $"{i}.png"));
                     }
 
                     var html = await File.ReadAllTextAsync(Path.Combine(path, "visualizer.html"));
