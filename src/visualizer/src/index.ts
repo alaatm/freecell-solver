@@ -155,7 +155,7 @@ class ReplayBoard {
                 target = this.f.children[m.to];
 
                 sourceX = this.tLeft + (this.cardWidthWithSpacing * m.from);
-                sourceY = 350 + this.getTableauSize(m.from) * this.stackOffset;
+                sourceY = 325 + this.getTableauSize(m.from) * this.stackOffset;
                 targetX = this.fLeft + (this.cardWidthWithSpacing * m.to);
                 targetY = 50;
 
@@ -165,7 +165,7 @@ class ReplayBoard {
                 target = this.r.children[m.to];
 
                 sourceX = this.tLeft + (this.cardWidthWithSpacing * m.from);
-                sourceY = 350 + this.getTableauSize(m.from) * this.stackOffset;
+                sourceY = 325 + this.getTableauSize(m.from) * this.stackOffset;
                 targetX = this.rLeft + (this.cardWidthWithSpacing * m.to);
                 targetY = 50;
 
@@ -175,9 +175,9 @@ class ReplayBoard {
                 target = this.t.children[m.to];
 
                 sourceX = this.tLeft + (this.cardWidthWithSpacing * m.from);
-                sourceY = 350 + (this.getTableauSize(m.from) - m.size) * this.stackOffset;
+                sourceY = 325 + (this.getTableauSize(m.from) - m.size) * this.stackOffset;
                 targetX = this.tLeft + (this.cardWidthWithSpacing * m.to);
-                targetY = 350 + this.getTableauSize(m.to) * this.stackOffset;
+                targetY = 325 + this.getTableauSize(m.to) * this.stackOffset;
 
                 cards = this.getTableauCards(m.from, m.size);
                 break;
@@ -197,7 +197,7 @@ class ReplayBoard {
                 sourceX = this.rLeft + (this.cardWidthWithSpacing * m.from);
                 sourceY = 50;
                 targetX = this.tLeft + (this.cardWidthWithSpacing * m.to);
-                targetY = 350 + (this.getTableauSize(m.to) + 1) * this.stackOffset;
+                targetY = 325 + (this.getTableauSize(m.to) + 1) * this.stackOffset;
 
                 cards = [this.getReserveCard(m.from)];
                 break;
@@ -292,7 +292,7 @@ class ReplayBoard {
 
             this.r.setAttribute('style', `left:${this.rLeft}px;top:50px;`);
             this.f.setAttribute('style', `left:${this.fLeft}px;top:50px;`);
-            this.t.setAttribute('style', `left:${this.tLeft}px;top:350px;`);
+            this.t.setAttribute('style', `left:${this.tLeft}px;top:325px;`);
         }
     }
 
