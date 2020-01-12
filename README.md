@@ -61,7 +61,7 @@ You can specify which solver to use using the `-s <SOLVER>`. The options are `as
 ./dist/release/fc-solve run -s dfs -d 1
 ```
 
-### Visualizing moves images
+### Visualizing solution
 
 You can ask the solver to output solution visualization using the `-v <PATH>`, this will output an html file:
 
