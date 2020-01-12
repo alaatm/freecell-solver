@@ -9,6 +9,7 @@ enum MoveType {
 type Move = { type: MoveType, from: number, to: number, size: number };
 
 class ReplayBoard {
+    cardWidthWithSpacing = 175;
     stackOffset = 60;
 
     zIndex = 0;
@@ -149,9 +150,9 @@ class ReplayBoard {
             case MoveType.TableauToFoundation:
                 target = this.f.children[m.to];
 
-                sourceX = this.tLeft + (200 * m.from);
-                sourceY = 400 + this.getTableauSize(m.from) * this.stackOffset;
-                targetX = this.fLeft + (200 * m.to);
+                sourceX = this.tLeft + (this.cardWidthWithSpacing * m.from);
+                sourceY = 350 + this.getTableauSize(m.from) * this.stackOffset;
+                targetX = this.fLeft + (this.cardWidthWithSpacing * m.to);
                 targetY = 50;
 
                 cards = [this.getTableauCards(m.from)[0]];
@@ -159,9 +160,9 @@ class ReplayBoard {
             case MoveType.TableauToReserve:
                 target = this.r.children[m.to];
 
-                sourceX = this.tLeft + (200 * m.from);
-                sourceY = 400 + this.getTableauSize(m.from) * this.stackOffset;
-                targetX = this.rLeft + (200 * m.to);
+                sourceX = this.tLeft + (this.cardWidthWithSpacing * m.from);
+                sourceY = 350 + this.getTableauSize(m.from) * this.stackOffset;
+                targetX = this.rLeft + (this.cardWidthWithSpacing * m.to);
                 targetY = 50;
 
                 cards = [this.getTableauCards(m.from)[0]];
@@ -169,19 +170,19 @@ class ReplayBoard {
             case MoveType.TableauToTableau:
                 target = this.t.children[m.to];
 
-                sourceX = this.tLeft + (200 * m.from);
-                sourceY = 400 + (this.getTableauSize(m.from) - m.size) * this.stackOffset;
-                targetX = this.tLeft + (200 * m.to);
-                targetY = 400 + this.getTableauSize(m.to) * this.stackOffset;
+                sourceX = this.tLeft + (this.cardWidthWithSpacing * m.from);
+                sourceY = 350 + (this.getTableauSize(m.from) - m.size) * this.stackOffset;
+                targetX = this.tLeft + (this.cardWidthWithSpacing * m.to);
+                targetY = 350 + this.getTableauSize(m.to) * this.stackOffset;
 
                 cards = this.getTableauCards(m.from, m.size);
                 break;
             case MoveType.ReserveToFoundation:
                 target = this.f.children[m.to];
 
-                sourceX = this.rLeft + (200 * m.from);
+                sourceX = this.rLeft + (this.cardWidthWithSpacing * m.from);
                 sourceY = 50;
-                targetX = this.fLeft + (200 * m.to);
+                targetX = this.fLeft + (this.cardWidthWithSpacing * m.to);
                 targetY = 50;
 
                 cards = [this.getReserveCard(m.from)];
@@ -189,10 +190,10 @@ class ReplayBoard {
             case MoveType.ReserveToTableau:
                 target = this.t.children[m.to];
 
-                sourceX = this.rLeft + (200 * m.from);
+                sourceX = this.rLeft + (this.cardWidthWithSpacing * m.from);
                 sourceY = 50;
-                targetX = this.tLeft + (200 * m.to);
-                targetY = 400 + (this.getTableauSize(m.to) + 1) * this.stackOffset;
+                targetX = this.tLeft + (this.cardWidthWithSpacing * m.to);
+                targetY = 350 + (this.getTableauSize(m.to) + 1) * this.stackOffset;
 
                 cards = [this.getReserveCard(m.from)];
                 break;
@@ -278,16 +279,16 @@ class ReplayBoard {
     }
 
     private onResize = () => {
-        const minWidth = 1770;
+        const minWidth = 1540;
         if (innerWidth > minWidth) {
             const hDiff = (innerWidth - minWidth) / 2;
             this.rLeft = 20 + hDiff;
-            this.fLeft = 970 + hDiff;
-            this.tLeft = 95 + hDiff;
+            this.fLeft = 845 + hDiff;
+            this.tLeft = 82 + hDiff;
 
             this.r.setAttribute('style', `left:${this.rLeft}px;top:50px;`);
             this.f.setAttribute('style', `left:${this.fLeft}px;top:50px;`);
-            this.t.setAttribute('style', `left:${this.tLeft}px;top:400px;`);
+            this.t.setAttribute('style', `left:${this.tLeft}px;top:350px;`);
         }
     }
 
