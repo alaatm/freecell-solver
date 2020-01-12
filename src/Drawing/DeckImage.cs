@@ -7,8 +7,8 @@ namespace FreeCellSolver.Drawing
     {
         private readonly SKImage _img;
 
-        public const int CardWidth = 150;
-        public const int CardHeight = 225;
+        public const int CardWidth = 140;
+        public const int CardHeight = 210;
 
         public static DeckImage Instance { get; private set; }
 
