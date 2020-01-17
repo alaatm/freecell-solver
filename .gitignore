@@ -363,4 +363,7 @@ dist/
 coverage/
 lcov.info
 
+# backup files
+bu/
+
 refs.txt

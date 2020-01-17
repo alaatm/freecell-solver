@@ -199,6 +199,7 @@ namespace FreeCellSolver.Entry
                     Directory.CreateDirectory(path);
                     Directory.CreateDirectory(Path.Combine(path, "assets"));
 
+                    await WriteResourceAsync("FreeCellSolver.assets.bg.jpg", Path.Combine(path, "assets", "bg.jpg"));
                     await WriteResourceAsync("FreeCellSolver.assets.empty.png", Path.Combine(path, "assets", "empty.png"));
                     await WriteResourceAsync("FreeCellSolver.visualizer.dist.index.min.js", Path.Combine(path, "index.min.js"));
                     await WriteResourceAsync("FreeCellSolver.visualizer.dist.visualizer.min.html", Path.Combine(path, "visualizer.html"));

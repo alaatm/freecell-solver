@@ -24,8 +24,9 @@ Setup(context =>
 Task("Clean")
     .Does(() =>
 {
-    CleanDirectories("./dist/debug");
-    CleanDirectories("./dist/release");
+    CleanDirectories("./dist/" + configuration);
+    CleanDirectories("./src/**/bin/" + configuration);
+    CleanDirectories("./src/**/obj");
     CleanDirectories("./coverage/**");
     if (FileExists("./lcov.info")) DeleteFile("./lcov.info");    
 });
