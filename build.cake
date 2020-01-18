@@ -122,7 +122,7 @@ Task("UploadCoverageReport")
     var commit = EnvironmentVariable("GITHUB_SHA");
     var branch = EnvironmentVariable("GITHUB_REF");
     var eventName = EnvironmentVariable("GITHUB_EVENT_NAME");
-    string jobId;;
+    string jobId;
 
     if (eventName == "pull_request")
     {
@@ -146,7 +146,6 @@ Task("UploadCoverageReport")
     Information($"branch={branch}");
     Information($"eventName={eventName}");
     Information($"jobId={jobId}");
-    return;
 
     var opencover = GetFiles("./coverage/*.opencover.xml").Single();
     CoverallsNet(opencover.FullPath, CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
