@@ -102,8 +102,6 @@ Task("Cover")
     var lcov = GetFiles("./coverage/*.info").Single();
     CopyFile(lcov, "./lcov.info");
 
-    Environment.SetEnvironmentVariable("COVERAGE_PATH_LCOV", lcov.FullPath);
-
     // Generate coverage report
     //var opencover = GetFiles("./coverage/*.opencover.xml").Single();
     //ReportGenerator(File(opencover.FullPath), Directory("./coverage"));
