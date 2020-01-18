@@ -132,7 +132,7 @@ Task("UploadCoverageReport")
             {
                 var eventJson = sr.ReadToEnd();
                 var pr = ParseJson(eventJson)["pr"];
-                jobId = $"{commit}-PR-${pr}";
+                jobId = $"{commit}-PR-{pr}";
             }
         }
     }
