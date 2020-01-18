@@ -122,7 +122,7 @@ Task("UploadCoverageReport")
     var commit = EnvironmentVariable("GITHUB_SHA");
     var branch = EnvironmentVariable("GITHUB_REF");
     var eventName = EnvironmentVariable("GITHUB_EVENT_NAME");
-    string jobId;
+    string jobId;;
 
     if (eventName == "pull_request")
     {
