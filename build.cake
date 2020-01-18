@@ -99,8 +99,11 @@ Task("Cover")
     CopyFile(lcov, "./lcov.info");
 
     // Generate coverage report
-    var opencover = GetFiles("./coverage/*.opencover.xml").Single();
-    ReportGenerator(File(opencover.FullPath), Directory("./coverage"));
+    if (IsRunningOnWindows())
+    {
+        var opencover = GetFiles("./coverage/*.opencover.xml").Single();
+        ReportGenerator(File(opencover.FullPath), Directory("./coverage"));
+    }
 });
 
 //////////////////////////////////////////////////////////////////////
