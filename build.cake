@@ -126,7 +126,7 @@ Task("UploadCoverageReport")
 
     if (eventName == "pull_request")
     {
-        using (var fs = new System.IO.FileStream(EnvironmentVariable("GITHUB_EVENT_PATH"), FileMode.Open, FileAccess.Read)
+        using (var fs = new System.IO.FileStream(EnvironmentVariable("GITHUB_EVENT_PATH"), FileMode.Open, FileAccess.Read))
         {
             using (var sr = new StreamReader(fs, Encoding.UTF8))
             {
