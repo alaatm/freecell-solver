@@ -21,8 +21,7 @@ jobs:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
-      - name: Upload coverage reports
-        run: |
-          ./build.sh -c release -t UploadCoverageReport
-        env:
-          REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.REPO_TOKEN }}
+          path-to-lcov: ${{ env.COVERAGE_PATH_LCOV }}
