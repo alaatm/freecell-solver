@@ -118,7 +118,7 @@ Task("UploadCoverageReport")
         return;
     }
 
-    var repoToken = EnvironmentVariable("GITHUB_TOKEN");
+    var repoToken = EnvironmentVariable("REPO_TOKEN");
     var commit = EnvironmentVariable("GITHUB_SHA");
     var branch = EnvironmentVariable("GITHUB_REF");
     var eventName = EnvironmentVariable("GITHUB_EVENT_NAME");

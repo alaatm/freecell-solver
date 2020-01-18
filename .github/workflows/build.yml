@@ -24,3 +24,5 @@ jobs:
       - name: Upload coverage reports
         run: |
           ./build.sh -c release -t UploadCoverageReport
+        env:
+          REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
