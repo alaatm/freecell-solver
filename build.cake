@@ -126,8 +126,8 @@ Task("UploadCoverageReport")
 
     if (eventName == "pull_request")
     {
-        var event = FileReadText(EnvironmentVariable("GITHUB_EVENT_PATH"));
-        var pr = ParseJson(event)["pr"];
+        var eventJson = FileReadText(EnvironmentVariable("GITHUB_EVENT_PATH"));
+        var pr = ParseJson(eventJson)["pr"];
         jobId = $"{commit}-PR-${pr}";
     }
     else
