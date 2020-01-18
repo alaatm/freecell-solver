@@ -126,9 +126,15 @@ Task("UploadCoverageReport")
 
     if (eventName == "pull_request")
     {
-        var eventJson = FileReadText(EnvironmentVariable("GITHUB_EVENT_PATH"));
-        var pr = ParseJson(eventJson)["pr"];
-        jobId = $"{commit}-PR-${pr}";
+        using (var fs = FileSystem.GetFile(EnvironmentVariable("GITHUB_EVENT_PATH")).Open(FileMode.Open, FileAccess.Read, FileShare.Read))
+        {
+            using (var sr = new StreamReader(fs, Encoding.UTF8))
+            {
+                var eventJson = sr.ReadToEnd();
+                var pr = ParseJson(eventJson)["pr"];
+                jobId = $"{commit}-PR-${pr}";
+            }
+        }
     }
     else
     {
