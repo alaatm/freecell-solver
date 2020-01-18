@@ -131,7 +131,7 @@ Task("UploadCoverageReport")
             using (var sr = new StreamReader(fs, Encoding.UTF8))
             {
                 var eventJson = sr.ReadToEnd();
-                var pr = ParseJson(eventJson)["pr"];
+                var pr = ParseJson(eventJson)["number"];
                 jobId = $"{commit}-PR-{pr}";
             }
         }
