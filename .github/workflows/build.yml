@@ -18,4 +18,9 @@ jobs:
           chmod +x ./build.sh
           ./build.sh -c debug
         env:
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
+      - name: Upload coverage reports
+        run: |
+          ./build.sh -c release -t UploadCoverageReport

@@ -1,6 +1,10 @@
 #addin nuget:?package=Cake.Yarn&version=0.4.6
 #addin nuget:?package=Cake.Coverlet&version=2.3.4
+#addin nuget:?package=Cake.Coveralls&version=0.10.1
+#addin nuget:?package=Cake.Json&version=4.0.0
+#addin nuget:?package=Newtonsoft.Json&version=11.0.2
 #tool nuget:?package=ReportGenerator&version=4.4.0
+#tool nuget:?package=coveralls.net&version=1.0.0
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS
@@ -101,6 +105,51 @@ Task("Cover")
     // Generate coverage report
     var opencover = GetFiles("./coverage/*.opencover.xml").Single();
     ReportGenerator(File(opencover.FullPath), Directory("./coverage"));
+});
+
+Task("UploadCoverageReport")
+    .IsDependentOn("Cover")
+    .Does(() =>
+{
+    var githubActionsFlag = EnvironmentVariable("GITHUB_ACTIONS");
+    if (githubActionsFlag != "true")
+    {
+        Warning("Task 'UploadCoverageReport' can only run when CI is executing in Github actions.");
+        return;
+    }
+
+    var repoToken = EnvironmentVariable("GITHUB_TOKEN");
+    var commit = EnvironmentVariable("GITHUB_SHA");
+    var branch = EnvironmentVariable("GITHUB_REF");
+    var eventName = EnvironmentVariable("GITHUB_EVENT_NAME");
+    string jobId;
+
+    if (eventName == "pull_request")
+    {
+        var event = FileReadText(EnvironmentVariable("GITHUB_EVENT_PATH"));
+        var pr = ParseJson(event)["pr"];
+        jobId = $"{commit}-PR-${pr}";
+    }
+    else
+    {
+        jobId = commit;
+    }
+    
+    Information($"repoToken={repoToken}");
+    Information($"commit={commit}");
+    Information($"branch={branch}");
+    Information($"eventName={eventName}");
+    Information($"jobId={jobId}");
+    return;
+
+    var opencover = GetFiles("./coverage/*.opencover.xml").Single();
+    CoverallsNet(opencover.FullPath, CoverallsNetReportType.OpenCover, new CoverallsNetSettings()
+    {
+        RepoToken = repoToken,
+        CommitId = commit,
+        CommitBranch = branch,
+        JobId = jobId,
+    });
 });
 
 //////////////////////////////////////////////////////////////////////
