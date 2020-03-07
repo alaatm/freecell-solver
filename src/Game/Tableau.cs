@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
@@ -167,7 +168,7 @@ namespace FreeCellSolver.Game
             const int SHORT_SIZE = 2;
 
             var clone = new Tableau();
-            Buffer.BlockCopy(_state, 0, clone._state, 0, _capacity * SHORT_SIZE);
+            Unsafe.CopyBlock(ref Unsafe.As<short, byte>(ref clone._state[0]), ref Unsafe.As<short, byte>(ref _state[0]), _capacity * SHORT_SIZE);
             clone.Size = Size;
             clone.SortedSize = SortedSize;
 

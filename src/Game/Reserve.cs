@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
@@ -91,7 +92,15 @@ namespace FreeCellSolver.Game
             foundation.Push(Remove(index));
         }
 
-        public Reserve Clone() => new Reserve(_state[0], _state[1], _state[2], _state[3]);
+        public Reserve Clone()
+        {
+            const int SHORT_SIZE = 2;
+
+            var clone = new Reserve();
+            clone.FreeCount = FreeCount;
+            Unsafe.CopyBlock(ref Unsafe.As<short, byte>(ref clone._state[0]), ref Unsafe.As<short, byte>(ref _state[0]), 4 * SHORT_SIZE);
+            return clone;
+        }
 
         public override string ToString()
         {

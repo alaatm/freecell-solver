@@ -2,6 +2,7 @@ using System.Text;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
@@ -67,11 +68,14 @@ namespace FreeCellSolver.Game
             _state[(short)card.Suit]++;
         }
 
-        public Foundation Clone() => new Foundation(
-            _state[0],
-            _state[1],
-            _state[2],
-            _state[3]);
+        public Foundation Clone()
+        {
+            const int SHORT_SIZE = 2;
+
+            var clone = new Foundation();
+            Unsafe.CopyBlock(ref Unsafe.As<short, byte>(ref clone._state[0]), ref Unsafe.As<short, byte>(ref _state[0]), 4 * SHORT_SIZE);
+            return clone;
+        }
 
         public override string ToString()
         {
