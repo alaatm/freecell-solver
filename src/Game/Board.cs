@@ -146,8 +146,14 @@ namespace FreeCellSolver.Game
                     }
 
                     var targetTableau = tableaus[t2];
-                    var emptyTarget = targetTableau.IsEmpty;
                     var moveSize = tableau.CountMovable(targetTableau);
+                    if (moveSize == 0)
+                    {
+                        continue;
+                    }
+
+                    var emptyTarget = targetTableau.IsEmpty;
+
                     // Left shift freeCount+1 on number of non-target empty tableaus to get max move size
                     // i.e. 0 free, 2 empty tableaus that are not the target:
                     // maxAllowedMoveSize is 0+1 << 2 = 4
