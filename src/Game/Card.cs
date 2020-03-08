@@ -42,6 +42,7 @@ namespace FreeCellSolver.Game
         private static readonly char[] _suits = SUITS.ToCharArray();
         private static readonly char[] _ranks = RANKS.ToCharArray();
 
+        public const short EMPTY = -1;
         public const string SUITS = "CDHS";
         public const string RANKS = "A23456789TJQK";
 

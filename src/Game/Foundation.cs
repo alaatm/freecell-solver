@@ -10,20 +10,20 @@ namespace FreeCellSolver.Game
     {
         private readonly short[] _state = new short[]
         {
-            -1, // Suit.Clubs
-            -1, // Suit.Diamonds
-            -1, // Suit.Hearts
-            -1, // Suit.Spades
+            Card.EMPTY, // Suit.Clubs
+            Card.EMPTY, // Suit.Diamonds
+            Card.EMPTY, // Suit.Hearts
+            Card.EMPTY, // Suit.Spades
         };
 
         public short this[Suit s] => _state[(short)s];
 
         public Foundation(short clubsTop, short diamondsTop, short heartsTop, short spadesTop)
         {
-            Debug.Assert(clubsTop >= -1 && clubsTop < 13);
-            Debug.Assert(diamondsTop >= -1 && diamondsTop < 13);
-            Debug.Assert(heartsTop >= -1 && heartsTop < 13);
-            Debug.Assert(spadesTop >= -1 && spadesTop < 13);
+            Debug.Assert(clubsTop >= Card.EMPTY && clubsTop < 13);
+            Debug.Assert(diamondsTop >= Card.EMPTY && diamondsTop < 13);
+            Debug.Assert(heartsTop >= Card.EMPTY && heartsTop < 13);
+            Debug.Assert(spadesTop >= Card.EMPTY && spadesTop < 13);
 
             _state[0] = clubsTop;
             _state[1] = diamondsTop;
@@ -84,7 +84,7 @@ namespace FreeCellSolver.Game
             for (var i = 0; i < 4; i++)
             {
                 var value = _state[i];
-                sb.Append((value == -1 ? "--" : Card.Get((Suit)i, (Rank)value).ToString()));
+                sb.Append((value == Card.EMPTY ? "--" : Card.Get((Suit)i, (Rank)value).ToString()));
                 if (i < 3)
                 {
                     sb.Append(" ");
@@ -96,7 +96,7 @@ namespace FreeCellSolver.Game
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards()
-            => _state.SelectMany((v, i) => v > -1
+            => _state.SelectMany((v, i) => v != Card.EMPTY
                 ? Enumerable.Range(0, v + 1).Select(r => Card.Get((Suit)i, (Rank)r))
                 : Enumerable.Empty<Card>());
     }

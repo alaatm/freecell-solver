@@ -77,7 +77,7 @@ namespace FreeCellSolver.Test
             Assert.False(new Tableau("5H").CanMove(new Reserve(0, 1, 2, 3), out _));
 
             // Can move to reserve slot #2 (index=1)
-            Assert.True(new Tableau("5H").CanMove(new Reserve(1, -1, 2, 3), out var idx));
+            Assert.True(new Tableau("5H").CanMove(new Reserve(1, Card.EMPTY, 2, 3), out var idx));
             Assert.Equal(1, idx);
         }
 
@@ -91,7 +91,7 @@ namespace FreeCellSolver.Test
             Assert.False(new Tableau("5H").CanMove(new Foundation(), out _));
 
             // Can move to foundation on top of 4H
-            Assert.True(new Tableau("5H").CanMove(new Foundation(-1, -1, 3, -1), out var idx));
+            Assert.True(new Tableau("5H").CanMove(new Foundation(Card.EMPTY, Card.EMPTY, 3, Card.EMPTY), out var idx));
             Assert.Equal((int)Suit.Hearts, idx);
         }
 
