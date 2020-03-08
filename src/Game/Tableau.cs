@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
-    public class Tableau
+    public sealed class Tableau
     {
         private const int _capacity = 19;
         private readonly sbyte[] _state = new sbyte[_capacity];

@@ -11,7 +11,7 @@ namespace FreeCellSolver.Game
         ReserveToTableau,
     }
 
-    public class Move
+    public sealed class Move
     {
         private static readonly Move[] _possibleMoves = new Move[816];
 

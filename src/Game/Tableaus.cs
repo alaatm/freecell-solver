@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FreeCellSolver.Game
 {
-    public class Tableaus
+    public sealed class Tableaus
     {
         private readonly Tableau[] _state = new Tableau[]
         {

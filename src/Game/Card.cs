@@ -34,7 +34,7 @@ namespace FreeCellSolver.Game
         public const sbyte RK = 12;
     }
 
-    public class Card
+    public sealed class Card
     {
         private static readonly Card[] _allCards = new Card[52];
 

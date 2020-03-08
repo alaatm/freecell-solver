@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
-    public class Reserve
+    public sealed class Reserve
     {
         private readonly sbyte[] _state = new sbyte[]
         {

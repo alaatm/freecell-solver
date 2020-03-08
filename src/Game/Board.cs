@@ -7,7 +7,7 @@ using FreeCellSolver.Game.Extensions;
 
 namespace FreeCellSolver.Game
 {
-    public class Board : IEquatable<Board>
+    public sealed class Board : IEquatable<Board>
     {
         public int ManualMoveCount { get; private set; }
         public int AutoMoveCount { get; private set; }

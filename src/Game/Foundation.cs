@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
-    public class Foundation
+    public sealed class Foundation
     {
         private readonly sbyte[] _state = new sbyte[]
         {
