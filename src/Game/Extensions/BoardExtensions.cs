@@ -20,17 +20,17 @@ namespace FreeCellSolver.Game.Extensions
                 cards.Swap(i, pos);
             }
 
-            var tableaus_ = new short[8][];
+            var tableaus_ = new sbyte[8][];
 
-            for (short i = 0; i < cards.Count; i++)
+            for (sbyte i = 0; i < cards.Count; i++)
             {
                 var c = i % 8;
                 var r = i / 8;
                 if (c == i)
                 {
-                    tableaus_[i] = new short[c < 4 ? 7 : 6];
+                    tableaus_[i] = new sbyte[c < 4 ? 7 : 6];
                 }
-                tableaus_[c][r] = (short)cards[i];
+                tableaus_[c][r] = (sbyte)cards[i];
             }
 
             var tableaus = new List<Tableau>(8);
@@ -77,7 +77,7 @@ namespace FreeCellSolver.Game.Extensions
         {
             var isValid = true;
 
-            var allCards = Enumerable.Range(0, 52).Select(c => Card.Get((short)c));
+            var allCards = Enumerable.Range(0, 52).Select(c => Card.Get((sbyte)c));
 
             var boardCards = board.AllCards.ToList();
             var uniqueCards = new HashSet<Card>(board.AllCards);

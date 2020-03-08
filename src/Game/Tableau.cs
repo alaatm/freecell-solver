@@ -10,7 +10,7 @@ namespace FreeCellSolver.Game
     public class Tableau
     {
         private const int _capacity = 19;
-        private readonly short[] _state = new short[_capacity];
+        private readonly sbyte[] _state = new sbyte[_capacity];
 
         public int Size { get; private set; }
 
@@ -165,10 +165,8 @@ namespace FreeCellSolver.Game
 
         public Tableau Clone()
         {
-            const int SHORT_SIZE = 2;
-
             var clone = new Tableau();
-            Unsafe.CopyBlock(ref Unsafe.As<short, byte>(ref clone._state[0]), ref Unsafe.As<short, byte>(ref _state[0]), _capacity * SHORT_SIZE);
+            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), _capacity);
             clone.Size = Size;
             clone.SortedSize = SortedSize;
 

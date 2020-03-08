@@ -8,7 +8,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_get_card_by_rawValue()
         {
-            for (short i = 0; i < 52; i++)
+            for (sbyte i = 0; i < 52; i++)
             {
                 var card = Card.Get(i);
                 Assert.Equal(i & 3, card.Suit);

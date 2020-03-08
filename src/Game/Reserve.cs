@@ -9,7 +9,7 @@ namespace FreeCellSolver.Game
 {
     public class Reserve
     {
-        private readonly short[] _state = new short[]
+        private readonly sbyte[] _state = new sbyte[]
         {
             Card.EMPTY,
             Card.EMPTY,
@@ -21,7 +21,7 @@ namespace FreeCellSolver.Game
 
         public int FreeCount { get; private set; } = 4;
 
-        public Reserve(short card1, short card2, short card3, short card4)
+        public Reserve(sbyte card1, sbyte card2, sbyte card3, sbyte card4)
         {
             Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != Card.EMPTY) || card1 == Card.EMPTY);
             Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != Card.EMPTY) || card2 == Card.EMPTY);
@@ -94,11 +94,9 @@ namespace FreeCellSolver.Game
 
         public Reserve Clone()
         {
-            const int SHORT_SIZE = 2;
-
             var clone = new Reserve();
             clone.FreeCount = FreeCount;
-            Unsafe.CopyBlock(ref Unsafe.As<short, byte>(ref clone._state[0]), ref Unsafe.As<short, byte>(ref _state[0]), 4 * SHORT_SIZE);
+            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), 4);
             return clone;
         }
 

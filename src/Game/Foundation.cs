@@ -8,7 +8,7 @@ namespace FreeCellSolver.Game
 {
     public class Foundation
     {
-        private readonly short[] _state = new short[]
+        private readonly sbyte[] _state = new sbyte[]
         {
             Card.EMPTY, // Suit.Clubs
             Card.EMPTY, // Suit.Diamonds
@@ -16,9 +16,9 @@ namespace FreeCellSolver.Game
             Card.EMPTY, // Suit.Spades
         };
 
-        public short this[int s] => _state[s];
+        public sbyte this[int s] => _state[s];
 
-        public Foundation(short clubsTop, short diamondsTop, short heartsTop, short spadesTop)
+        public Foundation(sbyte clubsTop, sbyte diamondsTop, sbyte heartsTop, sbyte spadesTop)
         {
             Debug.Assert(clubsTop >= Card.EMPTY && clubsTop < 13);
             Debug.Assert(diamondsTop >= Card.EMPTY && diamondsTop < 13);
@@ -70,10 +70,8 @@ namespace FreeCellSolver.Game
 
         public Foundation Clone()
         {
-            const int SHORT_SIZE = 2;
-
             var clone = new Foundation();
-            Unsafe.CopyBlock(ref Unsafe.As<short, byte>(ref clone._state[0]), ref Unsafe.As<short, byte>(ref _state[0]), 4 * SHORT_SIZE);
+            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), 4);
             return clone;
         }
 
@@ -81,10 +79,10 @@ namespace FreeCellSolver.Game
         {
             var sb = new StringBuilder();
             sb.AppendLine("CC DD HH SS");
-            for (byte s = 0; s < 4; s++)
+            for (sbyte s = 0; s < 4; s++)
             {
                 var value = _state[s];
-                sb.Append((value == Card.EMPTY ? "--" : Card.Get(s, (byte)value).ToString()));
+                sb.Append((value == Card.EMPTY ? "--" : Card.Get(s, value).ToString()));
                 if (s < 3)
                 {
                     sb.Append(" ");
@@ -97,7 +95,7 @@ namespace FreeCellSolver.Game
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards()
             => _state.SelectMany((v, s) => v != Card.EMPTY
-                ? Enumerable.Range(0, v + 1).Select(r => Card.Get((byte)s, (byte)r))
+                ? Enumerable.Range(0, v + 1).Select(r => Card.Get((sbyte)s, (sbyte)r))
                 : Enumerable.Empty<Card>());
     }
 }

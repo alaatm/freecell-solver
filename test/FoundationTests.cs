@@ -37,7 +37,7 @@ namespace FreeCellSolver.Test
 
         [Theory]
         [MemberData(nameof(CanAutoPlay_testsData))]
-        public void CanAutoPlay_tests(short clubs, short diamonds, short hearts, short spades, Card card, bool expectedCanAutoPlay)
+        public void CanAutoPlay_tests(sbyte clubs, sbyte diamonds, sbyte hearts, sbyte spades, Card card, bool expectedCanAutoPlay)
         {
             var f = new Foundation(clubs, diamonds, hearts, spades);
             Assert.Equal(expectedCanAutoPlay, f.CanAutoPlay(card));
