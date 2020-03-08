@@ -76,7 +76,7 @@ namespace FreeCellSolver.Test
             var r = new Reserve(Card.Get("AC").RawValue, Card.EMPTY, Card.EMPTY, Card.EMPTY);
             var f = new Foundation();
             Assert.True(r.CanMove(0, f, out var idx));
-            Assert.Equal(Suit.Clubs, (Suit)idx);
+            Assert.Equal(Suits.CLUBS, idx);
 
             // Can't move 2C to empty foundation
             r = new Reserve(Card.Get("2C").RawValue, Card.EMPTY, Card.EMPTY, Card.EMPTY);
@@ -128,7 +128,7 @@ namespace FreeCellSolver.Test
 
             Assert.Null(r[0]);
             Assert.Equal(4, r.FreeCount);
-            Assert.Equal(0, f[Suit.Clubs]);
+            Assert.Equal(0, f[Suits.CLUBS]);
         }
 
         [Fact]

@@ -15,7 +15,7 @@ namespace FreeCellSolver.Test
 
             for (var i = 0; i < 4; i++)
             {
-                Assert.Equal(Card.EMPTY, f[(Suit)i]);
+                Assert.Equal(Card.EMPTY, f[i]);
             }
         }
 
@@ -23,7 +23,7 @@ namespace FreeCellSolver.Test
         public void Indexer_returns_value_of_specified_suit()
         {
             var f = new Foundation(5, Card.EMPTY, Card.EMPTY, Card.EMPTY);
-            Assert.Equal(5, f[Suit.Clubs]);
+            Assert.Equal(5, f[Suits.CLUBS]);
         }
 
         [Fact]
@@ -67,9 +67,9 @@ namespace FreeCellSolver.Test
         {
             var f = new Foundation(Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY);
 
-            Assert.Equal(Card.EMPTY, f[Suit.Clubs]);
+            Assert.Equal(Card.EMPTY, f[Suits.CLUBS]);
             f.Push(Card.Get("AC"));
-            Assert.Equal(0, f[Suit.Clubs]);
+            Assert.Equal(0, f[Suits.CLUBS]);
         }
 
         [Fact]
@@ -78,10 +78,10 @@ namespace FreeCellSolver.Test
             var f = new Foundation(0, 3, Card.EMPTY, 2);
             var clone = f.Clone();
 
-            Assert.Equal(0, clone[Suit.Clubs]);
-            Assert.Equal(3, clone[Suit.Diamonds]);
-            Assert.Equal(Card.EMPTY, clone[Suit.Hearts]);
-            Assert.Equal(2, clone[Suit.Spades]);
+            Assert.Equal(0, clone[Suits.CLUBS]);
+            Assert.Equal(3, clone[Suits.DIAMONDS]);
+            Assert.Equal(Card.EMPTY, clone[Suits.HEARTS]);
+            Assert.Equal(2, clone[Suits.SPADES]);
         }
 
         [Fact]

@@ -22,10 +22,10 @@ namespace FreeCellSolver.Game.Extensions
 
             var tableaus_ = new short[8][];
 
-            for (var i = 0; i < cards.Count; i++)
+            for (short i = 0; i < cards.Count; i++)
             {
-                var c = (short)(i % 8);
-                var r = (short)(i / 8);
+                var c = i % 8;
+                var r = i / 8;
                 if (c == i)
                 {
                     tableaus_[i] = new short[c < 4 ? 7 : 6];

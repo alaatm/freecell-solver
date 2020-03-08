@@ -16,7 +16,7 @@ namespace FreeCellSolver.Game
             Card.EMPTY, // Suit.Spades
         };
 
-        public short this[Suit s] => _state[(short)s];
+        public short this[int s] => _state[s];
 
         public Foundation(short clubsTop, short diamondsTop, short heartsTop, short spadesTop)
         {
@@ -34,7 +34,7 @@ namespace FreeCellSolver.Game
         public Foundation() { }
 
         public bool CanPush(Card card)
-            => _state[(short)card.Suit] == (short)card.Rank - 1;
+            => _state[card.Suit] == card.Rank - 1;
 
         public bool CanAutoPlay(Card card)
         {
@@ -43,14 +43,14 @@ namespace FreeCellSolver.Game
                 return false;
             }
 
-            var rank = (int)card.Rank;
+            var rank = card.Rank;
 
-            if (rank <= (int)Rank.R2)
+            if (rank <= Ranks.R2)
             {
                 return true;
             }
 
-            if (card.Color == Color.Black)
+            if (card.Color == Colors.BLACK)
             {
                 return _state[1/*Suit.Diamonds*/] >= rank - 1
                     && _state[2/*Suit.Hearts*/] >= rank - 1;
@@ -65,7 +65,7 @@ namespace FreeCellSolver.Game
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
-            _state[(short)card.Suit]++;
+            _state[card.Suit]++;
         }
 
         public Foundation Clone()
@@ -81,11 +81,11 @@ namespace FreeCellSolver.Game
         {
             var sb = new StringBuilder();
             sb.AppendLine("CC DD HH SS");
-            for (var i = 0; i < 4; i++)
+            for (byte s = 0; s < 4; s++)
             {
-                var value = _state[i];
-                sb.Append((value == Card.EMPTY ? "--" : Card.Get((Suit)i, (Rank)value).ToString()));
-                if (i < 3)
+                var value = _state[s];
+                sb.Append((value == Card.EMPTY ? "--" : Card.Get(s, (byte)value).ToString()));
+                if (s < 3)
                 {
                     sb.Append(" ");
                 }
@@ -96,8 +96,8 @@ namespace FreeCellSolver.Game
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards()
-            => _state.SelectMany((v, i) => v != Card.EMPTY
-                ? Enumerable.Range(0, v + 1).Select(r => Card.Get((Suit)i, (Rank)r))
+            => _state.SelectMany((v, s) => v != Card.EMPTY
+                ? Enumerable.Range(0, v + 1).Select(r => Card.Get((byte)s, (byte)r))
                 : Enumerable.Empty<Card>());
     }
 }

@@ -17,7 +17,7 @@ namespace FreeCellSolver.Game.Extensions
             json.Append("[");
             foreach (var move in moves)
             {
-                json.Append($"{{type:{(int)move.Type},from:{move.From},to:{move.To},size:{move.Size}}},");
+                json.Append($"{{type:{move.Type},from:{move.From},to:{move.To},size:{move.Size}}},");
             }
             json.Append("];");
 

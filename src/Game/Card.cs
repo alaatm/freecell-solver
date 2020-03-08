@@ -1,38 +1,37 @@
 using System;
 using System.Diagnostics;
-using FreeCellSolver.Game.Shared;
 
 namespace FreeCellSolver.Game
 {
-    public enum Color
+    public sealed class Colors
     {
-        Black,
-        Red,
+        public const byte BLACK = 0;
+        public const byte RED = 1;
     }
 
-    public enum Suit
+    public sealed class Suits
     {
-        Clubs = 0,
-        Diamonds = 1,
-        Hearts = 2,
-        Spades = 3,
+        public const byte CLUBS = 0;
+        public const byte DIAMONDS = 1;
+        public const byte HEARTS = 2;
+        public const byte SPADES = 3;
     }
 
-    public enum Rank
+    public sealed class Ranks
     {
-        Ace = 0,
-        R2 = 1,
-        R3 = 2,
-        R4 = 3,
-        R5 = 4,
-        R6 = 5,
-        R7 = 6,
-        R8 = 7,
-        R9 = 8,
-        R10 = 9,
-        RJ = 10,
-        RQ = 11,
-        RK = 12,
+        public const byte ACE = 0;
+        public const byte R2 = 1;
+        public const byte R3 = 2;
+        public const byte R4 = 3;
+        public const byte R5 = 4;
+        public const byte R6 = 5;
+        public const byte R7 = 6;
+        public const byte R8 = 7;
+        public const byte R9 = 8;
+        public const byte R10 = 9;
+        public const byte RJ = 10;
+        public const byte RQ = 11;
+        public const byte RK = 12;
     }
 
     public class Card
@@ -47,19 +46,19 @@ namespace FreeCellSolver.Game
         public const string RANKS = "A23456789TJQK";
 
         public short RawValue { get; private set; }
-        public Suit Suit { get; private set; }
-        public Rank Rank { get; private set; }
-        public Color Color { get; private set; }
+        public byte Suit { get; private set; }
+        public byte Rank { get; private set; }
+        public byte Color { get; private set; }
 
         static Card()
         {
             // Pre-generate all cards
             var c = 0;
-            foreach (var rank in Ranks.Values())
+            for (var r = Ranks.ACE; r <= Ranks.RK; r++)
             {
-                foreach (var suit in Suits.Values())
+                for (var s = Suits.CLUBS; s <= Suits.SPADES; s++)
                 {
-                    var card = new Card((short)((short)suit + ((short)rank << 2)));
+                    var card = new Card((short)(s + (r << 2)));
                     _allCards[c++] = card;
                 }
             }
@@ -69,9 +68,9 @@ namespace FreeCellSolver.Game
         {
             Debug.Assert(rawValue >= 0 && rawValue < 52, "Invalid card.");
             RawValue = rawValue;
-            Suit = (Suit)(RawValue & 3);
-            Rank = (Rank)(RawValue >> 2);
-            Color = Suit == Suit.Hearts || Suit == Suit.Diamonds ? Color.Red : Color.Black;
+            Suit = (byte)(RawValue & 3);
+            Rank = (byte)(RawValue >> 2);
+            Color = Suit == Suits.HEARTS || Suit == Suits.DIAMONDS ? Colors.RED : Colors.BLACK;
         }
 
         // Note no error checks are made!
@@ -83,12 +82,12 @@ namespace FreeCellSolver.Game
             (Array.IndexOf(_ranks, card[0]) << 2)];
 
         // Note no error checks are made!
-        public static Card Get(Suit suit, Rank rank) => _allCards[(short)suit + ((short)rank << 2)];
+        public static Card Get(byte suit, byte rank) => _allCards[suit + (rank << 2)];
 
         public bool IsBelow(Card tableauTop)
             => Color != tableauTop.Color && Rank + 1 == tableauTop.Rank;
 
         public override string ToString()
-            => $"{_ranks[(short)Rank]}{_suits[(short)Suit]}";
+            => $"{_ranks[Rank]}{_suits[Suit]}";
     }
 }

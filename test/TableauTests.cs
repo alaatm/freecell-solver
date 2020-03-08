@@ -92,7 +92,7 @@ namespace FreeCellSolver.Test
 
             // Can move to foundation on top of 4H
             Assert.True(new Tableau("5H").CanMove(new Foundation(Card.EMPTY, Card.EMPTY, 3, Card.EMPTY), out var idx));
-            Assert.Equal((int)Suit.Hearts, idx);
+            Assert.Equal(Suits.HEARTS, idx);
         }
 
         [Fact]
@@ -165,7 +165,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(3, t.Size);
             Assert.Equal(1, t.SortedSize);
 
-            Assert.Equal(0, f[Suit.Hearts]);
+            Assert.Equal(0, f[Suits.HEARTS]);
         }
 
         [Theory]

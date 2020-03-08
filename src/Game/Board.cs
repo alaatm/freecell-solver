@@ -35,7 +35,7 @@ namespace FreeCellSolver.Game
             Tableaus = tableaus.Clone();
             Reserve = reserve.Clone();
             Foundation = foundation.Clone();
-            MovesEstimated = 52 - (foundation[Suit.Clubs] + foundation[Suit.Diamonds] + foundation[Suit.Hearts] + foundation[Suit.Spades] + 4);
+            MovesEstimated = 52 - (foundation[Suits.CLUBS] + foundation[Suits.DIAMONDS] + foundation[Suits.HEARTS] + foundation[Suits.SPADES] + 4);
         }
 
         private Board(Board copy)
@@ -253,7 +253,7 @@ namespace FreeCellSolver.Game
                     var card = reserve[r];
                     if (card != null && foundation.CanAutoPlay(card))
                     {
-                        var move = Move.Get(MoveType.ReserveToFoundation, r, (int)card.Suit);
+                        var move = Move.Get(MoveType.ReserveToFoundation, r, card.Suit);
 
                         if (AutoMoves == null)
                         {
@@ -274,7 +274,7 @@ namespace FreeCellSolver.Game
                     var card = tableaus[t].Top;
                     if (card != null && foundation.CanAutoPlay(card))
                     {
-                        var move = Move.Get(MoveType.TableauToFoundation, t, (int)card.Suit);
+                        var move = Move.Get(MoveType.TableauToFoundation, t, card.Suit);
 
                         if (AutoMoves == null)
                         {
@@ -421,7 +421,7 @@ namespace FreeCellSolver.Game
                         {
                             if (card.IsBelow(cardToBeMoved))
                             {
-                                LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + (int)card.Rank;
+                                LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + card.Rank;
                                 followup = true;
                             }
                         }
@@ -433,7 +433,7 @@ namespace FreeCellSolver.Game
                         var card = tableaus[i].Top;
                         if (card?.IsBelow(cardToBeMoved) ?? false)
                         {
-                            LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + (int)card.Rank;
+                            LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + card.Rank;
                             followup = true;
                         }
                     }
@@ -458,10 +458,10 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var tableaus = Tableaus;
 
-            var fClubs = foundation[Suit.Clubs] + 1;
-            var fDiamonds = foundation[Suit.Diamonds] + 1;
-            var fHearts = foundation[Suit.Hearts] + 1;
-            var fSpades = foundation[Suit.Spades] + 1;
+            var fClubs = foundation[Suits.CLUBS] + 1;
+            var fDiamonds = foundation[Suits.DIAMONDS] + 1;
+            var fHearts = foundation[Suits.HEARTS] + 1;
+            var fSpades = foundation[Suits.SPADES] + 1;
 
             var colorDiff = Math.Abs(fClubs + fSpades - fDiamonds - fHearts);
 
@@ -552,7 +552,7 @@ namespace FreeCellSolver.Game
                 {
                     return false;
                 }
-                if (foundation[(Suit)i] != otherFoundation[(Suit)i])
+                if (foundation[i] != otherFoundation[i])
                 {
                     return false;
                 }

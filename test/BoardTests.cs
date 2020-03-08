@@ -657,7 +657,7 @@ namespace FreeCellSolver.Test
             // Assert
             Assert.Equal(0, b.MovesSinceFoundation);
             Assert.Equal(Card.Get("2D").RawValue, b.Tableaus[3].Top.RawValue);
-            Assert.Equal(0, b.Foundation[Suit.Diamonds]);
+            Assert.Equal(0, b.Foundation[Suits.DIAMONDS]);
         }
 
         [Fact]
@@ -742,7 +742,7 @@ namespace FreeCellSolver.Test
             // Assert
             Assert.Equal(0, b.MovesSinceFoundation);
             Assert.Null(b.Reserve[0]);
-            Assert.Equal(0, b.Foundation[Suit.Diamonds]);
+            Assert.Equal(0, b.Foundation[Suits.DIAMONDS]);
         }
 
         [Fact]

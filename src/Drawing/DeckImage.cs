@@ -21,10 +21,10 @@ namespace FreeCellSolver.Drawing
 
         private DeckImage(SKImage img) => _img = img;
 
-        public SKImage GetCard(Suit suit, Rank rank)
+        public SKImage GetCard(int suit, int rank)
         {
-            var s = ~(int)suit & 3;
-            var r = (int)rank;
+            var s = ~suit & 3;
+            var r = rank;
 
             var left = CardWidth * r;
             var top = CardHeight * s;

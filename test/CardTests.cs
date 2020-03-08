@@ -1,5 +1,4 @@
 using FreeCellSolver.Game;
-using FreeCellSolver.Game.Shared;
 using Xunit;
 
 namespace FreeCellSolver.Test
@@ -9,11 +8,11 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_get_card_by_rawValue()
         {
-            for (var i = 0; i < 52; i++)
+            for (short i = 0; i < 52; i++)
             {
-                var card = Card.Get((short)i);
-                Assert.Equal((Suit)(i & 3), card.Suit);
-                Assert.Equal((Rank)(i >> 2), card.Rank);
+                var card = Card.Get(i);
+                Assert.Equal(i & 3, card.Suit);
+                Assert.Equal(i >> 2, card.Rank);
             }
         }
 
@@ -28,8 +27,8 @@ namespace FreeCellSolver.Test
                 foreach (var s in Card.SUITS)
                 {
                     var card = Card.Get($"{r}{s}");
-                    Assert.Equal(Card.SUITS.IndexOf(s), (int)card.Suit);
-                    Assert.Equal(Card.RANKS.IndexOf(r), (int)card.Rank);
+                    Assert.Equal(Card.SUITS.IndexOf(s), card.Suit);
+                    Assert.Equal(Card.RANKS.IndexOf(r), card.Rank);
                 }
             }
         }
@@ -37,9 +36,9 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_get_card_by_suit_and_rank()
         {
-            foreach (var r in Ranks.Values())
+            for (var r = Ranks.ACE; r <= Ranks.RK; r++)
             {
-                foreach (var s in Suits.Values())
+                for (var s = Suits.CLUBS; s <= Suits.SPADES; s++)
                 {
                     var card = Card.Get(s, r);
                     Assert.Equal(s, card.Suit);
