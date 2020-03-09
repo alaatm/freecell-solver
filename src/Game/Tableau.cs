@@ -12,6 +12,8 @@ namespace FreeCellSolver.Game
         private const int _capacity = 19;
         private readonly sbyte[] _state = new sbyte[_capacity];
 
+        public Card Top { get; private set; }
+
         public int Size { get; private set; }
 
         public int SortedSize { get; private set; }
@@ -19,8 +21,6 @@ namespace FreeCellSolver.Game
         public bool IsEmpty => Size == 0;
 
         public Card this[int index] => Card.Get(_state[Size - index - 1]);
-
-        public Card Top => Size == 0 ? null : Card.Get(_state[Size - 1]);
 
         public Tableau(string cards) : this(
             new[] { 0 }.SelectMany(i => cards
@@ -48,7 +48,7 @@ namespace FreeCellSolver.Game
         public bool CanPush(Card card)
         {
             var size = Size;
-            return size == 0 || card.IsBelow(Card.Get(_state[size - 1]));
+            return size == 0 || card.IsBelow(Top);
         }
 
         public bool CanPop() => Size > 0;
@@ -79,6 +79,7 @@ namespace FreeCellSolver.Game
             Debug.Assert(CanPush(card));
             _state[Size++] = card.RawValue;
             SortedSize++;
+            Top = card;
             Debug.Assert(SortedSize == CountSorted());
         }
 
@@ -92,6 +93,10 @@ namespace FreeCellSolver.Game
             if (--SortedSize < 1)
             {
                 SortedSize = CountSorted();
+            }
+            else
+            {
+                Top = Card.Get(_state[size - 1]);
             }
 
             Debug.Assert(SortedSize == CountSorted());
@@ -144,8 +149,8 @@ namespace FreeCellSolver.Game
             }
 
             // We can safely peek because we already check for emptiness above
-            var top = Card.Get(_state[size - 1]);
-            var lead = Card.Get(target._state[targetSize - 1]);
+            var top = Top;
+            var lead = target.Top;
 
             var rankDiff = lead.Rank - top.Rank;
 
@@ -171,6 +176,7 @@ namespace FreeCellSolver.Game
         {
             var clone = new Tableau();
             Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), _capacity);
+            clone.Top = Top;
             clone.Size = Size;
             clone.SortedSize = SortedSize;
 
@@ -183,9 +189,11 @@ namespace FreeCellSolver.Game
 
             if (size == 0)
             {
+                Top = null;
                 return 0;
             }
 
+            Top = Card.Get(_state[size - 1]);
             var sortedSize = 1;
             for (var i = 0; i < size - 1; i++)
             {

@@ -88,7 +88,7 @@ namespace FreeCellSolver.Game
                 {
                     moves.Add(Move.Get(MoveType.TableauToFoundation, t, f));
                     foundationFound = true;
-                    Debug.Assert(!foundation.CanAutoPlay(tableau[0]));
+                    Debug.Assert(!foundation.CanAutoPlay(tableau.Top));
                 }
             }
 
@@ -563,12 +563,12 @@ namespace FreeCellSolver.Game
                 var t1 = tableaus[i];
                 var size1 = t1.Size;
                 var sortedSize1 = t1.SortedSize;
-                var top1 = size1 > 0 ? t1[0] : null;
+                var top1 = size1 > 0 ? t1.Top : null;
 
                 var t2 = otherTableaus[i];
                 var size2 = t2.Size;
                 var sortedSize2 = t2.SortedSize;
-                var top2 = size2 > 0 ? t2[0] : null;
+                var top2 = size2 > 0 ? t2.Top : null;
 
                 if (top1 != top2 || size1 != size2 || sortedSize1 != sortedSize2)
                 {
@@ -610,7 +610,7 @@ namespace FreeCellSolver.Game
                     hash += _tableauSortedRand[i][sortedSize];
                     if (size > 0)
                     {
-                        hash += _tableauTopRand[i][t[0].RawValue];
+                        hash += _tableauTopRand[i][t.Top.RawValue];
                     }
                 }
 

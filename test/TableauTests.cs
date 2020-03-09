@@ -52,6 +52,29 @@ namespace FreeCellSolver.Test
             Assert.Null(t.Top);
         }
 
+        [Fact]
+        public void Top_is_tracked_when_pushing()
+        {
+            var t = new Tableau("5H");
+            Assert.Equal(Card.Get("5H"), t.Top);
+
+            t.Push(Card.Get("4S"));
+            Assert.Equal(Card.Get("4S"), t.Top);
+        }
+
+        [Fact]
+        public void Top_is_tracked_when_popping()
+        {
+            var t = new Tableau("5H4S");
+            Assert.Equal(Card.Get("4S"), t.Top);
+
+            t.Pop();
+            Assert.Equal(Card.Get("5H"), t.Top);
+
+            t.Pop();
+            Assert.Null(t.Top);
+        }
+
         [Theory]
         [InlineData("", "5H", true)]
         [InlineData("6S", "5H", true)]
