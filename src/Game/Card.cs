@@ -74,7 +74,7 @@ namespace FreeCellSolver.Game
         }
 
         // Note no error checks are made!
-        public static Card Get(sbyte rawValue) => rawValue == Card.EMPTY ? null : _allCards[rawValue];
+        public static Card Get(sbyte rawValue) => rawValue == EMPTY ? null : _allCards[rawValue];
 
         // Note no error checks are made!
         public static Card Get(string card) => _allCards[
