@@ -1048,5 +1048,49 @@ namespace FreeCellSolver.Test
             b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
         }
+
+        [Fact]
+        public void Board_should_be_equal_when_same_reserve_but_different_order()
+        {
+            /*
+             * CC DD HH SS               |    CC DD HH SS
+             * 4C 6D 2H 8S               |    4C 6D 2H 8S
+             *                           |
+             * aa bb cc dd               |    aa bb cc dd
+             * -- 6H -- JD               |    6H JD -- --
+             *                           |     
+             * 00 01 02 03 04 05 06 07   |    00 01 02 03 04 05 06 07
+             * -- -- -- -- -- -- -- --   |    -- -- -- -- -- -- -- --
+             * 9S KS QS JS KD JH 5C      |    9S KS QS JS KD JH 5C   
+             * QD    QC 8C    9D 6C      |    QD    QC 8C    9D 6C   
+             * 7D    TS 3H    9H QH      |    7D    TS 3H    9H QH   
+             * TC    7C 7H    8H 8D      |    TC    7C 7H    8H 8D   
+             * JC    KH KC    4H 5H      |    JC    KH KC    4H 5H   
+             * TH                TD      |    TH                TD   
+             * 9C                        |                      9C     
+             */
+
+            // Arrange
+            var r = new Reserve(Card.EMPTY, Card.Get("6H").RawValue, Card.EMPTY, Card.Get("JD").RawValue);
+            var f = new Foundation(3, 5, 1, 7);
+            var t0 = new Tableau("9SQD7DTCJCTH9C");
+            var t1 = new Tableau("KS");
+            var t2 = new Tableau("QSQCTS7CKH");
+            var t3 = new Tableau("JS8C3H7HKC");
+            var t4 = new Tableau("KD");
+            var t5 = new Tableau("JH9D9H8H4H");
+            var t6 = new Tableau("5C6CQH8D5HTD");
+            var tRest = new Tableau();
+            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, tRest);
+            var b1 = new Board(r, f, ts);
+            Assert.True(b1.IsValid());
+
+            r = new Reserve(Card.Get("6H").RawValue, Card.Get("JD").RawValue, Card.EMPTY, Card.EMPTY);
+            var b2 = new Board(r, f, ts);
+            Assert.True(b2.IsValid());
+
+            Assert.True(b1 == b2);
+            Assert.True(b1.GetHashCode() == b2.GetHashCode());
+        }
     }
 }

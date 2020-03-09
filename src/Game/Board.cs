@@ -533,29 +533,22 @@ namespace FreeCellSolver.Game
             var otherReserve = other.Reserve;
             var otherFoundation = other.Foundation;
 
+            var reserveSum = 0;
+            var otherReserveSum = 0;
             for (var i = 0; i < 4; i++)
             {
-                // TODO: This actually might report inequal where GetHashCode() return same value
-                // when we have same cards at reserve but at different positions. Chance is very low
-                // but consider making both methods return persistent values.
-                //
-                // i.e.
-                // Reserve1 [ 4C, --, --, 5H ]
-                // Reserve2 [ 4C, 5H, --, -- ]
-                // and everything else is same on both boards.
-                //
-                // GetHashCode() for both boards --> returns same value
-                // Equals()                      --> returns false
-                //
-                // For above case, we want to report equality.
-                if (reserve[i]?.RawValue != otherReserve[i]?.RawValue)
-                {
-                    return false;
-                }
+                reserveSum += reserve[i]?.RawValue ?? 0;
+                otherReserveSum += otherReserve[i]?.RawValue ?? 0;
                 if (foundation[i] != otherFoundation[i])
                 {
                     return false;
                 }
+            }
+
+            // Note as long as we have same cards in reserve, regardless of order then we consider them to be equal
+            if (reserveSum != otherReserveSum)
+            {
+                return false;
             }
 
             for (var i = 0; i < 8; i++)
