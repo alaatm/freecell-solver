@@ -31,6 +31,10 @@ namespace FreeCellSolver.Game
 
         public Tableau(params Card[] cards)
         {
+            unchecked
+            {
+                Unsafe.InitBlock(ref Unsafe.As<sbyte, byte>(ref _state[0]), (byte)Card.EMPTY, _capacity);
+            }
             foreach (var card in cards)
             {
                 _state[Size++] = card.RawValue;
