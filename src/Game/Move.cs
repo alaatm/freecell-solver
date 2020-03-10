@@ -96,26 +96,15 @@ namespace FreeCellSolver.Game
                 (type == MoveType.TableauToTableau && (from != to && from >= 0 && from < 8 && to >= 0 && to < 8 && size >= 1 & size <= 11))
             );
 
-            var index = -1;
-
-            switch (type)
+            var index = type switch
             {
-                case MoveType.ReserveToFoundation:
-                    index = from * 4 + to;
-                    break;
-                case MoveType.ReserveToTableau:
-                    index = 16 + (from * 8 + to);
-                    break;
-                case MoveType.TableauToFoundation:
-                    index = 48 + (from * 4 + to);
-                    break;
-                case MoveType.TableauToReserve:
-                    index = 80 + (from * 4 + to);
-                    break;
-                case MoveType.TableauToTableau:
-                    index = 112 + (from * 88 + to * 11) + size - 1;
-                    break;
-            }
+                MoveType.ReserveToFoundation => from * 4 + to,
+                MoveType.ReserveToTableau => 16 + (from * 8 + to),
+                MoveType.TableauToFoundation => 48 + (from * 4 + to),
+                MoveType.TableauToReserve => 80 + (from * 4 + to),
+                MoveType.TableauToTableau => 112 + (from * 88 + to * 11) + size - 1,
+                _ => -1,
+            };
 
             return _possibleMoves[index];
         }
