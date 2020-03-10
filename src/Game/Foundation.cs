@@ -33,8 +33,7 @@ namespace FreeCellSolver.Game
 
         public Foundation() { }
 
-        public bool CanPush(Card card)
-            => _state[card.Suit] == card.Rank - 1;
+        public bool CanPush(Card card) => _state[card.Suit] == card.Rank - 1;
 
         public bool CanAutoPlay(Card card)
         {

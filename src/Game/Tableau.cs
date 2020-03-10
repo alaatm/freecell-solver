@@ -45,11 +45,7 @@ namespace FreeCellSolver.Game
 
         private Tableau() { }
 
-        public bool CanPush(Card card)
-        {
-            var size = Size;
-            return size == 0 || card.IsBelow(Top);
-        }
+        public bool CanPush(Card card) => Size == 0 || card.IsBelow(Top);
 
         public bool CanPop() => Size > 0;
 
@@ -177,13 +173,11 @@ namespace FreeCellSolver.Game
             var size = Size;
 
             var clone = new Tableau();
-            if (size > 0)
-            {
-                Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), (uint)size);
-                clone.Top = Top;
-                clone.Size = size;
-                clone.SortedSize = SortedSize;
-            }
+
+            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), (uint)size);
+            clone.Top = Top;
+            clone.Size = size;
+            clone.SortedSize = SortedSize;
 
             return clone;
         }
