@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Collections.Generic;
 using FreeCellSolver.Game;
 
@@ -7,7 +6,7 @@ namespace FreeCellSolver.Solvers
     public class StateCostTree
     {
         private readonly HashSet<Board> _hash = new HashSet<Board>();
-        private readonly SortedDictionary<int, List<Board>> _costMap = new SortedDictionary<int, List<Board>>();
+        private readonly SortedList<int, List<Board>> _costMap = new SortedList<int, List<Board>>();
 
         public int Count => _hash.Count;
 
@@ -26,15 +25,15 @@ namespace FreeCellSolver.Solvers
 
         public Board RemoveMin()
         {
-            var min = _costMap.ElementAt(0);
+            var (keyMin, valMin) = _costMap.Min();
 
-            var best = min.Value[0];
-            min.Value.Remove(best);
+            var best = valMin[0];
+            valMin.RemoveAt(0);
             _hash.Remove(best);
 
-            if (min.Value.Count == 0)
+            if (valMin.Count == 0)
             {
-                _costMap.Remove(min.Key);
+                _costMap.Remove(keyMin);
             }
 
             return best;
@@ -65,5 +64,10 @@ namespace FreeCellSolver.Solvers
 
             return true;
         }
+    }
+
+    public static class SortedListExtensions
+    {
+        public static (K keyMin, V valMin) Min<K, V>(this SortedList<K, V> dict) => (dict.Keys[0], dict.Values[0]);
     }
 }
