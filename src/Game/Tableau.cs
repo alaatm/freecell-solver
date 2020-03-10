@@ -10,7 +10,10 @@ namespace FreeCellSolver.Game
     public sealed class Tableau
     {
         private const int _capacity = 19;
-        private readonly sbyte[] _state = new sbyte[_capacity];
+        private readonly sbyte[] _state = new sbyte[_capacity]{
+            Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY,
+            Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY
+        };
 
         public Card Top { get; private set; }
 
@@ -31,10 +34,6 @@ namespace FreeCellSolver.Game
 
         public Tableau(params Card[] cards)
         {
-            unchecked
-            {
-                Unsafe.InitBlock(ref Unsafe.As<sbyte, byte>(ref _state[0]), (byte)Card.EMPTY, _capacity);
-            }
             foreach (var card in cards)
             {
                 _state[Size++] = card.RawValue;
@@ -174,11 +173,16 @@ namespace FreeCellSolver.Game
 
         public Tableau Clone()
         {
+            var size = Size;
+
             var clone = new Tableau();
-            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), _capacity);
-            clone.Top = Top;
-            clone.Size = Size;
-            clone.SortedSize = SortedSize;
+            if (size > 0)
+            {
+                Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), (uint)size);
+                clone.Top = Top;
+                clone.Size = size;
+                clone.SortedSize = SortedSize;
+            }
 
             return clone;
         }

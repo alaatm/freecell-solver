@@ -226,6 +226,17 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void Clone_clones_empty_tableau()
+        {
+            var t = new Tableau("");
+            var clone = t.Clone();
+
+            Assert.Null(clone.Top);
+            Assert.Equal(0, clone.Size);
+            Assert.Equal(0, clone.SortedSize);
+        }
+
+        [Fact]
         public void ToString_returns_string_representation()
             => Assert.Equal($"8S{Environment.NewLine}2H{Environment.NewLine}9C{Environment.NewLine}8H", new Tableau("8S2H9C8H").ToString());
 
