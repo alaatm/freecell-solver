@@ -52,13 +52,13 @@ namespace FreeCellSolver.Game
 
             if (card.Color == Colors.BLACK)
             {
-                return _state[1/*Suit.Diamonds*/] >= rank - 1
-                    && _state[2/*Suit.Hearts*/] >= rank - 1;
+                return _state[Suits.DIAMONDS] >= rank - 1
+                    && _state[Suits.HEARTS] >= rank - 1;
             }
             else
             {
-                return _state[0/*Suit.Clubs*/] >= rank - 1
-                    && _state[3/*Suit.Spades*/] >= rank - 1;
+                return _state[Suits.CLUBS] >= rank - 1
+                    && _state[Suits.SPADES] >= rank - 1;
             }
         }
 
