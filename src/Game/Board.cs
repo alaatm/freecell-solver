@@ -257,7 +257,7 @@ namespace FreeCellSolver.Game
 
                         if (AutoMoves == null)
                         {
-                            AutoMoves = new List<Move>(10);
+                            AutoMoves = new List<Move>(4);
                         }
 
                         AutoMoveCount++;
@@ -278,7 +278,7 @@ namespace FreeCellSolver.Game
 
                         if (AutoMoves == null)
                         {
-                            AutoMoves = new List<Move>(10);
+                            AutoMoves = new List<Move>(4);
                         }
 
                         AutoMoveCount++;

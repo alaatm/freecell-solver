@@ -10,7 +10,8 @@ namespace FreeCellSolver.Game
     public sealed class Tableau
     {
         private const int _capacity = 19;
-        private readonly sbyte[] _state = new sbyte[_capacity]{
+        private readonly sbyte[] _state = new sbyte[_capacity]
+        {
             Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY,
             Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY
         };
