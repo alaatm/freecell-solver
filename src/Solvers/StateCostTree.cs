@@ -6,7 +6,7 @@ namespace FreeCellSolver.Solvers
     public class StateCostTree
     {
         private readonly HashSet<Board> _hash = new HashSet<Board>();
-        private readonly SortedList<int, List<Board>> _costMap = new SortedList<int, List<Board>>();
+        private readonly SortedList<int, PriorityQueue<Board>> _costMap = new SortedList<int, PriorityQueue<Board>>();
 
         public int Count => _hash.Count;
 
@@ -17,18 +17,17 @@ namespace FreeCellSolver.Solvers
             var cost = board.Cost;
             if (!_costMap.ContainsKey(cost))
             {
-                _costMap.Add(cost, new List<Board>());
+                _costMap.Add(cost, new PriorityQueue<Board>());
             }
 
-            _costMap[cost].Add(board);
+            _costMap[cost].Enqueue(board);
         }
 
         public Board RemoveMin()
         {
             var (keyMin, valMin) = _costMap.Min();
 
-            var best = valMin[0];
-            valMin.RemoveAt(0);
+            var best = valMin.Dequeue();
             _hash.Remove(best);
 
             if (valMin.Count == 0)
