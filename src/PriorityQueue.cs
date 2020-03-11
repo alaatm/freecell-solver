@@ -9,7 +9,6 @@ namespace FreeCellSolver
         private int _head;       // The index from which to dequeue if the queue isn't empty.
         private int _tail;       // The index at which to enqueue if the queue isn't full.
         private int _size;       // Number of elements.
-        private int _version;
 
         private const int MinimumGrow = 4;
         private const int GrowFactor = 200;  // double each time
@@ -47,7 +46,6 @@ namespace FreeCellSolver
             _array[_tail] = item;
             MoveNext(ref _tail);
             _size++;
-            _version++;
         }
 
         // Removes the object at the head of the queue and returns it. If the queue
@@ -64,11 +62,9 @@ namespace FreeCellSolver
             }
 
             T removed = array[head];
-            array[head] = default!;
 
             MoveNext(ref _head);
             _size--;
-            _version++;
             return removed;
         }
 
@@ -108,9 +104,6 @@ namespace FreeCellSolver
             {
                 Array.Copy(_array, index + 1, _array, index, _size - index);
             }
-
-            _array[_size] = default!;
-            _version++;
         }
 
         // PRIVATE Grows or shrinks the buffer to hold capacity objects. Capacity
@@ -134,7 +127,6 @@ namespace FreeCellSolver
             _array = newarray;
             _head = 0;
             _tail = (_size == capacity) ? 0 : _size;
-            _version++;
         }
 
         // Increments the index wrapping it if necessary.
