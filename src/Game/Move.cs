@@ -15,11 +15,10 @@ namespace FreeCellSolver.Game
     {
         private static readonly Move[] _possibleMoves = new Move[816];
 
-        public MoveType Type { get; private set; }
-        public int From { get; private set; }
-        public int To { get; private set; }
-        public int Size { get; private set; }
-
+        public MoveType Type { get; }
+        public int From { get; }
+        public int To { get; }
+        public int Size { get; }
         internal Move(MoveType type, int from, int to, int size = 1)
         {
             Type = type;
