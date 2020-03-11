@@ -45,10 +45,10 @@ namespace FreeCellSolver.Game
         public const string SUITS = "CDHS";
         public const string RANKS = "A23456789TJQK";
 
-        public sbyte RawValue { get; private set; }
-        public sbyte Suit { get; private set; }
-        public sbyte Rank { get; private set; }
-        public sbyte Color { get; private set; }
+        public sbyte RawValue { get; }
+        public sbyte Suit { get; }
+        public sbyte Rank { get; }
+        public sbyte Color { get; }
 
         static Card()
         {
