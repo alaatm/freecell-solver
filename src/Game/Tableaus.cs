@@ -7,17 +7,7 @@ namespace FreeCellSolver.Game
 {
     public sealed class Tableaus
     {
-        private readonly Tableau[] _state = new Tableau[]
-        {
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-        };
+        private readonly Tableau[] _state = new Tableau[8];
 
         public Tableau this[int index] => _state[index];
 
