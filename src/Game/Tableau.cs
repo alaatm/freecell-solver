@@ -10,11 +10,7 @@ namespace FreeCellSolver.Game
     public sealed class Tableau
     {
         private const int _capacity = 19;
-        private readonly sbyte[] _state = new sbyte[_capacity]
-        {
-            Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY,
-            Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY, Card.EMPTY
-        };
+        private readonly sbyte[] _state = new sbyte[_capacity];
 
         public Card Top { get; private set; }
 
@@ -84,7 +80,6 @@ namespace FreeCellSolver.Game
             Debug.Assert(CanPop());
             var size = --Size;
             var card = _state[size];
-            _state[size] = 0;
 
             if (--SortedSize < 1)
             {
