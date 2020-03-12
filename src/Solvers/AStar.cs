@@ -60,7 +60,6 @@ namespace FreeCellSolver.Solvers
         private void Search(Board root, int stateId)
         {
             var open = new StateCostTree();
-
             open.Add(root);
 
             while (open.Count != 0)
@@ -73,7 +72,7 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
-                _closed.AddOrUpdate(board.GetHashCode(), 1, (k, v) => 1);
+                _closed.TryAdd(board.GetHashCode(), 1);
 
                 if (board.ManualMoveCount >= _maxDepth)
                 {
@@ -93,12 +92,12 @@ namespace FreeCellSolver.Solvers
                     next.ComputeCost();
 
                     var existing = open.GetValue(next);
-                    if (existing == null || next.Cost < existing.Cost)
+                    if (existing == null/* || next.Cost < existing.Cost*/)
                     {
-                        if (existing != null)
-                        {
-                            open.Remove(existing);
-                        }
+                        // if (existing != null)
+                        // {
+                        //     open.Remove(existing);
+                        // }
 
                         open.Add(next);
                     }

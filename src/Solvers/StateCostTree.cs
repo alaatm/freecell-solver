@@ -6,7 +6,7 @@ namespace FreeCellSolver.Solvers
     public class StateCostTree
     {
         private readonly HashSet<Board> _hash = new HashSet<Board>();
-        private readonly SortedList<int, PriorityQueue<Board>> _costMap = new SortedList<int, PriorityQueue<Board>>();
+        private readonly SortedList<int, Queue<Board>> _costMap = new SortedList<int, Queue<Board>>();
 
         public int Count => _hash.Count;
 
@@ -17,7 +17,7 @@ namespace FreeCellSolver.Solvers
             var cost = board.Cost;
             if (!_costMap.ContainsKey(cost))
             {
-                _costMap.Add(cost, new PriorityQueue<Board>());
+                _costMap.Add(cost, new Queue<Board>());
             }
 
             _costMap[cost].Enqueue(board);
@@ -44,25 +44,25 @@ namespace FreeCellSolver.Solvers
             return actualValue;
         }
 
-        public bool Remove(Board board)
-        {
-            var removed = _hash.Remove(board);
-            if (!removed)
-            {
-                return false;
-            }
+        // public bool Remove(Board board)
+        // {
+        //     var removed = _hash.Remove(board);
+        //     if (!removed)
+        //     {
+        //         return false;
+        //     }
 
-            var cost = board.Cost;
-            var list = _costMap[cost];
-            list.Remove(board);
+        //     var cost = board.Cost;
+        //     var list = _costMap[cost];
+        //     list.Remove(board);
 
-            if (list.Count == 0)
-            {
-                _costMap.Remove(cost);
-            }
+        //     if (list.Count == 0)
+        //     {
+        //         _costMap.Remove(cost);
+        //     }
 
-            return true;
-        }
+        //     return true;
+        // }
     }
 
     public static class SortedListExtensions
