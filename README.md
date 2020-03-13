@@ -1,3 +1,5 @@
+*Archive branch which includes DFS version which is now removed in master branch*
+
 # Freecell Solver
 
 A freecell solver implemented using 2 methods. One with move rating using [DFS algorithm](https://en.wikipedia.org/wiki/Depth-first_search) and the other with board cost evaluation using [A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm).
