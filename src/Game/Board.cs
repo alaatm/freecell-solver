@@ -14,7 +14,6 @@ namespace FreeCellSolver.Game
         public int MovesEstimated { get; private set; }
         public int MinMovesToGoal => ManualMoveCount + MovesEstimated;
         public int MoveCount => ManualMoveCount + AutoMoveCount;
-        public int MovesSinceFoundation { get; private set; }
 
         public List<Move> AutoMoves { get; private set; }
         public Move LastMove { get; private set; }
@@ -25,7 +24,6 @@ namespace FreeCellSolver.Game
         public Tableaus Tableaus { get; private set; }
         public bool IsSolved => MovesEstimated == 0;
 
-        public int LastMoveRating { get; private set; }
         public int Cost { get; private set; }
 
         public Board(Tableaus tableaus) : this(new Reserve(), new Foundation(), tableaus) { }
@@ -47,7 +45,6 @@ namespace FreeCellSolver.Game
             ManualMoveCount = copy.ManualMoveCount;
             AutoMoveCount = copy.AutoMoveCount;
             MovesEstimated = copy.MovesEstimated;
-            MovesSinceFoundation = copy.MovesSinceFoundation;
             LastMove = copy.LastMove;
             Prev = copy.Prev;
         }
@@ -56,7 +53,7 @@ namespace FreeCellSolver.Game
 
         public static Board FromString(string deal) => BoardExtensions.FromString(deal);
 
-        public List<Move> GetValidMoves(out bool foundationFound)
+        public List<Move> GetValidMoves()
         {
             var tableaus = Tableaus;
             var reserve = Reserve;
@@ -64,7 +61,6 @@ namespace FreeCellSolver.Game
             var lastMove = LastMove;
 
             var moves = new List<Move>();
-            foundationFound = false;
 
             var freeCount = Reserve.FreeCount + 1;
             var emptyTableauCount = Tableaus.EmptyTableauCount;
@@ -75,7 +71,6 @@ namespace FreeCellSolver.Game
                 if (reserve.CanMove(r, foundation, out var f))
                 {
                     moves.Add(Move.Get(MoveType.ReserveToFoundation, r, f));
-                    foundationFound = true;
                     Debug.Assert(!foundation.CanAutoPlay(reserve[r]));
                 }
             }
@@ -87,7 +82,6 @@ namespace FreeCellSolver.Game
                 if (tableau.CanMove(foundation, out var f))
                 {
                     moves.Add(Move.Get(MoveType.TableauToFoundation, t, f));
-                    foundationFound = true;
                     Debug.Assert(!foundation.CanAutoPlay(tableau.Top));
                 }
             }
@@ -263,7 +257,6 @@ namespace FreeCellSolver.Game
                         AutoMoveCount++;
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
-                        LastMoveRating += 25;
                         found = autoFound = true;
                     }
                 }
@@ -284,7 +277,6 @@ namespace FreeCellSolver.Game
                         AutoMoveCount++;
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
-                        LastMoveRating += 25;
                         found = autoFound = true;
                     }
                 }
@@ -303,154 +295,27 @@ namespace FreeCellSolver.Game
             switch (move.Type)
             {
                 case MoveType.TableauToFoundation:
-                    MovesSinceFoundation = 0;
                     MovesEstimated--;
                     Tableaus[move.From].Move(Foundation);
                     break;
                 case MoveType.TableauToReserve:
-                    MovesSinceFoundation++;
                     Tableaus[move.From].Move(Reserve, move.To);
                     break;
                 case MoveType.TableauToTableau:
-                    MovesSinceFoundation++;
                     Tableaus[move.From].Move(Tableaus[move.To], move.Size);
                     Debug.Assert(move.Size <= ((Reserve.FreeCount + 1) << (Tableaus.EmptyTableauCount - (Tableaus[move.To].IsEmpty ? 1 : 0))));
                     break;
                 case MoveType.ReserveToFoundation:
-                    MovesSinceFoundation = 0;
                     MovesEstimated--;
                     Reserve.Move(move.From, Foundation);
                     break;
                 case MoveType.ReserveToTableau:
-                    MovesSinceFoundation++;
                     Reserve.Move(move.From, Tableaus[move.To]);
                     break;
             }
 
             // Assert count and uniqueness
             Debug.Assert(AllCards.Count() == 52 && new HashSet<Card>(AllCards).Count == 52);
-        }
-
-        public void RateMove(Move move)
-        {
-            const int RATING_FOUNDATION = 1000;
-            const int RATING_CLOSEDTABLEAUFOLLOWUP = 20;
-            const int RATING_FREEFOUNDATIONTARGET = 15;
-            const int RATING_OPENTABLEAU = 15;
-            const int RATING_FREETABLEAUTARGET = 10;
-            const int RATING_OPENRESERVE = 10;
-            const int RATING_TABLEAU = 2;
-            const int RATING_RESERVE = -1;
-            const int RATING_BURYFOUNDATIONTARGET = -5;
-            const int RATING_CLOSEDTABLEAU = -10;
-
-            LastMoveRating = 0;
-            Card cardToBeMoved = null;
-
-            var tableaus = Tableaus;
-            var reserve = Reserve;
-            var foundation = Foundation;
-
-            // Reward move to foundation
-            if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.ReserveToFoundation)
-            {
-                LastMoveRating += RATING_FOUNDATION;
-            }
-
-            if (move.Type == MoveType.TableauToFoundation || move.Type == MoveType.TableauToReserve || move.Type == MoveType.TableauToTableau)
-            {
-                var sourceTableau = tableaus[move.From];
-                var sourceTableauSize = sourceTableau.Size;
-                cardToBeMoved = sourceTableau.Top;
-
-                // Reward emptying tableau slot
-                if (sourceTableauSize == move.Size)
-                {
-                    LastMoveRating += RATING_OPENTABLEAU;
-                }
-
-                // Reward unburing foundation targets
-                for (var i = move.Size; i < sourceTableauSize; i++)
-                {
-                    if (foundation.CanPush(sourceTableau[i]))
-                    {
-                        LastMoveRating += Math.Max(1, RATING_FREEFOUNDATIONTARGET - ((i - move.Size) * 3));
-                    }
-                }
-
-                // Reward a newly discovered tableau-to-tableau move
-                var cardToBeTop = sourceTableauSize > move.Size ? sourceTableau[move.Size] : null;
-                if (tableaus.CanReceive(cardToBeTop, move.From))
-                {
-                    LastMoveRating += RATING_FREETABLEAUTARGET;
-                }
-            }
-
-            // Reward opening reserve slot
-            if (move.Type == MoveType.ReserveToFoundation || move.Type == MoveType.ReserveToTableau)
-            {
-                LastMoveRating += RATING_OPENRESERVE;
-                cardToBeMoved = reserve[move.From];
-            }
-
-            if (move.Type == MoveType.ReserveToTableau || move.Type == MoveType.TableauToTableau)
-            {
-                // Reward any move to tableau
-                LastMoveRating += RATING_TABLEAU + /* Reward more for moving sorted stacks */ move.Size - 1;
-                var targetTableau = tableaus[move.To];
-                var targetTableauSize = targetTableau.Size;
-
-                // Punish buring foundation target, penalty is higher on bottom cards
-                for (var i = 0; i < targetTableauSize; i++)
-                {
-                    if (foundation.CanPush(targetTableau[i]))
-                    {
-                        LastMoveRating += RATING_BURYFOUNDATIONTARGET * (targetTableauSize + move.Size - i - 1);
-                    }
-                }
-
-                if (targetTableauSize == 0)
-                {
-                    var followup = false;
-
-                    // Reward a move to an empty tableau that can be followed by another move from reserve
-                    for (var i = 0; i < 4; i++)
-                    {
-                        var card = reserve[i];
-                        if (card != null)
-                        {
-                            if (card.IsBelow(cardToBeMoved))
-                            {
-                                LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + card.Rank;
-                                followup = true;
-                            }
-                        }
-                    }
-
-                    // Reward a move to an empty tableau that can be followed by another move from tableaus
-                    for (var i = 0; i < 8; i++)
-                    {
-                        var card = tableaus[i].Top;
-                        if (card?.IsBelow(cardToBeMoved) ?? false)
-                        {
-                            LastMoveRating += RATING_CLOSEDTABLEAUFOLLOWUP + card.Rank;
-                            followup = true;
-                        }
-                    }
-
-                    // punish filling a tableau slot with no immediate followup
-                    if (!followup)
-                    {
-                        LastMoveRating += RATING_CLOSEDTABLEAU;
-                    }
-                }
-            }
-
-            // Punish filling a reserve spot
-            if (move.Type == MoveType.TableauToReserve)
-            {
-                LastMoveRating += RATING_RESERVE;
-            }
         }
 
         public void ComputeCost()

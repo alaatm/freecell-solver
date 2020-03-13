@@ -3,11 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using FreeCellSolver.Game;
-using FreeCellSolver.Solvers.Shared;
 
 namespace FreeCellSolver.Solvers
 {
-    public class AStar : ISolver
+    public class AStar
     {
         private static ConcurrentDictionary<int, byte> _closed;
 
@@ -21,7 +20,7 @@ namespace FreeCellSolver.Solvers
         public AStar(int maxDepth, bool best)
             => (_maxDepth, _best) = (maxDepth, best);
 
-        public static ISolver Run(Board board, bool best)
+        public static AStar Run(Board board, bool best)
         {
             Console.WriteLine($"Solver: A*");
 
@@ -39,7 +38,7 @@ namespace FreeCellSolver.Solvers
             return astar;
         }
 
-        public static async Task<ISolver> RunParallelAsync(Board board, bool best)
+        public static async Task<AStar> RunParallelAsync(Board board, bool best)
         {
             const int maxDepth = 200;
 
@@ -79,7 +78,7 @@ namespace FreeCellSolver.Solvers
                     continue;
                 }
 
-                foreach (var move in board.GetValidMoves(out _))
+                foreach (var move in board.GetValidMoves())
                 {
                     var next = board.Clone();
                     next.ExecuteMove(move, board);

@@ -5,11 +5,10 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using FreeCellSolver.Game;
-using FreeCellSolver.Drawing;
-using FreeCellSolver.Solvers.Shared;
 using FreeCellSolver.Game.Extensions;
 using FreeCellSolver.Drawing.Extensions;
 using McMaster.Extensions.CommandLineUtils;
+using FreeCellSolver.Solvers;
 
 namespace FreeCellSolver.Entry
 {
@@ -33,13 +32,6 @@ namespace FreeCellSolver.Entry
                 {
                     benchmarksRunCmd.Description = "Executes benchmarks";
 
-                    var optSolver = benchmarksRunCmd
-                        .Option<SolverType>(
-                            "-s|--solver <SOLVER>",
-                            "Solver type (Required)",
-                            CommandOptionType.SingleValue)
-                        .IsRequired();
-
                     var optType = benchmarksRunCmd
                         .Option<string>(
                             "-p|--type <TYPE>",
@@ -58,12 +50,12 @@ namespace FreeCellSolver.Entry
                     {
                         if (optType.ParsedValue.ToLower() == "short")
                         {
-                            await RunBenchmarksAsync(optSolver.ParsedValue, 1500, optTag.ParsedValue);
+                            await RunBenchmarksAsync(1500, optTag.ParsedValue);
                             await PrintBenchmarksSummaryAsync();
                         }
                         else if (optType.ParsedValue.ToLower() == "full")
                         {
-                            await RunBenchmarksAsync(optSolver.ParsedValue, 32000, optTag.ParsedValue);
+                            await RunBenchmarksAsync(32000, optTag.ParsedValue);
                             await PrintBenchmarksSummaryAsync();
                         }
                         else
@@ -105,13 +97,6 @@ namespace FreeCellSolver.Entry
             {
                 runCmd.Description = "Runs the solver";
 
-                var optSolver = runCmd
-                    .Option<SolverType>(
-                        "-s|--solver <SOLVER>",
-                        "Solver type (Required)",
-                        CommandOptionType.SingleValue)
-                    .IsRequired();
-
                 var optDeal = runCmd
                     .Option<int>(
                         "-d|--deal <NUM>",
@@ -134,7 +119,7 @@ namespace FreeCellSolver.Entry
 
                 runCmd.OnExecuteAsync(async (_) =>
                 {
-                    await RunSingleAsync(optSolver.ParsedValue, optDeal.ParsedValue, optBest.HasValue(), optVisualize.ParsedValue);
+                    await RunSingleAsync(optDeal.ParsedValue, optBest.HasValue(), optVisualize.ParsedValue);
                     return 0;
                 });
 
@@ -151,10 +136,9 @@ namespace FreeCellSolver.Entry
             return app;
         }
 
-        static async Task RunBenchmarksAsync(SolverType solverType, int count, string tag)
+        static async Task RunBenchmarksAsync(int count, string tag)
         {
-            var logFile = solverType.ToString().ToLower();
-            logFile += count == 32000 ? "-32k" : "";
+            var logFile = count == 32000 ? "-32k" : "-1.5k";
             logFile += String.IsNullOrWhiteSpace(tag) ? $"-{DateTime.UtcNow.Ticks}" : $"-{tag}";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "benchmarks", $"{logFile}.log");
@@ -177,17 +161,17 @@ namespace FreeCellSolver.Entry
             using var fs = File.CreateText(path);
             for (var i = 1; i <= count; i++)
             {
-                await ExecuteAsync(fs, solverType, i, false);
+                await ExecuteAsync(fs, i, false);
             }
             return;
         }
 
-        static async Task RunSingleAsync(SolverType solverType, int dealNum, bool best, string visualizePath)
+        static async Task RunSingleAsync(int dealNum, bool best, string visualizePath)
         {
             var sw = new Stopwatch();
             var b = Board.FromDealNum(dealNum);
 
-            var s = await ExecuteAsync(Console.Out, solverType, dealNum, best);
+            var s = await ExecuteAsync(Console.Out, dealNum, best);
 
             if (s.SolvedBoard != null)
             {
@@ -228,11 +212,11 @@ namespace FreeCellSolver.Entry
             fs.Close();
         }
 
-        static async Task<ISolver> ExecuteAsync(TextWriter writer, SolverType solverType, int deal, bool best)
+        static async Task<AStar> ExecuteAsync(TextWriter writer, int deal, bool best)
         {
             writer.WriteLine($"Processing deal #{deal}");
             _sw.Restart();
-            var solver = await Solver.RunParallelAsync(solverType, Board.FromDealNum(deal), best);
+            var solver = await AStar.RunParallelAsync(Board.FromDealNum(deal), best);
             _sw.Stop();
             writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
             writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.MoveCount}" : " - #moves: 0");

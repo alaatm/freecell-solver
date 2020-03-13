@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using FreeCellSolver.Game;
 
-namespace FreeCellSolver.Solvers.Shared
+namespace FreeCellSolver.Solvers
 {
     internal static class ParallelHelper
     {
@@ -21,7 +21,7 @@ namespace FreeCellSolver.Solvers.Shared
                         tree.Add(depth, new HashSet<Board>());
                     }
 
-                    foreach (var move in b.GetValidMoves(out _))
+                    foreach (var move in b.GetValidMoves())
                     {
                         var next = b.Clone();
                         next.ExecuteMove(move, b);
