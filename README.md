@@ -1,6 +1,6 @@
 # Freecell Solver
 
-A freecell solver implemented using 2 methods. One with move rating using [DFS algorithm](https://en.wikipedia.org/wiki/Depth-first_search) and the other with board cost evaluation using [A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm).
+A freecell solver implemented using [A* search algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm).
 
 ## Build
 
@@ -15,14 +15,14 @@ Make sure you have [.net core 3.0 or later SDK](https://dotnet.microsoft.com/dow
 Once built, you can solve any MS Freecell deal # with the following command:
 
 ```
-./dist/release/fc-solve run -s astar -d 1
+./dist/release/fc-solve run -d 1
 ```
 
 or run directly using dotnet run without building:
 
 ```
 cd src
-dotnet run -c release -- run -s astar -d 1
+dotnet run -c release -- run -d 1
 ```
 
 The output will be something like this:
@@ -46,27 +46,25 @@ moves: 4a41{1}4b4c4h40{1}64{1}76{1}a774{2}37{1}63{2}6a6h2h71{2}2d20{1}50{1}50{1}
 Use the `-d <n>` to specify which deal number to solve. For example, to solve deal #200:
 
 ```
-./dist/release/fc-solve run -v astar -d 200
+./dist/release/fc-solve run -d 200
 ```
 
-### Choosing which solver to use
+### Requesting best solution to be found
 
-You can specify which solver to use using the `-s <SOLVER>`. The options are `astar` or `dfs`. The `astar` solver generally finds better solutions but takes more time.
+Use the `-b` option to ask the solver to try harder in finding the best solution with the least amount of moves:
 
 ```
-./dist/release/fc-solve run -s astar -d 1
+./dist/release/fc-solve run -d 200 -b
 ```
--or-
-```
-./dist/release/fc-solve run -s dfs -d 1
-```
+
+When this option is set, the solver will take more time to complete but a better result could be returned.
 
 ### Visualizing solution
 
 You can ask the solver to output solution visualization using the `-v <PATH>`, this will output an html file:
 
 ```
-./dist/release/fc-solve run -s astar -d 1 -v "./path-to-html"
+./dist/release/fc-solve run -d 1 -v "./path-to-html"
 ```
 
 ### Other options

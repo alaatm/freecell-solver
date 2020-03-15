@@ -12,7 +12,6 @@ namespace FreeCellSolver.Game
         public int ManualMoveCount { get; private set; }
         public int AutoMoveCount { get; private set; }
         public int MovesEstimated { get; private set; }
-        public int MinMovesToGoal => ManualMoveCount + MovesEstimated;
         public int MoveCount => ManualMoveCount + AutoMoveCount;
 
         public List<Move> AutoMoves { get; private set; }
@@ -318,7 +317,7 @@ namespace FreeCellSolver.Game
             Debug.Assert(AllCards.Count() == 52 && new HashSet<Card>(AllCards).Count == 52);
         }
 
-        public void ComputeCost()
+        public void ComputeCost(bool factorPastMoves)
         {
             var foundation = Foundation;
             var tableaus = Tableaus;
@@ -338,6 +337,10 @@ namespace FreeCellSolver.Game
             }
 
             Cost = MovesEstimated + unsortedSize + (4 - Reserve.FreeCount) + colorDiff;
+            if (factorPastMoves)
+            {
+                Cost += ManualMoveCount;
+            }
         }
 
         public IEnumerable<Move> GetMoves()

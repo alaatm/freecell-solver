@@ -854,7 +854,7 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void ComputeCost_computes_cost()
+        public void ComputeCost_no_pastMovesFactor_computes_cost_without_factoring_past_moves_count()
         {
             /* 
              * CC DD HH SS
@@ -894,8 +894,56 @@ namespace FreeCellSolver.Test
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
-            b.ComputeCost();
+            b.ComputeCost(false);
             Assert.Equal(68, b.Cost);
+        }
+
+        [Fact]
+        public void ComputeCost_with_pastMovesFactor_computes_cost_factoring_past_moves_count()
+        {
+            /* 
+             * CC DD HH SS
+             * -- -- 3H 2S              colorDiff       = abs(0 + 2 - 0 - 3)   = 1
+             *                          movesEstimated  = 52 - (0 + 0 + 3 + 2) = 47
+             * aa bb cc dd
+             * QC QH -- 9D              occupied        = 4 - 1                = 3
+             * 
+             * 00 01 02 03 04 05 06 07  unsorted_size                          = 18
+             * -- -- -- -- -- -- -- --
+             * KC 5D TS 3S 9C TH 4D QD
+             *    AC 7H 5S 4S 7S 5C JS
+             *    2D 8H 4H JC 6D AD TD
+             *    KS    3C JH    9S   
+             *    KH       8S    8D   
+             *    6S       KD    7C   
+             *    4C       QS    6H   
+             *    3D       JD         
+             *    2C       TC         
+             *             9H         
+             *             8C         
+             *             7D         
+             *             6C         
+             *             5H         
+             */
+            var r = new Reserve(Card.Get("QC").RawValue, Card.EMPTY, Card.EMPTY, Card.Get("9D").RawValue);
+            var f = new Foundation(Card.EMPTY, Card.EMPTY, 2, 1);
+            var t0 = new Tableau("KCQH");                           // unsorted = 0
+            var t1 = new Tableau("5DAC2DKSKH6S4C3D2C");             // unsorted = 6
+            var t2 = new Tableau("TS7H8H");                         // unsorted = 2
+            var t3 = new Tableau("3S5S4H3C");                       // unsorted = 1
+            var t4 = new Tableau("9C4SJCJH8SKDQSJDTC9H8C7D6C5H");   // unsorted = 5
+            var t5 = new Tableau("TH7S6D");                         // unsorted = 1
+            var t6 = new Tableau("4D5CAD9S8D7C6H");                 // unsorted = 3
+            var t7 = new Tableau("QDJSTD");                         // unsorted = 0
+            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
+            var b = new Board(r, f, ts);
+            Assert.True(b.IsValid());
+
+            // Make a single move
+            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 1), null);
+
+            b.ComputeCost(true);
+            Assert.Equal(70, b.Cost); // 69 cost + 1 move
         }
 
         [Fact]
