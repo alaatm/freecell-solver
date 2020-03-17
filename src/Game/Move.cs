@@ -42,7 +42,7 @@ namespace FreeCellSolver.Game
                 var seed = 0;
                 for (var f = 0; f < 4; f++)
                 {
-                    var index = seed + (r * 4 + f);
+                    var index = seed + (r * 4) + f;
                     _possibleMoves[index] = new Move(mt, r, f);
                 }
 
@@ -50,7 +50,7 @@ namespace FreeCellSolver.Game
                 seed = 16;
                 for (var t = 0; t < 8; t++)
                 {
-                    var index = seed + (r * 8 + t);
+                    var index = seed + (r * 8) + t;
                     _possibleMoves[index] = new Move(mt, r, t);
                 }
             }
@@ -61,7 +61,7 @@ namespace FreeCellSolver.Game
                 var seed = 48;
                 for (var f = 0; f < 4; f++)
                 {
-                    var index = seed + (t * 4 + f);
+                    var index = seed + (t * 4) + f;
                     _possibleMoves[index] = new Move(mt, t, f);
                 }
 
@@ -69,7 +69,7 @@ namespace FreeCellSolver.Game
                 seed = 80;
                 for (var r = 0; r < 4; r++)
                 {
-                    var index = seed + (t * 4 + r);
+                    var index = seed + (t * 4) + r;
                     _possibleMoves[index] = new Move(mt, t, r);
                 }
 
@@ -79,7 +79,7 @@ namespace FreeCellSolver.Game
                 {
                     for (var moveSize = 1; moveSize < 12; moveSize++)
                     {
-                        var index = seed + (t * 88 + t2 * 11) + moveSize - 1;
+                        var index = seed + (t * 88) + (t2 * 11) + moveSize - 1;
                         _possibleMoves[index] = new Move(mt, t, t2, moveSize);
                     }
                 }
@@ -89,19 +89,19 @@ namespace FreeCellSolver.Game
         public static Move Get(MoveType type, int from, int to, int size = 1)
         {
             Debug.Assert(
-                (type == MoveType.ReserveToFoundation && (from >= 0 && from < 4 && to >= 0 && to < 4 && size == 1)) ||
-                (type == MoveType.ReserveToTableau && (from >= 0 && from < 4 && to >= 0 && to < 8 && size == 1)) ||
-                ((type == MoveType.TableauToFoundation || type == MoveType.TableauToReserve) && (from >= 0 && from < 8 && to >= 0 && to < 4 && size == 1)) ||
-                (type == MoveType.TableauToTableau && (from != to && from >= 0 && from < 8 && to >= 0 && to < 8 && size >= 1 & size <= 11))
+                (type == MoveType.ReserveToFoundation && from >= 0 && from < 4 && to >= 0 && to < 4 && size == 1) ||
+                (type == MoveType.ReserveToTableau && from >= 0 && from < 4 && to >= 0 && to < 8 && size == 1) ||
+                ((type == MoveType.TableauToFoundation || type == MoveType.TableauToReserve) && from >= 0 && from < 8 && to >= 0 && to < 4 && size == 1) ||
+                (type == MoveType.TableauToTableau && from != to && from >= 0 && from < 8 && to >= 0 && to < 8 && size >= 1 & size <= 11)
             );
 
             var index = type switch
             {
-                MoveType.ReserveToFoundation => from * 4 + to,
-                MoveType.ReserveToTableau => 16 + (from * 8 + to),
-                MoveType.TableauToFoundation => 48 + (from * 4 + to),
-                MoveType.TableauToReserve => 80 + (from * 4 + to),
-                MoveType.TableauToTableau => 112 + (from * 88 + to * 11) + size - 1,
+                MoveType.ReserveToFoundation => (from * 4) + to,
+                MoveType.ReserveToTableau => 16 + (from * 8) + to,
+                MoveType.TableauToFoundation => 48 + (from * 4) + to,
+                MoveType.TableauToReserve => 80 + (from * 4) + to,
+                MoveType.TableauToTableau => 112 + (from * 88) + (to * 11) + size - 1,
                 _ => -1,
             };
 

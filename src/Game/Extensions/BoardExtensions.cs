@@ -16,7 +16,8 @@ namespace FreeCellSolver.Game.Extensions
 
             for (var i = 0; i < cards.Count; i++)
             {
-                var pos = 51 - ((seed = (seed * 214013 + 2531011) & Int32.MaxValue) >> 16) % (52 - i);
+                seed = ((seed * 214013) + 2531011) & int.MaxValue;
+                var pos = 51 - ((seed >> 16) % (52 - i));
                 cards.Swap(i, pos);
             }
 
@@ -84,14 +85,14 @@ namespace FreeCellSolver.Game.Extensions
 
             if (uniqueCards.Count != 52)
             {
-                var missing = String.Join(", ", allCards.Except(uniqueCards).Select(c => $"'{c.ToString()}'"));
+                var missing = string.Join(", ", allCards.Except(uniqueCards).Select(c => $"'{c}'"));
                 Console.Error.WriteLine($"Invalid card count, should be '52' but found '{uniqueCards.Count}' cards.");
                 Console.Error.WriteLine($"The following card(s) are missing: {missing}");
                 isValid = false;
             }
             else if (boardCards.Count != 52)
             {
-                var duplicates = String.Join(", ", boardCards.GroupBy(x => x.RawValue).Where(g => g.Count() > 1).Select(g => $"'{Card.Get(g.Key).ToString()}'"));
+                var duplicates = string.Join(", ", boardCards.GroupBy(x => x.RawValue).Where(g => g.Count() > 1).Select(g => $"'{Card.Get(g.Key)}'"));
                 Console.Error.WriteLine($"Invalid card count, should be '52' but found '{boardCards.Count}' cards.");
                 Console.Error.WriteLine($"The following card(s) are duplicates: {duplicates}");
                 isValid = false;

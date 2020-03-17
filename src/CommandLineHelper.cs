@@ -102,7 +102,7 @@ namespace FreeCellSolver.Entry
                         "-d|--deal <NUM>",
                         "Deal number to solve",
                         CommandOptionType.SingleValue)
-                    .Accepts(n => n.Range(1, Int32.MaxValue));
+                    .Accepts(n => n.Range(1, int.MaxValue));
 
                 var optBest = runCmd
                     .Option<bool>(
@@ -139,7 +139,7 @@ namespace FreeCellSolver.Entry
         static async Task RunBenchmarksAsync(int count, string tag)
         {
             var logFile = count == 32000 ? "-32k" : "-1.5k";
-            logFile += String.IsNullOrWhiteSpace(tag) ? $"-{DateTime.UtcNow.Ticks}" : $"-{tag}";
+            logFile += string.IsNullOrWhiteSpace(tag) ? $"-{DateTime.UtcNow.Ticks}" : $"-{tag}";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "benchmarks", $"{logFile}.log");
             if (!Directory.Exists(Path.GetDirectoryName(path)))
@@ -175,9 +175,9 @@ namespace FreeCellSolver.Entry
 
             if (s.SolvedBoard != null)
             {
-                Console.WriteLine("moves: " + String.Join("", s.SolvedBoard.GetMoves().Select(m => m.ToString())));
+                Console.WriteLine("moves: " + string.Join("", s.SolvedBoard.GetMoves().Select(m => m.ToString())));
 
-                if (!String.IsNullOrWhiteSpace(visualizePath))
+                if (!string.IsNullOrWhiteSpace(visualizePath))
                 {
                     var path = Path.Combine(visualizePath, dealNum.ToString());
                     Directory.CreateDirectory(path);
@@ -218,7 +218,7 @@ namespace FreeCellSolver.Entry
             _sw.Restart();
             var solver = await AStar.RunParallelAsync(Board.FromDealNum(deal), best);
             _sw.Stop();
-            writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
+            writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - initial id: {solver.SolvedFromId} - visited nodes: {AStar.VisitedNodes,0:n0}");
             writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.MoveCount}" : " - #moves: 0");
             await writer.FlushAsync();
             GC.Collect();
@@ -256,10 +256,10 @@ namespace FreeCellSolver.Entry
 
                     idxStart = lines[l].IndexOf("visited nodes: ") + "visited nodes: ".Length;
                     length = lines[l].IndexOf(" - ", idxStart) - idxStart;
-                    nc += Int32.Parse(lines[l].Substring(idxStart, length).Replace(",", ""));
+                    nc += int.Parse(lines[l].Substring(idxStart, length).Replace(",", ""));
 
                     idxStart = lines[l].IndexOf("#moves: ") + "#moves: ".Length;
-                    mc += Int32.Parse(lines[l].Substring(idxStart));
+                    mc += int.Parse(lines[l].Substring(idxStart));
                 }
 
                 tests.Add((log.CreateDate, Path.GetFileNameWithoutExtension(log.Path), ts, count, nc, failed, (double)mc / count));

@@ -12,7 +12,7 @@ namespace FreeCellSolver.Solvers
 
         public Board SolvedBoard { get; private set; }
         public int SolvedFromId { get; private set; }
-        public int VisitedNodes => _closed.Count;
+        public static int VisitedNodes => _closed.Count;
 
         public static AStar Run(Board board, bool best)
         {

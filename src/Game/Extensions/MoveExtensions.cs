@@ -6,10 +6,12 @@ namespace FreeCellSolver.Game.Extensions
     public static class MoveExtensions
     {
         public static bool IsReverseOf(this Move val, Move other)
-            => other != null && ((val.Type == MoveType.TableauToTableau && other.Type == MoveType.TableauToTableau
-                || val.Type == MoveType.TableauToReserve && other.Type == MoveType.ReserveToTableau
-                || val.Type == MoveType.ReserveToTableau && other.Type == MoveType.TableauToReserve)
-                && val.From == other.To && val.To == other.From && val.Size == other.Size);
+            => other != null && (
+                    (val.Type == MoveType.TableauToTableau && other.Type == MoveType.TableauToTableau) ||
+                    (val.Type == MoveType.TableauToReserve && other.Type == MoveType.ReserveToTableau) ||
+                    (val.Type == MoveType.ReserveToTableau && other.Type == MoveType.TableauToReserve)
+                ) && 
+                val.From == other.To && val.To == other.From && val.Size == other.Size;
 
         public static string AsJson(this IEnumerable<Move> moves)
         {

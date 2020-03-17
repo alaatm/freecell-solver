@@ -8,9 +8,9 @@ namespace FreeCellSolver.Extensions
     {
         internal static class ThreadSafeRandom
         {
-            [ThreadStatic] private static Random Local;
+            [ThreadStatic] private static Random _local;
 
-            public static Random Rand => Local ?? (Local = new Random(unchecked(Environment.TickCount * 31 + Thread.CurrentThread.ManagedThreadId)));
+            public static Random Rand => _local ?? (_local = new Random(unchecked((Environment.TickCount * 31) + Thread.CurrentThread.ManagedThreadId)));
         }
 
         public static void Swap<T>(this IList<T> list, int indexA, int indexB)

@@ -25,7 +25,7 @@ namespace FreeCellSolver.Game
         public Tableau(string cards) : this(
             new[] { 0 }.SelectMany(i => cards
                 .GroupBy(_ => i++ / 2)
-                .Select(g => Card.Get(String.Join("", g)))
+                .Select(g => Card.Get(string.Join("", g)))
             ).ToArray())
         { }
 
