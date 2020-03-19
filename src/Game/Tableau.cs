@@ -97,15 +97,28 @@ namespace FreeCellSolver.Game
         {
             Debug.Assert(CanMove(target, requestedCount));
 
-            var poppedCards = new Card[requestedCount];
-            for (var i = 0; i < requestedCount; i++)
+            if (requestedCount == 1)
             {
-                poppedCards[i] = Pop();
+                target.Push(Pop());
+                return;
             }
 
-            for (var i = poppedCards.Length - 1; i >= 0; i--)
+            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref target._state[target.Size]), ref Unsafe.As<sbyte, byte>(ref _state[Size - requestedCount]), (uint)requestedCount);
+
+            Size -= requestedCount;
+            SortedSize -= requestedCount;
+
+            target.Top = Top;
+            target.Size += requestedCount;
+            target.SortedSize += requestedCount;
+
+            if (SortedSize < 1)
             {
-                target.Push(poppedCards[i]);
+                SortedSize = CountSorted();
+            }
+            else
+            {
+                Top = Card.Get(_state[Size - 1]);
             }
         }
 

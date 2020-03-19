@@ -145,7 +145,26 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void Move_moves_cards_from_tableau_to_another()
+        public void Move_moves_cards_from_tableau_to_another_when_requestedSize_equals_1()
+        {
+            var t1 = new Tableau("8S2H9C8H");
+            var t2 = new Tableau("");
+
+            t1.Move(t2, 1);
+
+            Assert.Equal(Card.Get("9C"), t1.Top);
+            Assert.Equal(3, t1.Size);
+            Assert.Equal(1, t1.SortedSize);
+
+            Assert.Equal(Card.Get("8H"), t2.Top);
+            Assert.Equal(1, t2.Size);
+            Assert.Equal(1, t2.SortedSize);
+
+            Assert.Equal(Card.Get("8H"), t2[0]);
+        }
+
+        [Fact]
+        public void Move_moves_cards_from_tableau_to_another_when_requestedSize_above_1()
         {
             var t1 = new Tableau("8S2H9C8H");
             var t2 = new Tableau("");
@@ -159,6 +178,51 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("8H"), t2.Top);
             Assert.Equal(2, t2.Size);
             Assert.Equal(2, t2.SortedSize);
+
+            Assert.Equal(Card.Get("8H"), t2[0]);
+            Assert.Equal(Card.Get("9C"), t2[1]);
+        }
+
+        [Fact]
+        public void Move_moves_cards_from_tableau_to_another_and_maintains_top1()
+        {
+            var t1 = new Tableau("9C8H");
+            var t2 = new Tableau("TH");
+
+            t1.Move(t2, 2);
+
+            Assert.Null(t1.Top);
+            Assert.Equal(0, t1.Size);
+            Assert.Equal(0, t1.SortedSize);
+
+            Assert.Equal(Card.Get("8H"), t2.Top);
+            Assert.Equal(3, t2.Size);
+            Assert.Equal(3, t2.SortedSize);
+
+            Assert.Equal(Card.Get("8H"), t2[0]);
+            Assert.Equal(Card.Get("9C"), t2[1]);
+            Assert.Equal(Card.Get("TH"), t2[2]);
+        }
+
+        [Fact]
+        public void Move_moves_cards_from_tableau_to_another_and_maintains_top2()
+        {
+            var t1 = new Tableau("TD9C8H");
+            var t2 = new Tableau("TH");
+
+            t1.Move(t2, 2);
+
+            Assert.Equal(Card.Get("TD"), t1.Top);
+            Assert.Equal(1, t1.Size);
+            Assert.Equal(1, t1.SortedSize);
+
+            Assert.Equal(Card.Get("8H"), t2.Top);
+            Assert.Equal(3, t2.Size);
+            Assert.Equal(3, t2.SortedSize);
+
+            Assert.Equal(Card.Get("8H"), t2[0]);
+            Assert.Equal(Card.Get("9C"), t2[1]);
+            Assert.Equal(Card.Get("TH"), t2[2]);
         }
 
         [Fact]
