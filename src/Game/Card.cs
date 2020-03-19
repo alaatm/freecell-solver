@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
@@ -74,6 +75,7 @@ namespace FreeCellSolver.Game
         }
 
         // Note no error checks are made!
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Card Get(int rawValue) => rawValue == EMPTY ? null : _allCards[rawValue];
 
         // Note no error checks are made!

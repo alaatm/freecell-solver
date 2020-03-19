@@ -121,6 +121,7 @@ namespace FreeCellSolver.Game
             foundation.Push(Pop());
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CountMovable(Tableau target)
         {
             Debug.Assert(this != target);
