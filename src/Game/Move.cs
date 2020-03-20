@@ -19,6 +19,7 @@ namespace FreeCellSolver.Game
         public int From { get; }
         public int To { get; }
         public int Size { get; }
+
         internal Move(MoveType type, int from, int to, int size = 1)
         {
             Type = type;
