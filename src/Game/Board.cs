@@ -437,14 +437,14 @@ namespace FreeCellSolver.Game
             {
                 var hash = 0;
 
-                for (var i = 0; i < 4; i++)
-                {
-                    var r = reserve[i];
-                    if (r != null)
-                    {
-                        hash += _reserveRand[r.RawValue];
-                    }
-                }
+                var r0 = reserve.GetValue(0);
+                var r1 = reserve.GetValue(1);
+                var r2 = reserve.GetValue(2);
+                var r3 = reserve.GetValue(3);
+                if (r0 != Card.EMPTY) hash += _reserveRand[r0];
+                if (r1 != Card.EMPTY) hash += _reserveRand[r1];
+                if (r2 != Card.EMPTY) hash += _reserveRand[r2];
+                if (r3 != Card.EMPTY) hash += _reserveRand[r3];
 
                 for (var i = 0; i < 8; i++)
                 {

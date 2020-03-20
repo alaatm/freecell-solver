@@ -41,6 +41,9 @@ namespace FreeCellSolver.Game
 
         public Reserve() { }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public sbyte GetValue(int i) => _state[i];
+
         public bool CanInsert(out int index)
         {
             index = Array.IndexOf(_state, Card.EMPTY);
