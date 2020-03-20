@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
@@ -217,6 +218,36 @@ namespace FreeCellSolver.Game
             }
 
             return sortedSize;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Tableau other)
+        {
+            var size = Size;
+            var otherSize = other.Size;
+
+            var sortedSize = SortedSize;
+            var otherSortedSize = other.SortedSize;
+
+            if (sortedSize != otherSortedSize || size != otherSize)
+            {
+                return false;
+            }
+
+            if (size == 0)
+            {
+                Debug.Assert(otherSize == 0);
+                return true;
+            }
+
+            if (Top != other.Top)
+            {
+                return false;
+            }
+
+            var ls = _state.AsSpan(0, size);
+            var rs = other._state.AsSpan(0, size);
+            return ls.SequenceEqual(rs);
         }
 
         public override string ToString()

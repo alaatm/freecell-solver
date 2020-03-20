@@ -74,6 +74,13 @@ namespace FreeCellSolver.Game
             return clone;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Foundation other) =>
+            _state[0] == other._state[0] &&
+            _state[1] == other._state[1] &&
+            _state[2] == other._state[2] &&
+            _state[3] == other._state[3];
+
         public override string ToString()
         {
             var sb = new StringBuilder();

@@ -394,44 +394,22 @@ namespace FreeCellSolver.Game
                 return false;
             }
 
-            var tableaus = Tableaus;
-            var reserve = Reserve;
-            var foundation = Foundation;
-            var otherTableaus = other.Tableaus;
-            var otherReserve = other.Reserve;
-            var otherFoundation = other.Foundation;
-
-            var reserveSum = 0;
-            var otherReserveSum = 0;
-            for (var i = 0; i < 4; i++)
-            {
-                reserveSum += reserve[i]?.RawValue ?? 0;
-                otherReserveSum += otherReserve[i]?.RawValue ?? 0;
-                if (foundation[i] != otherFoundation[i])
-                {
-                    return false;
-                }
-            }
-
-            // Note as long as we have same cards in reserve, regardless of order then we consider them to be equal
-            if (reserveSum != otherReserveSum)
+            if (!Reserve.Equals(other.Reserve))
             {
                 return false;
             }
 
+            if (!Foundation.Equals(other.Foundation))
+            {
+                return false;
+            }
+
+            var tableaus = Tableaus;
+            var otherTableaus = other.Tableaus;
+
             for (var i = 0; i < 8; i++)
             {
-                var t1 = tableaus[i];
-                var size1 = t1.Size;
-                var sortedSize1 = t1.SortedSize;
-                var top1 = size1 > 0 ? t1.Top : null;
-
-                var t2 = otherTableaus[i];
-                var size2 = t2.Size;
-                var sortedSize2 = t2.SortedSize;
-                var top2 = size2 > 0 ? t2.Top : null;
-
-                if (top1 != top2 || size1 != size2 || sortedSize1 != sortedSize2)
+                if (!tableaus[i].Equals(otherTableaus[i]))
                 {
                     return false;
                 }

@@ -100,6 +100,45 @@ namespace FreeCellSolver.Game
             return clone;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Reserve other)
+        {
+            if (FreeCount != other.FreeCount)
+            {
+                return false;
+            }
+            else if (FreeCount == 4)
+            {
+                return true;
+            }
+
+            // We have same number of occupied slots, verify that cards in them are the same
+            // regardless of order
+            for (var i = 0; i < 4; i++)
+            {
+                var card = _state[i];
+                if (card != Card.EMPTY)
+                {
+                    var found = false;
+                    for (var j = 0; j < 4; j++)
+                    {
+                        if (card == other._state[j])
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         public override string ToString()
         {
             var sb = new StringBuilder();

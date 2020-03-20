@@ -1051,6 +1051,15 @@ namespace FreeCellSolver.Test
 
             b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
             Assert.True(b1 == b2);
+
+            var tEmpty = new Tableau("");
+            b1 = new Board(new Reserve(Card.Get(1).RawValue, Card.Get(2).RawValue, Card.EMPTY, Card.EMPTY), new Foundation(), new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b2 = new Board(new Reserve(Card.Get(0).RawValue, Card.Get(3).RawValue, Card.EMPTY, Card.EMPTY), new Foundation(), new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            Assert.True(b1 != b2);
+
+            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KHQS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KDQS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            Assert.True(b1 != b2);
         }
 
         [Fact]
