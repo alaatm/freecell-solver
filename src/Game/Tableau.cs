@@ -221,33 +221,41 @@ namespace FreeCellSolver.Game
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(Tableau other)
+        public bool Equals(Tableau other, bool checkStack)
         {
             var size = Size;
-            var otherSize = other.Size;
 
-            var sortedSize = SortedSize;
-            var otherSortedSize = other.SortedSize;
-
-            if (sortedSize != otherSortedSize || size != otherSize)
+            if (!checkStack)
             {
-                return false;
+                var otherSize = other.Size;
+
+                var sortedSize = SortedSize;
+                var otherSortedSize = other.SortedSize;
+
+                if (sortedSize != otherSortedSize || size != otherSize)
+                {
+                    return false;
+                }
+
+                if (size == 0)
+                {
+                    Debug.Assert(otherSize == 0);
+                    return true;
+                }
+
+                if (Top != other.Top)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                var ls = _state.AsSpan(0, size);
+                var rs = other._state.AsSpan(0, size);
+                return ls.SequenceEqual(rs);
             }
 
-            if (size == 0)
-            {
-                Debug.Assert(otherSize == 0);
-                return true;
-            }
-
-            if (Top != other.Top)
-            {
-                return false;
-            }
-
-            var ls = _state.AsSpan(0, size);
-            var rs = other._state.AsSpan(0, size);
-            return ls.SequenceEqual(rs);
+            return true;
         }
 
         public override string ToString()

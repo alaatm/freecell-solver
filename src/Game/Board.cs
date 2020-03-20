@@ -409,7 +409,15 @@ namespace FreeCellSolver.Game
 
             for (var i = 0; i < 8; i++)
             {
-                if (!tableaus[i].Equals(otherTableaus[i]))
+                if (!tableaus[i].Equals(otherTableaus[i], false))
+                {
+                    return false;
+                }
+            }
+
+            for (var i = 0; i < 8; i++)
+            {
+                if (!tableaus[i].Equals(otherTableaus[i], true))
                 {
                     return false;
                 }
