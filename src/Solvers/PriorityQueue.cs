@@ -40,7 +40,7 @@ namespace FreeCellSolver.Solvers
             return best;
         }
 
-        public bool TryGetValue(Board equalValue, out Board actualValue) => _hash.TryGetValue(equalValue, out actualValue);
+        public bool Contains(Board equalValue) => _hash.Contains(equalValue);
     }
 
     // Same as PriorityQueue above except that it supports removing items at arbitrary locations.

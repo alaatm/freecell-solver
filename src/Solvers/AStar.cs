@@ -90,10 +90,9 @@ namespace FreeCellSolver.Solvers
                         continue;
                     }
 
-                    next.ComputeCost(false);
-
-                    if (!open.TryGetValue(next, out _))
+                    if (!open.Contains(next))
                     {
+                        next.ComputeCost(false);
                         open.Enqueue(next);
                     }
                 }
