@@ -224,19 +224,14 @@ namespace FreeCellSolver.Game
 
             if (!checkStack)
             {
-                var otherSize = other.Size;
-
-                var sortedSize = SortedSize;
-                var otherSortedSize = other.SortedSize;
-
-                if (sortedSize != otherSortedSize || size != otherSize)
+                if (SortedSize != other.SortedSize || size != other.Size)
                 {
                     return false;
                 }
 
                 if (size == 0)
                 {
-                    Debug.Assert(otherSize == 0);
+                    Debug.Assert(other.Size == 0);
                     return true;
                 }
 
@@ -244,15 +239,24 @@ namespace FreeCellSolver.Game
                 {
                     return false;
                 }
+
+                return true;
             }
             else
             {
+                // Note this method with checkStatus=true should only be called
+                // when the return value of calling this method with checkStatus=false yields true
+                Debug.Assert(size == other.Size);
+
+                if (size == 0)
+                {
+                    return true;
+                }
+
                 var ls = _state.AsSpan(0, size);
                 var rs = other._state.AsSpan(0, size);
                 return ls.SequenceEqual(rs);
             }
-
-            return true;
         }
 
         public override string ToString()
