@@ -140,15 +140,12 @@ namespace FreeCellSolver.Game
         {
             Debug.Assert(this != target);
 
-            var size = Size;
-            var targetSize = target.Size;
-
-            if (size == 0)
+            if (Size == 0)
             {
                 return 0;
             }
 
-            if (targetSize == 0)
+            if (target.Size == 0)
             {
                 return SortedSize;
             }
