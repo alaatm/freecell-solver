@@ -41,19 +41,6 @@ namespace FreeCellSolver.Game
             _state[7] = tableau8.Clone();
         }
 
-        public bool CanReceive(Card card, int exclude)
-        {
-            for (var i = 0; i < 8 && card != null; i++)
-            {
-                if (exclude != i && _state[i].CanPush(card))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public Tableaus Clone() => new Tableaus(
             _state[0],
             _state[1],

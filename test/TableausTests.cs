@@ -15,26 +15,6 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void CanReceive_returns_whether_card_can_be_placed_on_top_of_any_tableau()
-        {
-            // Excluding col 0, card can be received at col 7 because its empty.
-            var ts = new Tableaus(new Tableau(""), new Tableau("KC"), new Tableau("KD"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau(""));
-            Assert.True(ts.CanReceive(Card.Get("5H"), 0));
-
-            // Excluding col 0, card can be received at col 1 below 6S
-            ts = new Tableaus(new Tableau(""), new Tableau("6S"), new Tableau("KD"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau("QH"));
-            Assert.True(ts.CanReceive(Card.Get("5H"), 0));
-
-            // Excluding col 0, card cannot be placed anywhere
-            ts = new Tableaus(new Tableau(""), new Tableau("6S"), new Tableau("KD"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau("QH"));
-            Assert.False(ts.CanReceive(Card.Get("TH"), 0));
-
-            // Cannot receive null card
-            ts = new Tableaus(new Tableau(""), new Tableau("6S"), new Tableau("KD"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau("QH"));
-            Assert.False(ts.CanReceive(null, 0));
-        }
-
-        [Fact]
         public void Clone_clones_object()
         {
             var ts = new Tableaus(new Tableau(""), new Tableau("KC"), new Tableau("KD"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau(""));
