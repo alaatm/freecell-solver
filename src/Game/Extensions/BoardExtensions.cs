@@ -11,33 +11,65 @@ namespace FreeCellSolver.Game.Extensions
     {
         public static Board FromDealNum(int dealNum)
         {
-            var cards = Enumerable.Range(0, 52).Reverse().ToList();
+            Span<sbyte> crv = stackalloc sbyte[] 
+            { 
+                51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41,
+                40, 39, 38, 37, 36, 35, 34, 33, 32, 31,
+                30, 29, 28, 27, 26, 25, 24, 23, 22, 21,
+                20, 19, 18, 17, 16, 15, 14, 13, 12, 11,
+                10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 
+            };
             var seed = dealNum;
 
-            for (var i = 0; i < cards.Count; i++)
+            for (var i = 0; i < crv.Length; i++)
             {
                 seed = ((seed * 214013) + 2531011) & int.MaxValue;
                 var pos = 51 - ((seed >> 16) % (52 - i));
-                cards.Swap(i, pos);
+
+                var tmp = crv[i];
+                crv[i] = crv[pos];
+                crv[pos] = tmp;
             }
 
-            var tableaus_ = new sbyte[8][];
+            // IDX: 0  8  16 24 32 40 48
+            // T0 : JD KD 2S 4C 3S 6D 6S
 
-            for (sbyte i = 0; i < cards.Count; i++)
+            // IDX: 1  9  17 25 33 41 49
+            // T1 : 2D KC KS 5C TD 8S 9C
+
+            // IDX: 2  10 18 26 34 42 50
+            // T2 : 9H 9S 9D TS 4S 8D 2H
+
+            // IDX: 3  11 19 27 35 43 51
+            // T3 : JC 5S QD QH TH QS 6H
+
+            // IDX: 4  12 20 28 36 44
+            // T4 : 5D AD JS 4H 8H 6C
+
+            // IDX: 5  13 21 29 37 45
+            // T5 : 7H QC AS AC 2C 3D
+
+            // IDX: 6  14 22 30 38 46
+            // T6 : 7C KH AH 4D JH 8C
+
+            // IDX: 7  15 23 31 39 47
+            // T7 : 5H 3H 3C 7S 7D TC
+
+            var col = 0;
+            var tableaus = new Tableau[8];
+            Span<sbyte> cards = stackalloc sbyte[8];
+
+            for (var i = 0; i < crv.Length;)
             {
-                var c = i % 8;
-                var r = i / 8;
-                if (c == i)
+                var count = col < 4 ? 7 : 6;                
+
+                for (var j = 0; j < count; j++)
                 {
-                    tableaus_[i] = new sbyte[c < 4 ? 7 : 6];
+                    cards[j] = crv[col + (j * 8)];
                 }
-                tableaus_[c][r] = (sbyte)cards[i];
-            }
 
-            var tableaus = new List<Tableau>(8);
-            for (var c = 0; c < 8; c++)
-            {
-                tableaus.Add(new Tableau(tableaus_[c].Select(n => Card.Get(n)).ToArray()));
+                tableaus[col++] = new Tableau(cards.Slice(0, count));
+                i += count;
             }
 
             return new Board(new Tableaus(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));

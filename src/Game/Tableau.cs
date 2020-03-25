@@ -23,7 +23,7 @@ namespace FreeCellSolver.Game
         public Card this[int index] => Card.Get(_state[Size - index - 1]);
 
         public Tableau(string cards) : this(
-            new[] { 0 }.SelectMany(i => cards
+            new[] { 0 }.SelectMany(i => cards.Replace(" ", "")
                 .GroupBy(_ => i++ / 2)
                 .Select(g => Card.Get(string.Join("", g)))
             ).ToArray())
@@ -34,6 +34,16 @@ namespace FreeCellSolver.Game
             foreach (var card in cards)
             {
                 _state[Size++] = card.RawValue;
+            }
+
+            SortedSize = CountSorted();
+        }
+
+        public Tableau(Span<sbyte> cards)
+        {
+            foreach (var card in cards)
+            {
+                _state[Size++] = card;
             }
 
             SortedSize = CountSorted();
