@@ -46,7 +46,7 @@ namespace FreeCellSolver.Game
 
         public bool CanInsert(out int index)
         {
-            index = Array.IndexOf(_state, Card.EMPTY);
+            index = _state.AsSpan().IndexOf(Card.EMPTY);
             return FreeCount > 0;
         }
 
