@@ -2,6 +2,7 @@ using System.Text;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
@@ -76,10 +77,7 @@ namespace FreeCellSolver.Game
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(Foundation other) =>
-            _state[0] == other._state[0] &&
-            _state[1] == other._state[1] &&
-            _state[2] == other._state[2] &&
-            _state[3] == other._state[3];
+            MemoryMarshal.Cast<sbyte, int>(_state)[0] == MemoryMarshal.Cast<sbyte, int>(other._state)[0];
 
         public override string ToString()
         {
