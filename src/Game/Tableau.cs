@@ -53,8 +53,8 @@ namespace FreeCellSolver.Game
 
         public bool CanMove(Foundation foundation, out int targetIndex)
         {
-            var card = Top;
-            var canMove = CanPop() && foundation.CanPush(card);
+            Card card = null;
+            var canMove = CanPop() && foundation.CanPush(card = Top);
             targetIndex = canMove ? card.Suit : -1;
             return canMove;
         }
