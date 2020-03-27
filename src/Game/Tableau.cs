@@ -256,7 +256,7 @@ namespace FreeCellSolver.Game
             {
                 // Note this method with checkStatus=true should only be called
                 // when the return value of calling this method with checkStatus=false yields true
-                Debug.Assert(size == other.Size);
+                Debug.Assert(size == other.Size && SortedSize == other.SortedSize && Top == other.Top);
 
                 if (size == 0)
                 {
