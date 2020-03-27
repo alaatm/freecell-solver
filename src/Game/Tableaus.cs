@@ -41,15 +41,19 @@ namespace FreeCellSolver.Game
             _state[7] = tableau8.Clone();
         }
 
-        public Tableaus Clone() => new Tableaus(
-            _state[0],
-            _state[1],
-            _state[2],
-            _state[3],
-            _state[4],
-            _state[5],
-            _state[6],
-            _state[7]);
+        private Tableaus(Tableaus ts)
+        {
+            _state[0] = ts._state[0].Clone();
+            _state[1] = ts._state[1].Clone();
+            _state[2] = ts._state[2].Clone();
+            _state[3] = ts._state[3].Clone();
+            _state[4] = ts._state[4].Clone();
+            _state[5] = ts._state[5].Clone();
+            _state[6] = ts._state[6].Clone();
+            _state[7] = ts._state[7].Clone();
+        }
+
+        public Tableaus Clone() => new Tableaus(this);
 
         public override string ToString()
         {
