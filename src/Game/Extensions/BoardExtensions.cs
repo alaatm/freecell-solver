@@ -3,7 +3,6 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using FreeCellSolver.Extensions;
 
 namespace FreeCellSolver.Game.Extensions
 {
@@ -61,7 +60,7 @@ namespace FreeCellSolver.Game.Extensions
 
             for (var i = 0; i < crv.Length;)
             {
-                var count = col < 4 ? 7 : 6;                
+                var count = col < 4 ? 7 : 6;
 
                 for (var j = 0; j < count; j++)
                 {

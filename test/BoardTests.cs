@@ -70,20 +70,24 @@ namespace FreeCellSolver.Test
              * 00 01 02 03 04 05 06 07
              * -- -- -- -- -- -- -- --
              * 9S    QS JS    JH 5C   
-             * QD    QC 8C    9D 6C   
-             * 7D    TS 3H    9H QH   
-             * TC    7C 7H    8H 8D   
-             * JC    KH KC    4H TD   
+             * TC    QC 8C    9D 6C   
+             * KC    TS 3H    9H QH   
+             * QD    7C 7H    8H 8D   
+             * JC    KH 7D    4H TD   
              * TH                5H     
              * 9C                     
+             * 
+             * Max allowed: 4
+             * Possible to move 5 from 0 to 1 but should only move 4, 3, 2, 1 stack(s)
+             * Valid moves: 0->1(4), 0->1(3), 0->1(2), 0->1(1), 2->1(1), 3->1(1), 5->1(1), 6->1(1)
              */
 
             // Arrange
             var r = new Reserve(Card.Get("KS").RawValue, Card.Get("6H").RawValue, Card.Get("KD").RawValue, Card.Get("JD").RawValue);
             var f = new Foundation(3, 5, 1, 7);
-            var t0 = new Tableau("9SQD7DTCJCTH9C");
+            var t0 = new Tableau("9STCKCQDJCTH9C");
             var t2 = new Tableau("QSQCTS7CKH");
-            var t3 = new Tableau("JS8C3H7HKC");
+            var t3 = new Tableau("JS8C3H7H7D");
             var t5 = new Tableau("JH9D9H8H4H");
             var t6 = new Tableau("5C6CQH8DTD5H");
             var tRest = new Tableau();
@@ -95,7 +99,54 @@ namespace FreeCellSolver.Test
             var moves = b.GetValidMoves();
 
             // Assert
+            Assert.Equal(8, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
+            Assert.All(moves.Where(m => m.Type == MoveType.TableauToTableau), m => Assert.True(m.To == 1));
+        }
+
+        [Fact]
+        public void GetValidMoves_moves_part_of_tableau_to_empty_one_when_first_tableau_is_fully_sorted()
+        {
+            /*
+             * CC DD HH SS
+             * 4C 6D 2H 8S
+             *
+             * aa bb cc dd
+             * KS 6H KD --
+             *
+             * 00 01 02 03 04 05 06 07
+             * -- -- -- -- -- -- -- --
+             * JC    QS JS 9S JH 5C   
+             * TH    QC 8C TC 9D 6C   
+             * 9C    TS 3H KC 9H QH   
+             *       7C 7H JD 8H 8D   
+             *       KH 7D    4H TD   
+             *                   QD   
+             *                   5H   
+             * 
+             * Max allowed: 4
+             * Valid moves: 0->1(2), 0->1(1), 2->1(1), 3->1(1), 4->1(1), 5->1(1), 6->1(1)
+             */
+
+            // Arrange
+            var r = new Reserve(Card.Get("KS").RawValue, Card.Get("6H").RawValue, Card.Get("KD").RawValue, Card.EMPTY);
+            var f = new Foundation(3, 5, 1, 7);
+            var t0 = new Tableau("JCTH9C");
+            var t2 = new Tableau("QSQCTS7CKH");
+            var t3 = new Tableau("JS8C3H7H7D");
+            var t4 = new Tableau("9STCKCJD");
+            var t5 = new Tableau("JH9D9H8H4H");
+            var t6 = new Tableau("5C6CQH8DTDQD5H");
+            var tRest = new Tableau();
+            var ts = new Tableaus(t0, tRest, t2, t3, t4, t5, t6, tRest);
+            var b = new Board(r, f, ts);
+            Assert.True(b.IsValid());
+
+            // Act
+            var moves = b.GetValidMoves();
+
+            // Assert
             Assert.Equal(7, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
+            Assert.Equal(2, moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 0 && m.To == 1).Count());
             Assert.All(moves.Where(m => m.Type == MoveType.TableauToTableau), m => Assert.True(m.To == 1));
         }
 

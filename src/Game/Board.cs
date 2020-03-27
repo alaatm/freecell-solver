@@ -149,44 +149,46 @@ namespace FreeCellSolver.Game
 
                     // Left shift freeCount+1 on number of non-target empty tableaus to get max move size
                     // i.e. 0 free, 2 empty tableaus that are not the target:
-                    // maxAllowedMoveSize is 0+1 << 2 = 4
-                    var maxAllowedMoveSize = freeCount << (emptyTarget ? emptyTableauCount - 1 : emptyTableauCount);
-                    var canMove = true;
-                    /* No need to get target top when moveSize is 1 since we won't be calling IsBelow() */
-                    var targetTop = moveSize > 1 ? targetTableau.Top : null;
+                    // maxMoveSize is 0+1 << 2 = 4
+                    var maxMoveSize = freeCount << (emptyTarget ? emptyTableauCount - 1 : emptyTableauCount);
 
-                    var didMove = false;
-
-                    while (moveSize > 0)
+                    if (emptyTarget)
                     {
-                        // Do not move an entire column to an empty one
-                        var uselessMove = tableauSize == moveSize && emptyTarget;
-
-                        if (canMove && maxAllowedMoveSize >= moveSize && !uselessMove)
+                        if (alreadyMovedToEmpty)
                         {
-                            var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
-                            if (!move.IsReverseOf(lastMove))
-                            {
-                                if (emptyTarget && alreadyMovedToEmpty)
-                                {
-                                    // Skip move to empty when we've already made a similar
-                                    // move to another empty tableau
-                                }
-                                else
-                                {
-                                    moves.Add(move);
-                                    didMove = true;
-                                }
-                            }
+                            // Skip move to empty when we've already made a similar
+                            // move to another empty tableau.
                         }
-
-                        if (--moveSize > 0)
+                        else
                         {
-                            canMove = emptyTarget || tableau[moveSize - 1].IsBelow(targetTop);
+                            // For empty targets, add all possible moves from a tableau to an empty one except adding an entire sorted tableau
+                            // i.e. maxMoveSize = 3 and given the following t1:
+                            // JS TH 9S  (Size = 3, SortedSize = 3)
+                            // Adds 2 moves:
+                            // TH 9S -> t2
+                            // 9S    -> t2
+                            do
+                            {
+                                if (maxMoveSize >= moveSize && /* Skip move if moving entire column to empty one. */ tableauSize != moveSize)
+                                {
+                                    var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
+                                    if (!move.IsReverseOf(lastMove))
+                                    {
+                                        alreadyMovedToEmpty = true;
+                                        moves.Add(move);
+                                    }
+                                }
+                            } while (--moveSize > 0);
                         }
                     }
-
-                    alreadyMovedToEmpty = emptyTarget && didMove ? true : alreadyMovedToEmpty;
+                    else if (maxMoveSize >= moveSize)
+                    {
+                        var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
+                        if (!move.IsReverseOf(lastMove))
+                        {
+                            moves.Add(move);
+                        }
+                    }
                 }
             }
 
