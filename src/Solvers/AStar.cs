@@ -8,7 +8,7 @@ namespace FreeCellSolver.Solvers
 {
     public class AStar
     {
-        private static ConcurrentDictionary<int, byte> _closed;
+        private static ConcurrentDictionary<Board, byte> _closed;
 
         public Board SolvedBoard { get; private set; }
         public int SolvedFromId { get; private set; }
@@ -23,7 +23,7 @@ namespace FreeCellSolver.Solvers
 
             // Should obviously use a local HashSet<int> here but we don't care much about this
             // non parallel version, its only here for debugging.
-            _closed = new ConcurrentDictionary<int, byte>(1, 1000);
+            _closed = new ConcurrentDictionary<Board, byte>(1, 1000);
 
             var astar = new AStar();
             if (best)
@@ -45,7 +45,7 @@ namespace FreeCellSolver.Solvers
             var states = ParallelHelper.GetStates(clone, Environment.ProcessorCount);
             Console.WriteLine($"Solver: A* - using {states.Count} cores");
 
-            _closed = new ConcurrentDictionary<int, byte>(states.Count, 1000);
+            _closed = new ConcurrentDictionary<Board, byte>(states.Count, 1000);
             var astar = new AStar();
 
             var tasks = states.Select((b, i) => Task.Run(() =>
@@ -78,14 +78,14 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
-                _closed.TryAdd(board.GetHashCode(), 1);
+                _closed.TryAdd(board, 1);
 
                 foreach (var move in board.GetValidMoves())
                 {
                     var next = board.Clone();
                     next.ExecuteMove(move, board);
 
-                    if (_closed.ContainsKey(next.GetHashCode()))
+                    if (_closed.ContainsKey(next))
                     {
                         continue;
                     }
@@ -114,14 +114,14 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
-                _closed.TryAdd(board.GetHashCode(), 1);
+                _closed.TryAdd(board, 1);
 
                 foreach (var move in board.GetValidMoves())
                 {
                     var next = board.Clone();
                     next.ExecuteMove(move, board);
 
-                    if (_closed.ContainsKey(next.GetHashCode()))
+                    if (_closed.ContainsKey(next))
                     {
                         continue;
                     }
