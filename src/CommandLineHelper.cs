@@ -48,15 +48,15 @@ namespace FreeCellSolver.Entry
 
                     benchmarksRunCmd.OnExecuteAsync(async (_) =>
                     {
-                        if (optType.ParsedValue.ToLower() == "short")
+                        if (optType.ParsedValue.ToUpperInvariant() == "SHORT")
                         {
-                            await RunBenchmarksAsync(1500, optTag.ParsedValue);
-                            await PrintBenchmarksSummaryAsync();
+                            await RunBenchmarksAsync(1500, optTag.ParsedValue).ConfigureAwait(false);
+                            await PrintBenchmarksSummaryAsync().ConfigureAwait(false);
                         }
-                        else if (optType.ParsedValue.ToLower() == "full")
+                        else if (optType.ParsedValue.ToUpperInvariant() == "FULL")
                         {
-                            await RunBenchmarksAsync(32000, optTag.ParsedValue);
-                            await PrintBenchmarksSummaryAsync();
+                            await RunBenchmarksAsync(32000, optTag.ParsedValue).ConfigureAwait(false);
+                            await PrintBenchmarksSummaryAsync().ConfigureAwait(false);
                         }
                         else
                         {
@@ -81,7 +81,7 @@ namespace FreeCellSolver.Entry
                     benchmarkShowCmd.Description = "Shows past benchmarks results";
                     benchmarkShowCmd.OnExecuteAsync(async (_) =>
                     {
-                        await PrintBenchmarksSummaryAsync();
+                        await PrintBenchmarksSummaryAsync().ConfigureAwait(false);
                         return 0;
                     });
                 });
@@ -119,7 +119,7 @@ namespace FreeCellSolver.Entry
 
                 runCmd.OnExecuteAsync(async (_) =>
                 {
-                    await RunSingleAsync(optDeal.ParsedValue, optBest.HasValue(), optVisualize.ParsedValue);
+                    await RunSingleAsync(optDeal.ParsedValue, optBest.HasValue(), optVisualize.ParsedValue).ConfigureAwait(false);
                     return 0;
                 });
 
@@ -161,7 +161,7 @@ namespace FreeCellSolver.Entry
             using var fs = File.CreateText(path);
             for (var i = 1; i <= count; i++)
             {
-                await ExecuteAsync(fs, i, false);
+                await ExecuteAsync(fs, i, false).ConfigureAwait(false);
             }
             return;
         }
@@ -171,7 +171,7 @@ namespace FreeCellSolver.Entry
             var sw = new Stopwatch();
             var b = Board.FromDealNum(dealNum);
 
-            var s = await ExecuteAsync(Console.Out, dealNum, best);
+            var s = await ExecuteAsync(Console.Out, dealNum, best).ConfigureAwait(false);
 
             if (s.SolvedBoard != null)
             {
@@ -183,20 +183,20 @@ namespace FreeCellSolver.Entry
                     Directory.CreateDirectory(path);
                     Directory.CreateDirectory(Path.Combine(path, "assets"));
 
-                    await WriteResourceAsync("FreeCellSolver.assets.bg.jpg", Path.Combine(path, "assets", "bg.jpg"));
-                    await WriteResourceAsync("FreeCellSolver.assets.empty.png", Path.Combine(path, "assets", "empty.png"));
-                    await WriteResourceAsync("FreeCellSolver.visualizer.dist.index.min.js", Path.Combine(path, "index.min.js"));
-                    await WriteResourceAsync("FreeCellSolver.visualizer.dist.visualizer.min.html", Path.Combine(path, "visualizer.html"));
+                    await WriteResourceAsync("FreeCellSolver.assets.bg.jpg", Path.Combine(path, "assets", "bg.jpg")).ConfigureAwait(false);
+                    await WriteResourceAsync("FreeCellSolver.assets.empty.png", Path.Combine(path, "assets", "empty.png")).ConfigureAwait(false);
+                    await WriteResourceAsync("FreeCellSolver.visualizer.dist.index.min.js", Path.Combine(path, "index.min.js")).ConfigureAwait(false);
+                    await WriteResourceAsync("FreeCellSolver.visualizer.dist.visualizer.min.html", Path.Combine(path, "visualizer.html")).ConfigureAwait(false);
 
                     for (sbyte i = 0; i < 52; i++)
                     {
                         Card.Get(i).ToImage().Save(Path.Combine(path, "assets", $"{i}.png"));
                     }
 
-                    var html = await File.ReadAllTextAsync(Path.Combine(path, "visualizer.html"));
+                    var html = await File.ReadAllTextAsync(Path.Combine(path, "visualizer.html")).ConfigureAwait(false);
                     html = html.Replace("var board=[]", $"var board={b.AsJson()}");
                     html = html.Replace(",moves=[];", $"var moves={s.SolvedBoard.GetMoves().AsJson()}");
-                    await File.WriteAllTextAsync(Path.Combine(path, "visualizer.html"), html);
+                    await File.WriteAllTextAsync(Path.Combine(path, "visualizer.html"), html).ConfigureAwait(false);
 
                     Console.WriteLine();
                     Console.WriteLine($"Visualizer written at '{path}'");
@@ -208,7 +208,7 @@ namespace FreeCellSolver.Entry
         {
             using var stream = typeof(CommandLineHelper).Assembly.GetManifestResourceStream(name);
             using var fs = File.Create(dest);
-            await stream.CopyToAsync(fs);
+            await stream.CopyToAsync(fs).ConfigureAwait(false);
             fs.Close();
         }
 
@@ -216,11 +216,11 @@ namespace FreeCellSolver.Entry
         {
             writer.WriteLine($"Processing deal #{deal}");
             _sw.Restart();
-            var solver = await AStar.RunParallelAsync(Board.FromDealNum(deal), best);
+            var solver = await AStar.RunParallelAsync(Board.FromDealNum(deal), best).ConfigureAwait(false);
             _sw.Stop();
             writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - initial id: {solver.SolvedFromId} - visited nodes: {AStar.VisitedNodes,0:n0}");
             writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.MoveCount}" : " - #moves: 0");
-            await writer.FlushAsync();
+            await writer.FlushAsync().ConfigureAwait(false);
             GC.Collect();
             return solver;
         }
@@ -240,7 +240,7 @@ namespace FreeCellSolver.Entry
 
             foreach (var log in logFiles)
             {
-                var lines = await File.ReadAllLinesAsync(log.Path);
+                var lines = await File.ReadAllLinesAsync(log.Path).ConfigureAwait(false);
 
                 var count = lines.Length / 2;
                 var failed = lines.Count(p => p.IndexOf("Bailed") >= 0);

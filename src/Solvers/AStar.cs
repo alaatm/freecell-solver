@@ -59,7 +59,7 @@ namespace FreeCellSolver.Solvers
                     astar.SearchFast(b, i);
                 }
             }));
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(false);
             return astar;
         }
 
