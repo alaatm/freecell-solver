@@ -11,10 +11,10 @@ namespace FreeCellSolver.Game
     {
         private readonly sbyte[] _state =
         {
-            Card.EMPTY,
-            Card.EMPTY,
-            Card.EMPTY,
-            Card.EMPTY,
+            Card.Empty,
+            Card.Empty,
+            Card.Empty,
+            Card.Empty,
         };
 
         public Card this[int i] => Card.Get(_state[i]);
@@ -23,20 +23,20 @@ namespace FreeCellSolver.Game
 
         public Reserve(sbyte card1, sbyte card2, sbyte card3, sbyte card4)
         {
-            Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != Card.EMPTY) || card1 == Card.EMPTY);
-            Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != Card.EMPTY) || card2 == Card.EMPTY);
-            Debug.Assert((card3 != card1 && card3 != card2 && card3 != card4 && card3 != Card.EMPTY) || card3 == Card.EMPTY);
-            Debug.Assert((card4 != card1 && card4 != card2 && card4 != card3 && card4 != Card.EMPTY) || card4 == Card.EMPTY);
+            Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != Card.Empty) || card1 == Card.Empty);
+            Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != Card.Empty) || card2 == Card.Empty);
+            Debug.Assert((card3 != card1 && card3 != card2 && card3 != card4 && card3 != Card.Empty) || card3 == Card.Empty);
+            Debug.Assert((card4 != card1 && card4 != card2 && card4 != card3 && card4 != Card.Empty) || card4 == Card.Empty);
 
             _state[0] = card1;
             _state[1] = card2;
             _state[2] = card3;
             _state[3] = card4;
 
-            FreeCount -= card1 != Card.EMPTY ? 1 : 0;
-            FreeCount -= card2 != Card.EMPTY ? 1 : 0;
-            FreeCount -= card3 != Card.EMPTY ? 1 : 0;
-            FreeCount -= card4 != Card.EMPTY ? 1 : 0;
+            FreeCount -= card1 != Card.Empty ? 1 : 0;
+            FreeCount -= card2 != Card.Empty ? 1 : 0;
+            FreeCount -= card3 != Card.Empty ? 1 : 0;
+            FreeCount -= card4 != Card.Empty ? 1 : 0;
         }
 
         public Reserve() { }
@@ -46,11 +46,11 @@ namespace FreeCellSolver.Game
 
         public bool CanInsert(out int index)
         {
-            index = _state.AsSpan().IndexOf(Card.EMPTY);
+            index = _state.AsSpan().IndexOf(Card.Empty);
             return FreeCount > 0;
         }
 
-        private bool CanRemove(int index) => _state[index] != Card.EMPTY;
+        private bool CanRemove(int index) => _state[index] != Card.Empty;
 
         public bool CanMove(int index, Tableau tableau)
             => CanRemove(index) && tableau.CanPush(Card.Get(_state[index]));
@@ -59,7 +59,7 @@ namespace FreeCellSolver.Game
         {
             Card card = null;
             var canMove = CanRemove(index) && foundation.CanPush(card = Card.Get(_state[index]));
-            targetIndex = canMove ? card.Suit : Card.EMPTY;
+            targetIndex = canMove ? card.Suit : Card.Empty;
 
             return canMove;
         }
@@ -69,7 +69,7 @@ namespace FreeCellSolver.Game
             Debug.Assert(CanInsert(out var idx) && idx == index);
             _state[index] = card.RawValue;
             FreeCount--;
-            Debug.Assert(FreeCount == _state.Count(c => c == Card.EMPTY));
+            Debug.Assert(FreeCount == _state.Count(c => c == Card.Empty));
         }
 
         private Card Remove(int index)
@@ -78,8 +78,8 @@ namespace FreeCellSolver.Game
             Debug.Assert(CanRemove(index));
 
             var card = _state[index];
-            _state[index] = Card.EMPTY;
-            Debug.Assert(FreeCount == _state.Count(c => c == Card.EMPTY));
+            _state[index] = Card.Empty;
+            Debug.Assert(FreeCount == _state.Count(c => c == Card.Empty));
 
             return Card.Get(card);
         }
@@ -121,7 +121,7 @@ namespace FreeCellSolver.Game
             for (var i = 0; i < 4; i++)
             {
                 var card = _state[i];
-                if (card != Card.EMPTY)
+                if (card != Card.Empty)
                 {
                     var found = false;
                     for (var j = 0; j < 4; j++)
@@ -150,7 +150,7 @@ namespace FreeCellSolver.Game
             for (var i = 0; i < 4; i++)
             {
                 var value = _state[i];
-                sb.Append((value == Card.EMPTY ? "--" : Card.Get(value).ToString()));
+                sb.Append((value == Card.Empty ? "--" : Card.Get(value).ToString()));
                 if (i < 3)
                 {
                     sb.Append(" ");
@@ -161,6 +161,6 @@ namespace FreeCellSolver.Game
         }
 
         // Used only for post moves asserts
-        internal IEnumerable<Card> AllCards() => _state.Where(c => c != Card.EMPTY).Select(c => Card.Get(c));
+        internal IEnumerable<Card> AllCards() => _state.Where(c => c != Card.Empty).Select(c => Card.Get(c));
     }
 }

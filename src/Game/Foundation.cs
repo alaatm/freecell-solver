@@ -11,20 +11,20 @@ namespace FreeCellSolver.Game
     {
         private readonly sbyte[] _state =
         {
-            Card.EMPTY, // Suit.Clubs
-            Card.EMPTY, // Suit.Diamonds
-            Card.EMPTY, // Suit.Hearts
-            Card.EMPTY, // Suit.Spades
+            Card.Empty, // Suit.Clubs
+            Card.Empty, // Suit.Diamonds
+            Card.Empty, // Suit.Hearts
+            Card.Empty, // Suit.Spades
         };
 
         public sbyte this[int s] => _state[s];
 
         public Foundation(sbyte clubsTop, sbyte diamondsTop, sbyte heartsTop, sbyte spadesTop)
         {
-            Debug.Assert(clubsTop >= Card.EMPTY && clubsTop < 13);
-            Debug.Assert(diamondsTop >= Card.EMPTY && diamondsTop < 13);
-            Debug.Assert(heartsTop >= Card.EMPTY && heartsTop < 13);
-            Debug.Assert(spadesTop >= Card.EMPTY && spadesTop < 13);
+            Debug.Assert(clubsTop >= Card.Empty && clubsTop < 13);
+            Debug.Assert(diamondsTop >= Card.Empty && diamondsTop < 13);
+            Debug.Assert(heartsTop >= Card.Empty && heartsTop < 13);
+            Debug.Assert(spadesTop >= Card.Empty && spadesTop < 13);
 
             _state[0] = clubsTop;
             _state[1] = diamondsTop;
@@ -50,15 +50,15 @@ namespace FreeCellSolver.Game
                 return true;
             }
 
-            if (card.Color == Colors.BLACK)
+            if (card.Color == Colors.Black)
             {
-                return _state[Suits.DIAMONDS] >= rank - 1
-                    && _state[Suits.HEARTS] >= rank - 1;
+                return _state[Suits.Diamonds] >= rank - 1
+                    && _state[Suits.Hearts] >= rank - 1;
             }
             else
             {
-                return _state[Suits.CLUBS] >= rank - 1
-                    && _state[Suits.SPADES] >= rank - 1;
+                return _state[Suits.Clubs] >= rank - 1
+                    && _state[Suits.Spades] >= rank - 1;
             }
         }
 
@@ -86,7 +86,7 @@ namespace FreeCellSolver.Game
             for (sbyte s = 0; s < 4; s++)
             {
                 var value = _state[s];
-                sb.Append((value == Card.EMPTY ? "--" : Card.Get(s, value).ToString()));
+                sb.Append((value == Card.Empty ? "--" : Card.Get(s, value).ToString()));
                 if (s < 3)
                 {
                     sb.Append(" ");
@@ -98,7 +98,7 @@ namespace FreeCellSolver.Game
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards()
-            => _state.SelectMany((v, s) => v != Card.EMPTY
+            => _state.SelectMany((v, s) => v != Card.Empty
                 ? Enumerable.Range(0, v + 1).Select(r => Card.Get((sbyte)s, (sbyte)r))
                 : Enumerable.Empty<Card>());
     }

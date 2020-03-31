@@ -9,8 +9,8 @@ namespace FreeCellSolver.Game
 {
     public sealed class Tableau
     {
-        private const int _capacity = 19;
-        private readonly sbyte[] _state = new sbyte[_capacity];
+        private const int CAPACITY = 19;
+        private readonly sbyte[] _state = new sbyte[CAPACITY];
 
         public Card Top { get; private set; }
 

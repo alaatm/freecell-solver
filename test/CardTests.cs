@@ -19,16 +19,16 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_get_card_by_string()
         {
-            Assert.Equal("CDHS", Card.SUITS);
-            Assert.Equal("A23456789TJQK", Card.RANKS);
+            const string ranks = "A23456789TJQK";
+            const string suits = "CDHS";
 
-            foreach (var r in Card.RANKS)
+            foreach (var r in ranks)
             {
-                foreach (var s in Card.SUITS)
+                foreach (var s in suits)
                 {
                     var card = Card.Get($"{r}{s}");
-                    Assert.Equal(Card.SUITS.IndexOf(s), card.Suit);
-                    Assert.Equal(Card.RANKS.IndexOf(r), card.Rank);
+                    Assert.Equal(suits.IndexOf(s), card.Suit);
+                    Assert.Equal(ranks.IndexOf(r), card.Rank);
                 }
             }
         }
@@ -36,9 +36,9 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_get_card_by_suit_and_rank()
         {
-            for (var r = Ranks.ACE; r <= Ranks.RK; r++)
+            for (var r = Ranks.Ace; r <= Ranks.Rk; r++)
             {
-                for (var s = Suits.CLUBS; s <= Suits.SPADES; s++)
+                for (var s = Suits.Clubs; s <= Suits.Spades; s++)
                 {
                     var card = Card.Get(s, r);
                     Assert.Equal(s, card.Suit);

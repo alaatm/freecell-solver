@@ -33,7 +33,7 @@ namespace FreeCellSolver.Game
             Tableaus = tableaus.Clone();
             Reserve = reserve.Clone();
             Foundation = foundation.Clone();
-            MovesEstimated = 52 - (foundation[Suits.CLUBS] + foundation[Suits.DIAMONDS] + foundation[Suits.HEARTS] + foundation[Suits.SPADES] + 4);
+            MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades] + 4);
         }
 
         private Board(Board copy)
@@ -325,10 +325,10 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var tableaus = Tableaus;
 
-            var fClubs = foundation[Suits.CLUBS] + 1;
-            var fDiamonds = foundation[Suits.DIAMONDS] + 1;
-            var fHearts = foundation[Suits.HEARTS] + 1;
-            var fSpades = foundation[Suits.SPADES] + 1;
+            var fClubs = foundation[Suits.Clubs] + 1;
+            var fDiamonds = foundation[Suits.Diamonds] + 1;
+            var fHearts = foundation[Suits.Hearts] + 1;
+            var fSpades = foundation[Suits.Spades] + 1;
 
             var colorDiff = Math.Abs(fClubs + fSpades - fDiamonds - fHearts);
 
@@ -444,10 +444,10 @@ namespace FreeCellSolver.Game
                 var r1 = reserve.GetValue(1);
                 var r2 = reserve.GetValue(2);
                 var r3 = reserve.GetValue(3);
-                if (r0 != Card.EMPTY) hash += _reserveRand[r0];
-                if (r1 != Card.EMPTY) hash += _reserveRand[r1];
-                if (r2 != Card.EMPTY) hash += _reserveRand[r2];
-                if (r3 != Card.EMPTY) hash += _reserveRand[r3];
+                if (r0 != Card.Empty) hash += _reserveRand[r0];
+                if (r1 != Card.Empty) hash += _reserveRand[r1];
+                if (r2 != Card.Empty) hash += _reserveRand[r2];
+                if (r3 != Card.Empty) hash += _reserveRand[r3];
 
                 for (var i = 0; i < 8; i++)
                 {
