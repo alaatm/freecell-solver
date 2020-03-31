@@ -276,7 +276,7 @@ namespace FreeCellSolver.Game
 
             for (var i = 0; i < size; i++)
             {
-                sb.Append(Card.Get(_state[i]).ToString());
+                sb.Append(Card.Get(_state[i]));
                 if (i < size - 1)
                 {
                     sb.AppendLine();

@@ -9,7 +9,7 @@ namespace FreeCellSolver.Game
 {
     public sealed class Foundation
     {
-        private readonly sbyte[] _state = new sbyte[]
+        private readonly sbyte[] _state =
         {
             Card.EMPTY, // Suit.Clubs
             Card.EMPTY, // Suit.Diamonds

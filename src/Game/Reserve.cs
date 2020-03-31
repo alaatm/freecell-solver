@@ -9,7 +9,7 @@ namespace FreeCellSolver.Game
 {
     public sealed class Reserve
     {
-        private readonly sbyte[] _state = new sbyte[]
+        private readonly sbyte[] _state =
         {
             Card.EMPTY,
             Card.EMPTY,
@@ -98,8 +98,7 @@ namespace FreeCellSolver.Game
 
         public Reserve Clone()
         {
-            var clone = new Reserve();
-            clone.FreeCount = FreeCount;
+            var clone = new Reserve { FreeCount = FreeCount };
             Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), 4);
             return clone;
         }
@@ -111,7 +110,8 @@ namespace FreeCellSolver.Game
             {
                 return false;
             }
-            else if (FreeCount == 4)
+
+            if (FreeCount == 4)
             {
                 return true;
             }

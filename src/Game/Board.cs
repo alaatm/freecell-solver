@@ -18,9 +18,10 @@ namespace FreeCellSolver.Game
         public Move LastMove { get; private set; }
         public Board Prev { get; private set; }
 
-        public Reserve Reserve { get; private set; }
-        public Foundation Foundation { get; private set; }
-        public Tableaus Tableaus { get; private set; }
+        public Reserve Reserve { get; }
+        public Foundation Foundation { get; }
+        public Tableaus Tableaus { get; }
+
         public bool IsSolved => MovesEstimated == 0;
 
         public int Cost { get; private set; }
@@ -112,7 +113,7 @@ namespace FreeCellSolver.Game
                             else
                             {
                                 moves.Add(move);
-                                alreadyMovedToEmpty = emptyTarget ? true : alreadyMovedToEmpty;
+                                alreadyMovedToEmpty = emptyTarget || alreadyMovedToEmpty;
                             }
                         }
                     }

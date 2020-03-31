@@ -16,7 +16,7 @@ namespace FreeCellSolver.Solvers
 
         public static AStar Run(Board board, bool best)
         {
-            Console.WriteLine($"Solver: A*");
+            Console.WriteLine("Solver: A*");
 
             var clone = board.Clone();
             clone.AutoPlay();
