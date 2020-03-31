@@ -14,10 +14,6 @@
     <PackageReference Include="SkiaSharp" Version="1.68.2-preview.17" />
   </ItemGroup>
   
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
-  </ItemGroup>
-  
   <ItemGroup Condition=" '$(OS)' != 'Windows_NT' ">
     <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="1.68.2-preview.17" />
   </ItemGroup>
