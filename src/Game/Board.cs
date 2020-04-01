@@ -429,7 +429,7 @@ namespace FreeCellSolver.Game
             return true;
         }
 
-        public override bool Equals(object obj) => obj is Board board && Equals(board);
+        public override bool Equals(object obj) => obj is Board other && Equals(other);
 
         public override int GetHashCode()
         {
