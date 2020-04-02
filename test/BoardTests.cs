@@ -31,8 +31,8 @@ namespace FreeCellSolver.Test
              * 9S    QS JS    JH 5C   
              * QD    QC 8C    9D 6C   
              * 7D    TS 3H    9H QH   
-             * TC    KH 7H    8H 8D   
-             * JC    7C KC    4H TD   
+             * TC    7C 7H    8H 8D   
+             * JC    KH KC    4H TD   
              * TH                5H     
              * 9C                     
              */
@@ -41,7 +41,7 @@ namespace FreeCellSolver.Test
             var r = new Reserve(Card.Get("KS").RawValue, Card.Get("6H").RawValue, Card.Get("KD").RawValue, Card.Get("JD").RawValue);
             var f = new Foundation(3, 5, 1, 7);
             var t0 = new Tableau("9SQD7DTCJCTH9C");
-            var t2 = new Tableau("QSQCTSKH7C");
+            var t2 = new Tableau("QSQCTS7CKH");
             var t3 = new Tableau("JS8C3H7HKC");
             var t5 = new Tableau("JH9D9H8H4H");
             var t6 = new Tableau("5C6CQH8DTD5H");
@@ -54,6 +54,7 @@ namespace FreeCellSolver.Test
             var moves = b.GetValidMoves();
 
             // Assert
+            Assert.Equal(4, moves.Where(m => m.Type == MoveType.ReserveToTableau).Count());
             Assert.Equal(4, moves.Where(m => m.Type == MoveType.ReserveToTableau && m.To == 1).Count());
         }
 
