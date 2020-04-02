@@ -51,8 +51,6 @@ namespace FreeCellSolver.Game
 
         public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
 
-        public static Board FromString(string deal) => BoardExtensions.FromString(deal);
-
         [ThreadStatic] static List<Move> moves;
 
         public List<Move> GetValidMoves()

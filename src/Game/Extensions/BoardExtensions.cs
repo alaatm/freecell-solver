@@ -74,37 +74,6 @@ namespace FreeCellSolver.Game.Extensions
             return new Board(new Tableaus(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));
         }
 
-        public static Board FromString(string deal)
-        {
-            if (!Regex.IsMatch(deal, @"^(?:(?:[A23456789TJQK][CDHS] ){7}[A23456789TJQK][CDHS](\r\n|\r|\n)){6}(?:[A23456789TJQK][CDHS] ){3}[A23456789TJQK][CDHS]$"))
-            {
-                throw new ArgumentException("Invalid deal string.");
-            }
-
-            var cards = deal.Split(new[] { ' ', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-            var tableaus_ = new string[8][];
-
-            for (var i = 0; i < cards.Length; i++)
-            {
-                var c = i % 8;
-                var r = i / 8;
-                if (c == i)
-                {
-                    tableaus_[i] = new string[c < 4 ? 7 : 6];
-                }
-                tableaus_[c][r] = cards[i];
-            }
-
-            var tableaus = new List<Tableau>(8);
-            for (var c = 0; c < 8; c++)
-            {
-                tableaus.Add(new Tableau(tableaus_[c].Select(n => Card.Get(n)).ToArray()));
-            }
-
-            return new Board(new Tableaus(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));
-        }
-
         public static bool IsValid(this Board board)
         {
             var isValid = true;
