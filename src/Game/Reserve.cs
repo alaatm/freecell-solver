@@ -59,7 +59,7 @@ namespace FreeCellSolver.Game
         {
             Card card = null;
             var canMove = CanRemove(index) && foundation.CanPush(card = Card.Get(_state[index]));
-            targetIndex = canMove ? card.Suit : Card.Empty;
+            targetIndex = canMove ? card.Suit : -1;
 
             return canMove;
         }
