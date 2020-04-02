@@ -53,6 +53,8 @@ namespace FreeCellSolver.Game
 
         public static Board FromString(string deal) => BoardExtensions.FromString(deal);
 
+        [ThreadStatic] static List<Move> moves;
+
         public List<Move> GetValidMoves()
         {
             var tableaus = Tableaus;
@@ -60,7 +62,7 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var lastMove = LastMove;
 
-            var moves = new List<Move>();
+            (moves ??= new List<Move>()).Clear();
 
             var freeCount = Reserve.FreeCount + 1;
             var emptyTableauCount = Tableaus.EmptyTableauCount;
