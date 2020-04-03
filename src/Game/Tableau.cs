@@ -41,9 +41,9 @@ namespace FreeCellSolver.Game
 
         public Tableau(Span<sbyte> cards)
         {
-            foreach (var card in cards)
+            for (var i = 0; i < cards.Length; i++)
             {
-                _state[Size++] = card;
+                _state[Size++] = cards[i];
             }
 
             SortedSize = CountSorted();
