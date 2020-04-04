@@ -82,8 +82,7 @@ namespace FreeCellSolver.Solvers
 
                 foreach (var move in board.GetValidMoves())
                 {
-                    var next = board.Clone();
-                    next.ExecuteMove(move, board);
+                    var next = board.ExecuteMove(move);
 
                     if (_closed.ContainsKey(next))
                     {
@@ -118,8 +117,7 @@ namespace FreeCellSolver.Solvers
 
                 foreach (var move in board.GetValidMoves())
                 {
-                    var next = board.Clone();
-                    next.ExecuteMove(move, board);
+                    var next = board.ExecuteMove(move);
 
                     if (_closed.ContainsKey(next))
                     {

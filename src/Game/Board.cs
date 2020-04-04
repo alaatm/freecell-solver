@@ -209,17 +209,21 @@ namespace FreeCellSolver.Game
             return moves;
         }
 
-        public void ExecuteMove(Move move, Board prev, bool autoPlay = true /* This flag is used for printing of moves as we don't want to execute auto plays otherwise should always be true*/)
+        public Board ExecuteMove(Move move, bool autoPlay = true /* This flag is used for printing of moves as we don't want to execute auto plays otherwise should always be true*/)
         {
-            ManualMoveCount++;
-            LastMove = move;
-            Prev = prev;
+            var copy = Clone();
 
-            ExecuteMoveCore(move);
+            copy.ManualMoveCount++;
+            copy.LastMove = move;
+            copy.Prev = this;
+
+            copy.ExecuteMoveCore(move);
             if (autoPlay)
             {
-                AutoPlay();
+                copy.AutoPlay();
             }
+
+            return copy;
         }
 
         public void AutoPlay()

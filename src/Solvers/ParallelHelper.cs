@@ -23,8 +23,7 @@ namespace FreeCellSolver.Solvers
 
                     foreach (var move in b.GetValidMoves())
                     {
-                        var next = b.Clone();
-                        next.ExecuteMove(move, b);
+                        var next = b.ExecuteMove(move);
                         tree[depth].Add(next);
                     }
                 }

@@ -185,7 +185,7 @@ namespace FreeCellSolver.Test
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0));
 
             // Act
             var moves = b.GetValidMoves();
@@ -228,7 +228,7 @@ namespace FreeCellSolver.Test
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
-            b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 6), null);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 6));
 
             // Act
             var moves = b.GetValidMoves();
@@ -576,7 +576,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var b = Board.FromDealNum(984);
-            b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 3, 0), null);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 3, 0));
 
             // Act
             var moves = b.GetValidMoves();
@@ -640,14 +640,14 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var b = Board.FromDealNum(984);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 0), null);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 1), null);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 2), null);
+            var b = Board.FromDealNum(984)
+                .ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 0))
+                .ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 1))
+                .ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 2));
             Assert.Equal(52, b.MovesEstimated);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 3), null);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 6, 3));
 
             // Assert
             Assert.Equal(51, b.MovesEstimated);
@@ -658,17 +658,30 @@ namespace FreeCellSolver.Test
         {
             // Arrange
             var b1 = Board.FromDealNum(1);
-            var b2 = b1.Clone();
             var move = Move.Get(MoveType.TableauToReserve, 0, 0);
 
             // Act
-            b2.ExecuteMove(move, b1);
+            var b2 = b1.ExecuteMove(move);
 
             // Assert
             var lastMove = b2.LastMove;
             Assert.True(lastMove.Type == move.Type && lastMove.From == move.From && lastMove.To == move.To && lastMove.Size == move.Size);
             Assert.Equal(b1, b2.Prev);
             Assert.Equal(1, b2.ManualMoveCount);
+        }
+
+        [Fact]
+        public void ExecuteMove_is_immutable()
+        {
+            // Arrange
+            var b1 = Board.FromDealNum(1);
+            var move = Move.Get(MoveType.TableauToReserve, 0, 0);
+
+            // Act
+            _ = b1.ExecuteMove(move);
+
+            // Assert
+            Assert.Equal(Board.FromDealNum(1), b1);
         }
 
         [Fact]
@@ -690,7 +703,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(4);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 3, 1), null, false);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 3, 1), false);
 
             // Assert
             Assert.Equal(Card.Get("2D").RawValue, b.Tableaus[3].Top.RawValue);
@@ -716,7 +729,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(4);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false);
 
             // Assert
             Assert.Equal(Card.Get("JC").RawValue, b.Tableaus[0].Top.RawValue);
@@ -742,7 +755,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(4);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 4, 6), null, false);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 4, 6), false);
 
             // Assert
             Assert.Equal(Card.Get("7H").RawValue, b.Tableaus[4].Top.RawValue);
@@ -769,10 +782,10 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var b = Board.FromDealNum(4);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 3, 0), null, false);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 3, 0), false);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 1), null, false);
+            b = b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 1), false);
 
             // Assert
             Assert.Null(b.Reserve[0]);
@@ -799,10 +812,10 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var b = Board.FromDealNum(4);
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 1, 0), null, false);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 1, 0), false);
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.ReserveToTableau, 0, 4), null, false);
+            b = b.ExecuteMove(Move.Get(MoveType.ReserveToTableau, 0, 4), false);
 
             // Assert
             Assert.Null(b.Reserve[0]);
@@ -832,7 +845,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 0), null);
+            b = b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 0));
 
             // Assert
             Assert.Equal(1, b.ManualMoveCount);
@@ -992,7 +1005,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Make a single move
-            b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 1), null);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 1));
 
             b.ComputeCost(true);
             Assert.Equal(70, b.Cost); // 69 cost + 1 move
@@ -1015,8 +1028,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var b = Board.FromDealNum(4);
-            var c = b.Clone();
-            c.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), b);
+            var c = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0));
 
             // Act
             var moves = c.GetMoves().ToList();
@@ -1033,8 +1045,7 @@ namespace FreeCellSolver.Test
         {
             // Arrange
             var b = Board.FromDealNum(4);
-            var c = b.Clone();
-            c.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), b);
+            var c = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0));
 
             var i = 0;
             c.Traverse(n =>
@@ -1055,10 +1066,10 @@ namespace FreeCellSolver.Test
         {
             Assert.True(Board.FromDealNum(5) == Board.FromDealNum(5).Clone());
 
-            var b1 = Board.FromDealNum(5);
-            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
-            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
-            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 7, 1), null); // auto play here
+            var b1 = Board.FromDealNum(5)
+                .ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false)
+                .ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false)
+                .ExecuteMove(Move.Get(MoveType.TableauToReserve, 7, 1)); // auto play here
 
             var b2 = b1.Clone();
             Assert.True(b1 == b2);
@@ -1092,16 +1103,16 @@ namespace FreeCellSolver.Test
             var b2 = Board.FromDealNum(5);
             Assert.True(b1 == b2);
 
-            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
+            b1 = b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false);
             Assert.True(b1 != b2);
 
-            b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
+            b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false);
             Assert.True(b1 == b2);
 
-            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
+            b1 = b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false);
             Assert.True(b1 != b2);
 
-            b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
+            b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false);
             Assert.True(b1 == b2);
 
             var tEmpty = new Tableau("");
@@ -1123,16 +1134,16 @@ namespace FreeCellSolver.Test
             var b2 = Board.FromDealNum(5);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
 
-            b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
+            b1 = b1.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false);
             Assert.True(b1.GetHashCode() != b2.GetHashCode());
 
-            b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), null, false);
+            b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
 
-            b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
+            b1 = b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false);
             Assert.True(b1.GetHashCode() != b2.GetHashCode());
 
-            b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), null, false);
+            b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
         }
 
