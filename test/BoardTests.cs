@@ -827,7 +827,7 @@ namespace FreeCellSolver.Test
         {
             /* 
              * CC DD HH SS
-             * JC KD KH KS
+             * TC KD KH KS
              *
              * aa bb cc dd
              * QC -- -- --
@@ -835,35 +835,36 @@ namespace FreeCellSolver.Test
              * 00 01 02 03 04 05 06 07
              * -- -- -- -- -- -- -- --
              * KC                     
+             * JC
              */
             var r = new Reserve(Card.Get("QC").RawValue, Card.Empty, Card.Empty, Card.Empty);
-            var f = new Foundation(10, 12, 12, 12);
-            var t0 = new Tableau("KC");
+            var f = new Foundation(9, 12, 12, 12);
+            var t0 = new Tableau("KC JC");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
-            b = b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 0));
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 0, 0));
 
             // Assert
             Assert.Equal(1, b.ManualMoveCount);
-            Assert.Equal(1, b.AutoMoveCount);
-            Assert.Equal(2, b.MoveCount);
-            Assert.Single(b.AutoMoves);
+            Assert.Equal(2, b.AutoMoveCount);
+            Assert.Equal(3, b.MoveCount);
+            Assert.Equal(2, b.AutoMoves.Count);
             Assert.True(b.IsSolved);
         }
 
         [Fact]
-        public void AutoPlay_on_root_appends_root_node_to_prev_when_autoMove_found()
+        public void RootAutoPlay_appends_root_node_to_prev_when_autoMove_found()
         {
             // Arrange
             var b = Board.FromDealNum(2); // Deal #2 has an auto move right from the start
             var clone = b.Clone();
 
             // Act
-            b.AutoPlay();
+            b.RootAutoPlay();
 
             // Assert
             Assert.NotNull(b.Prev);
@@ -873,49 +874,10 @@ namespace FreeCellSolver.Test
             b = Board.FromDealNum(1); // Deal #1 has no auto moves initially
 
             // Act
-            b.AutoPlay();
+            b.RootAutoPlay();
 
             // Assert
             Assert.Null(b.Prev);
-        }
-
-        [Fact]
-        public void AutoPlay_auto_plays_all_possible_auto_moves()
-        {
-            /* 
-             * CC DD HH SS
-             * JC KD KH KS
-             *
-             * aa bb cc dd
-             * QC -- -- --
-             *
-             * 00 01 02 03 04 05 06 07
-             * -- -- -- -- -- -- -- --
-             * KC                     
-             */
-            var r = new Reserve(Card.Get("QC").RawValue, Card.Empty, Card.Empty, Card.Empty);
-            var f = new Foundation(10, 12, 12, 12);
-            var t0 = new Tableau("KC");
-            var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
-            var b = new Board(r, f, ts);
-            Assert.True(b.IsValid());
-
-            // Act
-            b.AutoPlay();
-
-            // Assert
-            Assert.Equal(0, b.ManualMoveCount);
-            Assert.Equal(2, b.AutoMoveCount);
-            Assert.Equal(2, b.MoveCount);
-            Assert.Equal(2, b.AutoMoves.Count);
-            Assert.True(b.IsSolved);
-        }
-
-        [Fact]
-        public void RateMove_rates_move()
-        {
-
         }
 
         [Fact]

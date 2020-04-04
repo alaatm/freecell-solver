@@ -19,7 +19,7 @@ namespace FreeCellSolver.Solvers
             Console.WriteLine("Solver: A*");
 
             var clone = board.Clone();
-            clone.AutoPlay();
+            clone.RootAutoPlay();
 
             // Should obviously use a local HashSet<int> here but we don't care much about this
             // non parallel version, its only here for debugging.
@@ -40,7 +40,7 @@ namespace FreeCellSolver.Solvers
         public static async Task<AStar> RunParallelAsync(Board board, bool best)
         {
             var clone = board.Clone();
-            clone.AutoPlay();
+            clone.RootAutoPlay();
 
             var states = ParallelHelper.GetStates(clone, Environment.ProcessorCount);
             Console.WriteLine($"Solver: A* - using {states.Count} cores");
