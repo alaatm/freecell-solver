@@ -12,12 +12,11 @@ namespace FreeCellSolver.Solvers
 
         public Board SolvedBoard { get; private set; }
         public int SolvedFromId { get; private set; }
-        public static int VisitedNodes => _closed.Count;
+        public int VisitedNodes { get; private set; }
+        public int Threads { get; private set; }
 
         public static AStar Run(Board board, bool best)
         {
-            Console.WriteLine("Solver: A*");
-
             var clone = board.Clone();
             clone.RootAutoPlay();
 
@@ -34,6 +33,8 @@ namespace FreeCellSolver.Solvers
             {
                 astar.SearchFast(clone, 0);
             }
+            astar.Threads = 1;
+            astar.VisitedNodes = _closed.Count;
             return astar;
         }
 
@@ -43,7 +44,6 @@ namespace FreeCellSolver.Solvers
             clone.RootAutoPlay();
 
             var states = ParallelHelper.GetStates(clone, Environment.ProcessorCount);
-            Console.WriteLine($"Solver: A* - using {states.Count} cores");
 
             _closed = new ConcurrentDictionary<Board, byte>(states.Count, 1000);
             var astar = new AStar();
@@ -60,6 +60,8 @@ namespace FreeCellSolver.Solvers
                 }
             }));
             await Task.WhenAll(tasks).ConfigureAwait(false);
+            astar.Threads = states.Count;
+            astar.VisitedNodes = _closed.Count;
             return astar;
         }
 

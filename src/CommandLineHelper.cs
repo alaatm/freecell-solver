@@ -214,11 +214,15 @@ namespace FreeCellSolver.Entry
 
         static async Task<AStar> ExecuteAsync(TextWriter writer, int deal, bool best)
         {
+            if (writer != Console.Out)
+            {
+                Console.WriteLine($"Processing deal #{deal}");
+            }
             writer.WriteLine($"Processing deal #{deal}");
             _sw.Restart();
             var solver = await AStar.RunParallelAsync(Board.FromDealNum(deal), best).ConfigureAwait(false);
             _sw.Stop();
-            writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - initial id: {solver.SolvedFromId} - visited nodes: {AStar.VisitedNodes,0:n0}");
+            writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - threads: {solver.Threads,0:n0} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
             writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.MoveCount}" : " - #moves: 0");
             await writer.FlushAsync().ConfigureAwait(false);
             GC.Collect();
