@@ -1,8 +1,8 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 namespace FreeCellSolver.Game.Extensions
 {
@@ -118,6 +118,70 @@ namespace FreeCellSolver.Game.Extensions
             json.Append("];");
 
             return json.ToString();
+        }
+
+        public static void EmitCSharpCode(this Board board, TextWriter writer)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine("/*");
+            sb.AppendLine(board.ToString());
+            sb.AppendLine("*/");
+            sb.AppendLine();
+
+            var rSb = new StringBuilder();
+            rSb.Append("\tnew Reserve(");
+            for (var i = 0; i < 4; i++)
+            {
+                var c = board.Reserve[i];
+                rSb.Append(c != null ? $"Card.Get(\"{c}\").RawValue" : "Card.Empty");
+                if (i < 3)
+                {
+                    rSb.Append(", ");
+                }
+            }
+            rSb.AppendLine("),");
+
+            var fSb = new StringBuilder();
+            fSb.Append("\tnew Foundation(");
+            for (var i = 0; i < 4; i++)
+            {
+                var c = board.Foundation[i];
+                fSb.Append(c != Card.Empty ? $"Card.Get(\"{Card.Get((sbyte)i, c)}\").Rank" : "Card.Empty");
+                if (i < 3)
+                {
+                    fSb.Append(", ");
+                }
+            }
+            fSb.AppendLine("),");
+
+            var tsSb = new StringBuilder();
+            for (var i = 0; i < 8; i++)
+            {
+                tsSb.Append($"\t\tnew Tableau(\"");
+                var t = board.Tableaus[i];
+                for (var j = t.Size - 1; j >= 0; j--)
+                {
+                    tsSb.Append(t[j]);
+                    if (j > 0)
+                    {
+                        tsSb.Append(" ");
+                    }
+                }
+                tsSb.AppendLine(i < 7 ? "\")," : "\")");
+            }
+
+            sb.AppendLine("var b = new Board(");
+            sb.Append(rSb);
+            sb.Append(fSb);
+            sb.AppendLine("\tnew Tableaus(");
+            sb.Append(tsSb);
+            sb.AppendLine("\t)");
+            sb.AppendLine(");");
+            sb.Append("if (!b.IsValid()) { throw new Exception(); }");
+
+            writer.Write(sb.ToString()
+                .Replace("(Card.Empty, Card.Empty, Card.Empty, Card.Empty)", "()")
+                .Replace("(\"\")", "()"));
         }
     }
 }
