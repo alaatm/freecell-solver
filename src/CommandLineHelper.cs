@@ -5,10 +5,10 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using FreeCellSolver.Game;
+using FreeCellSolver.Solvers;
 using FreeCellSolver.Game.Extensions;
 using FreeCellSolver.Drawing.Extensions;
 using McMaster.Extensions.CommandLineUtils;
-using FreeCellSolver.Solvers;
 
 namespace FreeCellSolver.Entry
 {
