@@ -168,7 +168,6 @@ namespace FreeCellSolver.Entry
 
         static async Task RunSingleAsync(int dealNum, bool best, string visualizePath)
         {
-            var sw = new Stopwatch();
             var b = Board.FromDealNum(dealNum);
 
             var s = await ExecuteAsync(Console.Out, dealNum, best).ConfigureAwait(false);
