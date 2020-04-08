@@ -169,8 +169,7 @@ namespace FreeCellSolver.Entry
         static async Task RunSingleAsync(int dealNum, bool best, string visualizePath)
         {
             var b = Board.FromDealNum(dealNum);
-
-            var s = await ExecuteAsync(Console.Out, dealNum, best).ConfigureAwait(false);
+            var s = await ExecuteAsync(Console.Out, dealNum, b, best).ConfigureAwait(false);
 
             if (s.SolvedBoard != null)
             {
@@ -211,7 +210,9 @@ namespace FreeCellSolver.Entry
             fs.Close();
         }
 
-        static async Task<AStar> ExecuteAsync(TextWriter writer, int deal, bool best)
+        static Task<AStar> ExecuteAsync(TextWriter writer, int deal, bool best) => ExecuteAsync(writer, deal, Board.FromDealNum(deal), best);
+
+        static async Task<AStar> ExecuteAsync(TextWriter writer, int deal, Board b, bool best)
         {
             if (writer != Console.Out)
             {
@@ -219,7 +220,7 @@ namespace FreeCellSolver.Entry
             }
             writer.WriteLine($"Processing deal #{deal}");
             _sw.Restart();
-            var solver = await AStar.RunParallelAsync(Board.FromDealNum(deal), best).ConfigureAwait(false);
+            var solver = await AStar.RunParallelAsync(b, best).ConfigureAwait(false);
             _sw.Stop();
             writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - threads: {solver.Threads,0:n0} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
             writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.MoveCount}" : " - #moves: 0");
