@@ -1,3 +1,4 @@
+using System;
 using SkiaSharp;
 
 namespace FreeCellSolver.Drawing
@@ -5,17 +6,18 @@ namespace FreeCellSolver.Drawing
     public class DeckImage
     {
         private readonly SKImage _img;
+        private static readonly Lazy<DeckImage> _instance = new Lazy<DeckImage>(Initialize);
 
         public const int CardWidth = 140;
         public const int CardHeight = 210;
 
-        public static DeckImage Instance { get; private set; }
+        public static DeckImage Instance => _instance.Value;
 
-        static DeckImage()
+        static DeckImage Initialize()
         {
             using var stream = typeof(DeckImage).Assembly.GetManifestResourceStream("FreeCellSolver.assets.deck.png");
             using var bmp = SKBitmap.Decode(stream);
-            Instance = new DeckImage(SKImage.FromBitmap(bmp));
+            return new DeckImage(SKImage.FromBitmap(bmp));
         }
 
         private DeckImage(SKImage img) => _img = img;
