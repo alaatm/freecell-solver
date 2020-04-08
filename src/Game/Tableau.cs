@@ -9,8 +9,8 @@ namespace FreeCellSolver.Game
 {
     public sealed class Tableau
     {
-        private const int CAPACITY = 19;
-        private readonly sbyte[] _state = new sbyte[CAPACITY];
+        private const int Capacity = 19;
+        private readonly sbyte[] _state = new sbyte[Capacity];
 
         public Card Top { get; private set; }
 
@@ -23,7 +23,8 @@ namespace FreeCellSolver.Game
         public Card this[int index] => Card.Get(_state[Size - index - 1]);
 
         public Tableau(string cards) : this(
-            new[] { 0 }.SelectMany(i => cards.Replace(" ", "")
+            new[] { 0 }.SelectMany(i => cards
+                .Replace(" ", "")
                 .GroupBy(_ => i++ / 2)
                 .Select(g => Card.Get(string.Join("", g)))
             ).ToArray())
