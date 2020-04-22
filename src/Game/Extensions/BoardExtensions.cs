@@ -185,19 +185,19 @@ namespace FreeCellSolver.Game.Extensions
 
             static string GetRank(sbyte c) => c switch
             {
-                0 => "Ace",
-                1 => "R2",
-                2 => "R3",
-                3 => "R4",
-                4 => "R5",
-                5 => "R6",
-                6 => "R7",
-                7 => "R8",
-                8 => "R9",
-                9 => "R10",
-                10 => "Rj",
-                11 => "Rq",
-                12 => "Rk",
+                Ranks.Ace => "Ace",
+                Ranks.R2 => "R2",
+                Ranks.R3 => "R3",
+                Ranks.R4 => "R4",
+                Ranks.R5 => "R5",
+                Ranks.R6 => "R6",
+                Ranks.R7 => "R7",
+                Ranks.R8 => "R8",
+                Ranks.R9 => "R9",
+                Ranks.R10 => "R10",
+                Ranks.Rj => "Rj",
+                Ranks.Rq => "Rq",
+                Ranks.Rk => "Rk",
                 _ => throw new IndexOutOfRangeException(),
             };
         }
