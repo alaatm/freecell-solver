@@ -20,6 +20,7 @@ namespace FreeCellSolver.Game
 
     public sealed class Ranks
     {
+        public const sbyte Nil = -1;
         public const sbyte Ace = 0;
         public const sbyte R2 = 1;
         public const sbyte R3 = 2;

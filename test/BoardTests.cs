@@ -12,7 +12,7 @@ namespace FreeCellSolver.Test
         public void IsSolved_returns_whether_board_is_solved()
         {
             var e = new Tableau();
-            Assert.True(new Board(new Reserve(), new Foundation(12, 12, 12, 12), new Tableaus(e, e, e, e, e, e, e, e)).IsSolved);
+            Assert.True(new Board(new Reserve(), new Foundation(Ranks.Rk, Ranks.Rk, Ranks.Rk, Ranks.Rk), new Tableaus(e, e, e, e, e, e, e, e)).IsSolved);
             Assert.False(Board.FromDealNum(1).IsSolved);
         }
 
@@ -39,7 +39,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Get("KS").RawValue, Card.Get("6H").RawValue, Card.Get("KD").RawValue, Card.Get("JD").RawValue);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("9SQD7DTCJCTH9C");
             var t2 = new Tableau("QSQCTS7CKH");
             var t3 = new Tableau("JS8C3H7HKC");
@@ -85,7 +85,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Get("KS").RawValue, Card.Get("6H").RawValue, Card.Get("KD").RawValue, Card.Get("JD").RawValue);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("9STCKCQDJCTH9C");
             var t2 = new Tableau("QSQCTS7CKH");
             var t3 = new Tableau("JS8C3H7H7D");
@@ -130,7 +130,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Get("KS").RawValue, Card.Get("6H").RawValue, Card.Get("KD").RawValue, Card.Empty);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("JCTH9C");
             var t2 = new Tableau("QSQCTS7CKH");
             var t3 = new Tableau("JS8C3H7H7D");
@@ -174,7 +174,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Empty, Card.Get("6H").RawValue, Card.Get("KD").RawValue, Card.Get("JD").RawValue);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("9SQD7DTCJCTH9C");
             var t2 = new Tableau("QSQCTS7CKHKS");
             var t3 = new Tableau("JS8C3H7HKC");
@@ -217,7 +217,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Get("KS").RawValue, Card.Get("6H").RawValue, Card.Get("KD").RawValue, Card.Get("JD").RawValue);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("9SQD7DTCJCTH9C");
             var t2 = new Tableau("QSQCTS7CKH");
             var t3 = new Tableau("JS8C3H7HKC");
@@ -258,7 +258,7 @@ namespace FreeCellSolver.Test
              * QS             KD      
              */
             var r = new Reserve(Card.Empty, Card.Get("6H").RawValue, Card.Empty, Card.Get("JD").RawValue);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("9SQD7DTCJCTHQS");
             var t2 = new Tableau("KHQCJHTS");
             var t3 = new Tableau("JS8C3H7HKC7C");
@@ -301,7 +301,7 @@ namespace FreeCellSolver.Test
              *        QC,JH,TS - Can't move since available is 2 and move size is 3
              */
             var r = new Reserve(Card.Get("QS").RawValue, Card.Get("6H").RawValue, Card.Get("TH").RawValue, Card.Get("JD").RawValue);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("9SQD7DTC");
             var t1 = new Tableau("JC");
             var t2 = new Tableau("KHQCJHTS");
@@ -346,7 +346,7 @@ namespace FreeCellSolver.Test
              *       QC,JH,TS,9D - Can move since available is (0+1)<<2=4 and move size is 4
              */
             var r = new Reserve(Card.Get("QS").RawValue, Card.Get("6H").RawValue, Card.Get("TH").RawValue, Card.Get("JD").RawValue);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("9SQD7DTCJC");
             var t2 = new Tableau("KHQCJHTS9D");
             var t3 = new Tableau("JS8C3H7HKC7C");
@@ -392,7 +392,7 @@ namespace FreeCellSolver.Test
              *          KH            
              */
             var r = new Reserve(Card.Get("KC").RawValue, Card.Empty, Card.Empty, Card.Empty);
-            var f = new Foundation(11, 12, Card.Empty, 10);
+            var f = new Foundation(Ranks.Rq, Ranks.Rk, Card.Empty, Ranks.Rj);
             var t0 = new Tableau("KS");
             var t1 = new Tableau("QS");
             var t3 = new Tableau("AH2H3H4H5H6H7H8H9HTHJHQHKH");
@@ -438,7 +438,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Get("4C").RawValue, Card.Get("4D").RawValue, Card.Empty, Card.Empty);
-            var f = new Foundation(2, 2, Card.Empty, Card.Empty);
+            var f = new Foundation(Ranks.R3, Ranks.R3, Card.Empty, Card.Empty);
             var t0 = new Tableau("QD3HTD7SAH5S");
             var t1 = new Tableau("QCJDJC9D9S");
             var t2 = new Tableau("KCJS8CKSTC7HTH");
@@ -486,7 +486,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve();
-            var f = new Foundation(2, 2, Card.Empty, Card.Empty);
+            var f = new Foundation(Ranks.R3, Ranks.R3, Card.Empty, Card.Empty);
             var t0 = new Tableau("QD3HTD7SAH5S");
             var t1 = new Tableau("QCJDJC9D9S");
             var t2 = new Tableau("KCJS8CKSTC7HTH");
@@ -531,7 +531,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Get("4C").RawValue, Card.Get("4D").RawValue, Card.Empty, Card.Empty);
-            var f = new Foundation(2, 2, Card.Empty, Card.Empty);
+            var f = new Foundation(Ranks.R3, Ranks.R3, Card.Empty, Card.Empty);
             var t0 = new Tableau("QD3HTD7SAH5S");
             var t1 = new Tableau("QCJDJC9D9S");
             var t2 = new Tableau("KCJS8CKSTC7HTH");
@@ -838,7 +838,7 @@ namespace FreeCellSolver.Test
              * JC
              */
             var r = new Reserve(Card.Get("QC").RawValue, Card.Empty, Card.Empty, Card.Empty);
-            var f = new Foundation(9, 12, 12, 12);
+            var f = new Foundation(Ranks.R10, Ranks.Rk, Ranks.Rk, Ranks.Rk);
             var t0 = new Tableau("KC JC");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
@@ -908,7 +908,7 @@ namespace FreeCellSolver.Test
              *             5H         
              */
             var r = new Reserve(Card.Get("QC").RawValue, Card.Empty, Card.Empty, Card.Get("9D").RawValue);
-            var f = new Foundation(Card.Empty, Card.Empty, 2, 1);
+            var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
             var t0 = new Tableau("KCQH");                           // unsorted = 0
             var t1 = new Tableau("5DAC2DKSKH6S4C3D2C");             // unsorted = 6
             var t2 = new Tableau("TS7H8H");                         // unsorted = 2
@@ -953,7 +953,7 @@ namespace FreeCellSolver.Test
              *             5H         
              */
             var r = new Reserve(Card.Get("QC").RawValue, Card.Empty, Card.Empty, Card.Get("9D").RawValue);
-            var f = new Foundation(Card.Empty, Card.Empty, 2, 1);
+            var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
             var t0 = new Tableau("KCQH");                           // unsorted = 0
             var t1 = new Tableau("5DAC2DKSKH6S4C3D2C");             // unsorted = 6
             var t2 = new Tableau("TS7H8H");                         // unsorted = 2
@@ -1132,7 +1132,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Empty, Card.Get("6H").RawValue, Card.Empty, Card.Get("JD").RawValue);
-            var f = new Foundation(3, 5, 1, 7);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
             var t0 = new Tableau("9SQD7DTCJCTH9C");
             var t1 = new Tableau("KS");
             var t2 = new Tableau("QSQCTS7CKH");

@@ -11,20 +11,20 @@ namespace FreeCellSolver.Game
     {
         private readonly sbyte[] _state =
         {
-            Card.Empty, // Suit.Clubs
-            Card.Empty, // Suit.Diamonds
-            Card.Empty, // Suit.Hearts
-            Card.Empty, // Suit.Spades
+            Ranks.Nil, // Suit.Clubs
+            Ranks.Nil, // Suit.Diamonds
+            Ranks.Nil, // Suit.Hearts
+            Ranks.Nil, // Suit.Spades
         };
 
         public sbyte this[int s] => _state[s];
 
         public Foundation(sbyte clubsTop, sbyte diamondsTop, sbyte heartsTop, sbyte spadesTop)
         {
-            Debug.Assert(clubsTop >= Card.Empty && clubsTop < 13);
-            Debug.Assert(diamondsTop >= Card.Empty && diamondsTop < 13);
-            Debug.Assert(heartsTop >= Card.Empty && heartsTop < 13);
-            Debug.Assert(spadesTop >= Card.Empty && spadesTop < 13);
+            Debug.Assert(clubsTop >= Ranks.Nil && clubsTop <= Ranks.Rk);
+            Debug.Assert(diamondsTop >= Ranks.Nil && diamondsTop <= Ranks.Rk);
+            Debug.Assert(heartsTop >= Ranks.Nil && heartsTop <= Ranks.Rk);
+            Debug.Assert(spadesTop >= Ranks.Nil && spadesTop <= Ranks.Rk);
 
             _state[0] = clubsTop;
             _state[1] = diamondsTop;
@@ -98,7 +98,7 @@ namespace FreeCellSolver.Game
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards()
-            => _state.SelectMany((v, s) => v != Card.Empty
+            => _state.SelectMany((v, s) => v != Ranks.Nil
                 ? Enumerable.Range(0, v + 1).Select(r => Card.Get((sbyte)s, (sbyte)r))
                 : Enumerable.Empty<Card>());
     }

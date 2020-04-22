@@ -15,15 +15,18 @@ namespace FreeCellSolver.Test
 
             for (var i = 0; i < 4; i++)
             {
-                Assert.Equal(Card.Empty, f[i]);
+                Assert.Equal(Ranks.Nil, f[i]);
             }
         }
 
         [Fact]
         public void Indexer_returns_value_of_specified_suit()
         {
-            var f = new Foundation(5, Card.Empty, Card.Empty, Card.Empty);
-            Assert.Equal(5, f[Suits.Clubs]);
+            var f = new Foundation(Ranks.R6, Ranks.Nil, Ranks.Nil, Ranks.Nil);
+            Assert.Equal(Ranks.R6, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Nil, f[Suits.Diamonds]);
+            Assert.Equal(Ranks.Nil, f[Suits.Hearts]);
+            Assert.Equal(Ranks.Nil, f[Suits.Spades]);
         }
 
         [Fact]
@@ -46,20 +49,20 @@ namespace FreeCellSolver.Test
         public static IEnumerable<object[]> CanAutoPlay_testsData()
         {
             // false when card cannot be pushed
-            yield return new object[] { Card.Empty, Card.Empty, Card.Empty, Card.Empty, Card.Get("KC"), false };
+            yield return new object[] { Ranks.Nil, Ranks.Nil, Ranks.Nil, Ranks.Nil, Card.Get("KC"), false };
             // true when card can be pushed and is below RANK 3
-            yield return new object[] { Card.Empty, Card.Empty, Card.Empty, Card.Empty, Card.Get("AC"), true };
-            yield return new object[] { 0, Card.Empty, Card.Empty, Card.Empty, Card.Get("2C"), true };
+            yield return new object[] { Ranks.Nil, Ranks.Nil, Ranks.Nil, Ranks.Nil, Card.Get("AC"), true };
+            yield return new object[] { Ranks.Ace, Ranks.Nil, Ranks.Nil, Ranks.Nil, Card.Get("2C"), true };
             // true when card can be pushed, above or equal RANK 3 and ALL oposite color cards of lower rank are at foundation
-            yield return new object[] { 1, 1, 1, Card.Empty, Card.Get("3C"), true };  // Alow 3C -> 2D and 2H are at foundation
-            yield return new object[] { 1, 1, Card.Empty, 1, Card.Get("3D"), true };  // Alow 3D -> 2C and 2S are at foundation
+            yield return new object[] { Ranks.R2, Ranks.R2, Ranks.R2, Ranks.Nil, Card.Get("3C"), true };  // Alow 3C -> 2D and 2H are at foundation
+            yield return new object[] { Ranks.R2, Ranks.R2, Ranks.Nil, Ranks.R2, Card.Get("3D"), true };  // Alow 3D -> 2C and 2S are at foundation
             // false when card can be pushed, above or equal RANK 3 and ANY oposite color cards of lower rank are NOT at foundation
-            yield return new object[] { 1, 0, 1, Card.Empty, Card.Get("3C"), false }; // Deny 3C -> 2D not at foundation
-            yield return new object[] { 1, 1, 0, Card.Empty, Card.Get("3C"), false }; // Deny 3C -> 2H not at foundation
-            yield return new object[] { 1, 0, 0, Card.Empty, Card.Get("3C"), false }; // Deny 3C -> Neither 2D or 2H are at foundation
-            yield return new object[] { 0, 1, Card.Empty, 1, Card.Get("3D"), false }; // Deny 3D -> 2C not at foundation
-            yield return new object[] { 1, 1, Card.Empty, 0, Card.Get("3D"), false }; // Deny 3D -> 2S not at foundation
-            yield return new object[] { 0, 1, Card.Empty, 0, Card.Get("3D"), false }; // Deny 3D -> Neither 2C or 2S are at foundation
+            yield return new object[] { Ranks.R2, Ranks.Ace, Ranks.R2, Ranks.Nil, Card.Get("3C"), false }; // Deny 3C -> 2D not at foundation
+            yield return new object[] { Ranks.R2, Ranks.R2, Ranks.Ace, Ranks.Nil, Card.Get("3C"), false }; // Deny 3C -> 2H not at foundation
+            yield return new object[] { Ranks.R2, Ranks.Ace, Ranks.Ace, Ranks.Nil, Card.Get("3C"), false }; // Deny 3C -> Neither 2D or 2H are at foundation
+            yield return new object[] { Ranks.Ace, Ranks.R2, Ranks.Nil, Ranks.R2, Card.Get("3D"), false }; // Deny 3D -> 2C not at foundation
+            yield return new object[] { Ranks.R2, Ranks.R2, Ranks.Nil, Ranks.Ace, Card.Get("3D"), false }; // Deny 3D -> 2S not at foundation
+            yield return new object[] { Ranks.Ace, Ranks.R2, Ranks.Nil, Ranks.Ace, Card.Get("3D"), false }; // Deny 3D -> Neither 2C or 2S are at foundation
         }
 
         [Fact]
@@ -67,31 +70,31 @@ namespace FreeCellSolver.Test
         {
             var f = new Foundation(Card.Empty, Card.Empty, Card.Empty, Card.Empty);
 
-            Assert.Equal(Card.Empty, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Nil, f[Suits.Clubs]);
             f.Push(Card.Get("AC"));
-            Assert.Equal(0, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Ace, f[Suits.Clubs]);
         }
 
         [Fact]
         public void Clone_clones_object()
         {
-            var f = new Foundation(0, 3, Card.Empty, 2);
+            var f = new Foundation(Ranks.Ace, Ranks.R4, Ranks.Nil, Ranks.R3);
             var clone = f.Clone();
 
-            Assert.Equal(0, clone[Suits.Clubs]);
-            Assert.Equal(3, clone[Suits.Diamonds]);
-            Assert.Equal(Card.Empty, clone[Suits.Hearts]);
-            Assert.Equal(2, clone[Suits.Spades]);
+            Assert.Equal(Ranks.Ace, clone[Suits.Clubs]);
+            Assert.Equal(Ranks.R4, clone[Suits.Diamonds]);
+            Assert.Equal(Ranks.Nil, clone[Suits.Hearts]);
+            Assert.Equal(Ranks.R3, clone[Suits.Spades]);
         }
 
         [Fact]
         public void ToString_returns_string_representation()
-            => Assert.Equal($"CC DD HH SS{Environment.NewLine}AC 4D -- KS", new Foundation(0, 3, Card.Empty, 12).ToString());
+            => Assert.Equal($"CC DD HH SS{Environment.NewLine}AC 4D -- KS", new Foundation(Ranks.Ace, Ranks.R4, Ranks.Nil, Ranks.Rk).ToString());
 
         [Fact]
         public void AllCards_returns_all_cards()
         {
-            var f = new Foundation(Card.Empty, 0, 1, 2);
+            var f = new Foundation(Ranks.Nil, Ranks.Ace, Ranks.R2, Ranks.R3);
             var allCards = f.AllCards().ToList();
 
             // Assert
