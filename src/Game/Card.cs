@@ -75,7 +75,7 @@ namespace FreeCellSolver.Game
 
         // Note no error checks are made!
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Card Get(int rawValue) => rawValue == Nil ? null : _allCards[rawValue];
+        public static Card Get(int rawValue) => _allCards[rawValue];
 
         // Note no error checks are made!
         public static Card Get(string card) => _allCards[
