@@ -89,7 +89,7 @@ namespace FreeCellSolver.Game
             // 3. Reserve -> Tableau
             for (var r = 0; r < 4; r++)
             {
-                if (reserve[r] == null)
+                if (reserve[r] == Card.Null)
                 {
                     continue;
                 }
