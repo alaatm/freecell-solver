@@ -133,7 +133,7 @@ namespace FreeCellSolver.Game.Extensions
             for (var i = 0; i < 4; i++)
             {
                 var c = board.Reserve[i];
-                rSb.Append(c != null ? $"Card.Get(\"{c}\").RawValue" : "Card.Nil");
+                rSb.Append(c != Card.Null ? $"Card.Get(\"{c}\").RawValue" : "Card.Nil");
                 if (i < 3)
                 {
                     rSb.Append(", ");

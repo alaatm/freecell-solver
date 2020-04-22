@@ -49,7 +49,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("2D"), t.Top);
 
             t = new Tableau("");
-            Assert.Null(t.Top);
+            Assert.Equal(Card.Null, t.Top);
         }
 
         [Fact]
@@ -72,7 +72,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("5H"), t.Top);
 
             t.Pop();
-            Assert.Null(t.Top);
+            Assert.Equal(Card.Null, t.Top);
         }
 
         [Theory]
@@ -191,7 +191,7 @@ namespace FreeCellSolver.Test
 
             t1.Move(t2, 2);
 
-            Assert.Null(t1.Top);
+            Assert.Equal(Card.Null, t1.Top);
             Assert.Equal(0, t1.Size);
             Assert.Equal(0, t1.SortedSize);
 
@@ -295,7 +295,7 @@ namespace FreeCellSolver.Test
             var t = new Tableau("");
             var clone = t.Clone();
 
-            Assert.Null(clone.Top);
+            Assert.Equal(Card.Null, clone.Top);
             Assert.Equal(0, clone.Size);
             Assert.Equal(0, clone.SortedSize);
         }

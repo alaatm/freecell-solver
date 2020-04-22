@@ -788,7 +788,7 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 1), false);
 
             // Assert
-            Assert.Null(b.Reserve[0]);
+            Assert.Equal(Card.Null, b.Reserve[0]);
             Assert.Equal(Ranks.Ace, b.Foundation[Suits.Diamonds]);
         }
 
@@ -818,7 +818,7 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.ReserveToTableau, 0, 4), false);
 
             // Assert
-            Assert.Null(b.Reserve[0]);
+            Assert.Equal(Card.Null, b.Reserve[0]);
             Assert.Equal(Card.Get("7D"), b.Tableaus[4].Top);
         }
 

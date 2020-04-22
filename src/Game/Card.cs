@@ -44,6 +44,7 @@ namespace FreeCellSolver.Game
         private static readonly char[] _ranks = "A23456789TJQK".ToCharArray();
 
         public const sbyte Nil = -1;
+        public const Card Null = null;
 
         public sbyte RawValue { get; }
         public sbyte Suit { get; }

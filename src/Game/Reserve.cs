@@ -23,7 +23,7 @@ namespace FreeCellSolver.Game
             {
                 var rawVal = _state[i];
                 return rawVal == Card.Nil
-                    ? null
+                    ? Card.Null
                     : Card.Get(rawVal);
             }
         }
@@ -66,7 +66,7 @@ namespace FreeCellSolver.Game
 
         public bool CanMove(int index, Foundation foundation, out int targetIndex)
         {
-            Card card = null;
+            var card = Card.Null;
             var canMove = CanRemove(index) && foundation.CanPush(card = Card.Get(_state[index]));
             targetIndex = canMove ? card.Suit : -1;
 

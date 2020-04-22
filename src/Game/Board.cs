@@ -256,7 +256,7 @@ namespace FreeCellSolver.Game
                 for (var r = 0; r < 4; r++)
                 {
                     var card = reserve[r];
-                    if (card != null && foundation.CanAutoPlay(card))
+                    if (card != Card.Null && foundation.CanAutoPlay(card))
                     {
                         var move = Move.Get(MoveType.ReserveToFoundation, r, card.Suit);
 
@@ -276,7 +276,7 @@ namespace FreeCellSolver.Game
                 for (var t = 0; t < 8; t++)
                 {
                     var card = tableaus[t].Top;
-                    if (card != null && foundation.CanAutoPlay(card))
+                    if (card != Card.Null && foundation.CanAutoPlay(card))
                     {
                         var move = Move.Get(MoveType.TableauToFoundation, t, card.Suit);
 

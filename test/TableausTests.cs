@@ -21,14 +21,14 @@ namespace FreeCellSolver.Test
             var clone = ts.Clone();
 
             Assert.Equal(ts.EmptyTableauCount, clone.EmptyTableauCount);
-            Assert.Null(clone[0].Top);
+            Assert.Equal(Card.Null, clone[0].Top);
             Assert.Equal(Card.Get("KC"), clone[1].Top);
             Assert.Equal(Card.Get("KD"), clone[2].Top);
             Assert.Equal(Card.Get("KH"), clone[3].Top);
             Assert.Equal(Card.Get("KS"), clone[4].Top);
             Assert.Equal(Card.Get("QC"), clone[5].Top);
             Assert.Equal(Card.Get("QD"), clone[6].Top);
-            Assert.Null(clone[7].Top);
+            Assert.Equal(Card.Null, clone[7].Top);
         }
 
         [Fact]

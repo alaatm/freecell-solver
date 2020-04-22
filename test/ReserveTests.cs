@@ -14,7 +14,7 @@ namespace FreeCellSolver.Test
 
             for (var i = 0; i < 4; i++)
             {
-                Assert.Null(r[i]);
+                Assert.Equal(Card.Null, r[i]);
             }
         }
 
@@ -23,9 +23,9 @@ namespace FreeCellSolver.Test
         {
             var r = new Reserve(Card.Get(1).RawValue, Card.Nil, Card.Get(2).RawValue, Card.Nil);
             Assert.Equal(Card.Get(1), r[0]);
-            Assert.Null(r[1]);
+            Assert.Equal(Card.Null, r[1]);
             Assert.Equal(Card.Get(2), r[2]);
-            Assert.Null(r[3]);
+            Assert.Equal(Card.Null, r[3]);
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace FreeCellSolver.Test
 
             r.Move(0, t);
 
-            Assert.Null(r[0]);
+            Assert.Equal(Card.Null, r[0]);
             Assert.Equal(4, r.FreeCount);
             Assert.Equal(2, t.Size);
             Assert.Equal(2, t.SortedSize);
@@ -129,7 +129,7 @@ namespace FreeCellSolver.Test
 
             r.Move(0, f);
 
-            Assert.Null(r[0]);
+            Assert.Equal(Card.Null, r[0]);
             Assert.Equal(4, r.FreeCount);
             Assert.Equal(Ranks.Ace, f[Suits.Clubs]);
         }
@@ -143,7 +143,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(r.FreeCount, clone.FreeCount);
             Assert.Equal(Card.Get(0), clone[0]);
             Assert.Equal(Card.Get(3), clone[1]);
-            Assert.Null(clone[2]);
+            Assert.Equal(Card.Null, clone[2]);
             Assert.Equal(Card.Get(2), clone[3]);
         }
 
