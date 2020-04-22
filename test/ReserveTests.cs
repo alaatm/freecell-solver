@@ -21,10 +21,10 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Indexer_returns_value_of_specified_slot()
         {
-            var r = new Reserve(Card.Get(1).RawValue, Card.Nil, Card.Get(2).RawValue, Card.Nil);
-            Assert.Equal(Card.Get(1), r[0]);
+            var r = new Reserve(Card.Get("AD").RawValue, Card.Nil, Card.Get("AH").RawValue, Card.Nil);
+            Assert.Equal(Card.Get("AD"), r[0]);
             Assert.Equal(Card.Null, r[1]);
-            Assert.Equal(Card.Get(2), r[2]);
+            Assert.Equal(Card.Get("AH"), r[2]);
             Assert.Equal(Card.Null, r[3]);
         }
 
@@ -34,21 +34,21 @@ namespace FreeCellSolver.Test
             // empty reserve
             Assert.Equal(4, new Reserve().FreeCount);
             // 2 spots occupied, 2 free
-            Assert.Equal(2, new Reserve(1, Card.Nil, 2, Card.Nil).FreeCount);
+            Assert.Equal(2, new Reserve(Card.Get("AD").RawValue, Card.Nil, Card.Get("AH").RawValue, Card.Nil).FreeCount);
         }
 
         [Fact]
         public void CanInsert_returns_whether_card_can_be_inserted_along_with_target_index()
         {
             // Index 2 free
-            var r = new Reserve(Card.Get(0).RawValue, Card.Get(1).RawValue, Card.Nil, Card.Get(2).RawValue);
+            var r = new Reserve(Card.Get("AC").RawValue, Card.Get("AD").RawValue, Card.Nil, Card.Get("AH").RawValue);
             Assert.True(r.CanInsert(out var index));
             Assert.Equal(2, index);
 
             // Full
-            r = new Reserve(Card.Get(0).RawValue, Card.Get(1).RawValue, Card.Get(5).RawValue, Card.Get(2).RawValue);
+            r = new Reserve(Card.Get("AC").RawValue, Card.Get("AD").RawValue, Card.Get("2D").RawValue, Card.Get("AH").RawValue);
             Assert.False(r.CanInsert(out index));
-            Assert.Equal(Card.Nil, index);
+            Assert.Equal(-1, index);
         }
 
         [Fact]
@@ -84,12 +84,12 @@ namespace FreeCellSolver.Test
             // Can't move 2C to empty foundation
             r = new Reserve(Card.Get("2C").RawValue, Card.Nil, Card.Nil, Card.Nil);
             Assert.False(r.CanMove(0, f, out idx));
-            Assert.Equal(Card.Nil, idx);
+            Assert.Equal(-1, idx);
 
             // Can't move empty slot
             r = new Reserve(Card.Nil, Card.Nil, Card.Nil, Card.Nil);
             Assert.False(r.CanMove(0, f, out idx));
-            Assert.Equal(Card.Nil, idx);
+            Assert.Equal(-1, idx);
         }
 
         [Fact]
@@ -137,14 +137,14 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Clone_clones_object()
         {
-            var r = new Reserve(Card.Get(0).RawValue, Card.Get(3).RawValue, Card.Nil, Card.Get(2).RawValue);
+            var r = new Reserve(Card.Get("AC").RawValue, Card.Get("AS").RawValue, Card.Nil, Card.Get("AH").RawValue);
             var clone = r.Clone();
 
             Assert.Equal(r.FreeCount, clone.FreeCount);
-            Assert.Equal(Card.Get(0), clone[0]);
-            Assert.Equal(Card.Get(3), clone[1]);
+            Assert.Equal(Card.Get("AC"), clone[0]);
+            Assert.Equal(Card.Get("AS"), clone[1]);
             Assert.Equal(Card.Null, clone[2]);
-            Assert.Equal(Card.Get(2), clone[3]);
+            Assert.Equal(Card.Get("AH"), clone[3]);
         }
 
         [Fact]

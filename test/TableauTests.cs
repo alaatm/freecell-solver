@@ -94,13 +94,15 @@ namespace FreeCellSolver.Test
         public void CanMove_returns_whether_top_can_be_moved_to_reserve()
         {
             // Can't move when empty
-            Assert.False(new Tableau("").CanMove(new Reserve(), out _));
+            Assert.False(new Tableau("").CanMove(new Reserve(), out var idx));
+            Assert.Equal(-1, idx);
 
             // Can't move when non-empty but full reserve
-            Assert.False(new Tableau("5H").CanMove(new Reserve(Card.Get(0).RawValue, Card.Get(1).RawValue, Card.Get(2).RawValue, Card.Get(3).RawValue), out _));
+            Assert.False(new Tableau("5H").CanMove(new Reserve(Card.Get("AC").RawValue, Card.Get("AD").RawValue, Card.Get("AH").RawValue, Card.Get("AS").RawValue), out idx));
+            Assert.Equal(-1, idx);
 
             // Can move to reserve slot #2 (index=1)
-            Assert.True(new Tableau("5H").CanMove(new Reserve(Card.Get(1).RawValue, Card.Nil, Card.Get(2).RawValue, Card.Get(3).RawValue), out var idx));
+            Assert.True(new Tableau("5H").CanMove(new Reserve(Card.Get("AD").RawValue, Card.Nil, Card.Get("AH").RawValue, Card.Get("AS").RawValue), out idx));
             Assert.Equal(1, idx);
         }
 

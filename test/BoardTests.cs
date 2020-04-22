@@ -1078,8 +1078,8 @@ namespace FreeCellSolver.Test
             Assert.True(b1 == b2);
 
             var tEmpty = new Tableau("");
-            b1 = new Board(new Reserve(Card.Get(1).RawValue, Card.Get(2).RawValue, Card.Nil, Card.Nil), new Foundation(), new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
-            b2 = new Board(new Reserve(Card.Get(0).RawValue, Card.Get(3).RawValue, Card.Nil, Card.Nil), new Foundation(), new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b1 = new Board(new Reserve(Card.Get("AD").RawValue, Card.Get("AH").RawValue, Card.Nil, Card.Nil), new Foundation(), new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b2 = new Board(new Reserve(Card.Get("AC").RawValue, Card.Get("AS").RawValue, Card.Nil, Card.Nil), new Foundation(), new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
             Assert.True(b1 != b2);
 
             b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KHQS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
