@@ -70,8 +70,8 @@ KD KC 9S 5S AD QC KH 3H
 */
 
 var b = new Board(
-	new Reserve(Card.Get(""3D"").RawValue, Card.Empty, Card.Empty, Card.Empty),
-	new Foundation(Card.Get(""2C"").Rank, Card.Empty, Card.Empty, Card.Get(""AS"").Rank),
+	new Reserve(Card.Get(""3D"").RawValue, Card.Nil, Card.Nil, Card.Nil),
+	new Foundation(Ranks.R2, Ranks.Nil, Ranks.Nil, Ranks.Ace),
 	new Tableaus(
 		new Tableau(""JD KD 2S 4C 3S 6D 6S""),
 		new Tableau(""2D KC KS 5C TD 8S 9C""),

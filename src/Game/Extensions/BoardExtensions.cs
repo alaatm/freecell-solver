@@ -133,7 +133,7 @@ namespace FreeCellSolver.Game.Extensions
             for (var i = 0; i < 4; i++)
             {
                 var c = board.Reserve[i];
-                rSb.Append(c != null ? $"Card.Get(\"{c}\").RawValue" : "Card.Empty");
+                rSb.Append(c != null ? $"Card.Get(\"{c}\").RawValue" : "Card.Nil");
                 if (i < 3)
                 {
                     rSb.Append(", ");
@@ -146,7 +146,7 @@ namespace FreeCellSolver.Game.Extensions
             for (var i = 0; i < 4; i++)
             {
                 var c = board.Foundation[i];
-                fSb.Append(c != Card.Nil ? $"Card.Get(\"{Card.Get((sbyte)i, c)}\").Rank" : "Card.Empty");
+                fSb.Append(c != Card.Nil ? $"Ranks.{GetRank(c)}" : "Ranks.Nil");
                 if (i < 3)
                 {
                     fSb.Append(", ");
@@ -182,6 +182,24 @@ namespace FreeCellSolver.Game.Extensions
             writer.Write(sb.ToString()
                 .Replace("(Card.Empty, Card.Empty, Card.Empty, Card.Empty)", "()")
                 .Replace("(\"\")", "()"));
+
+            static string GetRank(sbyte c) => c switch
+            {
+                0 => "Ace",
+                1 => "R2",
+                2 => "R3",
+                3 => "R4",
+                4 => "R5",
+                5 => "R6",
+                6 => "R7",
+                7 => "R8",
+                8 => "R9",
+                9 => "R10",
+                10 => "Rj",
+                11 => "Rq",
+                12 => "Rk",
+                _ => throw new IndexOutOfRangeException(),
+            };
         }
     }
 }
