@@ -68,7 +68,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Push_pushes_card_to_foundation_slot()
         {
-            var f = new Foundation(Card.Empty, Card.Empty, Card.Empty, Card.Empty);
+            var f = new Foundation(Card.Nil, Card.Nil, Card.Nil, Card.Nil);
 
             Assert.Equal(Ranks.Nil, f[Suits.Clubs]);
             f.Push(Card.Get("AC"));

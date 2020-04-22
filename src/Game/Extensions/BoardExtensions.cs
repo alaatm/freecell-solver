@@ -146,7 +146,7 @@ namespace FreeCellSolver.Game.Extensions
             for (var i = 0; i < 4; i++)
             {
                 var c = board.Foundation[i];
-                fSb.Append(c != Card.Empty ? $"Card.Get(\"{Card.Get((sbyte)i, c)}\").Rank" : "Card.Empty");
+                fSb.Append(c != Card.Nil ? $"Card.Get(\"{Card.Get((sbyte)i, c)}\").Rank" : "Card.Empty");
                 if (i < 3)
                 {
                     fSb.Append(", ");

@@ -85,8 +85,8 @@ namespace FreeCellSolver.Game
             sb.AppendLine("CC DD HH SS");
             for (sbyte s = 0; s < 4; s++)
             {
-                var value = _state[s];
-                sb.Append((value == Card.Empty ? "--" : Card.Get(s, value).ToString()));
+                var rank = _state[s];
+                sb.Append((rank == Ranks.Nil ? "--" : Card.Get(s, rank).ToString()));
                 if (s < 3)
                 {
                     sb.Append(" ");

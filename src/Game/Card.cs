@@ -43,7 +43,7 @@ namespace FreeCellSolver.Game
         private static readonly char[] _suits = "CDHS".ToCharArray();
         private static readonly char[] _ranks = "A23456789TJQK".ToCharArray();
 
-        public const sbyte Empty = -1;
+        public const sbyte Nil = -1;
 
         public sbyte RawValue { get; }
         public sbyte Suit { get; }
@@ -75,7 +75,7 @@ namespace FreeCellSolver.Game
 
         // Note no error checks are made!
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Card Get(int rawValue) => rawValue == Empty ? null : _allCards[rawValue];
+        public static Card Get(int rawValue) => rawValue == Nil ? null : _allCards[rawValue];
 
         // Note no error checks are made!
         public static Card Get(string card) => _allCards[
