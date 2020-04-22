@@ -98,8 +98,8 @@ namespace FreeCellSolver.Game
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards()
-            => _state.SelectMany((v, s) => v != Ranks.Nil
-                ? Enumerable.Range(0, v + 1).Select(r => Card.Get((sbyte)s, (sbyte)r))
+            => _state.SelectMany((r, s) => r != Ranks.Nil
+                ? Enumerable.Range(Ranks.Ace, r + 1).Select(r => Card.Get((sbyte)s, (sbyte)r))
                 : Enumerable.Empty<Card>());
     }
 }
