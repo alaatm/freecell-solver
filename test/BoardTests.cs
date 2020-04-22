@@ -706,8 +706,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 3, 1), false);
 
             // Assert
-            Assert.Equal(Card.Get("2D").RawValue, b.Tableaus[3].Top.RawValue);
-            Assert.Equal(0, b.Foundation[Suits.Diamonds]);
+            Assert.Equal(Card.Get("2D"), b.Tableaus[3].Top);
+            Assert.Equal(Ranks.Ace, b.Foundation[Suits.Diamonds]);
         }
 
         [Fact]
@@ -732,8 +732,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false);
 
             // Assert
-            Assert.Equal(Card.Get("JC").RawValue, b.Tableaus[0].Top.RawValue);
-            Assert.Equal(Card.Get("9C").RawValue, b.Reserve[0].RawValue);
+            Assert.Equal(Card.Get("JC"), b.Tableaus[0].Top);
+            Assert.Equal(Card.Get("9C"), b.Reserve[0]);
         }
 
         [Fact]
@@ -758,8 +758,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 4, 6), false);
 
             // Assert
-            Assert.Equal(Card.Get("7H").RawValue, b.Tableaus[4].Top.RawValue);
-            Assert.Equal(Card.Get("8S").RawValue, b.Tableaus[6].Top.RawValue);
+            Assert.Equal(Card.Get("7H"), b.Tableaus[4].Top);
+            Assert.Equal(Card.Get("8S"), b.Tableaus[6].Top);
         }
 
         [Fact]
@@ -789,7 +789,7 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Null(b.Reserve[0]);
-            Assert.Equal(0, b.Foundation[Suits.Diamonds]);
+            Assert.Equal(Ranks.Ace, b.Foundation[Suits.Diamonds]);
         }
 
         [Fact]
@@ -819,7 +819,7 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Null(b.Reserve[0]);
-            Assert.Equal(Card.Get("7D").RawValue, b.Tableaus[4].Top.RawValue);
+            Assert.Equal(Card.Get("7D"), b.Tableaus[4].Top);
         }
 
         [Fact]
