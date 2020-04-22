@@ -21,8 +21,11 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Indexer_returns_value_of_specified_slot()
         {
-            var r = new Reserve(1, Card.Empty, 2, Card.Empty);
-            Assert.Equal(2, r[2].RawValue);
+            var r = new Reserve(Card.Get(1).RawValue, Card.Empty, Card.Get(2).RawValue, Card.Empty);
+            Assert.Equal(Card.Get(1), r[0]);
+            Assert.Null(r[1]);
+            Assert.Equal(Card.Get(2), r[2]);
+            Assert.Null(r[3]);
         }
 
         [Fact]
@@ -38,12 +41,12 @@ namespace FreeCellSolver.Test
         public void CanInsert_returns_whether_card_can_be_inserted_along_with_target_index()
         {
             // Index 2 free
-            var r = new Reserve(0, 1, Card.Empty, 2);
+            var r = new Reserve(Card.Get(0).RawValue, Card.Get(1).RawValue, Card.Empty, Card.Get(2).RawValue);
             Assert.True(r.CanInsert(out var index));
             Assert.Equal(2, index);
 
             // Full
-            r = new Reserve(0, 1, 5, 2);
+            r = new Reserve(Card.Get(0).RawValue, Card.Get(1).RawValue, Card.Get(5).RawValue, Card.Get(2).RawValue);
             Assert.False(r.CanInsert(out index));
             Assert.Equal(Card.Empty, index);
         }
@@ -128,20 +131,20 @@ namespace FreeCellSolver.Test
 
             Assert.Null(r[0]);
             Assert.Equal(4, r.FreeCount);
-            Assert.Equal(0, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Ace, f[Suits.Clubs]);
         }
 
         [Fact]
         public void Clone_clones_object()
         {
-            var r = new Reserve(0, 3, Card.Empty, 2);
+            var r = new Reserve(Card.Get(0).RawValue, Card.Get(3).RawValue, Card.Empty, Card.Get(2).RawValue);
             var clone = r.Clone();
 
             Assert.Equal(r.FreeCount, clone.FreeCount);
-            Assert.Equal(0, clone[0].RawValue);
-            Assert.Equal(3, clone[1].RawValue);
+            Assert.Equal(Card.Get(0), clone[0]);
+            Assert.Equal(Card.Get(3), clone[1]);
             Assert.Null(clone[2]);
-            Assert.Equal(2, clone[3].RawValue);
+            Assert.Equal(Card.Get(2), clone[3]);
         }
 
         [Fact]
