@@ -10,12 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.5.0" />
-    <PackageReference Include="SkiaSharp" Version="1.68.2-preview.17" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="3.0.0" />
+    <PackageReference Include="SkiaSharp" Version="1.68.2-preview.60" />
   </ItemGroup>
   
   <ItemGroup Condition=" '$(OS)' != 'Windows_NT' ">
-    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="1.68.2-preview.17" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="1.68.2-preview.60" />
   </ItemGroup>
 
   <ItemGroup>
