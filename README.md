@@ -80,7 +80,7 @@ The following resources and open source projects were a huge help in building th
 * https://github.com/shlomif/fc-solve
 * https://github.com/heineman/algorithms-nutshell-2ed
 
-Resource and open source projects used for visualizer:
+Resources and open source projects used for visualizer:
 
 * https://animejs.com/
 * https://fontawesome.com/
