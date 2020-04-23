@@ -392,7 +392,7 @@ namespace FreeCellSolver.Test
              *          KH            
              */
             var r = new Reserve(Card.Get("KC").RawValue, Card.Nil, Card.Nil, Card.Nil);
-            var f = new Foundation(Ranks.Rq, Ranks.Rk, Card.Nil, Ranks.Rj);
+            var f = new Foundation(Ranks.Rq, Ranks.Rk, Ranks.Nil, Ranks.Rj);
             var t0 = new Tableau("KS");
             var t1 = new Tableau("QS");
             var t3 = new Tableau("AH2H3H4H5H6H7H8H9HTHJHQHKH");
@@ -438,7 +438,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Get("4C").RawValue, Card.Get("4D").RawValue, Card.Nil, Card.Nil);
-            var f = new Foundation(Ranks.R3, Ranks.R3, Card.Nil, Card.Nil);
+            var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
             var t0 = new Tableau("QD3HTD7SAH5S");
             var t1 = new Tableau("QCJDJC9D9S");
             var t2 = new Tableau("KCJS8CKSTC7HTH");
@@ -486,7 +486,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve();
-            var f = new Foundation(Ranks.R3, Ranks.R3, Card.Nil, Card.Nil);
+            var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
             var t0 = new Tableau("QD3HTD7SAH5S");
             var t1 = new Tableau("QCJDJC9D9S");
             var t2 = new Tableau("KCJS8CKSTC7HTH");
@@ -531,7 +531,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = new Reserve(Card.Get("4C").RawValue, Card.Get("4D").RawValue, Card.Nil, Card.Nil);
-            var f = new Foundation(Ranks.R3, Ranks.R3, Card.Nil, Card.Nil);
+            var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
             var t0 = new Tableau("QD3HTD7SAH5S");
             var t1 = new Tableau("QCJDJC9D9S");
             var t2 = new Tableau("KCJS8CKSTC7HTH");

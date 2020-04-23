@@ -116,7 +116,7 @@ namespace FreeCellSolver.Test
             Assert.False(new Tableau("5H").CanMove(new Foundation(), out _));
 
             // Can move to foundation on top of 4H
-            Assert.True(new Tableau("5H").CanMove(new Foundation(Card.Nil, Card.Nil, Ranks.R4, Card.Nil), out var idx));
+            Assert.True(new Tableau("5H").CanMove(new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R4, Ranks.Nil), out var idx));
             Assert.Equal(Suits.Hearts, idx);
         }
 
