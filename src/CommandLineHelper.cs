@@ -186,7 +186,7 @@ namespace FreeCellSolver.Entry
                     await WriteResourceAsync("FreeCellSolver.visualizer.dist.index.min.js", Path.Combine(path, "index.min.js")).ConfigureAwait(false);
                     await WriteResourceAsync("FreeCellSolver.visualizer.dist.visualizer.min.html", Path.Combine(path, "visualizer.html")).ConfigureAwait(false);
 
-                    for (sbyte i = 0; i < 52; i++)
+                    for (var i = 0; i < 52; i++)
                     {
                         Card.Get(i).ToImage().Save(Path.Combine(path, "assets", $"{i}.png"));
                     }

@@ -79,7 +79,7 @@ namespace FreeCellSolver.Game.Extensions
         {
             var isValid = true;
 
-            var allCards = Enumerable.Range(0, 52).Select(c => Card.Get((sbyte)c));
+            var allCards = Enumerable.Range(0, 52).Select(c => Card.Get(c));
 
             var boardCards = board.AllCards.ToList();
             var uniqueCards = new HashSet<Card>(board.AllCards);
