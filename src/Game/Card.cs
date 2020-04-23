@@ -6,34 +6,34 @@ namespace FreeCellSolver.Game
 {
     public sealed class Colors
     {
-        public const sbyte Black = 0;
-        public const sbyte Red = 1;
+        public const byte Black = 0;
+        public const byte Red = 1;
     }
 
     public sealed class Suits
     {
-        public const sbyte Clubs = 0;
-        public const sbyte Diamonds = 1;
-        public const sbyte Hearts = 2;
-        public const sbyte Spades = 3;
+        public const byte Clubs = 0;
+        public const byte Diamonds = 1;
+        public const byte Hearts = 2;
+        public const byte Spades = 3;
     }
 
     public sealed class Ranks
     {
-        public const sbyte Nil = -1;
-        public const sbyte Ace = 0;
-        public const sbyte R2 = 1;
-        public const sbyte R3 = 2;
-        public const sbyte R4 = 3;
-        public const sbyte R5 = 4;
-        public const sbyte R6 = 5;
-        public const sbyte R7 = 6;
-        public const sbyte R8 = 7;
-        public const sbyte R9 = 8;
-        public const sbyte R10 = 9;
-        public const sbyte Rj = 10;
-        public const sbyte Rq = 11;
-        public const sbyte Rk = 12;
+        public const int Nil = -1;
+        public const byte Ace = 0;
+        public const byte R2 = 1;
+        public const byte R3 = 2;
+        public const byte R4 = 3;
+        public const byte R5 = 4;
+        public const byte R6 = 5;
+        public const byte R7 = 6;
+        public const byte R8 = 7;
+        public const byte R9 = 8;
+        public const byte R10 = 9;
+        public const byte Rj = 10;
+        public const byte Rq = 11;
+        public const byte Rk = 12;
     }
 
     public sealed class Card
@@ -47,9 +47,9 @@ namespace FreeCellSolver.Game
         public const Card Null = null;
 
         public sbyte RawValue { get; }
-        public sbyte Suit { get; }
-        public sbyte Rank { get; }
-        public sbyte Color { get; }
+        public byte Suit { get; }
+        public byte Rank { get; }
+        public byte Color { get; }
 
         static Card()
         {
@@ -69,8 +69,8 @@ namespace FreeCellSolver.Game
         {
             Debug.Assert(rawValue >= 0 && rawValue < 52, "Invalid card.");
             RawValue = rawValue;
-            Suit = (sbyte)(RawValue & 3);
-            Rank = (sbyte)(RawValue >> 2);
+            Suit = (byte)(RawValue & 3);
+            Rank = (byte)(RawValue >> 2);
             Color = Suit == Suits.Hearts || Suit == Suits.Diamonds ? Colors.Red : Colors.Black;
         }
 
@@ -84,7 +84,7 @@ namespace FreeCellSolver.Game
             (Array.IndexOf(_ranks, card[0]) << 2)];
 
         // Note no error checks are made!
-        public static Card Get(sbyte suit, sbyte rank) => _allCards[suit + (rank << 2)];
+        public static Card Get(byte suit, byte rank) => _allCards[suit + (rank << 2)];
 
         public bool IsBelow(Card tableauTop)
             => Color != tableauTop.Color && Rank + 1 == tableauTop.Rank;

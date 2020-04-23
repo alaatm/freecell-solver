@@ -146,7 +146,7 @@ namespace FreeCellSolver.Game.Extensions
             fSb.Append("\tnew Foundation(");
             for (var i = 0; i < 4; i++)
             {
-                var c = board.Foundation[i];
+                var c = board.Foundation[i] - 1;
                 fSb.Append(c != Ranks.Nil ? $"Ranks.{GetRank(c)}" : "Ranks.Nil");
                 if (i < 3)
                 {
@@ -184,7 +184,7 @@ namespace FreeCellSolver.Game.Extensions
                 .Replace("(Card.Empty, Card.Empty, Card.Empty, Card.Empty)", "()")
                 .Replace("(\"\")", "()"));
 
-            static string GetRank(sbyte c) => c switch
+            static string GetRank(int c) => c switch
             {
                 Ranks.Ace => "Ace",
                 Ranks.R2 => "R2",

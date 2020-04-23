@@ -15,18 +15,18 @@ namespace FreeCellSolver.Test
 
             for (var i = 0; i < 4; i++)
             {
-                Assert.Equal(Ranks.Nil, f[i]);
+                Assert.Equal(Ranks.Ace, f[i]);
             }
         }
 
         [Fact]
-        public void Indexer_returns_value_of_specified_suit()
+        public void Indexer_returns_next_rank_of_specified_suit()
         {
             var f = new Foundation(Ranks.R6, Ranks.Nil, Ranks.Nil, Ranks.Nil);
-            Assert.Equal(Ranks.R6, f[Suits.Clubs]);
-            Assert.Equal(Ranks.Nil, f[Suits.Diamonds]);
-            Assert.Equal(Ranks.Nil, f[Suits.Hearts]);
-            Assert.Equal(Ranks.Nil, f[Suits.Spades]);
+            Assert.Equal(Ranks.R7, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Ace, f[Suits.Diamonds]);
+            Assert.Equal(Ranks.Ace, f[Suits.Hearts]);
+            Assert.Equal(Ranks.Ace, f[Suits.Spades]);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace FreeCellSolver.Test
 
         [Theory]
         [MemberData(nameof(CanAutoPlay_testsData))]
-        public void CanAutoPlay_tests(sbyte clubs, sbyte diamonds, sbyte hearts, sbyte spades, Card card, bool expectedCanAutoPlay)
+        public void CanAutoPlay_tests(int clubs, int diamonds, int hearts, int spades, Card card, bool expectedCanAutoPlay)
         {
             var f = new Foundation(clubs, diamonds, hearts, spades);
             Assert.Equal(expectedCanAutoPlay, f.CanAutoPlay(card));
@@ -70,9 +70,9 @@ namespace FreeCellSolver.Test
         {
             var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.Nil, Ranks.Nil);
 
-            Assert.Equal(Ranks.Nil, f[Suits.Clubs]);
-            f.Push(Card.Get("AC"));
             Assert.Equal(Ranks.Ace, f[Suits.Clubs]);
+            f.Push(Card.Get("AC"));
+            Assert.Equal(Ranks.R2, f[Suits.Clubs]);
         }
 
         [Fact]
@@ -81,10 +81,10 @@ namespace FreeCellSolver.Test
             var f = new Foundation(Ranks.Ace, Ranks.R4, Ranks.Nil, Ranks.R3);
             var clone = f.Clone();
 
-            Assert.Equal(Ranks.Ace, clone[Suits.Clubs]);
-            Assert.Equal(Ranks.R4, clone[Suits.Diamonds]);
-            Assert.Equal(Ranks.Nil, clone[Suits.Hearts]);
-            Assert.Equal(Ranks.R3, clone[Suits.Spades]);
+            Assert.Equal(Ranks.R2, clone[Suits.Clubs]);
+            Assert.Equal(Ranks.R5, clone[Suits.Diamonds]);
+            Assert.Equal(Ranks.Ace, clone[Suits.Hearts]);
+            Assert.Equal(Ranks.R4, clone[Suits.Spades]);
         }
 
         [Fact]

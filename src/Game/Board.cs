@@ -33,7 +33,7 @@ namespace FreeCellSolver.Game
             Tableaus = tableaus.Clone();
             Reserve = reserve.Clone();
             Foundation = foundation.Clone();
-            MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades] + 4);
+            MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades]);
         }
 
         private Board(Board copy)

@@ -707,7 +707,7 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Equal(Card.Get("2D"), b.Tableaus[3].Top);
-            Assert.Equal(Ranks.Ace, b.Foundation[Suits.Diamonds]);
+            Assert.Equal(Ranks.R2, b.Foundation[Suits.Diamonds]);
         }
 
         [Fact]
@@ -789,7 +789,7 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Equal(Card.Null, b.Reserve[0]);
-            Assert.Equal(Ranks.Ace, b.Foundation[Suits.Diamonds]);
+            Assert.Equal(Ranks.R2, b.Foundation[Suits.Diamonds]);
         }
 
         [Fact]

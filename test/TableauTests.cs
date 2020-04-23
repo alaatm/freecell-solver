@@ -253,7 +253,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(3, t.Size);
             Assert.Equal(1, t.SortedSize);
 
-            Assert.Equal(Ranks.Ace, f[Suits.Hearts]);
+            Assert.Equal(Ranks.R2, f[Suits.Hearts]);
         }
 
         [Theory]
