@@ -62,13 +62,8 @@ namespace FreeCellSolver.Game
             return CanPop() && reserve.CanInsert(out index);
         }
 
-        public bool CanMove(Foundation foundation, out int targetIndex)
-        {
-            var card = Card.Null;
-            var canMove = CanPop() && foundation.CanPush(card = Top);
-            targetIndex = canMove ? card.Suit : -1;
-            return canMove;
-        }
+        public bool CanMove(Foundation foundation)
+            => CanPop() && foundation.CanPush(Top);
 
         private bool CanMove(Tableau target, int requestedCount) =>
             Size > 0
@@ -142,7 +137,7 @@ namespace FreeCellSolver.Game
 
         public void Move(Foundation foundation)
         {
-            Debug.Assert(CanMove(foundation, out _));
+            Debug.Assert(CanMove(foundation));
             foundation.Push(Pop());
         }
 

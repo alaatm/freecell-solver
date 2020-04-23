@@ -144,11 +144,23 @@ class ReplayBoard {
         return parseInt((cards[cards.length - 1] as HTMLElement).dataset.value!);
     }
 
+    private setTargetFoundationPosition(m: Move) {
+        if (m.type == MoveType.ReserveToFoundation) {
+            const card = this.getReserveCard(m.from);
+            m.to = card & 3;
+        } else if (m.type == MoveType.TableauToFoundation) {
+            const card = this.getTableauCards(m.from)[0];
+            m.to = card & 3;
+        }
+    }
+
     private async move(m: Move, duration?: number) {
         let sourceX: number, sourceY: number, targetX: number, targetY: number;
         let translateX: number, translateY: number;
         let cards: number[];
         let target: Element;
+
+        this.setTargetFoundationPosition(m);
 
         switch (m.type) {
             case MoveType.TableauToFoundation:

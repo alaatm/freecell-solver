@@ -64,14 +64,8 @@ namespace FreeCellSolver.Game
         public bool CanMove(int index, Tableau tableau)
             => CanRemove(index) && tableau.CanPush(Card.Get(_state[index]));
 
-        public bool CanMove(int index, Foundation foundation, out int targetIndex)
-        {
-            var card = Card.Null;
-            var canMove = CanRemove(index) && foundation.CanPush(card = Card.Get(_state[index]));
-            targetIndex = canMove ? card.Suit : -1;
-
-            return canMove;
-        }
+        public bool CanMove(int index, Foundation foundation)
+            => CanRemove(index) && foundation.CanPush(Card.Get(_state[index]));
 
         public void Insert(int index, Card card)
         {
@@ -101,7 +95,7 @@ namespace FreeCellSolver.Game
 
         public void Move(int index, Foundation foundation)
         {
-            Debug.Assert(CanMove(index, foundation, out _));
+            Debug.Assert(CanMove(index, foundation));
             foundation.Push(Remove(index));
         }
 

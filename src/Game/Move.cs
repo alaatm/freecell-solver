@@ -13,14 +13,14 @@ namespace FreeCellSolver.Game
 
     public sealed class Move
     {
-        private static readonly Move[] _possibleMoves = new Move[816];
+        public static readonly Move[] _possibleMoves = new Move[780];
 
         public MoveType Type { get; }
         public int From { get; }
         public int To { get; }
         public int Size { get; }
 
-        internal Move(MoveType type, int from, int to, int size = 1)
+        internal Move(MoveType type, int from, int to = 0, int size = 1)
         {
             Type = type;
             From = from;
@@ -41,14 +41,10 @@ namespace FreeCellSolver.Game
             {
                 var mt = MoveType.ReserveToFoundation;
                 var seed = 0;
-                for (var f = 0; f < 4; f++)
-                {
-                    var index = seed + (r * 4) + f;
-                    _possibleMoves[index] = new Move(mt, r, f);
-                }
+                _possibleMoves[seed + r] = new Move(mt, r);
 
                 mt = MoveType.ReserveToTableau;
-                seed = 16;
+                seed = 4;
                 for (var t = 0; t < 8; t++)
                 {
                     var index = seed + (r * 8) + t;
@@ -59,15 +55,11 @@ namespace FreeCellSolver.Game
             for (var t = 0; t < 8; t++)
             {
                 var mt = MoveType.TableauToFoundation;
-                var seed = 48;
-                for (var f = 0; f < 4; f++)
-                {
-                    var index = seed + (t * 4) + f;
-                    _possibleMoves[index] = new Move(mt, t, f);
-                }
+                var seed = 36;
+                _possibleMoves[seed + t] = new Move(mt, t);
 
                 mt = MoveType.TableauToReserve;
-                seed = 80;
+                seed = 44;
                 for (var r = 0; r < 4; r++)
                 {
                     var index = seed + (t * 4) + r;
@@ -75,7 +67,7 @@ namespace FreeCellSolver.Game
                 }
 
                 mt = MoveType.TableauToTableau;
-                seed = 112;
+                seed = 76;
                 for (var t2 = 0; t2 < 8; t2++)
                 {
                     for (var moveSize = 1; moveSize < 12; moveSize++)
@@ -87,22 +79,23 @@ namespace FreeCellSolver.Game
             }
         }
 
-        public static Move Get(MoveType type, int from, int to, int size = 1)
+        public static Move Get(MoveType type, int from, int to = 0, int size = 1)
         {
             Debug.Assert(
-                (type == MoveType.ReserveToFoundation && from >= 0 && from < 4 && to >= 0 && to < 4 && size == 1) ||
+                (type == MoveType.ReserveToFoundation && from >= 0 && from < 4 && to == 0 && size == 1) ||
                 (type == MoveType.ReserveToTableau && from >= 0 && from < 4 && to >= 0 && to < 8 && size == 1) ||
-                ((type == MoveType.TableauToFoundation || type == MoveType.TableauToReserve) && from >= 0 && from < 8 && to >= 0 && to < 4 && size == 1) ||
+                (type == MoveType.TableauToFoundation && from >= 0 && from < 8 && to == 0 && size == 1) ||
+                (type == MoveType.TableauToReserve && from >= 0 && from < 8 && to >= 0 && to < 4 && size == 1) ||
                 (type == MoveType.TableauToTableau && from != to && from >= 0 && from < 8 && to >= 0 && to < 8 && size >= 1 & size <= 11)
             );
 
             var index = type switch
             {
-                MoveType.ReserveToFoundation => (from * 4) + to,
-                MoveType.ReserveToTableau => 16 + (from * 8) + to,
-                MoveType.TableauToFoundation => 48 + (from * 4) + to,
-                MoveType.TableauToReserve => 80 + (from * 4) + to,
-                MoveType.TableauToTableau => 112 + (from * 88) + (to * 11) + size - 1,
+                MoveType.ReserveToFoundation => from,
+                MoveType.ReserveToTableau => 4 + (from * 8) + to,
+                MoveType.TableauToFoundation => 36 + from,
+                MoveType.TableauToReserve => 44 + (from * 4) + to,
+                MoveType.TableauToTableau => 76 + (from * 88) + (to * 11) + size - 1,
                 _ => -1,
             };
 

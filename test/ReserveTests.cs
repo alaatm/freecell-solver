@@ -78,18 +78,15 @@ namespace FreeCellSolver.Test
             // Move AC to empty foundation
             var r = new Reserve(Card.Get("AC").RawValue, Card.Nil, Card.Nil, Card.Nil);
             var f = new Foundation();
-            Assert.True(r.CanMove(0, f, out var idx));
-            Assert.Equal(Suits.Clubs, idx);
+            Assert.True(r.CanMove(0, f));
 
             // Can't move 2C to empty foundation
             r = new Reserve(Card.Get("2C").RawValue, Card.Nil, Card.Nil, Card.Nil);
-            Assert.False(r.CanMove(0, f, out idx));
-            Assert.Equal(-1, idx);
+            Assert.False(r.CanMove(0, f));
 
             // Can't move empty slot
             r = new Reserve(Card.Nil, Card.Nil, Card.Nil, Card.Nil);
-            Assert.False(r.CanMove(0, f, out idx));
-            Assert.Equal(-1, idx);
+            Assert.False(r.CanMove(0, f));
         }
 
         [Fact]

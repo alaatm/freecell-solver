@@ -68,9 +68,9 @@ namespace FreeCellSolver.Game
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
             {
-                if (reserve.CanMove(r, foundation, out var f))
+                if (reserve.CanMove(r, foundation))
                 {
-                    moves.Add(Move.Get(MoveType.ReserveToFoundation, r, f));
+                    moves.Add(Move.Get(MoveType.ReserveToFoundation, r));
                     Debug.Assert(!foundation.CanAutoPlay(reserve[r]));
                 }
             }
@@ -79,9 +79,9 @@ namespace FreeCellSolver.Game
             for (var t = 0; t < 8; t++)
             {
                 var tableau = tableaus[t];
-                if (tableau.CanMove(foundation, out var f))
+                if (tableau.CanMove(foundation))
                 {
-                    moves.Add(Move.Get(MoveType.TableauToFoundation, t, f));
+                    moves.Add(Move.Get(MoveType.TableauToFoundation, t));
                     Debug.Assert(!foundation.CanAutoPlay(tableau.Top));
                 }
             }
@@ -258,7 +258,7 @@ namespace FreeCellSolver.Game
                     var card = reserve[r];
                     if (card != Card.Null && foundation.CanAutoPlay(card))
                     {
-                        var move = Move.Get(MoveType.ReserveToFoundation, r, card.Suit);
+                        var move = Move.Get(MoveType.ReserveToFoundation, r);
 
                         if (AutoMoves == null)
                         {
@@ -278,7 +278,7 @@ namespace FreeCellSolver.Game
                     var card = tableaus[t].Top;
                     if (card != Card.Null && foundation.CanAutoPlay(card))
                     {
-                        var move = Move.Get(MoveType.TableauToFoundation, t, card.Suit);
+                        var move = Move.Get(MoveType.TableauToFoundation, t);
 
                         if (AutoMoves == null)
                         {

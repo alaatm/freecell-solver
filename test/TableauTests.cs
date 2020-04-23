@@ -110,14 +110,13 @@ namespace FreeCellSolver.Test
         public void CanMove_returns_whether_top_can_be_moved_to_foundation()
         {
             // Can't move when empty
-            Assert.False(new Tableau("").CanMove(new Foundation(), out _));
+            Assert.False(new Tableau("").CanMove(new Foundation()));
 
             // Can't move when non-empty but no valid foundation target
-            Assert.False(new Tableau("5H").CanMove(new Foundation(), out _));
+            Assert.False(new Tableau("5H").CanMove(new Foundation()));
 
             // Can move to foundation on top of 4H
-            Assert.True(new Tableau("5H").CanMove(new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R4, Ranks.Nil), out var idx));
-            Assert.Equal(Suits.Hearts, idx);
+            Assert.True(new Tableau("5H").CanMove(new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R4, Ranks.Nil)));
         }
 
         [Fact]

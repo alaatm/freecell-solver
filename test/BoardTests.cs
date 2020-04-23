@@ -456,8 +456,8 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Equal(2, moves.Where(m => m.Type == MoveType.ReserveToFoundation).Count());
-            Assert.Equal(Move.Get(MoveType.ReserveToFoundation, 0, 0), moves[0]);
-            Assert.Equal(Move.Get(MoveType.ReserveToFoundation, 1, 1), moves[1]);
+            Assert.Equal(Move.Get(MoveType.ReserveToFoundation, 0), moves[0]);
+            Assert.Equal(Move.Get(MoveType.ReserveToFoundation, 1), moves[1]);
         }
 
         [Fact]
@@ -504,8 +504,8 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Equal(2, moves.Where(m => m.Type == MoveType.TableauToFoundation).Count());
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 4, 0), moves[0]);
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 6, 1), moves[1]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 4), moves[0]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 6), moves[1]);
         }
 
         [Fact]
@@ -703,7 +703,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(4);
 
             // Act
-            b = b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 3, 1), false);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 3), false);
 
             // Assert
             Assert.Equal(Card.Get("2D"), b.Tableaus[3].Top);
@@ -785,7 +785,7 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 3, 0), false);
 
             // Act
-            b = b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0, 1), false);
+            b = b.ExecuteMove(Move.Get(MoveType.ReserveToFoundation, 0), false);
 
             // Assert
             Assert.Equal(Card.Null, b.Reserve[0]);
@@ -846,7 +846,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            b = b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 0, 0));
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 0));
 
             // Assert
             Assert.Equal(1, b.ManualMoveCount);
@@ -998,8 +998,8 @@ namespace FreeCellSolver.Test
             // Assert
             Assert.Equal(3, moves.Count); // 1 manual and 2 auto
             Assert.Equal(Move.Get(MoveType.TableauToReserve, 0, 0), moves[0]);
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3, 1), moves[1]);
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3, 1), moves[2]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3), moves[1]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3), moves[2]);
         }
 
         [Fact]
@@ -1030,7 +1030,7 @@ namespace FreeCellSolver.Test
 
             var b1 = Board.FromDealNum(5)
                 .ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false)
-                .ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false)
+                .ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1), false)
                 .ExecuteMove(Move.Get(MoveType.TableauToReserve, 7, 1)); // auto play here
 
             var b2 = b1.Clone();
@@ -1071,10 +1071,10 @@ namespace FreeCellSolver.Test
             b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false);
             Assert.True(b1 == b2);
 
-            b1 = b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false);
+            b1 = b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1), false);
             Assert.True(b1 != b2);
 
-            b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false);
+            b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1), false);
             Assert.True(b1 == b2);
 
             var tEmpty = new Tableau("");
@@ -1102,10 +1102,10 @@ namespace FreeCellSolver.Test
             b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0), false);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
 
-            b1 = b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false);
+            b1 = b1.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1), false);
             Assert.True(b1.GetHashCode() != b2.GetHashCode());
 
-            b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1, 1), false);
+            b2 = b2.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 1), false);
             Assert.True(b1.GetHashCode() == b2.GetHashCode());
         }
 
