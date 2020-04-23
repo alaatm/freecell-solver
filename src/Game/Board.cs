@@ -327,12 +327,9 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var tableaus = Tableaus;
 
-            var fClubs = foundation[Suits.Clubs] + 1;
-            var fDiamonds = foundation[Suits.Diamonds] + 1;
-            var fHearts = foundation[Suits.Hearts] + 1;
-            var fSpades = foundation[Suits.Spades] + 1;
-
-            var colorDiff = Math.Abs(fClubs + fSpades - fDiamonds - fHearts);
+            var colorDiff = Math.Abs(
+                foundation[Suits.Clubs] + foundation[Suits.Spades] - 
+                foundation[Suits.Diamonds] - foundation[Suits.Hearts]);
 
             var unsortedSize = 0;
             for (var i = 0; i < 8; i++)
