@@ -10,7 +10,7 @@ namespace FreeCellSolver.Game.Extensions
     {
         public static Board FromDealNum(int dealNum)
         {
-            Span<sbyte> crv = stackalloc sbyte[] 
+            Span<byte> crv = stackalloc byte[] 
             { 
                 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41,
                 40, 39, 38, 37, 36, 35, 34, 33, 32, 31,
@@ -57,7 +57,7 @@ namespace FreeCellSolver.Game.Extensions
 
             var col = 0;
             var tableaus = new Tableau[8];
-            Span<sbyte> cards = stackalloc sbyte[8];
+            Span<byte> cards = stackalloc byte[8];
 
             for (var i = 0; i < crv.Length;)
             {

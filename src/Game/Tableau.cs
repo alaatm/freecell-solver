@@ -10,7 +10,7 @@ namespace FreeCellSolver.Game
     public sealed class Tableau
     {
         private const int Capacity = 19;
-        private readonly sbyte[] _state = new sbyte[Capacity];
+        private readonly byte[] _state = new byte[Capacity];
 
         public Card Top { get; private set; }
 
@@ -40,7 +40,7 @@ namespace FreeCellSolver.Game
             SortedSize = CountSorted();
         }
 
-        public Tableau(Span<sbyte> cards)
+        public Tableau(Span<byte> cards)
         {
             for (var i = 0; i < cards.Length; i++)
             {
@@ -110,7 +110,7 @@ namespace FreeCellSolver.Game
                 return;
             }
 
-            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref target._state[target.Size]), ref Unsafe.As<sbyte, byte>(ref _state[Size - requestedCount]), (uint)requestedCount);
+            Unsafe.CopyBlock(ref target._state[target.Size], ref _state[Size - requestedCount], (uint)requestedCount);
 
             Size -= requestedCount;
             SortedSize -= requestedCount;
@@ -186,7 +186,7 @@ namespace FreeCellSolver.Game
 
             var clone = new Tableau();
 
-            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), (uint)size);
+            Unsafe.CopyBlock(ref clone._state[0], ref _state[0], (uint)size);
             clone.Top = Top;
             clone.Size = size;
             clone.SortedSize = SortedSize;

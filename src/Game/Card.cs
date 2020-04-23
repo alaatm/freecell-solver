@@ -43,10 +43,10 @@ namespace FreeCellSolver.Game
         private static readonly char[] _suits = "CDHS".ToCharArray();
         private static readonly char[] _ranks = "A23456789TJQK".ToCharArray();
 
-        public const sbyte Nil = -1;
+        public const byte Nil = byte.MaxValue;
         public const Card Null = null;
 
-        public sbyte RawValue { get; }
+        public byte RawValue { get; }
         public byte Suit { get; }
         public byte Rank { get; }
         public byte Color { get; }
@@ -59,13 +59,13 @@ namespace FreeCellSolver.Game
             {
                 for (var s = Suits.Clubs; s <= Suits.Spades; s++)
                 {
-                    var card = new Card((sbyte)(s + (r << 2)));
+                    var card = new Card((byte)(s + (r << 2)));
                     _allCards[c++] = card;
                 }
             }
         }
 
-        private Card(sbyte rawValue)
+        private Card(byte rawValue)
         {
             Debug.Assert(rawValue >= 0 && rawValue < 52, "Invalid card.");
             RawValue = rawValue;

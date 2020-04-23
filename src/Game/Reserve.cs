@@ -9,7 +9,7 @@ namespace FreeCellSolver.Game
 {
     public sealed class Reserve
     {
-        private readonly sbyte[] _state =
+        private readonly byte[] _state =
         {
             Card.Nil,
             Card.Nil,
@@ -30,7 +30,7 @@ namespace FreeCellSolver.Game
 
         public int FreeCount { get; private set; } = 4;
 
-        public Reserve(sbyte card1, sbyte card2, sbyte card3, sbyte card4)
+        public Reserve(byte card1, byte card2, byte card3, byte card4)
         {
             Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != Card.Nil) || card1 == Card.Nil);
             Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != Card.Nil) || card2 == Card.Nil);
@@ -51,7 +51,7 @@ namespace FreeCellSolver.Game
         public Reserve() { }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public sbyte GetValue(int i) => _state[i];
+        public byte GetValue(int i) => _state[i];
 
         public bool CanInsert(out int index)
         {
@@ -102,7 +102,7 @@ namespace FreeCellSolver.Game
         public Reserve Clone()
         {
             var clone = new Reserve { FreeCount = FreeCount };
-            Unsafe.CopyBlock(ref Unsafe.As<sbyte, byte>(ref clone._state[0]), ref Unsafe.As<sbyte, byte>(ref _state[0]), 4);
+            Unsafe.CopyBlock(ref clone._state[0], ref _state[0], 4);
             return clone;
         }
 
