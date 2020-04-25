@@ -46,7 +46,6 @@ namespace FreeCellSolver.Game
             AutoMoveCount = copy.AutoMoveCount;
             MovesEstimated = copy.MovesEstimated;
             LastMove = copy.LastMove;
-            Prev = copy.Prev;
         }
 
         public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
