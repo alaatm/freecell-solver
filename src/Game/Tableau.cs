@@ -127,6 +127,8 @@ namespace FreeCellSolver.Game
             {
                 Top = Card.Get(_state[Size - 1]);
             }
+
+            Debug.Assert(SortedSize == CountSorted());
         }
 
         public void Move(Reserve reserve, int index)
