@@ -19,10 +19,10 @@ namespace FreeCellSolver.Game
 
         public Foundation(int clubsTop, int diamondsTop, int heartsTop, int spadesTop)
         {
-            var clubsNext = clubsTop + 1;
-            var diamondsNext = diamondsTop + 1;
-            var heartsNext = heartsTop + 1;
-            var spadesNext = spadesTop + 1;
+            var clubsNext = clubsTop == Ranks.Nil ? Ranks.Ace : clubsTop + 1;
+            var diamondsNext = diamondsTop == Ranks.Nil ? Ranks.Ace : diamondsTop + 1;
+            var heartsNext = heartsTop == Ranks.Nil ? Ranks.Ace : heartsTop + 1;
+            var spadesNext = spadesTop == Ranks.Nil ? Ranks.Ace : spadesTop + 1;
 
             Debug.Assert(clubsNext >= Ranks.Ace && clubsNext <= Ranks.Rk + 1);
             Debug.Assert(diamondsNext >= Ranks.Ace && diamondsNext <= Ranks.Rk + 1);
@@ -88,8 +88,10 @@ namespace FreeCellSolver.Game
             sb.AppendLine("CC DD HH SS");
             for (byte s = 0; s < 4; s++)
             {
-                var rank = _state[s] - 1;
-                sb.Append(rank == Ranks.Nil ? "--" : Card.Get(s, (byte)rank).ToString());
+                // Note for cases where _state[s] - 1 evaluates to -1, 
+                // the byte cast will make the result 255 which is equal to Ranks.Nil
+                var rank = (byte)(_state[s] - 1);
+                sb.Append(rank == Ranks.Nil ? "--" : Card.Get(s, rank).ToString());
                 if (s < 3)
                 {
                     sb.Append(" ");

@@ -20,7 +20,7 @@ namespace FreeCellSolver.Game
 
     public sealed class Ranks
     {
-        public const int Nil = -1;
+        public const byte Nil = byte.MaxValue;
         public const byte Ace = 0;
         public const byte R2 = 1;
         public const byte R3 = 2;

@@ -146,7 +146,9 @@ namespace FreeCellSolver.Game.Extensions
             fSb.Append("\tnew Foundation(");
             for (var i = 0; i < 4; i++)
             {
-                var c = board.Foundation[i] - 1;
+                // Note for cases where board.Foundation[i] - 1 evaluates to -1, 
+                // the byte cast will make the result 255 which is equal to Ranks.Nil
+                var c = (byte)(board.Foundation[i] - 1);
                 fSb.Append(c != Ranks.Nil ? $"Ranks.{GetRank(c)}" : "Ranks.Nil");
                 if (i < 3)
                 {
