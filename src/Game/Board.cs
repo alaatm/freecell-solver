@@ -51,7 +51,7 @@ namespace FreeCellSolver.Game
 
         public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
 
-        [ThreadStatic] static List<Move> moves;
+        [ThreadStatic] static List<Move> _moves;
 
         public List<Move> GetValidMoves()
         {
@@ -60,7 +60,7 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var lastMove = LastMove;
 
-            (moves ??= new List<Move>()).Clear();
+            (_moves ??= new List<Move>()).Clear();
 
             var freeCount = Reserve.FreeCount + 1;
             var emptyTableauCount = Tableaus.EmptyTableauCount;
@@ -70,7 +70,7 @@ namespace FreeCellSolver.Game
             {
                 if (reserve.CanMove(r, foundation))
                 {
-                    moves.Add(Move.Get(MoveType.ReserveToFoundation, r));
+                    _moves.Add(Move.Get(MoveType.ReserveToFoundation, r));
                     Debug.Assert(!foundation.CanAutoPlay(reserve[r]));
                 }
             }
@@ -81,7 +81,7 @@ namespace FreeCellSolver.Game
                 var tableau = tableaus[t];
                 if (tableau.CanMove(foundation))
                 {
-                    moves.Add(Move.Get(MoveType.TableauToFoundation, t));
+                    _moves.Add(Move.Get(MoveType.TableauToFoundation, t));
                     Debug.Assert(!foundation.CanAutoPlay(tableau.Top));
                 }
             }
@@ -112,7 +112,7 @@ namespace FreeCellSolver.Game
                             }
                             else
                             {
-                                moves.Add(move);
+                                _moves.Add(move);
                                 alreadyMovedToEmpty = emptyTarget || alreadyMovedToEmpty;
                             }
                         }
@@ -176,7 +176,7 @@ namespace FreeCellSolver.Game
                                     if (!move.IsReverseOf(lastMove))
                                     {
                                         alreadyMovedToEmpty = true;
-                                        moves.Add(move);
+                                        _moves.Add(move);
                                     }
                                 }
                             } while (--moveSize > 0);
@@ -187,7 +187,7 @@ namespace FreeCellSolver.Game
                         var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
                         if (!move.IsReverseOf(lastMove))
                         {
-                            moves.Add(move);
+                            _moves.Add(move);
                         }
                     }
                 }
@@ -201,12 +201,12 @@ namespace FreeCellSolver.Game
                     var move = Move.Get(MoveType.TableauToReserve, t, r);
                     if (!move.IsReverseOf(lastMove))
                     {
-                        moves.Add(move);
+                        _moves.Add(move);
                     }
                 }
             }
 
-            return moves;
+            return _moves;
         }
 
         public Board ExecuteMove(Move move, bool autoPlay = true /* This flag is used for printing of moves as we don't want to execute auto plays otherwise should always be true*/)
@@ -260,11 +260,7 @@ namespace FreeCellSolver.Game
                     {
                         var move = Move.Get(MoveType.ReserveToFoundation, r);
 
-                        if (AutoMoves == null)
-                        {
-                            AutoMoves = new List<Move>(4);
-                        }
-
+                        AutoMoves ??= new List<Move>(4);
                         AutoMoveCount++;
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
@@ -280,11 +276,7 @@ namespace FreeCellSolver.Game
                     {
                         var move = Move.Get(MoveType.TableauToFoundation, t);
 
-                        if (AutoMoves == null)
-                        {
-                            AutoMoves = new List<Move>(4);
-                        }
-
+                        AutoMoves ??= new List<Move>(4);
                         AutoMoveCount++;
                         AutoMoves.Add(move);
                         ExecuteMoveCore(move);
