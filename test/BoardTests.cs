@@ -1046,11 +1046,21 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(5);
 
             Assert.Equal(
-                b.Foundation.ToString() +
-                Environment.NewLine + Environment.NewLine +
-                b.Reserve.ToString() +
-                Environment.NewLine + Environment.NewLine +
-                b.Tableaus.ToString(), b.ToString());
+@"CC DD HH SS
+-- -- -- --
+
+01 02 03 04
+-- -- -- --
+
+01 02 03 04 05 06 07 08
+-- -- -- -- -- -- -- --
+AH 8S 2D QS 4C 9H 2S 3D
+5C AS 9C KH 4D 2C 3C 4S
+3S 5D KC 3H KD 5H 6S 8D
+TD 7S JD 7H 8H JH JC 7D
+5S QH 8C 9D KS QD 4H AC
+2H TC TH 6D 6H 6C QC JS
+9S AD 7C TS            ", b.ToString());
         }
 
         [Fact]
