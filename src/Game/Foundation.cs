@@ -71,6 +71,7 @@ namespace FreeCellSolver.Game
             _state[card.Suit]++;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Foundation Clone()
         {
             var clone = new Foundation();

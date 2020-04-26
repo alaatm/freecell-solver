@@ -99,6 +99,7 @@ namespace FreeCellSolver.Game
             foundation.Push(Remove(index));
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Reserve Clone()
         {
             var clone = new Reserve { FreeCount = FreeCount };

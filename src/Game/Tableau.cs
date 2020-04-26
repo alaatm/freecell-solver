@@ -182,6 +182,7 @@ namespace FreeCellSolver.Game
             return rankDiff;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Tableau Clone()
         {
             var size = Size;
