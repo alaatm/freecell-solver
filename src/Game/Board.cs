@@ -104,18 +104,13 @@ namespace FreeCellSolver.Game
                     if (reserve.CanMove(r, tableau))
                     {
                         var move = Move.Get(MoveType.ReserveToTableau, r, t);
-                        if (!move.IsReverseOf(lastMove))
+                        // Skip move to empty if reverse of last move or when we've already made a similar
+                        // move to another empty tableau
+                        // i.e. skip when move.IsReverseOf(lastMove) || (emptyTarget && alreadyMovedToEmpty) is true
+                        if (!move.IsReverseOf(lastMove) && (!emptyTarget || !alreadyMovedToEmpty))
                         {
-                            if (emptyTarget && alreadyMovedToEmpty)
-                            {
-                                // Skip move to empty when we've already made a similar
-                                // move to another empty tableau
-                            }
-                            else
-                            {
-                                _moves.Add(move);
-                                alreadyMovedToEmpty = emptyTarget || alreadyMovedToEmpty;
-                            }
+                            _moves.Add(move);
+                            alreadyMovedToEmpty = emptyTarget || alreadyMovedToEmpty;
                         }
                     }
                 }
@@ -156,12 +151,9 @@ namespace FreeCellSolver.Game
 
                     if (emptyTarget)
                     {
-                        if (alreadyMovedToEmpty)
-                        {
-                            // Skip move to empty when we've already made a similar
-                            // move to another empty tableau.
-                        }
-                        else
+                        // Skip move to empty when we've already made a similar
+                        // move to another empty tableau.
+                        if (!alreadyMovedToEmpty)
                         {
                             // For empty targets, add all possible moves from a tableau to an empty one except adding an entire sorted tableau
                             // i.e. maxMoveSize = 3 and given the following t1:
