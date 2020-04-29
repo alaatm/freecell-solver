@@ -43,7 +43,8 @@ namespace FreeCellSolver.Game
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Tableaus(Tableaus copy) {
+        private Tableaus(Tableaus copy)
+        {
             _state[0] = copy._state[0].Clone();
             _state[1] = copy._state[1].Clone();
             _state[2] = copy._state[2].Clone();

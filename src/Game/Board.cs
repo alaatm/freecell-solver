@@ -9,6 +9,8 @@ namespace FreeCellSolver.Game
 {
     public sealed class Board : IEquatable<Board>
     {
+        private int _hashcode = 0;
+
         public int ManualMoveCount { get; private set; }
         public int AutoMoveCount { get; private set; }
         public int MovesEstimated { get; private set; }
@@ -423,6 +425,12 @@ namespace FreeCellSolver.Game
 
         public override int GetHashCode()
         {
+            // Board is immutable so its perfectly fine to cache the hashcode.
+            if (_hashcode != 0)
+            {
+                return _hashcode;
+            }
+
             var tableaus = Tableaus;
             var reserve = Reserve;
 
@@ -454,6 +462,7 @@ namespace FreeCellSolver.Game
                     }
                 }
 
+                _hashcode = hash;
                 return hash;
             }
         }
