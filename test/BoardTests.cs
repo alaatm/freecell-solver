@@ -322,6 +322,52 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void GetValidMoves_calculates_maxMoveSize_correctly()
+        {
+            /*
+             * CC DD HH SS
+             * 4C 6D 2H 8S
+             *
+             * aa bb cc dd
+             * QS 6H TH JD
+             *
+             * 00 01 02 03 04 05 06 07
+             * -- -- -- -- -- -- -- --
+             * 9S JC KD JS KS 9C 5C 5H
+             * QD    KH 8C    9D 6C   
+             * 7D    JH 3H    9H QH   
+             * TC    TS 7H    8H 8D   
+             *          KC    4H TD   
+             *          7C    QC      
+             *       ^        ^      
+             *       |        |
+             *       |        | 
+             *       ----------
+             *        JH,TS - Can't move since available is 1 and move size is 2
+             */
+            var r = new Reserve(Card.Get("QS").RawValue, Card.Get("6H").RawValue, Card.Get("TH").RawValue, Card.Get("JD").RawValue);
+            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = new Tableau("9SQD7DTC");
+            var t1 = new Tableau("JC");
+            var t2 = new Tableau("KDKHJHTS");
+            var t3 = new Tableau("JS8C3H7HKC7C");
+            var t4 = new Tableau("KS");
+            var t5 = new Tableau("9C9D9H8H4HQC");
+            var t6 = new Tableau("5C6CQH8DTD");
+            var t7 = new Tableau("5H");
+            var tRest = new Tableau();
+            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
+            var b = new Board(r, f, ts);
+            Assert.True(b.IsValid());
+
+            // Act
+            var moves = b.GetValidMoves();
+
+            // Assert
+            Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 2 && m.To == 5 && m.Size == 2));
+        }
+
+        [Fact]
         public void GetValidMoves_includes_super_moves_when_enough_is_available_to_carry_move()
         {
             /*
