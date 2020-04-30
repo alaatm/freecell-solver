@@ -376,7 +376,7 @@ namespace FreeCellSolver.Game
         #region Equality overrides and overloads
         public bool Equals(Board other)
         {
-            if (other == null)
+            if (other is null)
             {
                 return false;
             }
