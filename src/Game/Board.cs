@@ -63,7 +63,7 @@ namespace FreeCellSolver.Game
 
             (_moves ??= new List<Move>()).Clear();
 
-            var freeCount = Reserve.FreeCount + 1;
+            var freeCountPlusOne = Reserve.FreeCount + 1;
             var emptyTableauCount = Tableaus.EmptyTableauCount;
 
             // 1. Reserve -> Foundation
@@ -144,10 +144,10 @@ namespace FreeCellSolver.Game
 
                     var emptyTarget = targetTableau.IsEmpty;
 
-                    // Left shift freeCount+1 on number of non-target empty tableaus to get max move size
+                    // Left shift Reserve.FreeCount+1 on number of non-target empty tableaus to get max move size
                     // i.e. 0 free, 2 empty tableaus that are not the target:
                     // maxMoveSize is 0+1 << 2 = 4
-                    var maxMoveSize = freeCount << (emptyTarget ? emptyTableauCount - 1 : emptyTableauCount);
+                    var maxMoveSize = freeCountPlusOne << (emptyTarget ? emptyTableauCount - 1 : emptyTableauCount);
 
                     if (emptyTarget)
                     {
