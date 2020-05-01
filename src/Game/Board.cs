@@ -396,7 +396,7 @@ namespace FreeCellSolver.Game
 
             for (var i = 0; i < 8; i++)
             {
-                if (!tableaus[i].Equals(otherTableaus[i], false))
+                if (!tableaus[i].EqualsFast(otherTableaus[i]))
                 {
                     return false;
                 }
@@ -404,7 +404,7 @@ namespace FreeCellSolver.Game
 
             for (var i = 0; i < 8; i++)
             {
-                if (!tableaus[i].Equals(otherTableaus[i], true))
+                if (!tableaus[i].EqualsSlow(otherTableaus[i]))
                 {
                     return false;
                 }

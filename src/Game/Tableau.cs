@@ -217,45 +217,41 @@ namespace FreeCellSolver.Game
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(Tableau other, bool checkStack)
+        public bool EqualsFast(Tableau other)
         {
             var size = Size;
 
-            if (!checkStack)
+            if (SortedSize != other.SortedSize || size != other.Size)
             {
-                if (SortedSize != other.SortedSize || size != other.Size)
-                {
-                    return false;
-                }
+                return false;
+            }
 
-                if (size == 0)
-                {
-                    Debug.Assert(other.Size == 0);
-                    return true;
-                }
-
-                if (Top != other.Top)
-                {
-                    return false;
-                }
-
+            if (size == 0)
+            {
+                Debug.Assert(other.Size == 0);
                 return true;
             }
-            else
+
+            return Top == other.Top;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool EqualsSlow(Tableau other)
+        {
+            var size = Size;
+
+            // Note this method should only be called when the return value of calling EqualsFast() yields true
+            // thus, the below assert.
+            Debug.Assert(size == other.Size && SortedSize == other.SortedSize && Top == other.Top);
+
+            if (size == 0)
             {
-                // Note this method with checkStatus=true should only be called
-                // when the return value of calling this method with checkStatus=false yields true
-                Debug.Assert(size == other.Size && SortedSize == other.SortedSize && Top == other.Top);
-
-                if (size == 0)
-                {
-                    return true;
-                }
-
-                var ls = _state.AsSpan(0, size);
-                var rs = other._state.AsSpan(0, size);
-                return ls.SequenceEqual(rs);
+                return true;
             }
+
+            var ls = _state.AsSpan(0, size);
+            var rs = other._state.AsSpan(0, size);
+            return ls.SequenceEqual(rs);
         }
 
         public override string ToString()
