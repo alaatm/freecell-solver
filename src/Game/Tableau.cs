@@ -22,25 +22,17 @@ namespace FreeCellSolver.Game
 
         public Card this[int index] => Card.Get(_state[Size - index - 1]);
 
+        public Tableau() { }
+
         public Tableau(string cards) : this(
             new[] { 0 }.SelectMany(i => cards
                 .Replace(" ", "")
                 .GroupBy(_ => i++ / 2)
-                .Select(g => Card.Get(string.Join("", g)))
+                .Select(g => Card.Get(string.Join("", g)).RawValue)
             ).ToArray())
         { }
 
-        public Tableau(params Card[] cards)
-        {
-            foreach (var card in cards)
-            {
-                _state[Size++] = card.RawValue;
-            }
-
-            SortedSize = CountSorted();
-        }
-
-        public Tableau(Span<byte> cards)
+        internal Tableau(Span<byte> cards)
         {
             for (var i = 0; i < cards.Length; i++)
             {
@@ -49,8 +41,6 @@ namespace FreeCellSolver.Game
 
             SortedSize = CountSorted();
         }
-
-        private Tableau() { }
 
         public bool CanPush(Card card) => Size == 0 || card.IsBelow(Top);
 

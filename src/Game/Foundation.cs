@@ -17,6 +17,8 @@ namespace FreeCellSolver.Game
 
         public byte this[int s] => _state[s];
 
+        public Foundation() { }
+
         public Foundation(int clubsTop, int diamondsTop, int heartsTop, int spadesTop)
         {
             var clubsNext = clubsTop == Ranks.Nil ? Ranks.Ace : clubsTop + 1;
@@ -34,8 +36,6 @@ namespace FreeCellSolver.Game
             _state[2] = (byte)heartsNext;
             _state[3] = (byte)spadesNext;
         }
-
-        public Foundation() { }
 
         public bool CanPush(Card card) => _state[card.Suit] == card.Rank;
 
