@@ -134,7 +134,7 @@ namespace FreeCellSolver.Game.Extensions
             for (var i = 0; i < 4; i++)
             {
                 var c = board.Reserve[i];
-                rSb.Append(c != Card.Null ? $"Card.Get(\"{c}\").RawValue" : "Card.Nil");
+                rSb.Append(c != Card.Null ? $"\"{c}\"" : "null");
                 if (i < 3)
                 {
                     rSb.Append(", ");
@@ -183,7 +183,10 @@ namespace FreeCellSolver.Game.Extensions
             sb.Append("if (!b.IsValid()) { throw new Exception(); }");
 
             writer.Write(sb.ToString()
-                .Replace("(Card.Empty, Card.Empty, Card.Empty, Card.Empty)", "()")
+                .Replace("(null, null, null, null)", "()")
+                .Replace(", null, null, null)", ")")
+                .Replace(", null, null)", ")")
+                .Replace(", null)", ")")
                 .Replace("(\"\")", "()"));
 
             static string GetRank(int c) => c switch
