@@ -90,7 +90,7 @@ namespace FreeCellSolver.Game
             // 3. Reserve -> Tableau
             for (var r = 0; r < 4; r++)
             {
-                if (reserve[r] == Card.Null)
+                if (reserve.GetValue(r) == Card.Nil)
                 {
                     continue;
                 }
@@ -99,11 +99,11 @@ namespace FreeCellSolver.Game
                 for (var t = 0; t < 8; t++)
                 {
                     var tableau = tableaus[t];
-                    var emptyTarget = tableau.IsEmpty;
 
                     if (reserve.CanMove(r, tableau))
                     {
                         var move = Move.Get(MoveType.ReserveToTableau, r, t);
+                        var emptyTarget = tableau.IsEmpty;
                         // Skip move to empty if reverse of last move or when we've already made a similar
                         // move to another empty tableau
                         // i.e. skip when move.IsReverseOf(lastMove) || (emptyTarget && alreadyMovedToEmpty) is true
