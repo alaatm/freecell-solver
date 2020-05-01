@@ -6,34 +6,34 @@ namespace FreeCellSolver.Game
 {
     public sealed class Colors
     {
-        public const byte Black = 0;
-        public const byte Red = 1;
+        public const int Black = 0;
+        public const int Red = 1;
     }
 
     public sealed class Suits
     {
-        public const byte Clubs = 0;
-        public const byte Diamonds = 1;
-        public const byte Hearts = 2;
-        public const byte Spades = 3;
+        public const int Clubs = 0;
+        public const int Diamonds = 1;
+        public const int Hearts = 2;
+        public const int Spades = 3;
     }
 
     public sealed class Ranks
     {
-        public const byte Nil = byte.MaxValue;
-        public const byte Ace = 0;
-        public const byte R2 = 1;
-        public const byte R3 = 2;
-        public const byte R4 = 3;
-        public const byte R5 = 4;
-        public const byte R6 = 5;
-        public const byte R7 = 6;
-        public const byte R8 = 7;
-        public const byte R9 = 8;
-        public const byte R10 = 9;
-        public const byte Rj = 10;
-        public const byte Rq = 11;
-        public const byte Rk = 12;
+        public const int Nil = byte.MaxValue;
+        public const int Ace = 0;
+        public const int R2 = 1;
+        public const int R3 = 2;
+        public const int R4 = 3;
+        public const int R5 = 4;
+        public const int R6 = 5;
+        public const int R7 = 6;
+        public const int R8 = 7;
+        public const int R9 = 8;
+        public const int R10 = 9;
+        public const int Rj = 10;
+        public const int Rq = 11;
+        public const int Rk = 12;
     }
 
     public sealed class Card
@@ -71,7 +71,7 @@ namespace FreeCellSolver.Game
             RawValue = rawValue;
             Suit = (byte)(RawValue & 3);
             Rank = (byte)(RawValue >> 2);
-            Color = Suit == Suits.Hearts || Suit == Suits.Diamonds ? Colors.Red : Colors.Black;
+            Color = Suit == Suits.Hearts || Suit == Suits.Diamonds ? (byte)Colors.Red : (byte)Colors.Black;
         }
 
         // Note no error checks are made!
@@ -84,7 +84,7 @@ namespace FreeCellSolver.Game
             (Array.IndexOf(_ranks, card[0]) << 2)];
 
         // Note no error checks are made!
-        public static Card Get(byte suit, byte rank) => _allCards[suit + (rank << 2)];
+        public static Card Get(int suit, int rank) => _allCards[suit + (rank << 2)];
 
         public bool IsBelow(Card tableauTop)
             => Color != tableauTop.Color && Rank + 1 == tableauTop.Rank;
