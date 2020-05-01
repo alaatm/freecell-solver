@@ -10,14 +10,30 @@ namespace FreeCellSolver.Test
         [Fact]
         public void EmptyTableauCount_returns_empty_tableau_count()
         {
-            var ts = new Tableaus(new Tableau(""), new Tableau("KC"), new Tableau("KD"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau(""));
+            var ts = new Tableaus(
+                new Tableau(),
+                new Tableau("KC"),
+                new Tableau("KD"),
+                new Tableau("KH"),
+                new Tableau("KS"),
+                new Tableau("QC"),
+                new Tableau("QD"),
+                new Tableau());
             Assert.Equal(2, ts.EmptyTableauCount);
         }
 
         [Fact]
         public void Clone_clones_object()
         {
-            var ts = new Tableaus(new Tableau(""), new Tableau("KC"), new Tableau("KD"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau(""));
+            var ts = new Tableaus(
+                new Tableau(),
+                new Tableau("KC"),
+                new Tableau("KD"),
+                new Tableau("KH"),
+                new Tableau("KS"),
+                new Tableau("QC"),
+                new Tableau("QD"),
+                new Tableau());
             var clone = ts.Clone();
 
             Assert.Equal(ts.EmptyTableauCount, clone.EmptyTableauCount);
@@ -35,14 +51,21 @@ namespace FreeCellSolver.Test
         public void ToString_returns_string_representation()
             => Assert.Equal(
                 $"01 02 03 04 05 06 07 08{Environment.NewLine}-- -- -- -- -- -- -- --{Environment.NewLine}   KC KD KH KS QC QD   {Environment.NewLine}      9C               ",
-                new Tableaus(new Tableau(""), new Tableau("KC"), new Tableau("KD9C"), new Tableau("KH"), new Tableau("KS"), new Tableau("QC"), new Tableau("QD"), new Tableau("")).ToString());
+                    new Tableaus(new Tableau(),
+                    new Tableau("KC"),
+                    new Tableau("KD 9C"),
+                    new Tableau("KH"),
+                    new Tableau("KS"),
+                    new Tableau("QC"),
+                    new Tableau("QD"),
+                    new Tableau("")).ToString());
 
         [Fact]
         public void AllCards_returns_all_cards()
         {
             var t0 = new Tableau("AC");
             var t1 = new Tableau("AD");
-            var t3 = new Tableau("AHAS");
+            var t3 = new Tableau("AH AS");
             var tEmpty = new Tableau();
             var ts = new Tableaus(t0, t1, tEmpty, t3, tEmpty, tEmpty, tEmpty, tEmpty);
             var allCards = ts.AllCards().ToList();

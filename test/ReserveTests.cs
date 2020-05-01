@@ -56,7 +56,7 @@ namespace FreeCellSolver.Test
         {
             // Move 5H to empty tableau
             var r = new Reserve("5H");
-            var t = new Tableau("");
+            var t = new Tableau();
             Assert.True(r.CanMove(0, t));
 
             // Move 5H below 6S

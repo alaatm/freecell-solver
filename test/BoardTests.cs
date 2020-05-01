@@ -40,11 +40,11 @@ namespace FreeCellSolver.Test
             // Arrange
             var r = new Reserve("KS", "6H", "KD", "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9SQD7DTCJCTH9C");
-            var t2 = new Tableau("QSQCTS7CKH");
-            var t3 = new Tableau("JS8C3H7HKC");
-            var t5 = new Tableau("JH9D9H8H4H");
-            var t6 = new Tableau("5C6CQH8DTD5H");
+            var t0 = new Tableau("9S QD 7D TC JC TH 9C");
+            var t2 = new Tableau("QS QC TS 7C KH");
+            var t3 = new Tableau("JS 8C 3H 7H KC");
+            var t5 = new Tableau("JH 9D 9H 8H 4H");
+            var t6 = new Tableau("5C 6C QH 8D TD 5H");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
@@ -86,11 +86,11 @@ namespace FreeCellSolver.Test
             // Arrange
             var r = new Reserve("KS", "6H", "KD", "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9STCKCQDJCTH9C");
-            var t2 = new Tableau("QSQCTS7CKH");
-            var t3 = new Tableau("JS8C3H7H7D");
-            var t5 = new Tableau("JH9D9H8H4H");
-            var t6 = new Tableau("5C6CQH8DTD5H");
+            var t0 = new Tableau("9S TC KC QD JC TH 9C");
+            var t2 = new Tableau("QS QC TS 7C KH");
+            var t3 = new Tableau("JS 8C 3H 7H 7D");
+            var t5 = new Tableau("JH 9D 9H 8H 4H");
+            var t6 = new Tableau("5C 6C QH 8D TD 5H");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
@@ -131,12 +131,12 @@ namespace FreeCellSolver.Test
             // Arrange
             var r = new Reserve("KS", "6H", "KD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("JCTH9C");
-            var t2 = new Tableau("QSQCTS7CKH");
-            var t3 = new Tableau("JS8C3H7H7D");
-            var t4 = new Tableau("9STCKCJD");
-            var t5 = new Tableau("JH9D9H8H4H");
-            var t6 = new Tableau("5C6CQH8DTDQD5H");
+            var t0 = new Tableau("JC TH 9C");
+            var t2 = new Tableau("QS QC TS 7C KH");
+            var t3 = new Tableau("JS 8C 3H 7H 7D");
+            var t4 = new Tableau("9S TC KC JD");
+            var t5 = new Tableau("JH 9D 9H 8H 4H");
+            var t6 = new Tableau("5C 6C QH 8D TD QD 5H");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, t2, t3, t4, t5, t6, tRest);
             var b = new Board(r, f, ts);
@@ -175,11 +175,11 @@ namespace FreeCellSolver.Test
             // Arrange
             var r = new Reserve(null, "6H", "KD", "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9SQD7DTCJCTH9C");
-            var t2 = new Tableau("QSQCTS7CKHKS");
-            var t3 = new Tableau("JS8C3H7HKC");
-            var t5 = new Tableau("JH9D9H8H4H");
-            var t6 = new Tableau("5C6CQH8DTD5H");
+            var t0 = new Tableau("9S QD 7D TC JC TH 9C");
+            var t2 = new Tableau("QS QC TS 7C KH KS");
+            var t3 = new Tableau("JS 8C 3H 7H KC");
+            var t5 = new Tableau("JH 9D 9H 8H 4H");
+            var t6 = new Tableau("5C 6C QH 8D TD 5H");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
@@ -218,11 +218,11 @@ namespace FreeCellSolver.Test
             // Arrange
             var r = new Reserve("KS", "6H", "KD", "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9SQD7DTCJCTH9C");
-            var t2 = new Tableau("QSQCTS7CKH");
-            var t3 = new Tableau("JS8C3H7HKC");
-            var t5 = new Tableau("JH9D9H8H4H");
-            var t6 = new Tableau("5C6CQH8D5HTD");
+            var t0 = new Tableau("9S QD 7D TC JC TH 9C");
+            var t2 = new Tableau("QS QC TS 7C KH");
+            var t3 = new Tableau("JS 8C 3H 7H KC");
+            var t5 = new Tableau("JH 9D 9H 8H 4H");
+            var t6 = new Tableau("5C 6C QH 8D 5H TD");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
@@ -259,11 +259,11 @@ namespace FreeCellSolver.Test
              */
             var r = new Reserve(null, "6H", null, "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9SQD7DTCJCTHQS");
-            var t2 = new Tableau("KHQCJHTS");
-            var t3 = new Tableau("JS8C3H7HKC7C");
-            var t5 = new Tableau("9C9D9H8H4HKSKD");
-            var t6 = new Tableau("5C6CQH8DTD5H");
+            var t0 = new Tableau("9S QD 7D TC JC TH QS");
+            var t2 = new Tableau("KH QC JH TS");
+            var t3 = new Tableau("JS 8C 3H 7H KC 7C");
+            var t5 = new Tableau("9C 9D 9H 8H 4H KS KD");
+            var t6 = new Tableau("5C 6C QH 8D TD 5H");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
@@ -302,12 +302,12 @@ namespace FreeCellSolver.Test
              */
             var r = new Reserve("QS", "6H", "TH", "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9SQD7DTC");
+            var t0 = new Tableau("9S QD 7D TC");
             var t1 = new Tableau("JC");
-            var t2 = new Tableau("KHQCJHTS");
-            var t3 = new Tableau("JS8C3H7HKC7C");
-            var t5 = new Tableau("9C9D9H8H4HKSKD");
-            var t6 = new Tableau("5C6CQH8DTD");
+            var t2 = new Tableau("KH QC JH TS");
+            var t3 = new Tableau("JS 8C 3H 7H KC 7C");
+            var t5 = new Tableau("9C 9D 9H 8H 4H KS KD");
+            var t6 = new Tableau("5C 6C QH 8D TD");
             var t7 = new Tableau("5H");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, t1, t2, t3, tRest, t5, t6, t7);
@@ -347,13 +347,13 @@ namespace FreeCellSolver.Test
              */
             var r = new Reserve("QS", "6H", "TH", "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9SQD7DTC");
+            var t0 = new Tableau("9S QD 7D TC");
             var t1 = new Tableau("JC");
-            var t2 = new Tableau("KDKHJHTS");
-            var t3 = new Tableau("JS8C3H7HKC7C");
+            var t2 = new Tableau("KD KH JH TS");
+            var t3 = new Tableau("JS 8C 3H 7H KC 7C");
             var t4 = new Tableau("KS");
-            var t5 = new Tableau("9C9D9H8H4HQC");
-            var t6 = new Tableau("5C6CQH8DTD");
+            var t5 = new Tableau("9C 9D 9H 8H 4H QC");
+            var t6 = new Tableau("5C 6C QH 8D TD");
             var t7 = new Tableau("5H");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
@@ -393,11 +393,11 @@ namespace FreeCellSolver.Test
              */
             var r = new Reserve("QS", "6H", "TH", "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9SQD7DTCJC");
-            var t2 = new Tableau("KHQCJHTS9D");
-            var t3 = new Tableau("JS8C3H7HKC7C");
-            var t5 = new Tableau("9CKS9H8H4HKD");
-            var t6 = new Tableau("5C6CQH8DTD");
+            var t0 = new Tableau("9S QD 7D TC JC");
+            var t2 = new Tableau("KH QC JH TS 9D");
+            var t3 = new Tableau("JS 8C 3H 7H KC 7C");
+            var t5 = new Tableau("9C KS 9H 8H 4H KD");
+            var t6 = new Tableau("5C 6C QH 8D TD");
             var t7 = new Tableau("5H");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, t7);
@@ -441,7 +441,7 @@ namespace FreeCellSolver.Test
             var f = new Foundation(Ranks.Rq, Ranks.Rk, Ranks.Nil, Ranks.Rj);
             var t0 = new Tableau("KS");
             var t1 = new Tableau("QS");
-            var t3 = new Tableau("AH2H3H4H5H6H7H8H9HTHJHQHKH");
+            var t3 = new Tableau("AH 2H 3H 4H 5H 6H 7H 8H 9H TH JH QH KH");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, t1, tRest, t3, tRest, tRest, tRest, tRest);
             var b = new Board(r, f, ts);
@@ -485,14 +485,14 @@ namespace FreeCellSolver.Test
             // Arrange
             var r = new Reserve("4C", "4D");
             var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
-            var t0 = new Tableau("QD3HTD7SAH5S");
-            var t1 = new Tableau("QCJDJC9D9S");
-            var t2 = new Tableau("KCJS8CKSTC7HTH");
-            var t3 = new Tableau("2S6H6CAS7C");
-            var t4 = new Tableau("5HQS8S6S3S");
-            var t5 = new Tableau("JH6D4S4HTS");
-            var t6 = new Tableau("KD8D5DKH9H");
-            var t7 = new Tableau("5C9CQH8H2H7D");
+            var t0 = new Tableau("QD 3H TD 7S AH 5S");
+            var t1 = new Tableau("QC JD JC 9D 9S");
+            var t2 = new Tableau("KC JS 8C KS TC 7H TH");
+            var t3 = new Tableau("2S 6H 6C AS 7C");
+            var t4 = new Tableau("5H QS 8S 6S 3S");
+            var t5 = new Tableau("JH 6D 4S 4H TS");
+            var t6 = new Tableau("KD 8D 5D KH 9H");
+            var t7 = new Tableau("5C 9C QH 8H 2H 7D");
             var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
@@ -533,14 +533,14 @@ namespace FreeCellSolver.Test
             // Arrange
             var r = new Reserve();
             var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
-            var t0 = new Tableau("QD3HTD7SAH5S");
-            var t1 = new Tableau("QCJDJC9D9S");
-            var t2 = new Tableau("KCJS8CKSTC7HTH");
-            var t3 = new Tableau("2S6H6CAS7C");
-            var t4 = new Tableau("5HQS8S6S3S4C");
-            var t5 = new Tableau("JH6D4S4HTS");
-            var t6 = new Tableau("KD8D5DKH9H4D");
-            var t7 = new Tableau("5C9CQH8H2H7D");
+            var t0 = new Tableau("QD 3H TD 7S AH 5S");
+            var t1 = new Tableau("QC JD JC 9D 9S");
+            var t2 = new Tableau("KC JS 8C KS TC 7H TH");
+            var t3 = new Tableau("2S 6H 6C AS 7C");
+            var t4 = new Tableau("5H QS 8S 6S 3S 4C");
+            var t5 = new Tableau("JH 6D 4S 4H TS");
+            var t6 = new Tableau("KD 8D 5D KH 9H 4D");
+            var t7 = new Tableau("5C 9C QH 8H 2H 7D");
             var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
@@ -578,14 +578,14 @@ namespace FreeCellSolver.Test
             // Arrange
             var r = new Reserve("4C", "4D");
             var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
-            var t0 = new Tableau("QD3HTD7SAH5S");
-            var t1 = new Tableau("QCJDJC9D9S");
-            var t2 = new Tableau("KCJS8CKSTC7HTH");
-            var t3 = new Tableau("2S6H6CAS7C");
-            var t4 = new Tableau("5HQS8S6S3S");
-            var t5 = new Tableau("JH6D4S4HTS");
-            var t6 = new Tableau("KD8D5DKH9H");
-            var t7 = new Tableau("5C9CQH8H2H7D");
+            var t0 = new Tableau("QD 3H TD 7S AH 5S");
+            var t1 = new Tableau("QC JD JC 9D 9S");
+            var t2 = new Tableau("KC JS 8C KS TC 7H TH");
+            var t3 = new Tableau("2S 6H 6C AS 7C");
+            var t4 = new Tableau("5H QS 8S 6S 3S");
+            var t5 = new Tableau("JH 6D 4S 4H TS");
+            var t6 = new Tableau("KD 8D 5D KH 9H");
+            var t7 = new Tableau("5C 9C QH 8H 2H 7D");
             var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
@@ -955,14 +955,14 @@ namespace FreeCellSolver.Test
              */
             var r = new Reserve("QC", null, null, "9D");
             var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
-            var t0 = new Tableau("KCQH");                           // unsorted = 0
-            var t1 = new Tableau("5DAC2DKSKH6S4C3D2C");             // unsorted = 6
-            var t2 = new Tableau("TS7H8H");                         // unsorted = 2
-            var t3 = new Tableau("3S5S4H3C");                       // unsorted = 1
-            var t4 = new Tableau("9C4SJCJH8SKDQSJDTC9H8C7D6C5H");   // unsorted = 5
-            var t5 = new Tableau("TH7S6D");                         // unsorted = 1
-            var t6 = new Tableau("4D5CAD9S8D7C6H");                 // unsorted = 3
-            var t7 = new Tableau("QDJSTD");                         // unsorted = 0
+            var t0 = new Tableau("KC QH");                                      // unsorted = 0
+            var t1 = new Tableau("5D AC 2D KS KH 6S 4C 3D 2C");                 // unsorted = 6
+            var t2 = new Tableau("TS 7H 8H");                                   // unsorted = 2
+            var t3 = new Tableau("3S 5S 4H 3C");                                // unsorted = 1
+            var t4 = new Tableau("9C 4S JC JH 8S KD QS JD TC 9H 8C 7D 6C 5H");  // unsorted = 5
+            var t5 = new Tableau("TH 7S 6D");                                   // unsorted = 1
+            var t6 = new Tableau("4D 5C AD 9S 8D 7C 6H");                       // unsorted = 3
+            var t7 = new Tableau("QD JS TD");                                   // unsorted = 0
             var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
@@ -1000,14 +1000,14 @@ namespace FreeCellSolver.Test
              */
             var r = new Reserve("QC", null, null, "9D");
             var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
-            var t0 = new Tableau("KCQH");                           // unsorted = 0
-            var t1 = new Tableau("5DAC2DKSKH6S4C3D2C");             // unsorted = 6
-            var t2 = new Tableau("TS7H8H");                         // unsorted = 2
-            var t3 = new Tableau("3S5S4H3C");                       // unsorted = 1
-            var t4 = new Tableau("9C4SJCJH8SKDQSJDTC9H8C7D6C5H");   // unsorted = 5
-            var t5 = new Tableau("TH7S6D");                         // unsorted = 1
-            var t6 = new Tableau("4D5CAD9S8D7C6H");                 // unsorted = 3
-            var t7 = new Tableau("QDJSTD");                         // unsorted = 0
+            var t0 = new Tableau("KC QH");                                      // unsorted = 0
+            var t1 = new Tableau("5D AC 2D KS KH 6S 4C 3D 2C");                 // unsorted = 6
+            var t2 = new Tableau("TS 7H 8H");                                   // unsorted = 2
+            var t3 = new Tableau("3S 5S 4H 3C");                                // unsorted = 1
+            var t4 = new Tableau("9C 4S JC JH 8S KD QS JD TC 9H 8C 7D 6C 5H");  // unsorted = 5
+            var t5 = new Tableau("TH 7S 6D");                                   // unsorted = 1
+            var t6 = new Tableau("4D 5C AD 9S 8D 7C 6H");                       // unsorted = 3
+            var t7 = new Tableau("QD JS TD");                                   // unsorted = 0
             var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
@@ -1189,13 +1189,13 @@ TD 7S JD 7H 8H JH JC 7D
             // Arrange
             var r = new Reserve(null, "6H", null, "JD");
             var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9SQD7DTCJCTH9C");
+            var t0 = new Tableau("9S QD 7D TC JC TH 9C");
             var t1 = new Tableau("KS");
-            var t2 = new Tableau("QSQCTS7CKH");
-            var t3 = new Tableau("JS8C3H7HKC");
+            var t2 = new Tableau("QS QC TS 7C KH");
+            var t3 = new Tableau("JS 8C 3H 7H KC");
             var t4 = new Tableau("KD");
-            var t5 = new Tableau("JH9D9H8H4H");
-            var t6 = new Tableau("5C6CQH8D5HTD");
+            var t5 = new Tableau("JH 9D 9H 8H 4H");
+            var t6 = new Tableau("5C 6C QH 8D 5H TD");
             var tRest = new Tableau();
             var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, tRest);
             var b1 = new Board(r, f, ts);
