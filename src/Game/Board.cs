@@ -63,8 +63,8 @@ namespace FreeCellSolver.Game
 
             (_moves ??= new List<Move>()).Clear();
 
-            var freeCountPlusOne = Reserve.FreeCount + 1;
-            var emptyTableauCount = Tableaus.EmptyTableauCount;
+            var freeCountPlusOne = reserve.FreeCount + 1;
+            var emptyTableauCount = tableaus.EmptyTableauCount;
 
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
@@ -104,8 +104,8 @@ namespace FreeCellSolver.Game
                     {
                         var move = Move.Get(MoveType.ReserveToTableau, r, t);
                         var emptyTarget = tableau.IsEmpty;
-                        // Skip move to empty if reverse of last move or when we've already made a similar
-                        // move to another empty tableau
+                        // Skip move to empty if we've already made a similar
+                        // move to another empty tableau or the move is a reverse of last move
                         // i.e. skip when move.IsReverseOf(lastMove) || (emptyTarget && alreadyMovedToEmpty) is true
                         if (!move.IsReverseOf(lastMove) && (!emptyTarget || !alreadyMovedToEmpty))
                         {
