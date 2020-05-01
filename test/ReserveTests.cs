@@ -21,7 +21,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Indexer_returns_value_of_specified_slot()
         {
-            var r = new Reserve(Card.Get("AD").RawValue, Card.Nil, Card.Get("AH").RawValue, Card.Nil);
+            var r = new Reserve("AD", null, "AH");
             Assert.Equal(Card.Get("AD"), r[0]);
             Assert.Equal(Card.Null, r[1]);
             Assert.Equal(Card.Get("AH"), r[2]);
@@ -34,19 +34,19 @@ namespace FreeCellSolver.Test
             // empty reserve
             Assert.Equal(4, new Reserve().FreeCount);
             // 2 spots occupied, 2 free
-            Assert.Equal(2, new Reserve(Card.Get("AD").RawValue, Card.Nil, Card.Get("AH").RawValue, Card.Nil).FreeCount);
+            Assert.Equal(2, new Reserve("AD", null, "AH").FreeCount);
         }
 
         [Fact]
         public void CanInsert_returns_whether_card_can_be_inserted_along_with_target_index()
         {
             // Index 2 free
-            var r = new Reserve(Card.Get("AC").RawValue, Card.Get("AD").RawValue, Card.Nil, Card.Get("AH").RawValue);
+            var r = new Reserve("AC", "AD", null, "AH");
             Assert.True(r.CanInsert(out var index));
             Assert.Equal(2, index);
 
             // Full
-            r = new Reserve(Card.Get("AC").RawValue, Card.Get("AD").RawValue, Card.Get("2D").RawValue, Card.Get("AH").RawValue);
+            r = new Reserve("AC", "AD", "2D", "AH");
             Assert.False(r.CanInsert(out index));
             Assert.Equal(-1, index);
         }
@@ -55,7 +55,7 @@ namespace FreeCellSolver.Test
         public void CanMove_returns_whether_card_can_be_moved_to_tableau()
         {
             // Move 5H to empty tableau
-            var r = new Reserve(Card.Get("5H").RawValue, Card.Nil, Card.Nil, Card.Nil);
+            var r = new Reserve("5H");
             var t = new Tableau("");
             Assert.True(r.CanMove(0, t));
 
@@ -68,7 +68,7 @@ namespace FreeCellSolver.Test
             Assert.False(r.CanMove(0, t));
 
             // Can't move empty slot
-            r = new Reserve(Card.Nil, Card.Nil, Card.Nil, Card.Nil);
+            r = new Reserve();
             Assert.False(r.CanMove(0, t));
         }
 
@@ -76,16 +76,16 @@ namespace FreeCellSolver.Test
         public void CanMove_returns_whether_card_can_be_moved_to_foundation_or_not()
         {
             // Move AC to empty foundation
-            var r = new Reserve(Card.Get("AC").RawValue, Card.Nil, Card.Nil, Card.Nil);
+            var r = new Reserve("AC");
             var f = new Foundation();
             Assert.True(r.CanMove(0, f));
 
             // Can't move 2C to empty foundation
-            r = new Reserve(Card.Get("2C").RawValue, Card.Nil, Card.Nil, Card.Nil);
+            r = new Reserve("2C");
             Assert.False(r.CanMove(0, f));
 
             // Can't move empty slot
-            r = new Reserve(Card.Nil, Card.Nil, Card.Nil, Card.Nil);
+            r = new Reserve();
             Assert.False(r.CanMove(0, f));
         }
 
@@ -107,7 +107,7 @@ namespace FreeCellSolver.Test
         public void Move_moves_card_to_tableau()
         {
             var t = new Tableau("5H");
-            var r = new Reserve(Card.Get("4S").RawValue, Card.Nil, Card.Nil, Card.Nil);
+            var r = new Reserve("4S");
 
             r.Move(0, t);
 
@@ -122,7 +122,7 @@ namespace FreeCellSolver.Test
         public void Move_moves_card_to_foundation()
         {
             var f = new Foundation();
-            var r = new Reserve(Card.Get("AC").RawValue, Card.Nil, Card.Nil, Card.Nil);
+            var r = new Reserve("AC");
 
             r.Move(0, f);
 
@@ -134,7 +134,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Clone_clones_object()
         {
-            var r = new Reserve(Card.Get("AC").RawValue, Card.Get("AS").RawValue, Card.Nil, Card.Get("AH").RawValue);
+            var r = new Reserve("AC", "AS", null, "AH");
             var clone = r.Clone();
 
             Assert.Equal(r.FreeCount, clone.FreeCount);
@@ -146,12 +146,12 @@ namespace FreeCellSolver.Test
 
         [Fact]
         public void ToString_returns_string_representation()
-            => Assert.Equal($"01 02 03 04{Environment.NewLine}-- 5H -- KD", new Reserve(Card.Nil, Card.Get("5H").RawValue, Card.Nil, Card.Get("KD").RawValue).ToString());
+            => Assert.Equal($"01 02 03 04{Environment.NewLine}-- 5H -- KD", new Reserve(null, "5H", null, "KD").ToString());
 
         [Fact]
         public void AllCards_returns_all_cards()
         {
-            var r = new Reserve(Card.Nil, Card.Get("KS").RawValue, Card.Get("QS").RawValue, Card.Nil);
+            var r = new Reserve(null, "KS", "QS");
             var allCards = r.AllCards().ToList();
 
             // Assert

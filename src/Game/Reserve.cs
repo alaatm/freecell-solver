@@ -30,7 +30,14 @@ namespace FreeCellSolver.Game
 
         public int FreeCount { get; private set; } = 4;
 
-        public Reserve(byte card1, byte card2, byte card3, byte card4)
+        public Reserve(string card1 = null, string card2 = null, string card3 = null, string card4 = null) : this(
+            string.IsNullOrWhiteSpace(card1) ? Card.Nil : Card.Get(card1).RawValue,
+            string.IsNullOrWhiteSpace(card2) ? Card.Nil : Card.Get(card2).RawValue,
+            string.IsNullOrWhiteSpace(card3) ? Card.Nil : Card.Get(card3).RawValue,
+            string.IsNullOrWhiteSpace(card4) ? Card.Nil : Card.Get(card4).RawValue)
+        { }
+
+        private Reserve(byte card1, byte card2, byte card3, byte card4)
         {
             Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != Card.Nil) || card1 == Card.Nil);
             Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != Card.Nil) || card2 == Card.Nil);
@@ -47,8 +54,6 @@ namespace FreeCellSolver.Game
             FreeCount -= card3 != Card.Nil ? 1 : 0;
             FreeCount -= card4 != Card.Nil ? 1 : 0;
         }
-
-        public Reserve() { }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte GetValue(int i) => _state[i];
