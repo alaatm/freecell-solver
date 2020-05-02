@@ -81,8 +81,7 @@ namespace FreeCellSolver.Game
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(Foundation other) =>
-            //Unsafe.As<byte, int>(ref _state[0]) == Unsafe.As<byte, int>(ref other._state[0]);
-            MemoryMarshal.Cast<byte, int>(_state)[0] == MemoryMarshal.Cast<byte, int>(other._state)[0];
+            Unsafe.As<byte, int>(ref _state[0]) == Unsafe.As<byte, int>(ref other._state[0]);
 
         public override string ToString()
         {
