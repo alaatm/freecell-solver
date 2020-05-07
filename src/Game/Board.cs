@@ -418,26 +418,19 @@ namespace FreeCellSolver.Game
         public override int GetHashCode()
         {
             // Board is immutable so its perfectly fine to cache the hashcode.
-            if (_hashcode != 0)
+            if (_hashcode == 0)
             {
-                return _hashcode;
-            }
-
-            var tableaus = Tableaus;
-            var reserve = Reserve;
-
-            unchecked
-            {
-                var hash = 0;
+                var tableaus = Tableaus;
+                var reserve = Reserve;
 
                 var r0 = reserve.GetValue(0);
                 var r1 = reserve.GetValue(1);
                 var r2 = reserve.GetValue(2);
                 var r3 = reserve.GetValue(3);
-                if (r0 != Card.Nil) hash += _reserveRand[r0];
-                if (r1 != Card.Nil) hash += _reserveRand[r1];
-                if (r2 != Card.Nil) hash += _reserveRand[r2];
-                if (r3 != Card.Nil) hash += _reserveRand[r3];
+                if (r0 != Card.Nil) _hashcode += _reserveRand[r0];
+                if (r1 != Card.Nil) _hashcode += _reserveRand[r1];
+                if (r2 != Card.Nil) _hashcode += _reserveRand[r2];
+                if (r3 != Card.Nil) _hashcode += _reserveRand[r3];
 
                 for (var i = 0; i < 8; i++)
                 {
@@ -446,40 +439,30 @@ namespace FreeCellSolver.Game
                     var sortedSize = t.SortedSize;
                     var unsortedSize = size - sortedSize;
 
-                    hash += _tableauUnsortedRand[i][unsortedSize];
-                    hash += _tableauSortedRand[i][sortedSize];
+                    _hashcode += _tableauUnsortedRand[unsortedSize] << i;
+                    _hashcode += _tableauSortedRand[sortedSize] << i;
                     if (size > 0)
                     {
-                        hash += _tableauTopRand[i][t.Top.RawValue];
+                        _hashcode += _tableauTopRand[t.Top.RawValue] << i;
                     }
                 }
-
-                _hashcode = hash;
-                return hash;
             }
+
+            return _hashcode;
         }
 
         static readonly Random _rnd = new Random();
         static readonly int[] _reserveRand = new int[52];
-        static readonly int[][] _tableauUnsortedRand = new int[8][];
-        static readonly int[][] _tableauSortedRand = new int[8][];
-        static readonly int[][] _tableauTopRand = new int[8][];
+        static readonly int[] _tableauUnsortedRand = new int[8];
+        static readonly int[] _tableauSortedRand = new int[14];
+        static readonly int[] _tableauTopRand = new int[52];
 
         static Board()
         {
             InitHashRand(52, _reserveRand);
-
-            for (var i = 0; i < 8; i++)
-            {
-                _tableauUnsortedRand[i] = new int[8];
-                InitHashRand(8, _tableauUnsortedRand[i]);
-
-                _tableauSortedRand[i] = new int[14];
-                InitHashRand(14, _tableauSortedRand[i]);
-
-                _tableauTopRand[i] = new int[52];
-                InitHashRand(52, _tableauTopRand[i]);
-            }
+            InitHashRand(8, _tableauUnsortedRand);
+            InitHashRand(14, _tableauSortedRand);
+            InitHashRand(52, _tableauTopRand);
         }
 
         static void InitHashRand(int count, int[] rand)
