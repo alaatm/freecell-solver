@@ -150,8 +150,7 @@ namespace FreeCellSolver.Entry
             if (File.Exists(path))
             {
                 Console.WriteLine("A log with the same tag name already exists. Are you sure you want to continue? [Y] [N]");
-                var answer = Console.ReadKey(true);
-                if (answer.Key == ConsoleKey.N)
+                if (Console.ReadKey(true).Key == ConsoleKey.N)
                 {
                     Console.WriteLine("Operation cancelled.");
                     return;
@@ -216,16 +215,20 @@ namespace FreeCellSolver.Entry
         {
             if (writer != Console.Out)
             {
-                Console.WriteLine($"Processing deal #{deal}");
+                Console.Write($"Processing deal #{deal}");
             }
             writer.WriteLine($"Processing deal #{deal}");
             _sw.Restart();
             var solver = await AStar.RunParallelAsync(b, best).ConfigureAwait(false);
             _sw.Stop();
+            if (writer != Console.Out)
+            {
+                Console.WriteLine(". Done");
+            }
             writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - threads: {solver.Threads,0:n0} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
             writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.MoveCount}" : " - #moves: 0");
             await writer.FlushAsync().ConfigureAwait(false);
-            GC.Collect();
+            AStar.Reset();
             return solver;
         }
 

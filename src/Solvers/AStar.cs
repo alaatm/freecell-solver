@@ -65,6 +65,13 @@ namespace FreeCellSolver.Solvers
             return astar;
         }
 
+        internal static void Reset()
+        {
+            _closed.Clear();
+            _closed = null;
+            GC.Collect();
+        }
+
         private void SearchFast(Board root, int stateId)
         {
             var open = new PriorityQueue();
