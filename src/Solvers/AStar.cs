@@ -81,7 +81,7 @@ namespace FreeCellSolver.Solvers
             {
                 var board = open.Dequeue();
 
-                if (board.IsSolved || SolvedBoard != null)
+                if (board.IsSolved || !(SolvedBoard is null))
                 {
                     Finalize(board, stateId);
                     break;
@@ -116,7 +116,7 @@ namespace FreeCellSolver.Solvers
             {
                 var board = open.Dequeue();
 
-                if (board.IsSolved || SolvedBoard != null)
+                if (board.IsSolved || !(SolvedBoard is null))
                 {
                     Finalize(board, stateId);
                     break;
