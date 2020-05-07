@@ -30,7 +30,9 @@ namespace FreeCellSolver.Game
 
         public int FreeCount { get; private set; } = 4;
 
-        public Reserve(string card1 = null, string card2 = null, string card3 = null, string card4 = null) : this(
+        public Reserve() { }
+
+        public Reserve(string card1, string card2 = null, string card3 = null, string card4 = null) : this(
             string.IsNullOrWhiteSpace(card1) ? Card.Nil : Card.Get(card1).RawValue,
             string.IsNullOrWhiteSpace(card2) ? Card.Nil : Card.Get(card2).RawValue,
             string.IsNullOrWhiteSpace(card3) ? Card.Nil : Card.Get(card3).RawValue,
