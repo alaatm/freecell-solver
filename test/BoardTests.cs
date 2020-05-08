@@ -1111,8 +1111,6 @@ TD 7S JD 7H 8H JH JC 7D
         [Fact]
         public void EqualityTests()
         {
-            Board nullBoard = null;
-            Assert.False(Board.FromDealNum(5).Equals(nullBoard));
             Assert.False(Board.FromDealNum(5).Equals(new object()));
             Assert.False(Board.FromDealNum(1) == Board.FromDealNum(2));
 

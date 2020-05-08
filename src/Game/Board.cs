@@ -388,10 +388,7 @@ namespace FreeCellSolver.Game
         #region Equality overrides and overloads
         public bool Equals(Board other)
         {
-            if (other is null)
-            {
-                return false;
-            }
+            Debug.Assert(!(other is null));
 
             if (!Reserve.Equals(other.Reserve))
             {
