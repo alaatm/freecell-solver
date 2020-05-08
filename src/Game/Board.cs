@@ -4,6 +4,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using FreeCellSolver.Game.Extensions;
+using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
@@ -204,20 +205,12 @@ namespace FreeCellSolver.Game
 
         public Board ExecuteMove(Move move)
         {
-            var copy = Clone();
-
-            copy.ManualMoveCount++;
-            copy.LastMove = move;
-            copy.Prev = this;
-
-            copy.ExecuteMoveCore(move);
+            var copy = ExecuteMoveNoAutoPlay(move);
             copy.AutoPlay();
-
             return copy;
         }
 
-        // Should be exactly as ExecuteMove(Move) but without AutoPlay() call
-        // Used only for unit tests
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal Board ExecuteMoveNoAutoPlay(Move move)
         {
             var copy = Clone();
