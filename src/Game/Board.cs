@@ -202,7 +202,7 @@ namespace FreeCellSolver.Game
             return _moves;
         }
 
-        public Board ExecuteMove(Move move, bool autoPlay = true /* This flag is used for printing of moves as we don't want to execute auto plays otherwise should always be true*/)
+        public Board ExecuteMove(Move move)
         {
             var copy = Clone();
 
@@ -211,10 +211,22 @@ namespace FreeCellSolver.Game
             copy.Prev = this;
 
             copy.ExecuteMoveCore(move);
-            if (autoPlay)
-            {
-                copy.AutoPlay();
-            }
+            copy.AutoPlay();
+
+            return copy;
+        }
+
+        // Should be exactly as ExecuteMove(Move) but without AutoPlay() call
+        // Used only for unit tests
+        internal Board ExecuteMoveNoAutoPlay(Move move)
+        {
+            var copy = Clone();
+
+            copy.ManualMoveCount++;
+            copy.LastMove = move;
+            copy.Prev = this;
+
+            copy.ExecuteMoveCore(move);
 
             return copy;
         }
