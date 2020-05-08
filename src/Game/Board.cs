@@ -342,6 +342,8 @@ namespace FreeCellSolver.Game
             }
         }
 
+        public Board Clone() => new Board(this);
+
         public IEnumerable<Move> GetMoves()
         {
             var moves = new Stack<Move>();
@@ -370,8 +372,6 @@ namespace FreeCellSolver.Game
                 prev = prev.Prev;
             }
         }
-
-        public Board Clone() => new Board(this);
 
         public override string ToString()
         {
