@@ -153,7 +153,7 @@ namespace FreeCellSolver.Solvers
         {
             lock (this)
             {
-                if (SolvedBoard == null)
+                if (SolvedBoard is null)
                 {
                     SolvedBoard = board;
                     SolvedFromId = stateId;
