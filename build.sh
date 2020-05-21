@@ -6,10 +6,19 @@
 # Feel free to change this file to fit your needs.
 ##########################################################################
 
+get_version() {
+    mkdir -p ./tools/tmp
+    wget -q -O ./tools/tmp/packages.config 'https://raw.githubusercontent.com/cake-build/resources/master/packages.config'
+    packages=$(<./tools/tmp/packages.config)
+    sub=${packages:82}
+    idx=`expr index "$sub" \"`
+    echo "${sub:0:idx-1}"
+}
+
 # Define directories.
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 TOOLS_DIR=$SCRIPT_DIR/tools
-CAKE_VERSION=0.35.0
+CAKE_VERSION=$(get_version)
 CAKE_DLL=$TOOLS_DIR/Cake.CoreCLR.$CAKE_VERSION/Cake.dll
 
 # Define default arguments.
@@ -55,7 +64,7 @@ fi
 
 # Make sure that Cake has been installed.
 if [ ! -f "$CAKE_DLL" ]; then
-    echo "Could not find Cake.exe at '$CAKE_DLL'."
+    echo "Could not find Cake.dll at '$CAKE_DLL'."
     exit 1
 fi
 
@@ -67,5 +76,5 @@ fi
 if $SHOW_VERSION; then
     exec dotnet "$CAKE_DLL" -version
 else
-    exec dotnet "$CAKE_DLL" $SCRIPT -verbosity=$VERBOSITY -configuration=$CONFIGURATION -target=$TARGET $DRYRUN
+    exec dotnet "$CAKE_DLL" $SCRIPT -verbosity=$VERBOSITY -configuration=$CONFIGURATION -target=$TARGET $DRYRUN ${SCRIPT_ARGUMENTS[@]}
 fi
