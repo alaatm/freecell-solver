@@ -242,7 +242,7 @@ namespace FreeCellSolver.Game
 
             // Note this method should only be called when the return value of calling EqualsFast() yields true
             // thus, the below assert.
-            Debug.Assert(size == other.Size && SortedSize == other.SortedSize && Top == other.Top);
+            Debug.Assert(EqualsFast(other));
 
             if (size == 0)
             {
