@@ -11,12 +11,11 @@ namespace FreeCellSolver.Solvers
 
         public int Count => _hash.Count;
 
-        public void Enqueue(Board board)
+        public void Enqueue(Board board, int cost)
         {
             Debug.Assert(!_hash.Contains(board));
             _hash.Add(board);
 
-            var cost = board.Cost;
             if (!_costMap.ContainsKey(cost))
             {
                 _costMap.Add(cost, new Queue<Board>());
@@ -51,12 +50,11 @@ namespace FreeCellSolver.Solvers
 
         public int Count => _hash.Count;
 
-        public void Enqueue(Board board)
+        public void Enqueue(Board board, int cost)
         {
             Debug.Assert(!_hash.Contains(board));
             _hash.Add(board);
 
-            var cost = board.Cost;
             if (!_costMap.ContainsKey(cost))
             {
                 _costMap.Add(cost, new List<Board>());

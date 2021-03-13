@@ -75,7 +75,7 @@ namespace FreeCellSolver.Solvers
         private void SearchFast(Board root, int stateId)
         {
             var open = new PriorityQueue();
-            open.Enqueue(root);
+            open.Enqueue(root, 0);
 
             while (open.Count != 0)
             {
@@ -100,8 +100,7 @@ namespace FreeCellSolver.Solvers
 
                     if (!open.Contains(next))
                     {
-                        next.ComputeCost(false);
-                        open.Enqueue(next);
+                        open.Enqueue(next, next.ComputeCost(false));
                     }
                 }
             }
@@ -110,7 +109,7 @@ namespace FreeCellSolver.Solvers
         private void SearchBest(Board root, int stateId)
         {
             var open = new DynamicPriorityQueue();
-            open.Enqueue(root);
+            open.Enqueue(root, 0);
 
             while (open.Count != 0)
             {
@@ -133,17 +132,17 @@ namespace FreeCellSolver.Solvers
                         continue;
                     }
 
-                    next.ComputeCost(true);
+                    var nextCost = next.ComputeCost(true);
 
                     var found = open.TryGetValue(next, out var existing);
-                    if (found && next.Cost < existing.Cost)
+                    if (found && nextCost < existing.Cost)
                     {
                         open.Remove(existing);
-                        open.Enqueue(next);
+                        open.Enqueue(next, nextCost);
                     }
                     else if (!found)
                     {
-                        open.Enqueue(next);
+                        open.Enqueue(next, nextCost);
                     }
                 }
             }

@@ -312,13 +312,13 @@ namespace FreeCellSolver.Game
             Debug.Assert(AllCards.Count() == 52 && new HashSet<Card>(AllCards).Count == 52);
         }
 
-        public void ComputeCost(bool factorPastMoves)
+        public int ComputeCost(bool factorPastMoves)
         {
             var foundation = Foundation;
             var tableaus = Tableaus;
 
             var colorDiff = Math.Abs(
-                foundation[Suits.Clubs] + foundation[Suits.Spades] - 
+                foundation[Suits.Clubs] + foundation[Suits.Spades] -
                 foundation[Suits.Diamonds] - foundation[Suits.Hearts]);
 
             var unsortedSize = 0;
@@ -328,11 +328,14 @@ namespace FreeCellSolver.Game
                 unsortedSize += t.Size - t.SortedSize;
             }
 
-            Cost = MovesEstimated + unsortedSize + (4 - Reserve.FreeCount) + colorDiff;
+            var cost = MovesEstimated + unsortedSize + (4 - Reserve.FreeCount) + colorDiff;
             if (factorPastMoves)
             {
-                Cost += ManualMoveCount;
+                cost += ManualMoveCount;
             }
+
+            Cost = cost;
+            return cost;
         }
 
         public Board Clone() => new Board(this);
