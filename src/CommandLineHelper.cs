@@ -250,7 +250,7 @@ namespace FreeCellSolver.Entry
                 var lines = await File.ReadAllLinesAsync(log.Path).ConfigureAwait(false);
 
                 var count = lines.Length / 2;
-                var failed = lines.Count(p => p.IndexOf("Bailed") >= 0);
+                var failed = lines.Count(p => p.Contains("Bailed", StringComparison.InvariantCulture));
                 var ts = new TimeSpan();
                 var nc = 0;
                 var mc = 0;
@@ -266,7 +266,7 @@ namespace FreeCellSolver.Entry
                     nc += int.Parse(lines[l].Substring(idxStart, length).Replace(",", ""));
 
                     idxStart = lines[l].IndexOf("#moves: ") + "#moves: ".Length;
-                    mc += int.Parse(lines[l].Substring(idxStart));
+                    mc += int.Parse(lines[l][idxStart..]);
                 }
 
                 tests.Add((log.CreateDate, Path.GetFileNameWithoutExtension(log.Path), ts, count, nc, failed, (double)mc / count));

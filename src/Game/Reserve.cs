@@ -164,7 +164,7 @@ namespace FreeCellSolver.Game
                 sb.Append((value == Card.Nil ? "--" : Card.Get(value).ToString()));
                 if (i < 3)
                 {
-                    sb.Append(" ");
+                    sb.Append(' ');
                 }
             }
 

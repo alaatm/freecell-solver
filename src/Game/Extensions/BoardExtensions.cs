@@ -105,11 +105,11 @@ namespace FreeCellSolver.Game.Extensions
         public static string AsJson(this Board board)
         {
             var json = new StringBuilder();
-            json.Append("[");
+            json.Append('[');
             for (var i = 0; i < 8; i++)
             {
                 var t = board.Tableaus[i];
-                json.Append("[");
+                json.Append('[');
                 for (var j = 0; j < t.Size; j++)
                 {
                     json.Append($"{t[t.Size - j - 1].RawValue},");
@@ -167,7 +167,7 @@ namespace FreeCellSolver.Game.Extensions
                     tsSb.Append(t[j]);
                     if (j > 0)
                     {
-                        tsSb.Append(" ");
+                        tsSb.Append(' ');
                     }
                 }
                 tsSb.AppendLine(i < 7 ? "\")," : "\")");

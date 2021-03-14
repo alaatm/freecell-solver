@@ -16,7 +16,7 @@ namespace FreeCellSolver.Game.Extensions
         public static string AsJson(this IEnumerable<Move> moves)
         {
             var json = new StringBuilder();
-            json.Append("[");
+            json.Append('[');
             foreach (var move in moves)
             {
                 json.Append($"{{type:{(int)move.Type},from:{move.From},to:{move.To},size:{move.Size}}},");
