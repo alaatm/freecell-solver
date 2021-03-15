@@ -9,6 +9,7 @@ namespace FreeCellSolver.Solvers
     {
         private const int Arity = 4;
         private const int Log2Arity = 2;
+        private const int MinCapacity = 4;
 
         private readonly HashSet<T> _hash;
 
@@ -19,16 +20,16 @@ namespace FreeCellSolver.Solvers
 
         public PriorityQueue()
         {
-            _nodes = Array.Empty<T>();
-            _hash = new();
+            _nodes = new T[MinCapacity];
+            _hash = new(MinCapacity);
         }
 
         public PriorityQueue(int initialCapacity)
         {
             Debug.Assert(initialCapacity > 0);
 
-            _nodes = new T[initialCapacity];
-            _hash = new(initialCapacity);
+            _nodes = new T[Math.Max(initialCapacity, MinCapacity)];
+            _hash = new(Math.Max(initialCapacity, MinCapacity));
         }
 
         public void Enqueue(T element)
@@ -39,7 +40,7 @@ namespace FreeCellSolver.Solvers
 
             if (_nodes.Length == currentSize)
             {
-                Grow(currentSize + 1);
+                Array.Resize(ref _nodes, _nodes.Length * 2);
             }
 
             _hash.Add(element);
@@ -86,31 +87,6 @@ namespace FreeCellSolver.Solvers
                 Array.Clear(_nodes, 0, _size);
             }
             _size = 0;
-        }
-
-        private void Grow(int minCapacity)
-        {
-            Debug.Assert(_nodes.Length < minCapacity);
-
-            const int MaxArrayLength = 0X7FEFFFFF;
-            const int GrowFactor = 2;
-            const int MinimumGrow = 4;
-
-            var newCapacity = GrowFactor * _nodes.Length;
-
-            if ((uint)newCapacity > MaxArrayLength)
-            {
-                newCapacity = MaxArrayLength;
-            }
-
-            newCapacity = Math.Max(newCapacity, _nodes.Length + MinimumGrow);
-
-            if (newCapacity < minCapacity)
-            {
-                newCapacity = minCapacity;
-            }
-
-            Array.Resize(ref _nodes, newCapacity);
         }
 
         private void RemoveRootNode()
