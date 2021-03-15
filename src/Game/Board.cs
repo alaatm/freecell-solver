@@ -8,14 +8,16 @@ using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
-    public sealed class Board : IEquatable<Board>
+    public sealed class Board : IEquatable<Board>, IComparable<Board>
     {
         private int _hashcode = 0;
 
-        public int ManualMoveCount { get; private set; }
+        internal int _cost = 0;
+        internal int _manualMoveCount = 0;
+
         public int AutoMoveCount { get; private set; }
         public int MovesEstimated { get; private set; }
-        public int MoveCount => ManualMoveCount + AutoMoveCount;
+        public int MoveCount => _manualMoveCount + AutoMoveCount;
 
         public List<Move> AutoMoves { get; private set; }
         public Move LastMove { get; private set; }
@@ -26,8 +28,6 @@ namespace FreeCellSolver.Game
         public Tableaus Tableaus { get; }
 
         public bool IsSolved => MovesEstimated == 0;
-
-        public int Cost { get; private set; }
 
         public Board(Tableaus tableaus) : this(new Reserve(), new Foundation(), tableaus) { }
 
@@ -45,7 +45,7 @@ namespace FreeCellSolver.Game
             Reserve = copy.Reserve.Clone();
             Foundation = copy.Foundation.Clone();
 
-            ManualMoveCount = copy.ManualMoveCount;
+            _manualMoveCount = copy._manualMoveCount;
             AutoMoveCount = copy.AutoMoveCount;
             MovesEstimated = copy.MovesEstimated;
             LastMove = copy.LastMove;
@@ -215,7 +215,7 @@ namespace FreeCellSolver.Game
         {
             var copy = Clone();
 
-            copy.ManualMoveCount++;
+            copy._manualMoveCount++;
             copy.LastMove = move;
             copy.Prev = this;
 
@@ -312,8 +312,10 @@ namespace FreeCellSolver.Game
             Debug.Assert(AllCards.Count() == 52 && new HashSet<Card>(AllCards).Count == 52);
         }
 
-        public int ComputeCost(bool factorPastMoves)
+        public void ComputeCost()
         {
+            Debug.Assert(_cost == 0);
+
             var foundation = Foundation;
             var tableaus = Tableaus;
 
@@ -328,14 +330,7 @@ namespace FreeCellSolver.Game
                 unsortedSize += t.Size - t.SortedSize;
             }
 
-            var cost = MovesEstimated + unsortedSize + (4 - Reserve.FreeCount) + colorDiff;
-            if (factorPastMoves)
-            {
-                cost += ManualMoveCount;
-            }
-
-            Cost = cost;
-            return cost;
+            _cost = MovesEstimated + unsortedSize + (4 - Reserve.FreeCount) + colorDiff;
         }
 
         public Board Clone() => new Board(this);
@@ -380,6 +375,9 @@ namespace FreeCellSolver.Game
 
             return sb.ToString();
         }
+
+        public int CompareTo(Board other)
+            => ((_cost << 8) | _manualMoveCount) - ((other._cost << 8) | other._manualMoveCount);
 
         #region Equality overrides and overloads
         public bool Equals(Board other)

@@ -49,16 +49,6 @@ Use the `-d <n>` to specify which deal number to solve. For example, to solve de
 ./dist/release/fc-solve run -d 200
 ```
 
-### Requesting best solution to be found
-
-Use the `-b` option to ask the solver to try harder in finding the best solution with the least amount of moves:
-
-```
-./dist/release/fc-solve run -d 200 -b
-```
-
-When this option is set, the solver will take more time to complete but a better result could be returned.
-
 ### Visualizing solution
 
 You can ask the solver to output solution visualization using the `-v <PATH>`, this will output an html file:

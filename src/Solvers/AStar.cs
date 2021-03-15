@@ -15,7 +15,7 @@ namespace FreeCellSolver.Solvers
         public int VisitedNodes { get; private set; }
         public int Threads { get; private set; }
 
-        public static AStar Run(Board board, bool best)
+        public static AStar Run(Board board)
         {
             var clone = board.Clone();
             clone.RootAutoPlay();
@@ -25,20 +25,13 @@ namespace FreeCellSolver.Solvers
             _closed = new ConcurrentDictionary<Board, byte>(1, 1000);
 
             var astar = new AStar();
-            if (best)
-            {
-                astar.SearchBest(clone, 0);
-            }
-            else
-            {
-                astar.SearchFast(clone, 0);
-            }
+            astar.Search(clone, 0);
             astar.Threads = 1;
             astar.VisitedNodes = _closed.Count;
             return astar;
         }
 
-        public static async Task<AStar> RunParallelAsync(Board board, bool best)
+        public static async Task<AStar> RunParallelAsync(Board board)
         {
             var clone = board.Clone();
             clone.RootAutoPlay();
@@ -48,17 +41,7 @@ namespace FreeCellSolver.Solvers
             _closed = new ConcurrentDictionary<Board, byte>(states.Count, 1000);
             var astar = new AStar();
 
-            var tasks = states.Select((b, i) => Task.Run(() =>
-            {
-                if (best)
-                {
-                    astar.SearchBest(b, i);
-                }
-                else
-                {
-                    astar.SearchFast(b, i);
-                }
-            }));
+            var tasks = states.Select((b, i) => Task.Run(() => astar.Search(b, i)));
             await Task.WhenAll(tasks).ConfigureAwait(false);
             astar.Threads = states.Count;
             astar.VisitedNodes = _closed.Count;
@@ -72,10 +55,10 @@ namespace FreeCellSolver.Solvers
             GC.Collect();
         }
 
-        private void SearchFast(Board root, int stateId)
+        private void Search(Board root, int stateId)
         {
-            var open = new PriorityQueue();
-            open.Enqueue(root, 0);
+            var open = new PriorityQueue<Board>();
+            open.Enqueue(root);
 
             while (open.Count != 0)
             {
@@ -98,51 +81,17 @@ namespace FreeCellSolver.Solvers
                         continue;
                     }
 
-                    if (!open.Contains(next))
-                    {
-                        open.Enqueue(next, next.ComputeCost(false));
-                    }
-                }
-            }
-        }
-
-        private void SearchBest(Board root, int stateId)
-        {
-            var open = new DynamicPriorityQueue();
-            open.Enqueue(root, 0);
-
-            while (open.Count != 0)
-            {
-                var board = open.Dequeue();
-
-                if (board.IsSolved || SolvedBoard is not null)
-                {
-                    Finalize(board, stateId);
-                    break;
-                }
-
-                _closed.TryAdd(board, 1);
-
-                foreach (var move in board.GetValidMoves())
-                {
-                    var next = board.ExecuteMove(move);
-
-                    if (_closed.ContainsKey(next))
-                    {
-                        continue;
-                    }
-
-                    var nextCost = next.ComputeCost(true);
+                    next.ComputeCost();
 
                     var found = open.TryGetValue(next, out var existing);
-                    if (found && nextCost < existing.Cost)
+                    if (found && next.CompareTo(existing) < 0)
                     {
                         open.Remove(existing);
-                        open.Enqueue(next, nextCost);
+                        open.Enqueue(next);
                     }
                     else if (!found)
                     {
-                        open.Enqueue(next, nextCost);
+                        open.Enqueue(next);
                     }
                 }
             }

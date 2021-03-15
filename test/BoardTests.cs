@@ -712,7 +712,7 @@ namespace FreeCellSolver.Test
             var lastMove = b2.LastMove;
             Assert.True(lastMove.Type == move.Type && lastMove.From == move.From && lastMove.To == move.To && lastMove.Size == move.Size);
             Assert.Equal(b1, b2.Prev);
-            Assert.Equal(1, b2.ManualMoveCount);
+            Assert.Equal(1, b2._manualMoveCount);
         }
 
         [Fact]
@@ -894,7 +894,7 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToFoundation, 0));
 
             // Assert
-            Assert.Equal(1, b.ManualMoveCount);
+            Assert.Equal(1, b._manualMoveCount);
             Assert.Equal(2, b.AutoMoveCount);
             Assert.Equal(3, b.MoveCount);
             Assert.Equal(2, b.AutoMoves.Count);
@@ -926,7 +926,7 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void ComputeCost_no_pastMovesFactor_computes_cost_without_factoring_past_moves_count()
+        public void ComputeCost_computes_cost()
         {
             /* 
              * CC DD HH SS
@@ -966,56 +966,8 @@ namespace FreeCellSolver.Test
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
-            b.ComputeCost(false);
-            Assert.Equal(68, b.Cost);
-        }
-
-        [Fact]
-        public void ComputeCost_with_pastMovesFactor_computes_cost_factoring_past_moves_count()
-        {
-            /* 
-             * CC DD HH SS
-             * -- -- 3H 2S              colorDiff       = abs(0 + 2 - 0 - 3)   = 1
-             *                          movesEstimated  = 52 - (0 + 0 + 3 + 2) = 47
-             * aa bb cc dd
-             * QC QH -- 9D              occupied        = 4 - 1                = 3
-             * 
-             * 00 01 02 03 04 05 06 07  unsorted_size                          = 18
-             * -- -- -- -- -- -- -- --
-             * KC 5D TS 3S 9C TH 4D QD
-             *    AC 7H 5S 4S 7S 5C JS
-             *    2D 8H 4H JC 6D AD TD
-             *    KS    3C JH    9S   
-             *    KH       8S    8D   
-             *    6S       KD    7C   
-             *    4C       QS    6H   
-             *    3D       JD         
-             *    2C       TC         
-             *             9H         
-             *             8C         
-             *             7D         
-             *             6C         
-             *             5H         
-             */
-            var r = new Reserve("QC", null, null, "9D");
-            var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
-            var t0 = new Tableau("KC QH");                                      // unsorted = 0
-            var t1 = new Tableau("5D AC 2D KS KH 6S 4C 3D 2C");                 // unsorted = 6
-            var t2 = new Tableau("TS 7H 8H");                                   // unsorted = 2
-            var t3 = new Tableau("3S 5S 4H 3C");                                // unsorted = 1
-            var t4 = new Tableau("9C 4S JC JH 8S KD QS JD TC 9H 8C 7D 6C 5H");  // unsorted = 5
-            var t5 = new Tableau("TH 7S 6D");                                   // unsorted = 1
-            var t6 = new Tableau("4D 5C AD 9S 8D 7C 6H");                       // unsorted = 3
-            var t7 = new Tableau("QD JS TD");                                   // unsorted = 0
-            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
-            var b = new Board(r, f, ts);
-            Assert.True(b.IsValid());
-
-            // Make a single move
-            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 1));
-
-            b.ComputeCost(true);
-            Assert.Equal(70, b.Cost); // 69 cost + 1 move
+            b.ComputeCost();
+            Assert.Equal(68, b._cost);
         }
 
         [Fact]
@@ -1080,7 +1032,7 @@ namespace FreeCellSolver.Test
 
             var b2 = b1.Clone();
             Assert.True(b1 == b2);
-            Assert.Equal(b1.ManualMoveCount, b2.ManualMoveCount);
+            Assert.Equal(b1._manualMoveCount, b2._manualMoveCount);
             Assert.Equal(b1.AutoMoveCount, b2.AutoMoveCount);
             Assert.Equal(b1.MovesEstimated, b2.MovesEstimated);
         }
@@ -1106,6 +1058,35 @@ TD 7S JD 7H 8H JH JC 7D
 5S QH 8C 9D KS QD 4H AC
 2H TC TH 6D 6H 6C QC JS
 9S AD 7C TS            ", b.ToString());
+        }
+
+        [Theory]
+        [InlineData(10, 0, 99, 0, -1)]
+        [InlineData(10, 99, 99, 0, -1)]
+        [InlineData(10, 0, 99, 99, -1)]
+        [InlineData(99, 0, 10, 0, 1)]
+        [InlineData(99, 99, 10, 0, 1)]
+        [InlineData(99, 0, 10, 99, 1)]
+        [InlineData(10, 10, 10, 10, 0)]
+        public void ComparisonTests(int b1Cost, int b1MoveCount, int b2Cost, int b2MoveCount, int expected)
+        {
+            // Arrange
+            var b1 = Board.FromDealNum(1);
+            b1._cost = b1Cost;
+            b1._manualMoveCount = b1MoveCount;
+
+            var b2 = Board.FromDealNum(1);
+            b2._cost = b2Cost;
+            b2._manualMoveCount = b2MoveCount;
+
+            // Act
+            var result = b1.CompareTo(b2);
+
+            // Assert
+            Assert.True(
+                (expected < 0 && result < 0) ||
+                (expected > 0 && result > 0) ||
+                (expected == 0 && result == 0));
         }
 
         [Fact]

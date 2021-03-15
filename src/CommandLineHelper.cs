@@ -35,7 +35,7 @@ namespace FreeCellSolver.Entry
                     var optType = benchmarksRunCmd
                         .Option<string>(
                             "-p|--type <TYPE>",
-                            $"Executes solver against short (1500) or full (32000) deals{Environment.NewLine}Allowed values are: short, full",
+                            $"Executes solver against short (1500) or full (32000) deals",
                             CommandOptionType.SingleValue)
                         .Accepts(x => x.Values("short", "full"))
                         .IsRequired();
@@ -104,12 +104,6 @@ namespace FreeCellSolver.Entry
                         CommandOptionType.SingleValue)
                     .Accepts(n => n.Range(1, int.MaxValue));
 
-                var optBest = runCmd
-                    .Option<bool>(
-                        "-b|--best",
-                        "Attempts to find a solution with the least amount of manual moves.",
-                        CommandOptionType.NoValue);
-
                 var optVisualize = runCmd
                     .Option<string>(
                         "-v|--visualize <PATH>",
@@ -119,7 +113,7 @@ namespace FreeCellSolver.Entry
 
                 runCmd.OnExecuteAsync(async (_) =>
                 {
-                    await RunSingleAsync(optDeal.ParsedValue, optBest.HasValue(), optVisualize.ParsedValue).ConfigureAwait(false);
+                    await RunSingleAsync(optDeal.ParsedValue, optVisualize.ParsedValue).ConfigureAwait(false);
                     return 0;
                 });
 
@@ -160,15 +154,15 @@ namespace FreeCellSolver.Entry
             using var fs = File.CreateText(path);
             for (var i = 1; i <= count; i++)
             {
-                await ExecuteAsync(fs, i, false).ConfigureAwait(false);
+                await ExecuteAsync(fs, i).ConfigureAwait(false);
             }
             return;
         }
 
-        static async Task RunSingleAsync(int dealNum, bool best, string visualizePath)
+        static async Task RunSingleAsync(int dealNum, string visualizePath)
         {
             var b = Board.FromDealNum(dealNum);
-            var s = await ExecuteAsync(Console.Out, dealNum, b, best).ConfigureAwait(false);
+            var s = await ExecuteAsync(Console.Out, dealNum, b).ConfigureAwait(false);
 
             if (s.SolvedBoard != null)
             {
@@ -209,9 +203,9 @@ namespace FreeCellSolver.Entry
             fs.Close();
         }
 
-        static Task<AStar> ExecuteAsync(TextWriter writer, int deal, bool best) => ExecuteAsync(writer, deal, Board.FromDealNum(deal), best);
+        static Task<AStar> ExecuteAsync(TextWriter writer, int deal) => ExecuteAsync(writer, deal, Board.FromDealNum(deal));
 
-        static async Task<AStar> ExecuteAsync(TextWriter writer, int deal, Board b, bool best)
+        static async Task<AStar> ExecuteAsync(TextWriter writer, int deal, Board b)
         {
             if (writer != Console.Out)
             {
@@ -219,7 +213,7 @@ namespace FreeCellSolver.Entry
             }
             writer.WriteLine($"Processing deal #{deal}");
             _sw.Restart();
-            var solver = await AStar.RunParallelAsync(b, best).ConfigureAwait(false);
+            var solver = await AStar.RunParallelAsync(b).ConfigureAwait(false);
             _sw.Stop();
             if (writer != Console.Out)
             {

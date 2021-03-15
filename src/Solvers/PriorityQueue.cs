@@ -1,109 +1,191 @@
+﻿using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
-using FreeCellSolver.Game;
 
 namespace FreeCellSolver.Solvers
 {
-    public class PriorityQueue
+    public class PriorityQueue<T> where T : IComparable<T>, IEquatable<T>
     {
-        private readonly HashSet<Board> _hash = new HashSet<Board>();
-        private readonly SortedList<int, Queue<Board>> _costMap = new SortedList<int, Queue<Board>>();
+        private const int Arity = 4;
+        private const int Log2Arity = 2;
 
-        public int Count => _hash.Count;
+        private readonly HashSet<T> _hash;
 
-        public void Enqueue(Board board, int cost)
+        private T[] _nodes;
+        private int _size;
+
+        public int Count => _size;
+
+        public PriorityQueue()
         {
-            Debug.Assert(!_hash.Contains(board));
-            _hash.Add(board);
-
-            if (!_costMap.ContainsKey(cost))
-            {
-                _costMap.Add(cost, new Queue<Board>());
-            }
-
-            _costMap[cost].Enqueue(board);
+            _nodes = Array.Empty<T>();
+            _hash = new();
         }
 
-        public Board Dequeue()
+        public PriorityQueue(int initialCapacity)
         {
-            var (keyMin, valMin) = _costMap.Min();
+            Debug.Assert(initialCapacity > 0);
 
-            var best = valMin.Dequeue();
-            _hash.Remove(best);
-
-            if (valMin.Count == 0)
-            {
-                _costMap.Remove(keyMin);
-            }
-
-            return best;
+            _nodes = new T[initialCapacity];
+            _hash = new(initialCapacity);
         }
 
-        public bool Contains(Board equalValue) => _hash.Contains(equalValue);
-    }
-
-    // Same as PriorityQueue above except that it supports removing items at arbitrary locations.
-    public class DynamicPriorityQueue
-    {
-        private readonly HashSet<Board> _hash = new HashSet<Board>();
-        private readonly SortedList<int, List<Board>> _costMap = new SortedList<int, List<Board>>();
-
-        public int Count => _hash.Count;
-
-        public void Enqueue(Board board, int cost)
+        public void Enqueue(T element)
         {
-            Debug.Assert(!_hash.Contains(board));
-            _hash.Add(board);
+            Debug.Assert(!_hash.Contains(element));
 
-            if (!_costMap.ContainsKey(cost))
+            var currentSize = _size++;
+
+            if (_nodes.Length == currentSize)
             {
-                _costMap.Add(cost, new List<Board>());
+                Grow(currentSize + 1);
             }
 
-            _costMap[cost].Add(board);
+            _hash.Add(element);
+            MoveUp(element, currentSize);
         }
 
-        public Board Dequeue()
+        public T Dequeue()
         {
-            var (keyMin, valMin) = _costMap.Min();
+            Debug.Assert(_size > 0);
 
-            var best = valMin[0];
-            valMin.RemoveAt(0);
-            _hash.Remove(best);
-
-            if (valMin.Count == 0)
-            {
-                _costMap.Remove(keyMin);
-            }
-
-            return best;
+            var element = _nodes[0];
+            _hash.Remove(element);
+            RemoveRootNode();
+            return element;
         }
 
-        public bool TryGetValue(Board equalValue, out Board actualValue) => _hash.TryGetValue(equalValue, out actualValue);
-
-        public bool Remove(Board board)
+        public void Remove(T element)
         {
-            var removed = _hash.Remove(board);
-            if (!removed)
+            Debug.Assert(_hash.Contains(element));
+
+            _hash.Remove(element);
+            var index = _nodes.AsSpan().IndexOf(element);
+
+            _size--;
+            if (index < _size)
             {
-                return false;
+                Unsafe.CopyBlock(
+                    ref Unsafe.As<T, byte>(ref _nodes[index]),
+                    ref Unsafe.As<T, byte>(ref _nodes[index + 1]),
+                    (uint)(Unsafe.SizeOf<T>() * (_size - index)));
             }
-
-            var cost = board.Cost;
-            var list = _costMap[cost];
-            list.Remove(board);
-
-            if (list.Count == 0)
+            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
-                _costMap.Remove(cost);
+                _nodes[_size] = default;
             }
-
-            return true;
         }
-    }
 
-    public static class SortedListExtensions
-    {
-        public static (K keyMin, V valMin) Min<K, V>(this SortedList<K, V> dict) => (dict.Keys[0], dict.Values[0]);
+        public bool TryGetValue(T equalValue, out T actualValue) => _hash.TryGetValue(equalValue, out actualValue);
+
+        public void Clear()
+        {
+            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+            {
+                Array.Clear(_nodes, 0, _size);
+            }
+            _size = 0;
+        }
+
+        private void Grow(int minCapacity)
+        {
+            Debug.Assert(_nodes.Length < minCapacity);
+
+            const int MaxArrayLength = 0X7FEFFFFF;
+            const int GrowFactor = 2;
+            const int MinimumGrow = 4;
+
+            var newCapacity = GrowFactor * _nodes.Length;
+
+            if ((uint)newCapacity > MaxArrayLength)
+            {
+                newCapacity = MaxArrayLength;
+            }
+
+            newCapacity = Math.Max(newCapacity, _nodes.Length + MinimumGrow);
+
+            if (newCapacity < minCapacity)
+            {
+                newCapacity = minCapacity;
+            }
+
+            Array.Resize(ref _nodes, newCapacity);
+        }
+
+        private void RemoveRootNode()
+        {
+            var lastNodeIndex = _size - 1;
+            var lastNode = _nodes[lastNodeIndex];
+            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+            {
+                _nodes[lastNodeIndex] = default;
+            }
+
+            _size--;
+
+            MoveDown(lastNode, 0);
+        }
+
+        private static int GetParentIndex(int index) => (index - 1) >> Log2Arity;
+
+        private static int GetFirstChildIndex(int index) => (index << Log2Arity) + 1;
+
+        private void MoveUp(T node, int nodeIndex)
+        {
+            var nodes = _nodes;
+
+            while (nodeIndex > 0)
+            {
+                var parentIndex = GetParentIndex(nodeIndex);
+                var parent = nodes[parentIndex];
+
+                if (node.CompareTo(parent) < 0)
+                {
+                    nodes[nodeIndex] = parent;
+                    nodeIndex = parentIndex;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            nodes[nodeIndex] = node;
+        }
+
+        private void MoveDown(T node, int nodeIndex)
+        {
+            var nodes = _nodes;
+            var size = _size;
+
+            int i;
+            while ((i = GetFirstChildIndex(nodeIndex)) < size)
+            {
+                var minChild = nodes[i];
+                var minChildIndex = i;
+
+                var childIndexUpperBound = Math.Min(i + Arity, size);
+                while (++i < childIndexUpperBound)
+                {
+                    var nextChild = nodes[i];
+                    if (nextChild.CompareTo(minChild) < 0)
+                    {
+                        minChild = nextChild;
+                        minChildIndex = i;
+                    }
+                }
+
+                if (node.CompareTo(minChild) <= 0)
+                {
+                    break;
+                }
+
+                nodes[nodeIndex] = minChild;
+                nodeIndex = minChildIndex;
+            }
+
+            nodes[nodeIndex] = node;
+        }
     }
 }
