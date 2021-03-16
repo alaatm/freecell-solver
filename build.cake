@@ -1,6 +1,6 @@
-#addin nuget:?package=Cake.Yarn&version=0.4.6
-#addin nuget:?package=Cake.Coverlet&version=2.4.2
-#tool nuget:?package=ReportGenerator&version=4.5.8
+#addin nuget:?package=Cake.Yarn&version=0.4.8
+#addin nuget:?package=Cake.Coverlet&version=2.5.4
+#tool nuget:?package=ReportGenerator&version=4.8.7
 
 //////////////////////////////////////////////////////////////////////
 // ARGUMENTS

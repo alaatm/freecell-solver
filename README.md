@@ -4,10 +4,10 @@ A freecell solver implemented using [A* search algorithm](https://en.wikipedia.o
 
 ## Build
 
-Make sure you have [.net core 3.0 or later SDK](https://dotnet.microsoft.com/download) installed then run the following command in the terminal:
+Make sure you have [.net 5 or later SDK](https://dotnet.microsoft.com/download) installed then run the following command in the terminal:
 
 ```
-./build
+dotnet cake
 ```
 
 ## Run
