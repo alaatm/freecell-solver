@@ -79,7 +79,7 @@ namespace FreeCellSolver.Test
              * 
              * Max allowed: 4
              * Possible to move 5 from 0 to 1 but should only move 4, 3, 2, 1 stack(s)
-             * Valid moves: 0->1(4), 0->1(3), 0->1(2), 0->1(1), 2->1(1), 3->1(1), 5->1(1), 6->1(1)
+             * Valid moves: 0->1(4), 2->1(1), 3->1(1), 5->1(1), 6->1(1)
              */
 
             // Arrange
@@ -99,12 +99,12 @@ namespace FreeCellSolver.Test
             var moves = b.GetValidMoves();
 
             // Assert
-            Assert.Equal(8, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
+            Assert.Equal(5, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
             Assert.All(moves.Where(m => m.Type == MoveType.TableauToTableau), m => Assert.True(m.To == 1));
         }
 
         [Fact]
-        public void GetValidMoves_moves_part_of_tableau_to_empty_one_when_first_tableau_is_fully_sorted()
+        public void GetValidMoves_skips_partial_moves_of_sorted_tableau_to_empty_one()
         {
             /*
              * CC DD HH SS
@@ -124,7 +124,7 @@ namespace FreeCellSolver.Test
              *                   5H   
              * 
              * Max allowed: 4
-             * Valid moves: 0->1(2), 0->1(1), 2->1(1), 3->1(1), 4->1(1), 5->1(1), 6->1(1)
+             * Valid moves: 2->1(1), 3->1(1), 4->1(1), 5->1(1), 6->1(1)
              */
 
             // Arrange
@@ -145,8 +145,8 @@ namespace FreeCellSolver.Test
             var moves = b.GetValidMoves();
 
             // Assert
-            Assert.Equal(7, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
-            Assert.Equal(2, moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 0 && m.To == 1).Count());
+            Assert.Equal(5, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
+            Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 0 && m.To == 1));
             Assert.All(moves.Where(m => m.Type == MoveType.TableauToTableau), m => Assert.True(m.To == 1));
         }
 
