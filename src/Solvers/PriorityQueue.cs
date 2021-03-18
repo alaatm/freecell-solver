@@ -67,10 +67,7 @@ namespace FreeCellSolver.Solvers
             _size--;
             if (index < _size)
             {
-                Unsafe.CopyBlock(
-                    ref Unsafe.As<T, byte>(ref _nodes[index]),
-                    ref Unsafe.As<T, byte>(ref _nodes[index + 1]),
-                    (uint)(Unsafe.SizeOf<T>() * (_size - index)));
+                Array.Copy(_nodes, index + 1, _nodes, index, _size - index);
             }
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
