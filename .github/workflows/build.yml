@@ -15,15 +15,14 @@ jobs:
 
       - name: restore cake tool
         run: dotnet tool restore
-
-      - name: run build script
-        run: dotnet cake --configuration debug
-
         env:
           DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
           DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
-      - run: dotnet cake --target cover
+      - name: run build script
+        run: dotnet cake
+
+      - run: dotnet cake --configuration debug --target cover
 
       - uses: coverallsapp/github-action@master
         with:

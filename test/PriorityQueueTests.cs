@@ -10,25 +10,23 @@ namespace FreeCellSolver.Test
         public void EnqueueDequeue_respects_priority_order()
         {
             // Arrange
-            var pq = new PriorityQueue<Node>();
-            var node1 = new Node("1", 3);
-            var node2 = new Node("2", 2);
-            var node3 = new Node("3", 1);
+            var rnd = new Random();
+            var pq = new PriorityQueue<Node>(500);
 
             // Act
-            pq.Enqueue(node1);
-            pq.Enqueue(node2);
-            pq.Enqueue(node3);
-            Assert.Equal(3, pq.Count);
-            var n1 = pq.Dequeue();
-            var n2 = pq.Dequeue();
-            var n3 = pq.Dequeue();
-            Assert.Equal(0, pq.Count);
+            for (var i = 0; i < 500; i++)
+            {
+                pq.Enqueue(new Node(i.ToString(), rnd.Next(500)));
+            }
 
             // Assert
-            Assert.Same(node3, n1);
-            Assert.Same(node2, n2);
-            Assert.Same(node1, n3);
+            var min = int.MinValue;
+            for (var i = 0; i < 500; i++)
+            {
+                var priority = pq.Dequeue().Priority;
+                Assert.True(priority >= min);
+                min = priority;
+            }
         }
 
         [Fact]
