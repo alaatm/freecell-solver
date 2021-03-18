@@ -100,15 +100,18 @@ namespace FreeCellSolver.Game
                 for (var t = 0; t < 8; t++)
                 {
                     var tableau = tableaus[t];
+                    var emptyTarget = tableau.IsEmpty;
+
+                    // Skip move to empty if we've already made a similar move to another empty tableau
+                    if (alreadyMovedToEmpty && emptyTarget)
+                    {
+                        continue;
+                    }
 
                     if (reserve.CanMove(r, tableau))
                     {
                         var move = Move.Get(MoveType.ReserveToTableau, r, t);
-                        var emptyTarget = tableau.IsEmpty;
-                        // Skip move to empty if we've already made a similar
-                        // move to another empty tableau or the move is a reverse of last move
-                        // i.e. skip when move.IsReverseOf(lastMove) || (emptyTarget && alreadyMovedToEmpty) is true
-                        if (!move.IsReverseOf(lastMove) && (!emptyTarget || !alreadyMovedToEmpty))
+                        if (!move.IsReverseOf(lastMove))
                         {
                             _moves.Add(move);
                             alreadyMovedToEmpty = emptyTarget || alreadyMovedToEmpty;
