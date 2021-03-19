@@ -393,12 +393,12 @@ namespace FreeCellSolver.Game
         {
             Debug.Assert(other is not null);
 
-            if (!Reserve.Equals(other.Reserve))
+            if (!Foundation.Equals(other.Foundation))
             {
                 return false;
             }
 
-            if (!Foundation.Equals(other.Foundation))
+            if (!Reserve.Equals(other.Reserve))
             {
                 return false;
             }
