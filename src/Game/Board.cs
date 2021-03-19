@@ -312,14 +312,34 @@ namespace FreeCellSolver.Game
                 foundation[Suits.Clubs] + foundation[Suits.Spades] -
                 foundation[Suits.Diamonds] - foundation[Suits.Hearts]);
 
+            var suitsFound = 0;
+            var numBuried = 0;
             var unsortedSize = 0;
             for (var i = 0; i < 8; i++)
             {
                 var t = tableaus[i];
-                unsortedSize += t.Size - t.SortedSize;
+                var size = t.Size;
+                unsortedSize += size - t.SortedSize;
+
+                if (suitsFound < 4)
+                {
+                    for (var j = 0; j < size; j++)
+                    {
+                        if (foundation.CanPush(t[j]))
+                        {
+                            numBuried += j;
+                            suitsFound++;
+                        }
+                    }
+                }
             }
 
-            _cost = MovesEstimated + unsortedSize + (4 - Reserve.FreeCount) + colorDiff;
+            _cost =
+                (MovesEstimated * 2)        // Less cards at foundation is costly by a factor of 2
+                + unsortedSize              // Unsored tableaues are a disadvantage
+                + (4 - Reserve.FreeCount)   // Fewer free cells is a disadvantage
+                + colorDiff                 // Greater color variance at foundation is a disadvantage
+                + numBuried;                // Deeply buried cards that are next to be placed at foundation is a disadvantage
         }
 
         public Board Clone() => new Board(this);

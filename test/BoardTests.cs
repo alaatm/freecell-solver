@@ -930,14 +930,14 @@ namespace FreeCellSolver.Test
         {
             /* 
              * CC DD HH SS
-             * -- -- 3H 2S              colorDiff       = abs(0 + 2 - 0 - 3)   = 1
-             *                          movesEstimated  = 52 - (0 + 0 + 3 + 2) = 47
+             * -- -- 3H 2S              colorDiff       = abs(0 + 2 - 0 - 3)            = 1
+             *                          movesEstimated  = 52 - (0 + 0 + 3 + 2) = 47 * 2 = 94
              * aa bb cc dd
-             * QC -- -- 9D              occupied        = 4 - 2                = 2
+             * QC -- -- 9D              occupied        = 4 - 2                         = 2
              * 
-             * 00 01 02 03 04 05 06 07  unsorted_size                          = 18
+             * 00 01 02 03 04 05 06 07  unsorted_size                                   = 18
              * -- -- -- -- -- -- -- --
-             * KC 5D TS 3S 9C TH 4D QD
+             * KC 5D TS 3S 9C TH 4D QD  num_buried                                      = 15
              * QH AC 7H 5S 4S 7S 5C JS
              *    2D 8H 4H JC 6D AD TD
              *    KS    3C JH    9S   
@@ -954,20 +954,20 @@ namespace FreeCellSolver.Test
              */
             var r = new Reserve("QC", null, null, "9D");
             var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
-            var t0 = new Tableau("KC QH");                                      // unsorted = 0
-            var t1 = new Tableau("5D AC 2D KS KH 6S 4C 3D 2C");                 // unsorted = 6
-            var t2 = new Tableau("TS 7H 8H");                                   // unsorted = 2
-            var t3 = new Tableau("3S 5S 4H 3C");                                // unsorted = 1
-            var t4 = new Tableau("9C 4S JC JH 8S KD QS JD TC 9H 8C 7D 6C 5H");  // unsorted = 5
-            var t5 = new Tableau("TH 7S 6D");                                   // unsorted = 1
-            var t6 = new Tableau("4D 5C AD 9S 8D 7C 6H");                       // unsorted = 3
-            var t7 = new Tableau("QD JS TD");                                   // unsorted = 0
+            var t0 = new Tableau("KC QH");                                      // unsorted = 0, buried = 0
+            var t1 = new Tableau("5D AC 2D KS KH 6S 4C 3D 2C");                 // unsorted = 6, buried = 7
+            var t2 = new Tableau("TS 7H 8H");                                   // unsorted = 2, buried = 0
+            var t3 = new Tableau("3S 5S 4H 3C");                                // unsorted = 1, buried = 4 - 3 for (3S), 1 for (4H)
+            var t4 = new Tableau("9C 4S JC JH 8S KD QS JD TC 9H 8C 7D 6C 5H");  // unsorted = 5, buried = 0
+            var t5 = new Tableau("TH 7S 6D");                                   // unsorted = 1, buried = 0
+            var t6 = new Tableau("4D 5C AD 9S 8D 7C 6H");                       // unsorted = 3, buried = 4
+            var t7 = new Tableau("QD JS TD");                                   // unsorted = 0, buried = 0
             var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
             b.ComputeCost();
-            Assert.Equal(68, b._cost);
+            Assert.Equal(130, b._cost);
         }
 
         [Fact]
