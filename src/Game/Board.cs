@@ -80,11 +80,10 @@ namespace FreeCellSolver.Game
             // 2. Tableau -> Foundation
             for (var t = 0; t < 8; t++)
             {
-                var tableau = tableaus[t];
-                if (tableau.CanMove(foundation))
+                if (tableaus[t].CanMove(foundation))
                 {
                     _moves.Add(Move.Get(MoveType.TableauToFoundation, t));
-                    Debug.Assert(!foundation.CanAutoPlay(tableau.Top));
+                    Debug.Assert(!foundation.CanAutoPlay(tableaus[t].Top));
                 }
             }
 
