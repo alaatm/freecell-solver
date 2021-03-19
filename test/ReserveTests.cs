@@ -144,6 +144,47 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("AH"), clone[3]);
         }
 
+        [Theory]
+        [InlineData(",,,", ",,,", true)]
+        [InlineData("AC,,,", "AC,,,", true)]
+        [InlineData("AC,,,", ",AC,,", true)]
+        [InlineData("AC,,,", ",,AC,", true)]
+        [InlineData("AC,,,", ",,,AC", true)]
+
+        [InlineData("AC,AD,,", "AD,AC,,", true)]
+        [InlineData("AC,AD,,", "AD,,AC,", true)]
+        [InlineData("AC,AD,,", "AD,,,AC", true)]
+        [InlineData("AC,AD,,", ",AD,AC,", true)]
+        [InlineData("AC,AD,,", ",AD,,AC", true)]
+        [InlineData("AC,AD,,", ",,AD,AC", true)]
+
+        [InlineData("AC,AD,,", "AC,AD,,", true)]
+        [InlineData("AC,AD,,", "AC,,AD,", true)]
+        [InlineData("AC,AD,,", "AC,,,AD", true)]
+        [InlineData("AC,AD,,", ",AC,AD,", true)]
+        [InlineData("AC,AD,,", ",AC,,AD", true)]
+        [InlineData("AC,AD,,", ",,AC,AD", true)]
+
+        [InlineData("AC,,,", ",,,", false)]
+        [InlineData(",,,", "AC,,,", false)]
+
+        [InlineData("AC,AD,,", "AC,,,", false)]
+        [InlineData("AC,,,", "AC,AD,,", false)]
+        public void Equality_Tests(string cards1, string cards2, bool expected)
+        {
+            // Arrange
+            var c1 = cards1.Split(',');
+            var r1 = new Reserve(c1[0], c1[1], c1[2], c1[3]);
+            var c2 = cards2.Split(',');
+            var r2 = new Reserve(c2[0], c2[1], c2[2], c2[3]);
+
+            // Act
+            var equal = r1.Equals(r2);
+
+            // Assert
+            Assert.Equal(expected, equal);
+        }
+
         [Fact]
         public void ToString_returns_string_representation()
             => Assert.Equal($"01 02 03 04{Environment.NewLine}-- 5H -- KD", new Reserve(null, "5H", null, "KD").ToString());
