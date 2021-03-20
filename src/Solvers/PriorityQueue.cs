@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FreeCellSolver.Solvers
 {
-    public class PriorityQueue<T> where T : IComparable<T>, IEquatable<T>
+    public sealed class PriorityQueue<T> where T : IComparable<T>, IEquatable<T>
     {
         private const int Arity = 4;
         private const int Log2Arity = 2;
@@ -83,6 +83,7 @@ namespace FreeCellSolver.Solvers
             {
                 Array.Clear(_nodes, 0, _size);
             }
+
             _size = 0;
         }
 
@@ -96,7 +97,6 @@ namespace FreeCellSolver.Solvers
             }
 
             _size--;
-
             MoveDown(lastNode, 0);
         }
 
