@@ -202,7 +202,7 @@ namespace FreeCellSolver.Game
             for (var i = 0; i < size - 1; i++)
             {
                 var current = Card.Get(_state[size - i - 1]);
-                var above = Card.Get(_state[size - (i + 1) - 1]);
+                var above = Card.Get(_state[size - i - 2]);
                 if (current.IsBelow(above))
                 {
                     sortedSize++;
