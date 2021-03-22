@@ -1111,21 +1111,20 @@ TD 7S JD 7H 8H JH JC 7D
             b2 = b2.ExecuteMoveNoAutoPlay(Move.Get(MoveType.TableauToFoundation, 1));
             Assert.True(b1 == b2);
 
-            var tEmpty = new Tableau("");
-            b1 = new Board(new Reserve("AD", "AH"), new Foundation(), new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
-            b2 = new Board(new Reserve("AC", "AS"), new Foundation(), new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b1 = new Board(new Reserve("AD", "AH"), new Foundation(), new Tableaus());
+            b2 = new Board(new Reserve("AC", "AS"), new Foundation(), new Tableaus());
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
-            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD QS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS")));
+            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD QS")));
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
-            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS")));
+            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD")));
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
-            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD TS 9D"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS")));
+            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD TS 9D")));
             Assert.True(b1 != b2);
         }
 

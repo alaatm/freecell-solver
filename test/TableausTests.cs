@@ -66,8 +66,7 @@ namespace FreeCellSolver.Test
             var t0 = new Tableau("AC");
             var t1 = new Tableau("AD");
             var t3 = new Tableau("AH AS");
-            var tEmpty = new Tableau();
-            var ts = new Tableaus(t0, t1, tEmpty, t3, tEmpty, tEmpty, tEmpty, tEmpty);
+            var ts = new Tableaus(t0, t1, new Tableau(), t3);
             var allCards = ts.AllCards().ToList();
 
             // Assert
@@ -77,7 +76,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("AH"), allCards[2]);
             Assert.Equal(Card.Get("AS"), allCards[3]);
 
-            Assert.Empty(new Tableaus(tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty).AllCards());
+            Assert.Empty(new Tableaus().AllCards());
         }
     }
 }

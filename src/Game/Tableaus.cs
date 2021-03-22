@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -30,16 +31,19 @@ namespace FreeCellSolver.Game
             }
         }
 
-        public Tableaus(Tableau tableau1, Tableau tableau2, Tableau tableau3, Tableau tableau4, Tableau tableau5, Tableau tableau6, Tableau tableau7, Tableau tableau8)
+        public Tableaus(params Tableau[] tableaus)
         {
-            _state[0] = tableau1.Clone();
-            _state[1] = tableau2.Clone();
-            _state[2] = tableau3.Clone();
-            _state[3] = tableau4.Clone();
-            _state[4] = tableau5.Clone();
-            _state[5] = tableau6.Clone();
-            _state[6] = tableau7.Clone();
-            _state[7] = tableau8.Clone();
+            Debug.Assert(tableaus.Length <= 8);
+
+            for (var i = 0; i < tableaus.Length; i++)
+            {
+                _state[i] = tableaus[i].Clone();
+            }
+
+            for (var i = tableaus.Length; i < 8; i++)
+            {
+                _state[i] = new Tableau();
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
