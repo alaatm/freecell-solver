@@ -341,7 +341,7 @@ namespace FreeCellSolver.Game
                 + numBuried;                // Deeply buried cards that are next to be placed at foundation is a disadvantage
         }
 
-        public Board Clone() => new Board(this);
+        public Board Clone() => new(this);
 
         public IEnumerable<Move> GetMoves()
         {
@@ -462,7 +462,7 @@ namespace FreeCellSolver.Game
             return _hashcode;
         }
 
-        static readonly Random _rnd = new Random();
+        static readonly Random _rnd = new();
         static readonly int[] _reserveRand = new int[52];
         static readonly int[] _tableauUnsortedRand = new int[8];
         static readonly int[] _tableauSortedRand = new int[14];

@@ -7,7 +7,7 @@ namespace FreeCellSolver.Test
 {
     public class BoardExtensionsTests
     {
-        static readonly Board _b1 = new Board(new Tableaus(
+        static readonly Board _b1 = new(new Tableaus(
             new Tableau("JD KD 2S 4C 3S 6D 6S"),
             new Tableau("2D KC KS 5C TD 8S 9C"),
             new Tableau("9H 9S 9D TS 4S 8D 2H"),
@@ -18,7 +18,7 @@ namespace FreeCellSolver.Test
             new Tableau("5H 3H 3C 7S 7D TC")
         ));
 
-        static readonly Board _b2 = new Board(new Tableaus(
+        static readonly Board _b2 = new(new Tableaus(
             new Tableau("QD 4D TD 7S AH 3H AS"),
             new Tableau("QC JD JC 9D 9S AD 5S"),
             new Tableau("KC JS 8C KS TC 7H TH"),

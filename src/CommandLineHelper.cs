@@ -14,7 +14,7 @@ namespace FreeCellSolver.Entry
 {
     static class CommandLineHelper
     {
-        static readonly Stopwatch _sw = new Stopwatch();
+        static readonly Stopwatch _sw = new();
 
         public static CommandLineApplication BuildCmdParser()
         {

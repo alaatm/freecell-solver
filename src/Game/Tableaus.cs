@@ -59,7 +59,7 @@ namespace FreeCellSolver.Game
             _state[7] = copy._state[7].Clone();
         }
 
-        public Tableaus Clone() => new Tableaus(this);
+        public Tableaus Clone() => new(this);
 
         public override string ToString()
         {

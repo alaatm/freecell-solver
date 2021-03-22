@@ -6,7 +6,7 @@ namespace FreeCellSolver.Drawing
     public class DeckImage
     {
         private readonly SKImage _img;
-        private static readonly Lazy<DeckImage> _instance = new Lazy<DeckImage>(Initialize);
+        private static readonly Lazy<DeckImage> _instance = new(Initialize);
 
         public const int CardWidth = 140;
         public const int CardHeight = 210;
