@@ -131,18 +131,90 @@ namespace FreeCellSolver.Test
             Assert.Equal(5, t.Size);
             Assert.Equal(3, t.SortedSize);
         }
+        [Fact]
+        public void Push_tests()
+        {
+            // Arrange
+            var cards = "8D 7C 6H 5S 4H 3C 2D";
+            var cardsArr = cards.Split(' ').Select(c => Card.Get(c)).ToArray();
+
+            var t = new Tableau("");
+            Assert.Equal(0, t.Size);
+            Assert.Equal(0, t.SortedSize);
+            Assert.Null(t.Top);
+
+            // Act & assert
+            for (var i = 0; i < cardsArr.Length; i++)
+            {
+                t.Push(cardsArr[i]);
+
+                Assert.Equal(cardsArr[i], t.Top);
+                Assert.Equal(i + 1, t.Size);
+                Assert.Equal(i + 1, t.SortedSize);
+            }
+        }
 
         [Fact]
         public void Pop_pops_top_and_maintains_size_and_sortedSize()
         {
+            // Arrange
             var t = new Tableau("8S 2H 9C 8H");
             Assert.Equal(4, t.Size);
             Assert.Equal(2, t.SortedSize);
 
+            // Act
             t.Pop();
+
+            // Assert
             Assert.Equal(Card.Get("9C"), t.Top);
             Assert.Equal(3, t.Size);
             Assert.Equal(1, t.SortedSize);
+        }
+
+        [Fact]
+        public void Pop_updates_stack_when_col_is_sorted_after_pop_operation()
+        {
+            // Arrange
+            var t = new Tableau("TH 9C 7C");
+
+            // Act
+            t.Pop();
+
+            // Assert
+            Assert.Equal(2, t.Size);
+            Assert.Equal(2, t.SortedSize);
+            Assert.Equal(Card.Get("9C"), t.Top);
+            Assert.Equal(Card.Get("9C"), t[0]);
+            Assert.Equal(Card.Get("TH"), t[1]);
+        }
+
+        [Fact]
+        public void Pop_tests()
+        {
+            // Arrange
+            var cards = "8D 7C 6H 5S 4H 3C 2D";
+            var cardsArr = cards.Split(' ').Select(c => Card.Get(c)).ToArray();
+
+            var t = new Tableau(cards);
+            Assert.Equal(7, t.Size);
+            Assert.Equal(7, t.SortedSize);
+            Assert.Equal(cardsArr[cardsArr.Length - 1], t.Top);
+
+            // Act & assert
+            for (var i = cardsArr.Length - 1; i >= 0; i--)
+            {
+                Assert.Equal(cardsArr[i], t.Pop());
+                if (i > 0)
+                {
+                    Assert.Equal(cardsArr[i - 1], t.Top);
+                }
+                else
+                {
+                    Assert.Null(t.Top);
+                }
+                Assert.Equal(i, t.Size);
+                Assert.Equal(i, t.SortedSize);
+            }
         }
 
         [Fact]
@@ -224,6 +296,26 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("8H"), t2[0]);
             Assert.Equal(Card.Get("9C"), t2[1]);
             Assert.Equal(Card.Get("TH"), t2[2]);
+        }
+
+        [Fact]
+        public void Move_updates_stack_when_col_is_sorted_after_move_operation()
+        {
+            // Arrange
+            var t1 = new Tableau("TS 4D 4S 3D 9D 8C");
+            var t2 = new Tableau("TC");
+
+            // Act
+            t1.Move(t2, 2);
+
+            // Assert
+            Assert.Equal(4, t1.Size);
+            Assert.Equal(2, t1.SortedSize);
+            Assert.Equal(Card.Get("3D"), t1.Top);
+            Assert.Equal(Card.Get("3D"), t1[0]);
+            Assert.Equal(Card.Get("4S"), t1[1]);
+            Assert.Equal(Card.Get("4D"), t1[2]);
+            Assert.Equal(Card.Get("TS"), t1[3]);
         }
 
         [Fact]
