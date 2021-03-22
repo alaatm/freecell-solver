@@ -1119,6 +1119,14 @@ TD 7S JD 7H 8H JH JC 7D
             b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
             b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD QS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
             Assert.True(b1 != b2);
+
+            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            Assert.True(b1 != b2);
+
+            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD TS 9D"), tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty, tEmpty));
+            Assert.True(b1 != b2);
         }
 
         [Fact]
