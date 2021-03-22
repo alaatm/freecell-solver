@@ -102,14 +102,12 @@ namespace FreeCellSolver.Game
 
             Unsafe.CopyBlock(ref target._state[target.Size], ref _state[Size - requestedCount], (uint)requestedCount);
 
-            Size -= requestedCount;
-            SortedSize -= requestedCount;
-
             target.Top = Top;
             target.Size += requestedCount;
             target.SortedSize += requestedCount;
 
-            if (SortedSize < 1)
+            Size -= requestedCount;
+            if ((SortedSize -= requestedCount) < 1)
             {
                 SortedSize = CountSorted();
             }
@@ -189,20 +187,25 @@ namespace FreeCellSolver.Game
 
         private int CountSorted()
         {
-            var size = Size;
+            Debug.Assert(Size >= 0);
 
-            if (size == 0)
+            var size = Size;
+            var state = _state;
+
+            if (size <= 1)
             {
-                Top = Card.Null;
-                return 0;
+                Top = size == 0 ? Card.Null : Top = Card.Get(state[size - 1]);
+                return size;
             }
 
-            Top = Card.Get(_state[size - 1]);
+            Top = Card.Get(state[size - 1]);
+
+            var i = 0;
+            var current = Top;
             var sortedSize = 1;
-            for (var i = 0; i < size - 1; i++)
+            do
             {
-                var current = Card.Get(_state[size - i - 1]);
-                var above = Card.Get(_state[size - i - 2]);
+                var above = Card.Get(state[size - i - 2]);
                 if (current.IsBelow(above))
                 {
                     sortedSize++;
@@ -211,7 +214,10 @@ namespace FreeCellSolver.Game
                 {
                     break;
                 }
-            }
+
+                current = above;
+                i++;
+            } while (i < size - 1);
 
             return sortedSize;
         }
