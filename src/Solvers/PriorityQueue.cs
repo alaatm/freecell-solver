@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace FreeCellSolver.Solvers
 {
@@ -64,7 +65,7 @@ namespace FreeCellSolver.Solvers
 
             _hash.Remove(existing);
             _hash.Add(replacement);
-            var index = _nodes.AsSpan().IndexOf(existing);
+            var index = FindIndex(existing);
 
             if (index != 0 && replacement.CompareTo(_nodes[GetParentIndex(index)]) < 0)
             {
@@ -163,6 +164,24 @@ namespace FreeCellSolver.Solvers
             }
 
             nodes[nodeIndex] = node;
+        }
+
+        private int FindIndex(T element)
+        {
+            var size = _size;
+            var hc = element.GetHashCode();
+            ref var ptr = ref MemoryMarshal.GetArrayDataReference(_nodes);
+
+            for (var i = 0; i < size; i++)
+            {
+                if (hc == Unsafe.Add(ref ptr, i).GetHashCode() && element.Equals(Unsafe.Add(ref ptr, i)))
+                {
+                    return i;
+                }
+            }
+
+            Debug.Assert(false);
+            return -1;
         }
     }
 }
