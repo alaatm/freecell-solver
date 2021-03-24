@@ -92,16 +92,16 @@ namespace FreeCellSolver.Solvers
 
         private void RemoveRootNode()
         {
-            var lastNodeIndex = _size - 1;
-            var lastNode = _nodes[lastNodeIndex];
+            var lastNodeIndex = --_size;
+            if (lastNodeIndex > 0)
+            {
+                var lastNode = _nodes[lastNodeIndex];
+                MoveDown(lastNode, 0);
+            }
+
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
                 _nodes[lastNodeIndex] = default;
-            }
-
-            if (--_size > 0)
-            {
-                MoveDown(lastNode, 0);
             }
         }
 
