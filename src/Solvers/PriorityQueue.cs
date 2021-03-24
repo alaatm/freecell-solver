@@ -57,25 +57,27 @@ namespace FreeCellSolver.Solvers
             return element;
         }
 
-        public void Remove(T element)
+        public void Replace(T existing, T replacement)
         {
-            Debug.Assert(_hash.Contains(element));
+            Debug.Assert(_hash.Contains(existing));
+            Debug.Assert(!_hash.Contains(replacement) || !ReferenceEquals(existing, replacement));
 
-            _hash.Remove(element);
-            var index = _nodes.AsSpan().IndexOf(element);
+            _hash.Remove(existing);
+            _hash.Add(replacement);
+            var index = _nodes.AsSpan().IndexOf(existing);
 
-            _size--;
-            if (index < _size)
+            if (index != 0 && replacement.CompareTo(_nodes[GetParentIndex(index)]) < 0)
             {
-                Array.Copy(_nodes, index + 1, _nodes, index, _size - index);
+                MoveUp(replacement, index);
             }
-            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+            else
             {
-                _nodes[_size] = default;
+                MoveDown(replacement, index);
             }
         }
 
-        public bool TryGetValue(T equalValue, out T actualValue) => _hash.TryGetValue(equalValue, out actualValue);
+        public bool TryGetValue(T equalValue, out T actualValue)
+            => _hash.TryGetValue(equalValue, out actualValue);
 
         public void Clear()
         {
@@ -96,8 +98,10 @@ namespace FreeCellSolver.Solvers
                 _nodes[lastNodeIndex] = default;
             }
 
-            _size--;
-            MoveDown(lastNode, 0);
+            if (--_size > 0)
+            {
+                MoveDown(lastNode, 0);
+            }
         }
 
         private static int GetParentIndex(int index) => (index - 1) >> Log2Arity;

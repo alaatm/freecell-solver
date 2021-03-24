@@ -86,8 +86,7 @@ namespace FreeCellSolver.Solvers
                     var found = open.TryGetValue(next, out var existing);
                     if (found && next.CompareTo(existing) < 0)
                     {
-                        open.Remove(existing);
-                        open.Enqueue(next);
+                        open.Replace(existing, next);
                     }
                     else if (!found)
                     {
