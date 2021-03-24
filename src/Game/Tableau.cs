@@ -20,7 +20,7 @@ namespace FreeCellSolver.Game
 
         public bool IsEmpty => Size == 0;
 
-        public Card this[int index] => Card.Get(_state[Size - index - 1]);
+        public Card this[int index] => Card.Get(_state[index]);
 
         public Tableau() { }
 
@@ -60,7 +60,7 @@ namespace FreeCellSolver.Game
             && this != target
             && requestedCount > 0
             && requestedCount <= CountMovable(target)
-            && target.CanPush(this[requestedCount - 1]);
+            && target.CanPush(this[Size - requestedCount]);
 
         public void Push(Card card)
         {
@@ -165,7 +165,7 @@ namespace FreeCellSolver.Game
                 return 0;
             }
 
-            Debug.Assert(target.CanPush(this[rankDiff - 1]));
+            Debug.Assert(target.CanPush(this[Size - rankDiff]));
 
             return rankDiff;
         }

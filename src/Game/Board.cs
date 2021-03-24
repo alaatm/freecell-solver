@@ -322,11 +322,11 @@ namespace FreeCellSolver.Game
 
                 if (suitsFound < 4)
                 {
-                    for (var j = 0; j < size; j++)
+                    for (var j = size - 1; j >= 0; j--)
                     {
                         if (foundation.CanPush(t[j]))
                         {
-                            numBuried += j;
+                            numBuried += size - j - 1;
                             suitsFound++;
                         }
                     }

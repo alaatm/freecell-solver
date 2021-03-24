@@ -7,24 +7,20 @@ namespace FreeCellSolver.Test
 {
     public class TableauTests
     {
-        [Fact]
-        public void Size_is_properly_initialized()
+        [Theory]
+        [InlineData("", 0, 0)]
+        [InlineData("KD", 1, 1)]
+        [InlineData("KD 5H 4S 2D", 4, 1)]
+        [InlineData("KD 5H 4S", 3, 2)]
+        [InlineData("6C 5H 4S", 3, 3)]
+        public void Size_props_are_properly_initialized(string tableau, int expectedSize, int expectedSortedSize)
         {
-            Assert.Equal(0, new Tableau().Size);
-            Assert.Equal(4, new Tableau("KD 5H 4S 2D").Size);
-        }
+            // Arrange & act
+            var t = new Tableau(tableau);
 
-        [Fact]
-        public void SortedSize_is_properly_initialized()
-        {
-            Assert.Equal(0, new Tableau().SortedSize);
-            Assert.Equal(1, new Tableau("KD").SortedSize);
-            // 5H and 4S are not at top
-            Assert.Equal(1, new Tableau("KD 5H 4S 2D").SortedSize);
-            // 5H and 4S are at top
-            Assert.Equal(2, new Tableau("KD 5H 4S").SortedSize);
-            // All sorted
-            Assert.Equal(3, new Tableau("6C 5H 4S").SortedSize);
+            // Assert
+            Assert.Equal(expectedSize, t.Size);
+            Assert.Equal(expectedSortedSize, t.SortedSize);
         }
 
         [Fact]
@@ -35,11 +31,11 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void Indexer_returns_cards_starting_from_top()
+        public void Indexer_returns_cards_starting_from_bottom()
         {
             var t = new Tableau("5H 9S 2D");
-            Assert.Equal(Card.Get("2D"), t[0]);
-            Assert.Equal(Card.Get("5H"), t[2]);
+            Assert.Equal(Card.Get("2D"), t[2]);
+            Assert.Equal(Card.Get("5H"), t[0]);
         }
 
         [Fact]
@@ -131,6 +127,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(5, t.Size);
             Assert.Equal(3, t.SortedSize);
         }
+
         [Fact]
         public void Push_tests()
         {
@@ -184,8 +181,8 @@ namespace FreeCellSolver.Test
             Assert.Equal(2, t.Size);
             Assert.Equal(2, t.SortedSize);
             Assert.Equal(Card.Get("9C"), t.Top);
-            Assert.Equal(Card.Get("9C"), t[0]);
-            Assert.Equal(Card.Get("TH"), t[1]);
+            Assert.Equal(Card.Get("9C"), t[1]);
+            Assert.Equal(Card.Get("TH"), t[0]);
         }
 
         [Fact]
@@ -252,8 +249,8 @@ namespace FreeCellSolver.Test
             Assert.Equal(2, t2.Size);
             Assert.Equal(2, t2.SortedSize);
 
-            Assert.Equal(Card.Get("8H"), t2[0]);
-            Assert.Equal(Card.Get("9C"), t2[1]);
+            Assert.Equal(Card.Get("8H"), t2[1]);
+            Assert.Equal(Card.Get("9C"), t2[0]);
         }
 
         [Fact]
@@ -272,9 +269,9 @@ namespace FreeCellSolver.Test
             Assert.Equal(3, t2.Size);
             Assert.Equal(3, t2.SortedSize);
 
-            Assert.Equal(Card.Get("8H"), t2[0]);
+            Assert.Equal(Card.Get("8H"), t2[2]);
             Assert.Equal(Card.Get("9C"), t2[1]);
-            Assert.Equal(Card.Get("TH"), t2[2]);
+            Assert.Equal(Card.Get("TH"), t2[0]);
         }
 
         [Fact]
@@ -293,9 +290,9 @@ namespace FreeCellSolver.Test
             Assert.Equal(3, t2.Size);
             Assert.Equal(3, t2.SortedSize);
 
-            Assert.Equal(Card.Get("8H"), t2[0]);
+            Assert.Equal(Card.Get("8H"), t2[2]);
             Assert.Equal(Card.Get("9C"), t2[1]);
-            Assert.Equal(Card.Get("TH"), t2[2]);
+            Assert.Equal(Card.Get("TH"), t2[0]);
         }
 
         [Fact]
@@ -312,10 +309,10 @@ namespace FreeCellSolver.Test
             Assert.Equal(4, t1.Size);
             Assert.Equal(2, t1.SortedSize);
             Assert.Equal(Card.Get("3D"), t1.Top);
-            Assert.Equal(Card.Get("3D"), t1[0]);
-            Assert.Equal(Card.Get("4S"), t1[1]);
-            Assert.Equal(Card.Get("4D"), t1[2]);
-            Assert.Equal(Card.Get("TS"), t1[3]);
+            Assert.Equal(Card.Get("3D"), t1[3]);
+            Assert.Equal(Card.Get("4S"), t1[2]);
+            Assert.Equal(Card.Get("4D"), t1[1]);
+            Assert.Equal(Card.Get("TS"), t1[0]);
         }
 
         [Fact]
@@ -374,10 +371,10 @@ namespace FreeCellSolver.Test
             var clone = t.Clone();
 
             Assert.Equal(Card.Get("8H"), clone.Top);
-            Assert.Equal(Card.Get("8H"), clone[0]);
-            Assert.Equal(Card.Get("9C"), clone[1]);
-            Assert.Equal(Card.Get("2H"), clone[2]);
-            Assert.Equal(Card.Get("8S"), clone[3]);
+            Assert.Equal(Card.Get("8H"), clone[3]);
+            Assert.Equal(Card.Get("9C"), clone[2]);
+            Assert.Equal(Card.Get("2H"), clone[1]);
+            Assert.Equal(Card.Get("8S"), clone[0]);
             Assert.Equal(4, clone.Size);
             Assert.Equal(2, clone.SortedSize);
         }

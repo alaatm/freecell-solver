@@ -110,7 +110,7 @@ namespace FreeCellSolver.Game.Extensions
             {
                 var t = board.Tableaus[i];
                 json.Append('[');
-                for (var j = 0; j < t.Size; j++)
+                for (var j = t.Size - 1; j >= 0; j--)
                 {
                     json.Append($"{t[t.Size - j - 1].RawValue},");
                 }
@@ -162,10 +162,10 @@ namespace FreeCellSolver.Game.Extensions
             {
                 tsSb.Append($"\t\tnew Tableau(\"");
                 var t = board.Tableaus[i];
-                for (var j = t.Size - 1; j >= 0; j--)
+                for (var j = 0; j < t.Size; j++)
                 {
                     tsSb.Append(t[j]);
-                    if (j > 0)
+                    if (j < t.Size - 1)
                     {
                         tsSb.Append(' ');
                     }

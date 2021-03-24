@@ -74,7 +74,7 @@ namespace FreeCellSolver.Game
                 for (var c = 0; c < 8; c++)
                 {
                     var size = _state[c].Size;
-                    sb.Append(size > r ? _state[c][size - r - 1].ToString() : "  ");
+                    sb.Append(size > r ? _state[c][r].ToString() : "  ");
                     sb.Append(c < 7 ? " " : "");
                 }
 
