@@ -251,12 +251,12 @@ namespace FreeCellSolver.Game
             Debug.Assert(EqualsFast(other));
             // Since all tableaus have a common ancestor, at this point (same size, same sorted size, same unsorted size, same top)
             // then the unsorted portion of both tableaus should be exactly the same
-            Debug.Assert(_state.AsSpan(0, size - SortedSize).SequenceEqual(
-                    other._state.AsSpan(0, size - SortedSize)));
+            Debug.Assert(_state.AsSpan(0, size - SortedSize).SequenceEqual(other._state.AsSpan(0, size - SortedSize)));
 
             // If empty, then equal. If single card, we know from EqualsFast() that its the same on both sides
             if (size <= 1)
             {
+                Debug.Assert(_state.AsSpan(0, size).SequenceEqual(other._state.AsSpan(0, size)));
                 return true;
             }
 
