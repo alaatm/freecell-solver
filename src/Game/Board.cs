@@ -324,7 +324,7 @@ namespace FreeCellSolver.Game
                 if (suitsFound < 4)
                 {
                     // Count depth of buried cards next in line to go to foundation
-                    // only in the unsorted portion of the stack.
+                    // only in the unsorted portion of each tableau.
                     for (var j = unsortedSize - 1; j >= 0; j--)
                     {
                         if (foundation.CanPush(t[j]))
@@ -337,11 +337,11 @@ namespace FreeCellSolver.Game
             }
 
             _cost =
-                (MovesEstimated * 2)        // Less cards at foundation is costly by a factor of 2
-                + totalUnsortedSize         // Unsored tableaues are a disadvantage
-                + (4 - Reserve.FreeCount)   // Fewer free cells is a disadvantage
-                + colorDiff                 // Greater color variance at foundation is a disadvantage
-                + numBuried;                // Deeply buried cards within the unsorted portion of the col that are next to be placed at foundation is a disadvantage
+                (MovesEstimated * 2)       // Less cards at foundation is costly by a factor of 2
+                + totalUnsortedSize        // Unsored tableaues are a disadvantage
+                + (4 - Reserve.FreeCount)  // Fewer free cells is a disadvantage
+                + colorDiff                // Greater color variance at foundation is a disadvantage
+                + numBuried;               // Deeply buried cards, which are next in line, within the unsorted portion of tableaus is a disadvantage
         }
 
         public Board Clone() => new(this);
