@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Reflection;
+using System.Threading;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using FreeCellSolver.Solvers;
 using Xunit;
 
@@ -35,19 +36,24 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Removing_last_element_doesnt_keep_reference_to_it()
         {
-            // Arrange
-            var nodesField = typeof(PriorityQueue<Node>).GetField("_nodes", BindingFlags.Instance | BindingFlags.NonPublic);
-            var node = new Node("", 0);
             var pq = new PriorityQueue<Node>();
+            var wr = Populate(pq);
+            Assert.True(SpinWait.SpinUntil(() =>
+            {
+                GC.Collect();
+                return !wr.TryGetTarget(out _);
+            }, 2000));
+            GC.KeepAlive(pq);
 
-            // Act
-            pq.Enqueue(node);
-            pq.Dequeue();
-
-            // Assert
-            Assert.Null((nodesField.GetValue(pq) as Node[])[0]);
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            static WeakReference<object> Populate(PriorityQueue<Node> pq)
+            {
+                var node = new Node("", 0);
+                pq.Enqueue(node);
+                pq.Dequeue();
+                return new WeakReference<object>(node);
+            }
         }
-
 
         [Fact]
         public void Replace_replaces_element()
