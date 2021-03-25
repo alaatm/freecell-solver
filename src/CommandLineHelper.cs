@@ -134,7 +134,7 @@ namespace FreeCellSolver.Entry
 
         static async Task RunBenchmarksAsync(int count, string tag)
         {
-            var logFile = count == 32000 ? "-32k" : "-1.5k";
+            var logFile = count == 32000 ? "32k" : "1.5k";
             logFile += string.IsNullOrWhiteSpace(tag) ? $"-{DateTime.UtcNow.Ticks}" : $"-{tag}";
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "benchmarks", $"{logFile}.log");
@@ -247,7 +247,7 @@ namespace FreeCellSolver.Entry
             foreach (var log in logFiles)
             {
                 var fileName = Path.GetFileNameWithoutExtension(log.Path);
-                var lines = ReadAllLines(log.Path, fileName.StartsWith("-1") ? 1500 : 32000, out var failed);
+                var lines = ReadAllLines(log.Path, fileName.StartsWith('1') ? 1500 : 32000, out var failed);
 
                 var count = lines.Length;
                 var ts = new TimeSpan();
