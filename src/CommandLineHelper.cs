@@ -9,6 +9,8 @@ using FreeCellSolver.Solvers;
 using FreeCellSolver.Game.Extensions;
 using FreeCellSolver.Drawing.Extensions;
 using McMaster.Extensions.CommandLineUtils;
+using System.Globalization;
+using System.Text;
 
 namespace FreeCellSolver.Entry
 {
@@ -51,12 +53,12 @@ namespace FreeCellSolver.Entry
                         if (optType.ParsedValue.ToUpperInvariant() == "SHORT")
                         {
                             await RunBenchmarksAsync(1500, optTag.ParsedValue).ConfigureAwait(false);
-                            await PrintBenchmarksSummaryAsync().ConfigureAwait(false);
+                            PrintBenchmarksSummary();
                         }
                         else if (optType.ParsedValue.ToUpperInvariant() == "FULL")
                         {
                             await RunBenchmarksAsync(32000, optTag.ParsedValue).ConfigureAwait(false);
-                            await PrintBenchmarksSummaryAsync().ConfigureAwait(false);
+                            PrintBenchmarksSummary();
                         }
                         else
                         {
@@ -79,9 +81,9 @@ namespace FreeCellSolver.Entry
                 benchmarksCmd.Command("show", benchmarkShowCmd =>
                 {
                     benchmarkShowCmd.Description = "Shows past benchmarks results";
-                    benchmarkShowCmd.OnExecuteAsync(async (_) =>
+                    benchmarkShowCmd.OnExecute(() =>
                     {
-                        await PrintBenchmarksSummaryAsync().ConfigureAwait(false);
+                        PrintBenchmarksSummary();
                         return 0;
                     });
                 });
@@ -226,8 +228,11 @@ namespace FreeCellSolver.Entry
             return solver;
         }
 
-        static async Task PrintBenchmarksSummaryAsync()
+        public static void PrintBenchmarksSummary()
         {
+            var lenOfVisitedNodes = "visited nodes: ".Length;
+            var lenOfMoves = "#moves: ".Length;
+
             var path = Path.Combine(Directory.GetCurrentDirectory(), "benchmarks");
             if (!Directory.Exists(path))
             {
@@ -235,35 +240,35 @@ namespace FreeCellSolver.Entry
                 return;
             }
 
-            var tests = new List<(DateTime createDate, string name, TimeSpan ts, int total, int visited, int failed, double avgMoveCount)>();
-            var logFiles = Directory.GetFiles(path, "*.log").Select(f => new { Path = f, CreateDate = File.GetLastWriteTime(f) });
+            var logFiles = Directory.GetFiles(path, "*.log").Select(f => new { Path = f, CreateDate = File.GetLastWriteTime(f) }).ToList();
+            var tests = new List<(DateTime createDate, string name, TimeSpan ts, int total, int visited, int failed, double avgMoveCount)>(logFiles.Count);
             var len = logFiles.Select(f => Path.GetFileNameWithoutExtension(f.Path).Length).Max();
 
             foreach (var log in logFiles)
             {
-                var lines = await File.ReadAllLinesAsync(log.Path).ConfigureAwait(false);
+                var fileName = Path.GetFileNameWithoutExtension(log.Path);
+                var lines = ReadAllLines(log.Path, fileName.StartsWith("-1") ? 1500 : 32000, out var failed);
 
-                var count = lines.Length / 2;
-                var failed = lines.Count(p => p.Contains("Bailed", StringComparison.InvariantCulture));
+                var count = lines.Length;
                 var ts = new TimeSpan();
                 var nc = 0;
                 var mc = 0;
 
-                for (var l = 1; l < lines.Length; l += 2)
+                for (var l = 0; l < lines.Length; l++)
                 {
-                    var idxStart = lines[l].IndexOf("in ") + "in ".Length;
-                    var length = lines[l].IndexOf(" - ", idxStart) - idxStart;
-                    ts = ts.Add(TimeSpan.Parse(lines[l].Substring(idxStart, length)));
+                    var line = lines[l].AsSpan();
 
-                    idxStart = lines[l].IndexOf("visited nodes: ") + "visited nodes: ".Length;
-                    length = lines[l].IndexOf(" - ", idxStart) - idxStart;
-                    nc += int.Parse(lines[l].Substring(idxStart, length).Replace(",", ""));
+                    ts = ts.Add(TimeSpan.Parse(line[0] == 'D' ? line.Slice(8, 16) : line.Slice(10, 16)));
 
-                    idxStart = lines[l].IndexOf("#moves: ") + "#moves: ".Length;
-                    mc += int.Parse(lines[l][idxStart..]);
+                    var idxStart = line.IndexOf("visited nodes: ") + lenOfVisitedNodes;
+                    var length = line[idxStart..].IndexOf(" - ");
+                    nc += int.Parse(line.Slice(idxStart, length), NumberStyles.AllowThousands);
+
+                    idxStart = line.IndexOf("#moves: ") + lenOfMoves;
+                    mc += int.Parse(line[idxStart..]);
                 }
 
-                tests.Add((log.CreateDate, Path.GetFileNameWithoutExtension(log.Path), ts, count, nc, failed, (double)mc / count));
+                tests.Add((log.CreateDate, fileName, ts, count, nc, failed, (double)mc / count));
             }
 
             var maxLenName = tests.Select(p => p.name.Length).Max() + 1;
@@ -281,6 +286,32 @@ namespace FreeCellSolver.Entry
 
                 Console.WriteLine($"{d} - {n}: {ts} - visited: {v} - total: {c} - failed: {f} - avg move count: {Math.Round(avgMoveCount, 4)}");
             }
+        }
+
+        private static ReadOnlySpan<string> ReadAllLines(string path, int size, out int failCount)
+        {
+            string line;
+            Span<string> lines = new string[size];
+
+            failCount = 0;
+
+            var i = 0;
+            var n = 0;
+            using var sr = new StreamReader(path, Encoding.UTF8);
+            while ((line = sr.ReadLine()) is not null)
+            {
+                if (n++ % 2 != 0)
+                {
+                    if (line[0] == 'B')
+                    {
+                        failCount++;
+                    }
+
+                    lines[i++] = line;
+                }
+            }
+
+            return i < size ? lines.Slice(0, i) : lines;
         }
     }
 }
