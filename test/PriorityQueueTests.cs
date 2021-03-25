@@ -234,8 +234,9 @@ namespace FreeCellSolver.Test
         public void Clear_clears_queue()
         {
             // Arrange
+            var node = new Node("1", 1);
             var pq = new PriorityQueue<Node>();
-            pq.Enqueue(new Node("1", 1));
+            pq.Enqueue(node);
             Assert.Equal(1, pq.Count);
 
             // Act
@@ -243,6 +244,7 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Equal(0, pq.Count);
+            Assert.False(pq.TryGetValue(node, out _));
         }
 
         [DebuggerDisplay("{Priority}", Name = "{Name}")]

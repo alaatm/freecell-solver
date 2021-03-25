@@ -87,6 +87,7 @@ namespace FreeCellSolver.Solvers
                 Array.Clear(_nodes, 0, _size);
             }
 
+            _hash.Clear();
             _size = 0;
         }
 
