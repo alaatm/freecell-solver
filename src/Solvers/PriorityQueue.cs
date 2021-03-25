@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace FreeCellSolver.Solvers
 {
+    // Adapted from .net 5 implementation
     public sealed class PriorityQueue<T> where T : IComparable<T>, IEquatable<T>
     {
         private const int Arity = 4;

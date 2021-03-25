@@ -17,16 +17,7 @@ namespace FreeCellSolver.Game
             Card.Nil,
         };
 
-        public Card this[int i]
-        {
-            get
-            {
-                var rawVal = _state[i];
-                return rawVal == Card.Nil
-                    ? Card.Null
-                    : Card.Get(rawVal);
-            }
-        }
+        public Card this[int i] => Card.Get(_state[i]);
 
         public int FreeCount { get; private set; } = 4;
 

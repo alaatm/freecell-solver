@@ -38,12 +38,12 @@ namespace FreeCellSolver.Game
 
     public sealed class Card
     {
-        private static readonly Card[] _allCards = new Card[52];
+        private static readonly Card[] _allCards = new Card[53];
 
         private static readonly char[] _suits = "CDHS".ToCharArray();
         private static readonly char[] _ranks = "A23456789TJQK".ToCharArray();
 
-        public const byte Nil = byte.MaxValue;
+        public const byte Nil = 52;
         public const Card Null = null;
 
         public byte RawValue { get; }
@@ -63,6 +63,7 @@ namespace FreeCellSolver.Game
                     _allCards[c++] = card;
                 }
             }
+            _allCards[c] = Null;
         }
 
         private Card(byte rawValue)
