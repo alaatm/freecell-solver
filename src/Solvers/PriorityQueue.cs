@@ -61,8 +61,10 @@ namespace FreeCellSolver.Solvers
 
         public void Replace(T existing, T replacement)
         {
+            // Replace is exclusively used to replace one element with another equal (state) but better (cost) element
             Debug.Assert(_hash.Contains(existing));
-            Debug.Assert(!_hash.Contains(replacement) || !ReferenceEquals(existing, replacement));
+            Debug.Assert(existing.GetHashCode() == replacement.GetHashCode() && existing.Equals(replacement) && !ReferenceEquals(existing, replacement));
+            Debug.Assert(existing.CompareTo(replacement) > 0);
 
             _hash.Remove(existing);
             _hash.Add(replacement);

@@ -64,12 +64,12 @@ namespace FreeCellSolver.Test
             var node2 = new Node("2", 3);
             var node3 = new Node("3", 1);
             var node4 = new Node("4", 1);
-            var node5 = new Node("5", 4);
-            var node6 = new Node("6", 4);
+            var node5 = new Node("5", 5);
+            var node6 = new Node("6", 5);
 
-            var replacement1 = new Node("r1", 0);
-            var replacement2 = new Node("r1", 2);
-            var replacement3 = new Node("r1", 5);
+            var replacement1 = new Node(node1.Name, node1.Priority - 1);  // prio 2
+            var replacement2 = new Node(node4.Name, node4.Priority - 1);  // prio 0
+            var replacement3 = new Node(node6.Name, node6.Priority - 1);  // prio 4
 
             pq.Enqueue(node1);
             pq.Enqueue(node2);
@@ -85,12 +85,12 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Equal(6, pq.Count);
-            Assert.Same(replacement1, pq.Dequeue());
-            Assert.Same(node3, pq.Dequeue());
             Assert.Same(replacement2, pq.Dequeue());
+            Assert.Same(node3, pq.Dequeue());
+            Assert.Same(replacement1, pq.Dequeue());
             Assert.Same(node2, pq.Dequeue());
-            Assert.Same(node5, pq.Dequeue());
             Assert.Same(replacement3, pq.Dequeue());
+            Assert.Same(node5, pq.Dequeue());
         }
 
         [Fact]
@@ -122,7 +122,8 @@ namespace FreeCellSolver.Test
                 }
 
                 hash.Add(index);
-                pq.Replace(list[index], new Node($"r{i}", rnd.Next()));
+                var toBeReplaced = list[index];
+                pq.Replace(toBeReplaced, new Node(toBeReplaced.Name, toBeReplaced.Priority - 1));
             }
 
             // Assert
@@ -144,7 +145,7 @@ namespace FreeCellSolver.Test
 
             var pq = new PriorityQueue<Node>(size);
 
-            var minNode = new Node("min", int.MinValue);
+            var minNode = new Node("min", int.MinValue + 1);
             var maxNode1 = new Node("max1", int.MaxValue);
             var maxNode2 = new Node("max2", int.MaxValue - 1);
             var maxNode3 = new Node("max3", int.MaxValue - 2);
@@ -160,10 +161,10 @@ namespace FreeCellSolver.Test
             pq.Enqueue(maxNode2);
 
             // Act
-            pq.Replace(maxNode2, new Node("r1", rnd.Next(0, int.MaxValue - 5)));
-            pq.Replace(minNode, new Node("r2", rnd.Next(0, int.MaxValue - 5)));
-            pq.Replace(maxNode1, new Node("r3", rnd.Next(0, int.MaxValue - 5)));
-            pq.Replace(maxNode3, new Node("r4", rnd.Next(0, int.MaxValue - 5)));
+            pq.Replace(maxNode2, new Node(maxNode2.Name, maxNode2.Priority - 1));
+            pq.Replace(minNode, new Node(minNode.Name, minNode.Priority - 1));
+            pq.Replace(maxNode1, new Node(maxNode1.Name, maxNode1.Priority - 1));
+            pq.Replace(maxNode3, new Node(maxNode3.Name, maxNode3.Priority - 1));
 
             // Assert
             var min = int.MinValue;
@@ -179,22 +180,22 @@ namespace FreeCellSolver.Test
         public void Replace_keeps_track_of_hashes()
         {
             // Arrange
-            var oldVal = new Node("old", 0);
-            var newVal = new Node("new", 0);
+            var good = new Node("same", 1);
+            var better = new Node("same", 0);
             var pq = new PriorityQueue<Node>();
-            pq.Enqueue(oldVal);
-            pq.Replace(oldVal, newVal);
+            pq.Enqueue(good);
+            pq.Replace(good, better);
 
             // Act
-            var oldFound = pq.TryGetValue(oldVal, out var actualOld);
-            var newFound = pq.TryGetValue(newVal, out var actualNew);
+            var prvFound = pq.TryGetValue(good, out var actualPrv);
+            var newFound = pq.TryGetValue(better, out var actualNew);
 
             // Assert
-            Assert.False(oldFound);
-            Assert.Null(actualOld);
-
+            Assert.True(prvFound);
             Assert.True(newFound);
-            Assert.Same(newVal, actualNew);
+            Assert.Same(better, actualPrv);
+            Assert.Same(better, actualNew);
+            Assert.Equal(1, pq.Count);
         }
 
         [Fact]
@@ -256,7 +257,8 @@ namespace FreeCellSolver.Test
             public Node(string name, int priority) => (Name, Priority) = (name, priority);
 
             public int CompareTo(Node other) => Priority.CompareTo(other.Priority);
-            public bool Equals(Node other) => ReferenceEquals(this, other);
+            public bool Equals(Node other) => Name == Name;
+            public override int GetHashCode() => Name.GetHashCode();
         }
     }
 }
