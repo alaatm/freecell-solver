@@ -172,20 +172,18 @@ namespace FreeCellSolver.Solvers
 
         private int FindIndex(T element)
         {
-            var size = _size;
+            var index = 0;
             var hc = element.GetHashCode();
-            ref var ptr = ref MemoryMarshal.GetArrayDataReference(_nodes);
+            ref var ptr = ref Unsafe.Add(ref MemoryMarshal.GetArrayDataReference(_nodes), index);
 
-            for (var i = 0; i < size; i++)
+            while (hc != ptr.GetHashCode() || !element.Equals(ptr))
             {
-                if (hc == Unsafe.Add(ref ptr, i).GetHashCode() && element.Equals(Unsafe.Add(ref ptr, i)))
-                {
-                    return i;
-                }
+                ptr = ref Unsafe.Add(ref ptr, 1);
+                index++;
             }
 
-            Debug.Assert(false);
-            return -1;
+            Debug.Assert(index < _size);
+            return index;
         }
     }
 }
