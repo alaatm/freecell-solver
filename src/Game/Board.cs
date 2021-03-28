@@ -432,33 +432,35 @@ namespace FreeCellSolver.Game
         public override int GetHashCode()
         {
             // Board is immutable so its perfectly fine to cache the hashcode.
-            if (_hashcode == 0)
+            if (_hashcode != 0)
             {
-                var tableaus = Tableaus;
-                var reserve = Reserve;
+                return _hashcode;
+            }
 
-                var r0 = reserve.GetValue(0);
-                var r1 = reserve.GetValue(1);
-                var r2 = reserve.GetValue(2);
-                var r3 = reserve.GetValue(3);
-                if (r0 != Card.Nil) _hashcode += _reserveRand[r0];
-                if (r1 != Card.Nil) _hashcode += _reserveRand[r1];
-                if (r2 != Card.Nil) _hashcode += _reserveRand[r2];
-                if (r3 != Card.Nil) _hashcode += _reserveRand[r3];
+            var tableaus = Tableaus;
+            var reserve = Reserve;
 
-                for (var i = 0; i < 8; i++)
+            var r0 = reserve.GetValue(0);
+            var r1 = reserve.GetValue(1);
+            var r2 = reserve.GetValue(2);
+            var r3 = reserve.GetValue(3);
+            if (r0 != Card.Nil) _hashcode += _reserveRand[r0];
+            if (r1 != Card.Nil) _hashcode += _reserveRand[r1];
+            if (r2 != Card.Nil) _hashcode += _reserveRand[r2];
+            if (r3 != Card.Nil) _hashcode += _reserveRand[r3];
+
+            for (var i = 0; i < 8; i++)
+            {
+                var t = tableaus[i];
+                var size = t.Size;
+                var sortedSize = t.SortedSize;
+                var unsortedSize = size - sortedSize;
+
+                _hashcode += _tableauUnsortedRand[unsortedSize] << i;
+                _hashcode += _tableauSortedRand[sortedSize] << i;
+                if (size > 0)
                 {
-                    var t = tableaus[i];
-                    var size = t.Size;
-                    var sortedSize = t.SortedSize;
-                    var unsortedSize = size - sortedSize;
-
-                    _hashcode += _tableauUnsortedRand[unsortedSize] << i;
-                    _hashcode += _tableauSortedRand[sortedSize] << i;
-                    if (size > 0)
-                    {
-                        _hashcode += _tableauTopRand[t.Top.RawValue] << i;
-                    }
+                    _hashcode += _tableauTopRand[t.Top.RawValue] << i;
                 }
             }
 
