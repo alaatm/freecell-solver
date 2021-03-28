@@ -9,21 +9,15 @@ namespace FreeCellSolver.Game
 {
     public sealed class Reserve
     {
-        private readonly byte[] _state =
-        {
-            Card.Nil,
-            Card.Nil,
-            Card.Nil,
-            Card.Nil,
-        };
+        private readonly byte[] _state = new byte[4];
 
         public Card this[int i] => Card.Get(_state[i]);
 
         public int FreeCount { get; private set; } = 4;
 
-        public Reserve() { }
+        private Reserve() { }
 
-        public Reserve(string card1, string card2 = null, string card3 = null, string card4 = null) : this(
+        public Reserve(string card1 = null, string card2 = null, string card3 = null, string card4 = null) : this(
             string.IsNullOrWhiteSpace(card1) ? Card.Nil : Card.Get(card1).RawValue,
             string.IsNullOrWhiteSpace(card2) ? Card.Nil : Card.Get(card2).RawValue,
             string.IsNullOrWhiteSpace(card3) ? Card.Nil : Card.Get(card3).RawValue,
