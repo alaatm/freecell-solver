@@ -50,20 +50,11 @@ namespace FreeCellSolver.Entry
 
                     benchmarksRunCmd.OnExecuteAsync(async (_) =>
                     {
-                        if (optType.ParsedValue.ToUpperInvariant() == "SHORT")
-                        {
-                            await RunBenchmarksAsync(1500, optTag.ParsedValue).ConfigureAwait(false);
-                            PrintBenchmarksSummary();
-                        }
-                        else if (optType.ParsedValue.ToUpperInvariant() == "FULL")
-                        {
-                            await RunBenchmarksAsync(32000, optTag.ParsedValue).ConfigureAwait(false);
-                            PrintBenchmarksSummary();
-                        }
-                        else
-                        {
-                            throw new Exception("??");
-                        }
+                        var type = optType.ParsedValue.ToUpperInvariant();
+                        var count = type == "SHORT" ? 1500 : type == "FULL" ? 32000 : -1;
+
+                        await RunBenchmarksAsync(count, optTag.ParsedValue).ConfigureAwait(false);
+                        PrintBenchmarksSummary();
 
                         return 0;
                     });
@@ -156,7 +147,7 @@ namespace FreeCellSolver.Entry
             using var fs = File.CreateText(path);
             for (var i = 1; i <= count; i++)
             {
-                await ExecuteAsync(fs, i).ConfigureAwait(false);
+                await ExecuteAsync(fs, i, Board.FromDealNum(i)).ConfigureAwait(false);
             }
             return;
         }
@@ -204,8 +195,6 @@ namespace FreeCellSolver.Entry
             await stream.CopyToAsync(fs).ConfigureAwait(false);
             fs.Close();
         }
-
-        static Task<AStar> ExecuteAsync(TextWriter writer, int deal) => ExecuteAsync(writer, deal, Board.FromDealNum(deal));
 
         static async Task<AStar> ExecuteAsync(TextWriter writer, int deal, Board b)
         {
