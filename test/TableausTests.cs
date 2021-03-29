@@ -45,6 +45,12 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("QC"), clone[5].Top);
             Assert.Equal(Card.Get("QD"), clone[6].Top);
             Assert.Equal(Card.Null, clone[7].Top);
+
+            Assert.NotSame(ts, clone);
+            for (var i = 0; i < 8; i++)
+            {
+                Assert.NotSame(ts[i], clone[i]);
+            }
         }
 
         [Fact]
