@@ -131,7 +131,7 @@ namespace FreeCellSolver.Game
             foundation.Push(Pop());
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public int CountMovable(Tableau target)
         {
             Debug.Assert(this != target);
@@ -170,16 +170,14 @@ namespace FreeCellSolver.Game
             return rankDiff;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public Tableau Clone()
         {
-            var size = Size;
-
             var clone = new Tableau();
 
-            Unsafe.CopyBlock(ref clone._state[0], ref _state[0], (uint)size);
+            Unsafe.CopyBlock(ref clone._state[0], ref _state[0], (uint)Size);
             clone.Top = Top;
-            clone.Size = size;
+            clone.Size = Size;
             clone.SortedSize = SortedSize;
 
             return clone;
@@ -222,8 +220,8 @@ namespace FreeCellSolver.Game
             return sortedSize;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool EqualsFast(Tableau other)
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        public bool Equals(Tableau other)
         {
             var size = Size;
 
@@ -238,31 +236,15 @@ namespace FreeCellSolver.Game
                 return true;
             }
 
-            return Top == other.Top;
-        }
+            if (Top != other.Top)
+            {
+                return false;
+            }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool EqualsSlow(Tableau other)
-        {
-            var size = Size;
-
-            // Note this method should only be called when the return value of calling EqualsFast() yields true
-            // thus, the below assert.
-            Debug.Assert(EqualsFast(other));
             // Since all tableaus have a common ancestor, at this point (same size, same sorted size, same unsorted size, same top)
             // then the unsorted portion of both tableaus should be exactly the same
             Debug.Assert(_state.AsSpan(0, size - SortedSize).SequenceEqual(other._state.AsSpan(0, size - SortedSize)));
-
-            // If empty, then equal. If single card, we know from EqualsFast() that its the same on both sides
-            if (size <= 1)
-            {
-                Debug.Assert(_state.AsSpan(0, size).SequenceEqual(other._state.AsSpan(0, size)));
-                return true;
-            }
-
-            var ls = _state.AsSpan(0, size);
-            var rs = other._state.AsSpan(0, size);
-            return ls.SequenceEqual(rs);
+            return _state.AsSpan(0, size).SequenceEqual(other._state.AsSpan(0, other.Size));
         }
 
         public override string ToString()

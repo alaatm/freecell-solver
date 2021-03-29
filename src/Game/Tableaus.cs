@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
@@ -31,6 +30,8 @@ namespace FreeCellSolver.Game
             }
         }
 
+        private Tableaus() { }
+
         public Tableaus(params Tableau[] tableaus)
         {
             Debug.Assert(tableaus.Length <= 8);
@@ -46,20 +47,19 @@ namespace FreeCellSolver.Game
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Tableaus(Tableaus copy)
+        public Tableaus Clone()
         {
-            _state[0] = copy._state[0].Clone();
-            _state[1] = copy._state[1].Clone();
-            _state[2] = copy._state[2].Clone();
-            _state[3] = copy._state[3].Clone();
-            _state[4] = copy._state[4].Clone();
-            _state[5] = copy._state[5].Clone();
-            _state[6] = copy._state[6].Clone();
-            _state[7] = copy._state[7].Clone();
+            var copy = new Tableaus();
+            copy._state[0] = _state[0].Clone();
+            copy._state[1] = _state[1].Clone();
+            copy._state[2] = _state[2].Clone();
+            copy._state[3] = _state[3].Clone();
+            copy._state[4] = _state[4].Clone();
+            copy._state[5] = _state[5].Clone();
+            copy._state[6] = _state[6].Clone();
+            copy._state[7] = _state[7].Clone();
+            return copy;
         }
-
-        public Tableaus Clone() => new(this);
 
         public override string ToString()
         {

@@ -36,6 +36,7 @@ namespace FreeCellSolver.Game
             _state[3] = (byte)spadesNext;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
         public bool CanPush(Card card) => _state[card.Suit] == card.Rank;
 
         public bool CanAutoPlay(Card card)
@@ -70,7 +71,6 @@ namespace FreeCellSolver.Game
             _state[card.Suit]++;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Foundation Clone()
         {
             var clone = new Foundation();
@@ -78,7 +78,6 @@ namespace FreeCellSolver.Game
             return clone;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(Foundation other) =>
             Unsafe.As<byte, int>(ref _state[0]) == Unsafe.As<byte, int>(ref other._state[0]);
 

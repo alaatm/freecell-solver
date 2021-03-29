@@ -4,7 +4,6 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using FreeCellSolver.Game.Extensions;
-using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game
 {
@@ -23,11 +22,13 @@ namespace FreeCellSolver.Game
         public Move LastMove { get; private set; }
         public Board Prev { get; private set; }
 
-        public Reserve Reserve { get; }
-        public Foundation Foundation { get; }
-        public Tableaus Tableaus { get; }
+        public Reserve Reserve { get; init; }
+        public Foundation Foundation { get; init; }
+        public Tableaus Tableaus { get; init; }
 
         public bool IsSolved => MovesEstimated == 0;
+
+        private Board() { }
 
         public Board(Tableaus tableaus) : this(new Reserve(), new Foundation(), tableaus) { }
 
@@ -37,18 +38,6 @@ namespace FreeCellSolver.Game
             Reserve = reserve.Clone();
             Foundation = foundation.Clone();
             MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades]);
-        }
-
-        private Board(Board copy)
-        {
-            Tableaus = copy.Tableaus.Clone();
-            Reserve = copy.Reserve.Clone();
-            Foundation = copy.Foundation.Clone();
-
-            _manualMoveCount = copy._manualMoveCount;
-            AutoMoveCount = copy.AutoMoveCount;
-            MovesEstimated = copy.MovesEstimated;
-            LastMove = copy.LastMove;
         }
 
         public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
@@ -198,7 +187,6 @@ namespace FreeCellSolver.Game
             return copy;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal Board ExecuteMoveNoAutoPlay(Move move)
         {
             var copy = Clone();
@@ -344,7 +332,17 @@ namespace FreeCellSolver.Game
                 + numBuried;               // Deeply buried cards, which are next in line, within the unsorted portion of tableaus is a disadvantage
         }
 
-        public Board Clone() => new(this);
+        public Board Clone() => new()
+        {
+            Tableaus = Tableaus.Clone(),
+            Reserve = Reserve.Clone(),
+            Foundation = Foundation.Clone(),
+
+            _manualMoveCount = _manualMoveCount,
+            AutoMoveCount = AutoMoveCount,
+            MovesEstimated = MovesEstimated,
+            LastMove = LastMove,
+        };
 
         public IEnumerable<Move> GetMoves()
         {
@@ -410,15 +408,7 @@ namespace FreeCellSolver.Game
 
             for (var i = 0; i < 8; i++)
             {
-                if (!tableaus[i].EqualsFast(otherTableaus[i]))
-                {
-                    return false;
-                }
-            }
-
-            for (var i = 0; i < 8; i++)
-            {
-                if (!tableaus[i].EqualsSlow(otherTableaus[i]))
+                if (!tableaus[i].Equals(otherTableaus[i]))
                 {
                     return false;
                 }

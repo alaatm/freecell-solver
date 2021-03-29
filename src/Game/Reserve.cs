@@ -42,7 +42,6 @@ namespace FreeCellSolver.Game
             FreeCount -= card4 != Card.Nil ? 1 : 0;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public byte GetValue(int i) => _state[i];
 
         public bool CanInsert(out int index)
@@ -91,7 +90,6 @@ namespace FreeCellSolver.Game
             foundation.Push(Remove(index));
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Reserve Clone()
         {
             var clone = new Reserve { FreeCount = FreeCount };
@@ -99,7 +97,6 @@ namespace FreeCellSolver.Game
             return clone;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(Reserve other)
         {
             if (FreeCount != other.FreeCount)
