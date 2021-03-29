@@ -7,9 +7,10 @@ namespace FreeCellSolver.Solvers
 {
     internal static class ParallelHelper
     {
-        internal static HashSet<Board> GetStates(Board initialBoard, int num)
+        internal static List<Board> GetStates(Board initialBoard, int num)
         {
-            var tree = new Dictionary<int, HashSet<Board>>() { { 0, new HashSet<Board> { initialBoard } } };
+            var hashes = new HashSet<Board>() { initialBoard };
+            var tree = new Dictionary<int, List<Board>>() { { 0, new List<Board> { initialBoard } } };
             var depth = 0;
 
             while (true)
@@ -18,13 +19,16 @@ namespace FreeCellSolver.Solvers
                 {
                     if (!tree.ContainsKey(depth))
                     {
-                        tree.Add(depth, new HashSet<Board>());
+                        tree.Add(depth, new List<Board>());
                     }
 
                     foreach (var move in b.GetValidMoves())
                     {
                         var next = b.ExecuteMove(move);
-                        tree[depth].Add(next);
+                        if (hashes.Add(next))
+                        {
+                            tree[depth].Add(next);
+                        }
                     }
                 }
 
@@ -36,18 +40,35 @@ namespace FreeCellSolver.Solvers
 
             Debug.Assert(tree[depth].Count > num);
 
-            // TODO:
-            // Find a better way to utilize all cpu cores
-            var nominees = new List<HashSet<Board>>();
+            var boards = new List<Board>(tree[depth - 1]);
             foreach (var node in tree[depth - 1])
             {
-                var descendants = tree[depth].Where(t => t.Prev == node);
-                var adjacents = tree[depth - 1].Where(n => n != node);
-                nominees.Add(new HashSet<Board>(descendants.Concat(adjacents)));
+                var descendants = tree[depth].Where(t => t.Prev == node).ToList();
+
+                // Can we replace parent by all its descendants and remain within the allowed count?
+                if (boards.Count + descendants.Count - 1 <= num)
+                {
+                    // Remove the parent
+                    boards.Remove(descendants[0].Prev);
+                    // Add all of its descendants
+                    boards.AddRange(descendants);
+                }
+                else
+                {
+                    // Add the allowed number of descendants
+                    var count = boards.Count;
+                    for (var i = 0; i < num - count; i++)
+                    {
+                        boards.Add(descendants[i]);
+                    }
+
+                    // We won't be able to add anything else since we're maxed at this point
+                    break;
+                }
             }
 
-            var boards = nominees.OrderByDescending(p => p.Count).FirstOrDefault(p => p.Count <= num);
-            return boards ?? tree[depth - 1];
+            Debug.Assert(boards.Count == num);
+            return boards;
         }
     }
 }
