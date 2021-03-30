@@ -76,8 +76,7 @@ namespace FreeCellSolver.Solvers
 
                 closed.TryAdd(node, 1);
 
-                var moves = node.GetValidMoves();
-                foreach (var move in moves)
+                foreach (var move in node.GetValidMoves())
                 {
                     var next = node.ExecuteMove(move);
 
@@ -127,13 +126,13 @@ namespace FreeCellSolver.Solvers
             return true;
         }
 
-        private static void Finalize(Board board)
+        private static void Finalize(Board node)
         {
             lock (_syncLock)
             {
-                if (_goalNode is null)
+                if (_goalNode is null || (node.IsSolved && node.MoveCount < _goalNode.MoveCount))
                 {
-                    _goalNode = board;
+                    _goalNode = node;
                 }
             }
         }
