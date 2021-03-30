@@ -30,7 +30,7 @@ namespace FreeCellSolver.Solvers
 
             _threadCount = _parallelismLevel = parallelismLevel;
 
-            var nodes = ParallelHelper.GetNodes(clone, parallelismLevel);
+            var nodes = ParallelHelper.Expand(clone, parallelismLevel);
             for (var i = 0; i < nodes.Count; i++)
             {
                 var node = nodes[i];
