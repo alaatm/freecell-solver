@@ -155,11 +155,11 @@ namespace FreeCellSolver.Entry
         static async Task RunSingleAsync(int dealNum, string visualizePath)
         {
             var b = Board.FromDealNum(dealNum);
-            var s = await ExecuteAsync(Console.Out, dealNum, b).ConfigureAwait(false);
+            var result = await ExecuteAsync(Console.Out, dealNum, b).ConfigureAwait(false);
 
-            if (s.SolvedBoard != null)
+            if (result.IsSolved)
             {
-                Console.WriteLine("moves: " + string.Join("", s.SolvedBoard.GetMoves().Select(m => m.ToString())));
+                Console.WriteLine("moves: " + string.Join("", result.GoalNode.GetMoves().Select(m => m.ToString())));
 
                 if (!string.IsNullOrWhiteSpace(visualizePath))
                 {
@@ -179,7 +179,7 @@ namespace FreeCellSolver.Entry
 
                     var html = await File.ReadAllTextAsync(Path.Combine(path, "visualizer.html")).ConfigureAwait(false);
                     html = html.Replace("var board=[]", $"var board={b.AsJson()}");
-                    html = html.Replace(",moves=[];", $"var moves={s.SolvedBoard.GetMoves().AsJson()}");
+                    html = html.Replace(",moves=[];", $"var moves={result.GoalNode.GetMoves().AsJson()}");
                     await File.WriteAllTextAsync(Path.Combine(path, "visualizer.html"), html).ConfigureAwait(false);
 
                     Console.WriteLine();
@@ -196,7 +196,7 @@ namespace FreeCellSolver.Entry
             fs.Close();
         }
 
-        static async Task<AStar> ExecuteAsync(TextWriter writer, int deal, Board b)
+        static async Task<Result> ExecuteAsync(TextWriter writer, int deal, Board b)
         {
             if (writer != Console.Out)
             {
@@ -204,17 +204,17 @@ namespace FreeCellSolver.Entry
             }
             writer.WriteLine($"Processing deal #{deal}");
             _sw.Restart();
-            var solver = await AStar.RunParallelAsync(b).ConfigureAwait(false);
+            var result = AStar.Run(b);
             _sw.Stop();
+            AStar.Reset();
             if (writer != Console.Out)
             {
                 Console.WriteLine(". Done");
             }
-            writer.Write($"{(solver.SolvedBoard != null ? "Done" : "Bailed")} in {_sw.Elapsed} - threads: {solver.Threads,0:n0} - initial id: {solver.SolvedFromId} - visited nodes: {solver.VisitedNodes,0:n0}");
-            writer.WriteLine(solver.SolvedBoard != null ? $" - #moves: {solver.SolvedBoard.MoveCount}" : " - #moves: 0");
+            writer.Write($"{(result.IsSolved ? "Done" : "Bailed")} in {_sw.Elapsed} - threads: {result.Threads} - visited nodes: {result.VisitedNodes,0:n0}");
+            writer.WriteLine(result.IsSolved ? $" - #moves: {result.GoalNode.MoveCount}" : " - #moves: 0");
             await writer.FlushAsync().ConfigureAwait(false);
-            AStar.Reset();
-            return solver;
+            return result;
         }
 
         public static void PrintBenchmarksSummary()

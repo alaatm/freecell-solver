@@ -7,25 +7,25 @@ namespace FreeCellSolver.Solvers
 {
     internal static class ParallelHelper
     {
-        internal static List<Board> GetStates(Board initialBoard, int num)
+        internal static List<Board> GetNodes(Board root, int num)
         {
-            var hashes = new HashSet<Board>() { initialBoard };
-            var tree = new Dictionary<int, List<Board>>() { { 0, new List<Board> { initialBoard } } };
+            var set = new HashSet<Board>() { root };
+            var tree = new Dictionary<int, List<Board>>() { { 0, new List<Board> { root } } };
             var depth = 0;
 
             while (true)
             {
-                foreach (var b in tree[depth++])
+                foreach (var node in tree[depth++])
                 {
                     if (!tree.ContainsKey(depth))
                     {
                         tree.Add(depth, new List<Board>());
                     }
 
-                    foreach (var move in b.GetValidMoves())
+                    foreach (var move in node.GetValidMoves())
                     {
-                        var next = b.ExecuteMove(move);
-                        if (hashes.Add(next))
+                        var next = node.ExecuteMove(move);
+                        if (set.Add(next))
                         {
                             tree[depth].Add(next);
                         }
@@ -40,26 +40,26 @@ namespace FreeCellSolver.Solvers
 
             Debug.Assert(tree[depth].Count > num);
 
-            var boards = new List<Board>(tree[depth - 1]);
+            var nodes = new List<Board>(tree[depth - 1]);
             foreach (var node in tree[depth - 1])
             {
-                var descendants = tree[depth].Where(t => t.Prev == node).ToList();
+                var descendants = tree[depth].Where(t => t.Prev == node).ToArray();
 
                 // Can we replace parent by all its descendants and remain within the allowed count?
-                if (boards.Count + descendants.Count - 1 <= num)
+                if (nodes.Count + descendants.Length - 1 <= num)
                 {
                     // Remove the parent
-                    boards.Remove(descendants[0].Prev);
+                    nodes.Remove(descendants[0].Prev);
                     // Add all of its descendants
-                    boards.AddRange(descendants);
+                    nodes.AddRange(descendants);
                 }
                 else
                 {
                     // Add the allowed number of descendants
-                    var count = boards.Count;
+                    var count = nodes.Count;
                     for (var i = 0; i < num - count; i++)
                     {
-                        boards.Add(descendants[i]);
+                        nodes.Add(descendants[i]);
                     }
 
                     // We won't be able to add anything else since we're maxed at this point
@@ -67,8 +67,8 @@ namespace FreeCellSolver.Solvers
                 }
             }
 
-            Debug.Assert(boards.Count == num);
-            return boards;
+            Debug.Assert(nodes.Count == num);
+            return nodes;
         }
     }
 }

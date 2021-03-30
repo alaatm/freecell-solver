@@ -6,7 +6,7 @@
     <RootNamespace>FreeCellSolver</RootNamespace>
     <AssemblyName>fc-solve</AssemblyName>
     <ServerGarbageCollection>true</ServerGarbageCollection>
-    <DebugType>Full</DebugType>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,109 +1,139 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
+using System.Diagnostics;
 using System.Collections.Concurrent;
 using FreeCellSolver.Game;
 
 namespace FreeCellSolver.Solvers
 {
-    public class AStar
+    public static class AStar
     {
+        private static readonly object _syncLock = new();
+
         private static ConcurrentDictionary<Board, byte> _closed;
+        private static ManualResetEventSlim _mres;
+        private static Board _goalNode;
+        private static int _parallelismLevel;
+        private static int _threadCount = 0;
 
-        public Board SolvedBoard { get; private set; }
-        public int SolvedFromId { get; private set; }
-        public int VisitedNodes { get; private set; }
-        public int Threads { get; private set; }
+        public static Result Run(Board root) => Run(root, Environment.ProcessorCount);
 
-        public static AStar Run(Board board)
+        public static Result Run(Board root, int parallelismLevel)
         {
-            var clone = board.Clone();
+            Debug.Assert(parallelismLevel > 0);
+
+            var clone = root.Clone();
             clone.RootAutoPlay();
 
-            // Should obviously use a local HashSet<int> here but we don't care much about this
-            // non parallel version, its only here for debugging.
-            _closed = new ConcurrentDictionary<Board, byte>(1, 1000);
+            _closed = new(parallelismLevel, 1000);
+            _mres = new(false);
 
-            var astar = new AStar();
-            astar.Search(clone, 0);
-            astar.Threads = 1;
-            astar.VisitedNodes = _closed.Count;
-            return astar;
-        }
+            _threadCount = _parallelismLevel = parallelismLevel;
 
-        public static async Task<AStar> RunParallelAsync(Board board)
-        {
-            var clone = board.Clone();
-            clone.RootAutoPlay();
+            var nodes = ParallelHelper.GetNodes(clone, parallelismLevel);
+            for (var i = 0; i < nodes.Count; i++)
+            {
+                var node = nodes[i];
+                ThreadPool.UnsafeQueueUserWorkItem(_ => Search(node), null);
+            }
 
-            var states = ParallelHelper.GetStates(clone, Environment.ProcessorCount);
+            _mres.Wait();
 
-            _closed = new ConcurrentDictionary<Board, byte>(states.Count, 1000);
-            var astar = new AStar();
-
-            var tasks = states.Select((b, i) => Task.Run(() => astar.Search(b, i)));
-            await Task.WhenAll(tasks).ConfigureAwait(false);
-            astar.Threads = states.Count;
-            astar.VisitedNodes = _closed.Count;
-            return astar;
+            return new Result
+            {
+                GoalNode = _goalNode,
+                VisitedNodes = _closed.Count,
+                Threads = parallelismLevel,
+            };
         }
 
         internal static void Reset()
         {
+            _goalNode = null;
+
             _closed.Clear();
             _closed = null;
+            _mres.Dispose();
+            _mres = null;
             GC.Collect();
         }
 
-        private void Search(Board root, int stateId)
+        private static void Search(Board root)
         {
+            var closed = _closed;
             var open = new PriorityQueue<Board>();
             open.Enqueue(root);
 
             while (open.Count != 0)
             {
-                var board = open.Dequeue();
+                var node = open.Dequeue();
 
-                if (board.IsSolved || SolvedBoard is not null)
+                if (node.IsSolved || _goalNode is not null)
                 {
-                    Finalize(board, stateId);
+                    Finalize(node);
                     break;
                 }
 
-                _closed.TryAdd(board, 1);
+                closed.TryAdd(node, 1);
 
-                foreach (var move in board.GetValidMoves())
+                var moves = node.GetValidMoves();
+                foreach (var move in moves)
                 {
-                    var next = board.ExecuteMove(move);
+                    var next = node.ExecuteMove(move);
 
-                    if (_closed.ContainsKey(next))
+                    if (closed.ContainsKey(next))
                     {
                         continue;
                     }
 
                     next.ComputeCost();
 
-                    var found = open.TryGetValue(next, out var existing);
-                    if (found && next.CompareTo(existing) < 0)
+                    if (!QueueWorkItem(next))
                     {
-                        open.Replace(existing, next);
-                    }
-                    else if (!found)
-                    {
-                        open.Enqueue(next);
+                        var found = open.TryGetValue(next, out var existing);
+                        if (found && next.CompareTo(existing) < 0)
+                        {
+                            open.Replace(existing, next);
+                        }
+                        else if (!found)
+                        {
+                            open.Enqueue(next);
+                        }
                     }
                 }
             }
+
+            if (Interlocked.Decrement(ref _threadCount) == 0)
+            {
+                _mres.Set();
+            }
         }
 
-        private void Finalize(Board board, int stateId)
+        private static bool QueueWorkItem(Board root)
         {
-            lock (this)
+            int newThreadCount;
+            int currentThreadCount;
+            do
             {
-                if (SolvedBoard is null)
+                currentThreadCount = _threadCount;
+                newThreadCount = currentThreadCount + 1;
+
+                if (currentThreadCount >= _parallelismLevel)
                 {
-                    SolvedBoard = board;
-                    SolvedFromId = stateId;
+                    return false;
+                }
+            } while (Interlocked.CompareExchange(ref _threadCount, newThreadCount, currentThreadCount) != currentThreadCount);
+            ThreadPool.UnsafeQueueUserWorkItem(_ => Search(root), null);
+            return true;
+        }
+
+        private static void Finalize(Board board)
+        {
+            lock (_syncLock)
+            {
+                if (_goalNode is null)
+                {
+                    _goalNode = board;
                 }
             }
         }
