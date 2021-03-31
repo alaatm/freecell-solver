@@ -10,7 +10,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void EmptyTableauCount_returns_empty_tableau_count()
         {
-            var ts = new Tableaus(
+            var ts = Tableaus.Create(
                 new Tableau(),
                 new Tableau("KC"),
                 new Tableau("KD"),
@@ -25,7 +25,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Clone_clones_object()
         {
-            var ts = new Tableaus(
+            var ts = Tableaus.Create(
                 new Tableau(),
                 new Tableau("KC"),
                 new Tableau("KD"),
@@ -57,7 +57,7 @@ namespace FreeCellSolver.Test
         public void ToString_returns_string_representation()
             => Assert.Equal(
                 $"01 02 03 04 05 06 07 08{Environment.NewLine}-- -- -- -- -- -- -- --{Environment.NewLine}   KC KD KH KS QC QD   {Environment.NewLine}      9C               ",
-                    new Tableaus(new Tableau(),
+                    Tableaus.Create(new Tableau(),
                     new Tableau("KC"),
                     new Tableau("KD 9C"),
                     new Tableau("KH"),
@@ -72,7 +72,7 @@ namespace FreeCellSolver.Test
             var t0 = new Tableau("AC");
             var t1 = new Tableau("AD");
             var t3 = new Tableau("AH AS");
-            var ts = new Tableaus(t0, t1, new Tableau(), t3);
+            var ts = Tableaus.Create(t0, t1, new Tableau(), t3);
             var allCards = ts.AllCards().ToList();
 
             // Assert
@@ -82,7 +82,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("AH"), allCards[2]);
             Assert.Equal(Card.Get("AS"), allCards[3]);
 
-            Assert.Empty(new Tableaus().AllCards());
+            Assert.Empty(Tableaus.Create().AllCards());
         }
     }
 }

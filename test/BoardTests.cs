@@ -10,8 +10,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void IsSolved_returns_whether_board_is_solved()
         {
-            var e = new Tableau();
-            Assert.True(new Board(new Reserve(), new Foundation(Ranks.Rk, Ranks.Rk, Ranks.Rk, Ranks.Rk), new Tableaus(e, e, e, e, e, e, e, e)).IsSolved);
+            Assert.True(new Board(new Reserve(), new Foundation(Ranks.Rk, Ranks.Rk, Ranks.Rk, Ranks.Rk), Tableaus.Create()).IsSolved);
             Assert.False(Board.FromDealNum(1).IsSolved);
         }
 
@@ -45,7 +44,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("JH 9D 9H 8H 4H");
             var t6 = new Tableau("5C 6C QH 8D TD 5H");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
+            var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -91,7 +90,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("JH 9D 9H 8H 4H");
             var t6 = new Tableau("5C 6C QH 8D TD 5H");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
+            var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -137,7 +136,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("JH 9D 9H 8H 4H");
             var t6 = new Tableau("5C 6C QH 8D TD QD 5H");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, t2, t3, t4, t5, t6, tRest);
+            var ts = Tableaus.Create(t0, tRest, t2, t3, t4, t5, t6, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -180,7 +179,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("JH 9D 9H 8H 4H");
             var t6 = new Tableau("5C 6C QH 8D TD 5H");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
+            var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -223,7 +222,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("JH 9D 9H 8H 4H");
             var t6 = new Tableau("5C 6C QH 8D 5H TD");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
+            var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -264,7 +263,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("9C 9D 9H 8H 4H KS KD");
             var t6 = new Tableau("5C 6C QH 8D TD 5H");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, tRest);
+            var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -309,7 +308,7 @@ namespace FreeCellSolver.Test
             var t6 = new Tableau("5C 6C QH 8D TD");
             var t7 = new Tableau("5H");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, t1, t2, t3, tRest, t5, t6, t7);
+            var ts = Tableaus.Create(t0, t1, t2, t3, tRest, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -355,7 +354,7 @@ namespace FreeCellSolver.Test
             var t6 = new Tableau("5C 6C QH 8D TD");
             var t7 = new Tableau("5H");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
+            var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -399,7 +398,7 @@ namespace FreeCellSolver.Test
             var t6 = new Tableau("5C 6C QH 8D TD");
             var t7 = new Tableau("5H");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, t2, t3, tRest, t5, t6, t7);
+            var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -442,7 +441,7 @@ namespace FreeCellSolver.Test
             var t1 = new Tableau("QS");
             var t3 = new Tableau("AH 2H 3H 4H 5H 6H 7H 8H 9H TH JH QH KH");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, t1, tRest, t3, tRest, tRest, tRest, tRest);
+            var ts = Tableaus.Create(t0, t1, tRest, t3, tRest, tRest, tRest, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -492,7 +491,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("JH 6D 4S 4H TS");
             var t6 = new Tableau("KD 8D 5D KH 9H");
             var t7 = new Tableau("5C 9C QH 8H 2H 7D");
-            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
+            var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -540,7 +539,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("JH 6D 4S 4H TS");
             var t6 = new Tableau("KD 8D 5D KH 9H 4D");
             var t7 = new Tableau("5C 9C QH 8H 2H 7D");
-            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
+            var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -585,7 +584,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("JH 6D 4S 4H TS");
             var t6 = new Tableau("KD 8D 5D KH 9H");
             var t7 = new Tableau("5C 9C QH 8H 2H 7D");
-            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
+            var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -886,7 +885,7 @@ namespace FreeCellSolver.Test
             var f = new Foundation(Ranks.R10, Ranks.Rk, Ranks.Rk, Ranks.Rk);
             var t0 = new Tableau("KC JC");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
+            var ts = Tableaus.Create(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -962,7 +961,7 @@ namespace FreeCellSolver.Test
             var t5 = new Tableau("TH 7S 6D");                                   // unsorted = 1, buried = 0
             var t6 = new Tableau("4D 5C 9S 8D 7C 6H");                          // unsorted = 3, buried = 0
             var t7 = new Tableau("QD JS TD");                                   // unsorted = 0, buried = 0
-            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, t7);
+            var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = new Board(r, f, ts);
             Assert.True(b.IsValid());
 
@@ -1111,24 +1110,24 @@ TD 7S JD 7H 8H JH JC 7D
             b2 = b2.ExecuteMoveNoAutoPlay(Move.Get(MoveType.TableauToFoundation, 1));
             Assert.True(b1 == b2);
 
-            b1 = new Board(new Reserve("AD", "AH"), new Foundation(), new Tableaus());
-            b2 = new Board(new Reserve("AC", "AS"), new Foundation(), new Tableaus());
+            b1 = new Board(new Reserve("AD", "AH"), new Foundation(), Tableaus.Create());
+            b2 = new Board(new Reserve("AC", "AS"), new Foundation(), Tableaus.Create());
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH")));
-            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH")));
+            b1 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH")));
+            b2 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH")));
             Assert.True(b1 == b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS")));
-            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD QS")));
+            b1 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH QS")));
+            b2 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KD QS")));
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS")));
-            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD")));
+            b1 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH QS")));
+            b2 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KD")));
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KH QS")));
-            b2 = new Board(new Reserve(), new Foundation(), new Tableaus(new Tableau("KD TS 9D")));
+            b1 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH QS")));
+            b2 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KD TS 9D")));
             Assert.True(b1 != b2);
         }
 
@@ -1186,7 +1185,7 @@ TD 7S JD 7H 8H JH JC 7D
             var t5 = new Tableau("JH 9D 9H 8H 4H");
             var t6 = new Tableau("5C 6C QH 8D 5H TD");
             var tRest = new Tableau();
-            var ts = new Tableaus(t0, t1, t2, t3, t4, t5, t6, tRest);
+            var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, tRest);
             var b1 = new Board(r, f, ts);
             Assert.True(b1.IsValid());
 

@@ -72,7 +72,7 @@ namespace FreeCellSolver.Game.Extensions
                 i += count;
             }
 
-            return new Board(new Tableaus(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));
+            return new Board(Tableaus.Create(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));
         }
 
         public static bool IsValid(this Board board)
@@ -176,7 +176,7 @@ namespace FreeCellSolver.Game.Extensions
             sb.AppendLine("var b = new Board(");
             sb.Append(rSb);
             sb.Append(fSb);
-            sb.AppendLine("\tnew Tableaus(");
+            sb.AppendLine("\tTableaus.Create(");
             sb.Append(tsSb);
             sb.AppendLine("\t)");
             sb.AppendLine(");");

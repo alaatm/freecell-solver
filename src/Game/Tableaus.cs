@@ -32,19 +32,22 @@ namespace FreeCellSolver.Game
 
         private Tableaus() { }
 
-        public Tableaus(params Tableau[] tableaus)
+        public static Tableaus Create(params Tableau[] tableaus)
         {
             Debug.Assert(tableaus.Length <= 8);
+            var ts = new Tableaus();
 
             for (var i = 0; i < tableaus.Length; i++)
             {
-                _state[i] = tableaus[i].Clone();
+                ts._state[i] = tableaus[i].Clone();
             }
 
             for (var i = tableaus.Length; i < 8; i++)
             {
-                _state[i] = new Tableau();
+                ts._state[i] = new Tableau();
             }
+
+            return ts;
         }
 
         public Tableaus Clone()
