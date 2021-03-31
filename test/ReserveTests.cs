@@ -137,11 +137,16 @@ namespace FreeCellSolver.Test
             var r = new Reserve("AC", "AS", null, "AH");
             var clone = r.Clone();
 
+            Assert.True(r.Equals(clone));
             Assert.Equal(r.FreeCount, clone.FreeCount);
             Assert.Equal(Card.Get("AC"), clone[0]);
             Assert.Equal(Card.Get("AS"), clone[1]);
             Assert.Equal(Card.Null, clone[2]);
             Assert.Equal(Card.Get("AH"), clone[3]);
+
+            Assert.NotSame(r, clone);
+            var fi = typeof(Reserve).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.NotSame(fi.GetValue(r), fi.GetValue(clone));
         }
 
         [Theory]

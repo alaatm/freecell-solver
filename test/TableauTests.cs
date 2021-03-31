@@ -370,6 +370,7 @@ namespace FreeCellSolver.Test
             var t = new Tableau("8S 2H 9C 8H");
             var clone = t.Clone();
 
+            Assert.True(t.Equals(clone));
             Assert.Equal(Card.Get("8H"), clone.Top);
             Assert.Equal(Card.Get("8H"), clone[3]);
             Assert.Equal(Card.Get("9C"), clone[2]);
@@ -377,6 +378,10 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("8S"), clone[0]);
             Assert.Equal(4, clone.Size);
             Assert.Equal(2, clone.SortedSize);
+
+            Assert.NotSame(t, clone);
+            var fi = typeof(Tableau).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.NotSame(fi.GetValue(t), fi.GetValue(clone));
         }
 
         [Fact]

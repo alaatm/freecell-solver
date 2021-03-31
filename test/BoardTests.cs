@@ -1034,6 +1034,27 @@ namespace FreeCellSolver.Test
             Assert.Equal(b1._manualMoveCount, b2._manualMoveCount);
             Assert.Equal(b1.AutoMoveCount, b2.AutoMoveCount);
             Assert.Equal(b1.MovesEstimated, b2.MovesEstimated);
+
+            Assert.NotSame(b1, b2);
+            Assert.NotSame(b1.Foundation, b2.Foundation);
+            Assert.NotSame(b1.Reserve, b2.Reserve);
+            Assert.NotSame(b1.Tableaus, b2.Tableaus);
+
+            var fi = typeof(Reserve).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.NotSame(fi.GetValue(b1.Reserve), fi.GetValue(b2.Reserve));
+
+            fi = typeof(Foundation).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.NotSame(fi.GetValue(b1.Foundation), fi.GetValue(b2.Foundation));
+
+            fi = typeof(Tableaus).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.NotSame(fi.GetValue(b1.Tableaus), fi.GetValue(b2.Tableaus));
+
+            fi = typeof(Tableau).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            for (var i = 0; i < 8; i++)
+            {
+                Assert.NotSame(b1.Tableaus[i], b2.Tableaus[i]);
+                Assert.NotSame(fi.GetValue(b1.Tableaus[i]), fi.GetValue(b2.Tableaus[i]));
+            }
         }
 
         [Fact]

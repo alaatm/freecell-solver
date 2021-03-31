@@ -47,9 +47,16 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Null, clone[7].Top);
 
             Assert.NotSame(ts, clone);
+
+            var fi = typeof(Tableaus).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.NotSame(fi.GetValue(ts), fi.GetValue(clone));
+
+            fi = typeof(Tableau).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             for (var i = 0; i < 8; i++)
             {
+                Assert.True(ts[i].Equals(clone[i]));
                 Assert.NotSame(ts[i], clone[i]);
+                Assert.NotSame(fi.GetValue(ts[i]), fi.GetValue(clone[i]));
             }
         }
 

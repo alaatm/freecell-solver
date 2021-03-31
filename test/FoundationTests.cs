@@ -81,10 +81,15 @@ namespace FreeCellSolver.Test
             var f = new Foundation(Ranks.Ace, Ranks.R4, Ranks.Nil, Ranks.R3);
             var clone = f.Clone();
 
+            Assert.True(f.Equals(clone));
             Assert.Equal(Ranks.R2, clone[Suits.Clubs]);
             Assert.Equal(Ranks.R5, clone[Suits.Diamonds]);
             Assert.Equal(Ranks.Ace, clone[Suits.Hearts]);
             Assert.Equal(Ranks.R4, clone[Suits.Spades]);
+
+            Assert.NotSame(f, clone);
+            var fi = typeof(Foundation).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.NotSame(fi.GetValue(f), fi.GetValue(clone));
         }
 
         [Fact]
