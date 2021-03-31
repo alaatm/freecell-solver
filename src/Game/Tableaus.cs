@@ -17,10 +17,11 @@ namespace FreeCellSolver.Game
             get
             {
                 var emptyCount = 0;
+                var state = _state;
 
-                for (var i = 0; i < 8; i++)
+                for (var i = 0; i < state.Length; i++)
                 {
-                    if (_state[i].Size == 0)
+                    if (state[i].Size == 0)
                     {
                         emptyCount++;
                     }
