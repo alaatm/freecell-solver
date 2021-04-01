@@ -379,6 +379,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(4, clone.Size);
             Assert.Equal(2, clone.SortedSize);
 
+            Assert.Same(t.Top, clone.Top);
             Assert.NotSame(t, clone);
             var fi = typeof(Tableau).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.NotSame(fi.GetValue(t), fi.GetValue(clone));

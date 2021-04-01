@@ -56,6 +56,7 @@ namespace FreeCellSolver.Test
             {
                 Assert.True(ts[i].Equals(clone[i]));
                 Assert.NotSame(ts[i], clone[i]);
+                Assert.Same(ts[i].Top, clone[i].Top);
                 Assert.NotSame(fi.GetValue(ts[i]), fi.GetValue(clone[i]));
             }
         }

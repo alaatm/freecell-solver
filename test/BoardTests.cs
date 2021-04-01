@@ -1034,6 +1034,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(b1._manualMoveCount, b2._manualMoveCount);
             Assert.Equal(b1.AutoMoveCount, b2.AutoMoveCount);
             Assert.Equal(b1.MovesEstimated, b2.MovesEstimated);
+            Assert.Same(b1.LastMove, b2.LastMove);
 
             Assert.NotSame(b1, b2);
             Assert.NotSame(b1.Foundation, b2.Foundation);
@@ -1053,6 +1054,7 @@ namespace FreeCellSolver.Test
             for (var i = 0; i < 8; i++)
             {
                 Assert.NotSame(b1.Tableaus[i], b2.Tableaus[i]);
+                Assert.Same(b1.Tableaus[i].Top, b2.Tableaus[i].Top);
                 Assert.NotSame(fi.GetValue(b1.Tableaus[i]), fi.GetValue(b2.Tableaus[i]));
             }
         }
