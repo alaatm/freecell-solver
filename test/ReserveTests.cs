@@ -192,7 +192,7 @@ namespace FreeCellSolver.Test
 
         [Fact]
         public void ToString_returns_string_representation()
-            => Assert.Equal($"01 02 03 04{Environment.NewLine}-- 5H -- KD", new Reserve(null, "5H", null, "KD").ToString());
+            => Assert.Equal($"00 01 02 03{Environment.NewLine}-- 5H -- KD", new Reserve(null, "5H", null, "KD").ToString());
 
         [Fact]
         public void AllCards_returns_all_cards()

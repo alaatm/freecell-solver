@@ -1068,10 +1068,10 @@ namespace FreeCellSolver.Test
 @"CC DD HH SS
 -- -- -- --
 
-01 02 03 04
+00 01 02 03
 -- -- -- --
 
-01 02 03 04 05 06 07 08
+00 01 02 03 04 05 06 07
 -- -- -- -- -- -- -- --
 AH 8S 2D QS 4C 9H 2S 3D
 5C AS 9C KH 4D 2C 3C 4S

@@ -139,7 +139,7 @@ namespace FreeCellSolver.Game
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("01 02 03 04");
+            sb.AppendLine("00 01 02 03");
             for (var i = 0; i < 4; i++)
             {
                 var value = _state[i];

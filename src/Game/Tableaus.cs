@@ -68,7 +68,7 @@ namespace FreeCellSolver.Game
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("01 02 03 04 05 06 07 08");
+            sb.AppendLine("00 01 02 03 04 05 06 07");
             sb.AppendLine("-- -- -- -- -- -- -- --");
 
             var maxSize = _state.Max(t => t.Size);

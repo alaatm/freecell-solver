@@ -64,7 +64,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void ToString_returns_string_representation()
             => Assert.Equal(
-                $"01 02 03 04 05 06 07 08{Environment.NewLine}-- -- -- -- -- -- -- --{Environment.NewLine}   KC KD KH KS QC QD   {Environment.NewLine}      9C               ",
+                $"00 01 02 03 04 05 06 07{Environment.NewLine}-- -- -- -- -- -- -- --{Environment.NewLine}   KC KD KH KS QC QD   {Environment.NewLine}      9C               ",
                     Tableaus.Create(new Tableau(),
                     new Tableau("KC"),
                     new Tableau("KD 9C"),
