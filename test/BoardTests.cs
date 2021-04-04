@@ -1044,27 +1044,6 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void Traverse_traverses_states_backwards()
-        {
-            // Arrange
-            var b = Board.FromDealNum(4);
-            var c = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0));
-
-            var i = 0;
-            c.Traverse(n =>
-            {
-                if (i++ == 0)
-                {
-                    Assert.Same(c, n);
-                }
-                else
-                {
-                    Assert.Equal(b, n);
-                }
-            });
-        }
-
-        [Fact]
         public void Clone_clones_object()
         {
             Assert.True(Board.FromDealNum(5) == Board.FromDealNum(5).Clone());

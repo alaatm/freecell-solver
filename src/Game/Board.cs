@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
@@ -84,21 +84,20 @@ namespace FreeCellSolver.Game
                 var alreadyMovedToEmpty = false;
                 for (var t = 0; t < 8; t++)
                 {
-                    var tableau = tableaus[t];
-                    var emptyTarget = tableau.IsEmpty;
-
-                    // Skip move to empty if we've already made a similar move to another empty tableau
-                    if (alreadyMovedToEmpty && emptyTarget)
+                    if (AllowReserveToTableau(r, t))
                     {
-                        continue;
-                    }
+                        var tableau = tableaus[t];
+                        var emptyTarget = tableau.IsEmpty;
 
-                    if (reserve.CanMove(r, tableau))
-                    {
-                        var move = Move.Get(MoveType.ReserveToTableau, r, t);
-                        if (!move.IsReverseOf(lastMove))
+                        // Skip move to empty if we've already made a similar move to another empty tableau
+                        if (alreadyMovedToEmpty && emptyTarget)
                         {
-                            _moves.Add(move);
+                            continue;
+                        }
+
+                        if (reserve.CanMove(r, tableau))
+                        {
+                            _moves.Add(Move.Get(MoveType.ReserveToTableau, r, t));
                             alreadyMovedToEmpty = emptyTarget || alreadyMovedToEmpty;
                         }
                     }
@@ -119,7 +118,7 @@ namespace FreeCellSolver.Game
                 var alreadyMovedToEmpty = false;
                 for (var t2 = 0; t2 < 8; t2++)
                 {
-                    if (t1 == t2)
+                    if (t1 == t2 || !AllowTableauToTableau(t1, t2))
                     {
                         continue;
                     }
@@ -144,7 +143,7 @@ namespace FreeCellSolver.Game
                     if (emptyTarget && (moveSize = Math.Min(moveSize, maxMoveSize)) != tableauSize)
                     {
                         var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
-                        if (!move.IsReverseOf(lastMove))
+                        if (!move.IsReverseOfTT(lastMove))
                         {
                             alreadyMovedToEmpty = true;
                             _moves.Add(move);
@@ -153,7 +152,7 @@ namespace FreeCellSolver.Game
                     else if (!emptyTarget && maxMoveSize >= moveSize)
                     {
                         var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
-                        if (!move.IsReverseOf(lastMove))
+                        if (!move.IsReverseOfTT(lastMove))
                         {
                             _moves.Add(move);
                         }
@@ -164,13 +163,9 @@ namespace FreeCellSolver.Game
             // 5. Tableau -> Reserve
             for (var t = 0; t < 8; t++)
             {
-                if (tableaus[t].CanMove(reserve, out var r))
+                if (AllowTableauToReserve(t) && tableaus[t].CanMove(reserve, out var r))
                 {
-                    var move = Move.Get(MoveType.TableauToReserve, t, r);
-                    if (!move.IsReverseOf(lastMove))
-                    {
-                        _moves.Add(move);
-                    }
+                    _moves.Add(Move.Get(MoveType.TableauToReserve, t, r));
                 }
             }
 
@@ -196,17 +191,61 @@ namespace FreeCellSolver.Game
             return copy;
         }
 
-        internal void RootAutoPlay()
+        public void ComputeCost()
         {
-            Debug.Assert(Prev == null);
+            Debug.Assert(_cost == 0);
 
-            Prev = Clone();
-            AutoPlay();
-            if (AutoMoveCount == 0)
+            var foundation = Foundation;
+            var tableaus = Tableaus;
+
+            var colorDiff = Math.Abs(
+                foundation[Suits.Clubs] + foundation[Suits.Spades] -
+                foundation[Suits.Diamonds] - foundation[Suits.Hearts]);
+
+            var suitsFound = 0;
+            var numBuried = 0;
+            var totalUnsortedSize = 0;
+            for (var i = 0; i < 8; i++)
             {
-                Prev = null;
+                var t = tableaus[i];
+                var size = t.Size;
+                var unsortedSize = size - t.SortedSize;
+                totalUnsortedSize += unsortedSize;
+
+                if (suitsFound < 4)
+                {
+                    // Count depth of buried cards next in line to go to foundation
+                    // only in the unsorted portion of each tableau.
+                    for (var j = unsortedSize - 1; j >= 0; j--)
+                    {
+                        if (foundation.CanPush(t[j]))
+                        {
+                            numBuried += size - j - 1;
+                            suitsFound++;
+                        }
+                    }
+                }
             }
+
+            _cost =
+                (MovesEstimated * 2)       // Less cards at foundation is costly by a factor of 2
+                + totalUnsortedSize        // Unsored tableaues are a disadvantage
+                + (4 - Reserve.FreeCount)  // Fewer free cells is a disadvantage
+                + colorDiff                // Greater color variance at foundation is a disadvantage
+                + numBuried;               // Deeply buried cards, which are next in line, within the unsorted portion of tableaus is a disadvantage
         }
+
+        public Board Clone() => new()
+        {
+            Tableaus = Tableaus.Clone(),
+            Reserve = Reserve.Clone(),
+            Foundation = Foundation.Clone(),
+
+            _manualMoveCount = _manualMoveCount,
+            AutoMoveCount = AutoMoveCount,
+            MovesEstimated = MovesEstimated,
+            LastMove = LastMove,
+        };
 
         // Any change in this function must also be reflected in GetAutoMoves()
         private void AutoPlay()
@@ -277,66 +316,22 @@ namespace FreeCellSolver.Game
             Debug.Assert(AllCards.Count() == 52 && new HashSet<Card>(AllCards).Count == 52);
         }
 
-        public void ComputeCost()
+        internal void RootAutoPlay()
         {
-            Debug.Assert(_cost == 0);
+            Debug.Assert(Prev == null);
 
-            var foundation = Foundation;
-            var tableaus = Tableaus;
-
-            var colorDiff = Math.Abs(
-                foundation[Suits.Clubs] + foundation[Suits.Spades] -
-                foundation[Suits.Diamonds] - foundation[Suits.Hearts]);
-
-            var suitsFound = 0;
-            var numBuried = 0;
-            var totalUnsortedSize = 0;
-            for (var i = 0; i < 8; i++)
+            Prev = Clone();
+            AutoPlay();
+            if (AutoMoveCount == 0)
             {
-                var t = tableaus[i];
-                var size = t.Size;
-                var unsortedSize = size - t.SortedSize;
-                totalUnsortedSize += unsortedSize;
-
-                if (suitsFound < 4)
-                {
-                    // Count depth of buried cards next in line to go to foundation
-                    // only in the unsorted portion of each tableau.
-                    for (var j = unsortedSize - 1; j >= 0; j--)
-                    {
-                        if (foundation.CanPush(t[j]))
-                        {
-                            numBuried += size - j - 1;
-                            suitsFound++;
-                        }
-                    }
-                }
+                Prev = null;
             }
-
-            _cost =
-                (MovesEstimated * 2)       // Less cards at foundation is costly by a factor of 2
-                + totalUnsortedSize        // Unsored tableaues are a disadvantage
-                + (4 - Reserve.FreeCount)  // Fewer free cells is a disadvantage
-                + colorDiff                // Greater color variance at foundation is a disadvantage
-                + numBuried;               // Deeply buried cards, which are next in line, within the unsorted portion of tableaus is a disadvantage
         }
 
-        public Board Clone() => new()
-        {
-            Tableaus = Tableaus.Clone(),
-            Reserve = Reserve.Clone(),
-            Foundation = Foundation.Clone(),
-
-            _manualMoveCount = _manualMoveCount,
-            AutoMoveCount = AutoMoveCount,
-            MovesEstimated = MovesEstimated,
-            LastMove = LastMove,
-        };
-
-        public IEnumerable<Move> GetMoves()
+        internal IEnumerable<Move> GetMoves()
         {
             var moves = new Stack<Move>();
-            Traverse(b =>
+            Traverse(this, b =>
             {
                 foreach (var autoMove in GetAutoMoves(b).Reverse())
                 {
@@ -399,19 +394,67 @@ namespace FreeCellSolver.Game
 
                 return autoMoves;
             }
-        }
 
-        public void Traverse(Action<Board> visit)
-        {
-            var prev = this;
-
-            while (prev != null)
+            static void Traverse(Board initial, Action<Board> visit)
             {
-                visit(prev);
-                prev = prev.Prev;
+                var prev = initial;
+
+                while (prev != null)
+                {
+                    visit(prev);
+                    prev = prev.Prev;
+                }
             }
         }
 
+        private bool AllowReserveToTableau(int r, int t) =>
+            // Block if last move is TtT unless the proposed move target is same as either source
+            // or dest of last move.
+            //
+            // 00 01 02 03 04 05 06 07
+            //     ↓        ↑
+            //     →→→→→→→→→→
+            //
+            // i.e. if last move was t1-->t4, then we block any RtT move where target tableau is not 1 or 4.
+            // so we only allow r-->t1 or r-->t4
+            //
+            // We do this because we want to stay with the same tableaus that originated the move to discover
+            // more promising positions.
+            !(LastMove.Type == MoveType.TableauToTableau && t != LastMove.From && t != LastMove.To) &&
+            // Block reverse move
+            !(LastMove.Type == MoveType.TableauToReserve && r == LastMove.To && t == LastMove.From);
+
+        private bool AllowTableauToTableau(int t1, int t2) =>
+            // Block if last move is TtR unless the last move source is same as either the source
+            // or dest of the proposed move.
+            //
+            //     r
+            //     ↑
+            // 00 01 02 03 04 05 06 07
+            //
+            // i.e. if last move t1-->r, then we block any TtT move where target or source is not 1.
+            // so we only allow tx-->t1 or t1-->tx
+            //
+            // We do this because we want to stay with the same tableau discovering more promising positions.
+            !(LastMove.Type == MoveType.TableauToReserve && LastMove.From != t1 && LastMove.From != t2);
+
+        private bool AllowTableauToReserve(int t) =>
+            // Block if last move is also TtR unless the last move source is greater or equal to
+            // the proposed move source.
+            //
+            //              r
+            //              ↑
+            // 00 01 02 03 04 05 06 07
+            //
+            // i.e. if last move t4-->r, then we block any TtR move where source is less than 4.
+            // so we only allow t4-->r, t5-->r, t6-->r and t7-->r
+            //
+            // We do this because blocked moves are guaranteed to be generated from other board states.
+            !(LastMove.Type == MoveType.TableauToReserve && LastMove.From > t) &&
+            // Block reverse move
+            !(LastMove.Type == MoveType.ReserveToTableau && LastMove.To == t);
+
+        #region overrides and interface impl functions
         public override string ToString()
         {
             var sb = new StringBuilder();
@@ -427,7 +470,6 @@ namespace FreeCellSolver.Game
         public int CompareTo(Board other)
             => ((_cost << 8) | _manualMoveCount) - ((other._cost << 8) | other._manualMoveCount);
 
-        #region Equality overrides and overloads
         public bool Equals(Board other)
         {
             Debug.Assert(other is not null);

@@ -6,55 +6,25 @@ namespace FreeCellSolver.Test
 {
     public class MoveExtensionsTests
     {
-        [Fact]
-        public void IsReverseOf_returns_false_when_other_is_emptyMove()
-        {
-            // Arrange
-            var m1 = Move.Get(MoveType.ReserveToFoundation, 0);
-
-            // Act
-            var r = m1.IsReverseOf(default);
-
-            // Assert
-            Assert.False(r);
-        }
-
         [Theory]
-        [InlineData(MoveType.TableauToTableau, 1, 2, 1, MoveType.TableauToTableau, 2, 1, 1, true)]
-        [InlineData(MoveType.TableauToTableau, 1, 2, 2, MoveType.TableauToTableau, 2, 1, 2, true)]
-        [InlineData(MoveType.TableauToReserve, 1, 2, 1, MoveType.ReserveToTableau, 2, 1, 1, true)]
-        [InlineData(MoveType.ReserveToTableau, 1, 2, 1, MoveType.TableauToReserve, 2, 1, 1, true)]
+        [InlineData(0, 1, 2, MoveType.ReserveToFoundation, 0, 0, 1, false)]
+        [InlineData(0, 1, 2, MoveType.TableauToFoundation, 0, 0, 1, false)]
+        [InlineData(0, 1, 2, MoveType.ReserveToTableau, 0, 0, 1, false)]
+        [InlineData(0, 1, 2, MoveType.TableauToReserve, 0, 0, 1, false)]
 
-        [InlineData(MoveType.TableauToTableau, 1, 2, 1, MoveType.TableauToTableau, 2, 1, 2, false)]
-        [InlineData(MoveType.TableauToTableau, 1, 2, 1, MoveType.TableauToTableau, 3, 1, 1, false)]
-        [InlineData(MoveType.TableauToTableau, 1, 2, 1, MoveType.TableauToReserve, 2, 1, 1, false)]
-        [InlineData(MoveType.TableauToTableau, 1, 2, 1, MoveType.ReserveToTableau, 2, 1, 1, false)]
-        [InlineData(MoveType.TableauToTableau, 1, 2, 1, MoveType.ReserveToFoundation, 2, 0, 1, false)]
-        [InlineData(MoveType.TableauToTableau, 1, 2, 1, MoveType.TableauToFoundation, 2, 0, 1, false)]
+        [InlineData(0, 1, 2, MoveType.TableauToTableau, 0, 1, 2, false)]
+        [InlineData(0, 1, 2, MoveType.TableauToTableau, 2, 0, 2, false)]
+        [InlineData(0, 1, 2, MoveType.TableauToTableau, 1, 0, 1, false)]
 
-        [InlineData(MoveType.TableauToReserve, 1, 2, 1, MoveType.TableauToTableau, 2, 1, 2, false)]
-        [InlineData(MoveType.TableauToReserve, 1, 2, 1, MoveType.TableauToTableau, 3, 1, 1, false)]
-        [InlineData(MoveType.TableauToReserve, 1, 2, 1, MoveType.TableauToReserve, 2, 1, 1, false)]
-        [InlineData(MoveType.TableauToReserve, 1, 2, 1, MoveType.ReserveToTableau, 3, 1, 1, false)]
-        [InlineData(MoveType.TableauToReserve, 1, 2, 1, MoveType.ReserveToTableau, 2, 2, 1, false)]
-        [InlineData(MoveType.TableauToReserve, 1, 2, 1, MoveType.ReserveToFoundation, 2, 0, 1, false)]
-        [InlineData(MoveType.TableauToReserve, 1, 2, 1, MoveType.TableauToFoundation, 2, 0, 1, false)]
-
-        [InlineData(MoveType.ReserveToTableau, 1, 2, 1, MoveType.TableauToTableau, 2, 1, 2, false)]
-        [InlineData(MoveType.ReserveToTableau, 1, 2, 1, MoveType.TableauToTableau, 3, 1, 1, false)]
-        [InlineData(MoveType.ReserveToTableau, 1, 2, 1, MoveType.TableauToReserve, 3, 1, 1, false)]
-        [InlineData(MoveType.ReserveToTableau, 1, 2, 1, MoveType.TableauToReserve, 2, 2, 1, false)]
-        [InlineData(MoveType.ReserveToTableau, 1, 2, 1, MoveType.ReserveToTableau, 2, 1, 1, false)]
-        [InlineData(MoveType.ReserveToTableau, 1, 2, 1, MoveType.ReserveToFoundation, 2, 0, 1, false)]
-        [InlineData(MoveType.ReserveToTableau, 1, 2, 1, MoveType.TableauToFoundation, 2, 0, 1, false)]
-        public void IsReverseOf_returns_whether_move1_is_reverse_of_move2(MoveType mt1, int from1, int to1, int size1, MoveType mt2, int from2, int to2, int size2, bool expected)
+        [InlineData(0, 1, 2, MoveType.TableauToTableau, 1, 0, 2, true)]
+        public void IsReverseOfTT_returns_whether_TT_move1_is_reverse_of_TT_move2(int currentFrom, int currentTo, int currentSize, MoveType lastType, int lastFrom, int lastTo, int lastSize, bool expected)
         {
             // Arrange
-            var m1 = Move.Get(mt1, from1, to1, size1);
-            var m2 = Move.Get(mt2, from2, to2, size2);
+            var current = Move.Get(MoveType.TableauToTableau, currentFrom, currentTo, currentSize);
+            var last = Move.Get(lastType, lastFrom, lastTo, lastSize);
 
             // Act
-            var r = m1.IsReverseOf(m2);
+            var r = current.IsReverseOfTT(last);
 
             // Assert
             Assert.Equal(expected, r);
