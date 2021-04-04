@@ -1,9 +1,11 @@
+using System;
 using System.Diagnostics;
 
 namespace FreeCellSolver.Game
 {
-    public enum MoveType
+    public enum MoveType : byte
     {
+        None,
         TableauToFoundation,
         TableauToReserve,
         TableauToTableau,
@@ -11,72 +13,19 @@ namespace FreeCellSolver.Game
         ReserveToTableau,
     }
 
-    public sealed class Move
+    public readonly struct Move
     {
-        private static readonly Move[] _possibleMoves = new Move[780];
-
         public MoveType Type { get; }
-        public int From { get; }
-        public int To { get; }
-        public int Size { get; }
+        public byte From { get; }
+        public byte To { get; }
+        public byte Size { get; }
 
-        internal Move(MoveType type, int from, int to = 0, int size = 1)
+        private Move(MoveType type, byte from, byte to, byte size)
         {
             Type = type;
             From = from;
             To = to;
             Size = size;
-        }
-
-        static Move()
-        {
-            // Cache all possible moves
-            // Reserve -> foundation
-            // Reserve -> tableau
-            // Tableau -> foundation
-            // Tableau -> reserve
-            // Tableau -> tableau
-
-            for (var r = 0; r < 4; r++)
-            {
-                var mt = MoveType.ReserveToFoundation;
-                var seed = 0;
-                _possibleMoves[seed + r] = new Move(mt, r);
-
-                mt = MoveType.ReserveToTableau;
-                seed = 4;
-                for (var t = 0; t < 8; t++)
-                {
-                    var index = seed + (r * 8) + t;
-                    _possibleMoves[index] = new Move(mt, r, t);
-                }
-            }
-
-            for (var t = 0; t < 8; t++)
-            {
-                var mt = MoveType.TableauToFoundation;
-                var seed = 36;
-                _possibleMoves[seed + t] = new Move(mt, t);
-
-                mt = MoveType.TableauToReserve;
-                seed = 44;
-                for (var r = 0; r < 4; r++)
-                {
-                    var index = seed + (t * 4) + r;
-                    _possibleMoves[index] = new Move(mt, t, r);
-                }
-
-                mt = MoveType.TableauToTableau;
-                seed = 76;
-                for (var t2 = 0; t2 < 8; t2++)
-                {
-                    for (var moveSize = 1; moveSize < 12; moveSize++)
-                    {
-                        var index = seed + (t * 88) + (t2 * 11) + moveSize - 1;
-                        _possibleMoves[index] = new Move(mt, t, t2, moveSize);
-                    }
-                }
-            }
         }
 
         public static Move Get(MoveType type, int from, int to = 0, int size = 1)
@@ -89,17 +38,7 @@ namespace FreeCellSolver.Game
                 (type == MoveType.TableauToTableau && from != to && from >= 0 && from < 8 && to >= 0 && to < 8 && size >= 1 && size <= 11)
             );
 
-            var index = type switch
-            {
-                MoveType.ReserveToFoundation => from,
-                MoveType.ReserveToTableau => 4 + (from * 8) + to,
-                MoveType.TableauToFoundation => 36 + from,
-                MoveType.TableauToReserve => 44 + (from * 4) + to,
-                MoveType.TableauToTableau => 76 + (from * 88) + (to * 11) + size - 1,
-                _ => -1,
-            };
-
-            return _possibleMoves[index];
+            return new Move(type, (byte)from, (byte)to, (byte)size);
         }
 
         public override string ToString()
@@ -123,5 +62,15 @@ namespace FreeCellSolver.Game
             Debug.Assert(false);
             return null;
         }
+
+        public override int GetHashCode() => HashCode.Combine(Type, From, To, Size);
+
+        public bool Equals(Move other) => Type == other.Type && From == other.From && To == other.To && Size == other.Size;
+
+        public override bool Equals(object obj) => obj is Move other && Equals(other);
+
+        public static bool operator ==(Move a, Move b) => Equals(a, b);
+
+        public static bool operator !=(Move a, Move b) => !(a == b);
     }
 }

@@ -1034,7 +1034,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(b1._manualMoveCount, b2._manualMoveCount);
             Assert.Equal(b1.AutoMoveCount, b2.AutoMoveCount);
             Assert.Equal(b1.MovesEstimated, b2.MovesEstimated);
-            Assert.Same(b1.LastMove, b2.LastMove);
+            Assert.Equal(b1.LastMove, b2.LastMove);
 
             Assert.NotSame(b1, b2);
             Assert.NotSame(b1.Foundation, b2.Foundation);

@@ -351,7 +351,7 @@ namespace FreeCellSolver.Game
                 {
                     moves.Push(autoMove);
                 }
-                if (b.LastMove != null)
+                if (b.LastMove.Type != MoveType.None)
                 {
                     moves.Push(b.LastMove);
                 }
