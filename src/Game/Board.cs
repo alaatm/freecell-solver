@@ -18,7 +18,6 @@ namespace FreeCellSolver.Game
         public int MovesEstimated { get; private set; }
         public int MoveCount => _manualMoveCount + AutoMoveCount;
 
-        public List<Move> AutoMoves { get; private set; }
         public Move LastMove { get; private set; }
         public Board Prev { get; private set; }
 
@@ -178,14 +177,9 @@ namespace FreeCellSolver.Game
             return _moves;
         }
 
-        public Board ExecuteMove(Move move)
-        {
-            var copy = ExecuteMoveNoAutoPlay(move);
-            copy.AutoPlay();
-            return copy;
-        }
+        public Board ExecuteMove(Move move) => ExecuteMove(move, true);
 
-        internal Board ExecuteMoveNoAutoPlay(Move move)
+        public Board ExecuteMove(Move move, bool autoPlay)
         {
             var copy = Clone();
 
@@ -194,6 +188,10 @@ namespace FreeCellSolver.Game
             copy.Prev = this;
 
             copy.ExecuteMoveCore(move);
+            if (autoPlay)
+            {
+                copy.AutoPlay();
+            }
 
             return copy;
         }
@@ -204,12 +202,13 @@ namespace FreeCellSolver.Game
 
             Prev = Clone();
             AutoPlay();
-            if (AutoMoves == null)
+            if (AutoMoveCount == 0)
             {
                 Prev = null;
             }
         }
 
+        // Any change in this function must also be reflected in GetAutoMoves()
         private void AutoPlay()
         {
             Debug.Assert(Prev != null);
@@ -230,12 +229,8 @@ namespace FreeCellSolver.Game
                     var card = reserve[r];
                     if (card != Card.Null && foundation.CanAutoPlay(card))
                     {
-                        var move = Move.Get(MoveType.ReserveToFoundation, r);
-
-                        AutoMoves ??= new List<Move>(4);
                         AutoMoveCount++;
-                        AutoMoves.Add(move);
-                        ExecuteMoveCore(move);
+                        ExecuteMoveCore(Move.Get(MoveType.ReserveToFoundation, r));
                         found = true;
                     }
                 }
@@ -246,12 +241,8 @@ namespace FreeCellSolver.Game
                     var card = tableaus[t].Top;
                     if (card != Card.Null && foundation.CanAutoPlay(card))
                     {
-                        var move = Move.Get(MoveType.TableauToFoundation, t);
-
-                        AutoMoves ??= new List<Move>(4);
                         AutoMoveCount++;
-                        AutoMoves.Add(move);
-                        ExecuteMoveCore(move);
+                        ExecuteMoveCore(Move.Get(MoveType.TableauToFoundation, t));
                         found = true;
                     }
                 }
@@ -347,7 +338,7 @@ namespace FreeCellSolver.Game
             var moves = new Stack<Move>();
             Traverse(b =>
             {
-                foreach (var autoMove in b.AutoMoves?.AsEnumerable().Reverse() ?? Enumerable.Empty<Move>())
+                foreach (var autoMove in GetAutoMoves(b).Reverse())
                 {
                     moves.Push(autoMove);
                 }
@@ -358,6 +349,59 @@ namespace FreeCellSolver.Game
             });
 
             return moves;
+
+            static IEnumerable<Move> GetAutoMoves(Board board)
+            {
+                if (board.AutoMoveCount == 0)
+                {
+                    return Enumerable.Empty<Move>();
+                }
+
+                Debug.Assert(board.Prev is not null);
+
+                var clone = board.Prev.Clone();
+                var reserve = clone.Reserve;
+                var foundation = clone.Foundation;
+                var tableaus = clone.Tableaus;
+
+                var autoMoves = new List<Move>();
+
+                bool found;
+
+                do
+                {
+                    found = false;
+
+                    // 1. Reserve -> Foundation
+                    for (var r = 0; r < 4; r++)
+                    {
+                        var card = reserve[r];
+                        if (card != Card.Null && foundation.CanAutoPlay(card))
+                        {
+                            var move = Move.Get(MoveType.ReserveToFoundation, r);
+                            autoMoves.Add(move);
+                            clone.ExecuteMoveCore(move);
+                            found = true;
+                        }
+                    }
+
+                    // 2. Tableau -> Foundation
+                    for (var t = 0; t < 8; t++)
+                    {
+                        var card = tableaus[t].Top;
+                        if (card != Card.Null && foundation.CanAutoPlay(card))
+                        {
+                            var move = Move.Get(MoveType.TableauToFoundation, t);
+                            autoMoves.Add(move);
+                            clone.ExecuteMoveCore(move);
+                            found = true;
+                        }
+                    }
+                } while (found);
+
+                Debug.Assert(autoMoves.Count == board.AutoMoveCount);
+                return autoMoves;
+            }
         }
 
         public void Traverse(Action<Board> visit)
