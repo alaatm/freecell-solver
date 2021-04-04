@@ -45,7 +45,7 @@ namespace FreeCellSolver.Game
 
             for (var i = tableaus.Length; i < 8; i++)
             {
-                ts._state[i] = new Tableau();
+                ts._state[i] = Tableau.Create();
             }
 
             return ts;

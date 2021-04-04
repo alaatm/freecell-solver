@@ -11,7 +11,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void State_is_initialized_to_empty_foundation()
         {
-            var f = new Foundation();
+            var f = Foundation.Create();
 
             for (var i = 0; i < 4; i++)
             {
@@ -22,7 +22,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Indexer_returns_next_rank_of_specified_suit()
         {
-            var f = new Foundation(Ranks.R6, Ranks.Nil, Ranks.Nil, Ranks.Nil);
+            var f = Foundation.Create(Ranks.R6, Ranks.Nil, Ranks.Nil, Ranks.Nil);
             Assert.Equal(Ranks.R7, f[Suits.Clubs]);
             Assert.Equal(Ranks.Ace, f[Suits.Diamonds]);
             Assert.Equal(Ranks.Ace, f[Suits.Hearts]);
@@ -32,7 +32,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void CanPush_returns_whether_card_can_be_pushed()
         {
-            var f = new Foundation();
+            var f = Foundation.Create();
 
             Assert.True(f.CanPush(Card.Get("AC")));
             Assert.False(f.CanPush(Card.Get("2C")));
@@ -42,7 +42,7 @@ namespace FreeCellSolver.Test
         [MemberData(nameof(CanAutoPlay_testsData))]
         public void CanAutoPlay_tests(int clubs, int diamonds, int hearts, int spades, Card card, bool expectedCanAutoPlay)
         {
-            var f = new Foundation(clubs, diamonds, hearts, spades);
+            var f = Foundation.Create(clubs, diamonds, hearts, spades);
             Assert.Equal(expectedCanAutoPlay, f.CanAutoPlay(card));
         }
 
@@ -68,7 +68,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Push_pushes_card_to_foundation_slot()
         {
-            var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.Nil, Ranks.Nil);
+            var f = Foundation.Create(Ranks.Nil, Ranks.Nil, Ranks.Nil, Ranks.Nil);
 
             Assert.Equal(Ranks.Ace, f[Suits.Clubs]);
             f.Push(Card.Get("AC"));
@@ -78,7 +78,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Clone_clones_object()
         {
-            var f = new Foundation(Ranks.Ace, Ranks.R4, Ranks.Nil, Ranks.R3);
+            var f = Foundation.Create(Ranks.Ace, Ranks.R4, Ranks.Nil, Ranks.R3);
             var clone = f.Clone();
 
             Assert.True(f.Equals(clone));
@@ -94,12 +94,12 @@ namespace FreeCellSolver.Test
 
         [Fact]
         public void ToString_returns_string_representation()
-            => Assert.Equal($"CC DD HH SS{Environment.NewLine}AC 4D -- KS", new Foundation(Ranks.Ace, Ranks.R4, Ranks.Nil, Ranks.Rk).ToString());
+            => Assert.Equal($"CC DD HH SS{Environment.NewLine}AC 4D -- KS", Foundation.Create(Ranks.Ace, Ranks.R4, Ranks.Nil, Ranks.Rk).ToString());
 
         [Fact]
         public void AllCards_returns_all_cards()
         {
-            var f = new Foundation(Ranks.Nil, Ranks.Ace, Ranks.R2, Ranks.R3);
+            var f = Foundation.Create(Ranks.Nil, Ranks.Ace, Ranks.R2, Ranks.R3);
             var allCards = f.AllCards().ToList();
 
             // Assert
@@ -111,7 +111,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("2S"), allCards[4]);
             Assert.Equal(Card.Get("3S"), allCards[5]);
 
-            Assert.Empty(new Foundation().AllCards());
+            Assert.Empty(Foundation.Create().AllCards());
         }
     }
 }

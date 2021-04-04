@@ -16,9 +16,11 @@ namespace FreeCellSolver.Game
 
         public byte this[int s] => _state[s];
 
-        public Foundation() { }
+        private Foundation() { }
 
-        public Foundation(int clubsTop, int diamondsTop, int heartsTop, int spadesTop)
+        public static Foundation Create() => new();
+
+        public static Foundation Create(int clubsTop, int diamondsTop, int heartsTop, int spadesTop)
         {
             var clubsNext = clubsTop == Ranks.Nil ? Ranks.Ace : clubsTop + 1;
             var diamondsNext = diamondsTop == Ranks.Nil ? Ranks.Ace : diamondsTop + 1;
@@ -30,10 +32,12 @@ namespace FreeCellSolver.Game
             Debug.Assert(heartsNext >= Ranks.Ace && heartsNext <= Ranks.Rk + 1);
             Debug.Assert(spadesNext >= Ranks.Ace && spadesNext <= Ranks.Rk + 1);
 
-            _state[0] = (byte)clubsNext;
-            _state[1] = (byte)diamondsNext;
-            _state[2] = (byte)heartsNext;
-            _state[3] = (byte)spadesNext;
+            var f = new Foundation();
+            f._state[0] = (byte)clubsNext;
+            f._state[1] = (byte)diamondsNext;
+            f._state[2] = (byte)heartsNext;
+            f._state[3] = (byte)spadesNext;
+            return f;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]

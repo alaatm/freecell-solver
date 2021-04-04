@@ -22,24 +22,28 @@ namespace FreeCellSolver.Game
 
         public Card this[int index] => Card.Get(_state[index]);
 
-        public Tableau() { }
+        private Tableau() { }
 
-        public Tableau(string cards) : this(
-            new[] { 0 }.SelectMany(i => cards
+        public static Tableau Create() => new();
+
+        public static Tableau Create(string cards) =>
+            Create(new[] { 0 }.SelectMany(i => cards
                 .Replace(" ", "")
                 .GroupBy(_ => i++ / 2)
                 .Select(g => Card.Get(string.Join("", g)).RawValue)
-            ).ToArray())
-        { }
+            ).ToArray());
 
-        internal Tableau(Span<byte> cards)
+        internal static Tableau Create(Span<byte> cards)
         {
+            var t = new Tableau();
+
             for (var i = 0; i < cards.Length; i++)
             {
-                _state[Size++] = cards[i];
+                t._state[t.Size++] = cards[i];
             }
 
-            SortedSize = CountSorted();
+            t.SortedSize = t.CountSorted();
+            return t;
         }
 
         public bool CanPush(Card card) => Size == 0 || card.IsBelow(Top);

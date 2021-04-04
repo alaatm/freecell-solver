@@ -7,26 +7,26 @@ namespace FreeCellSolver.Test
 {
     public class BoardExtensionsTests
     {
-        static readonly Board _b1 = new(Tableaus.Create(
-            new Tableau("JD KD 2S 4C 3S 6D 6S"),
-            new Tableau("2D KC KS 5C TD 8S 9C"),
-            new Tableau("9H 9S 9D TS 4S 8D 2H"),
-            new Tableau("JC 5S QD QH TH QS 6H"),
-            new Tableau("5D AD JS 4H 8H 6C"),
-            new Tableau("7H QC AS AC 2C 3D"),
-            new Tableau("7C KH AH 4D JH 8C"),
-            new Tableau("5H 3H 3C 7S 7D TC")
+        static readonly Board _b1 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(
+            Tableau.Create("JD KD 2S 4C 3S 6D 6S"),
+            Tableau.Create("2D KC KS 5C TD 8S 9C"),
+            Tableau.Create("9H 9S 9D TS 4S 8D 2H"),
+            Tableau.Create("JC 5S QD QH TH QS 6H"),
+            Tableau.Create("5D AD JS 4H 8H 6C"),
+            Tableau.Create("7H QC AS AC 2C 3D"),
+            Tableau.Create("7C KH AH 4D JH 8C"),
+            Tableau.Create("5H 3H 3C 7S 7D TC")
         ));
 
-        static readonly Board _b2 = new(Tableaus.Create(
-            new Tableau("QD 4D TD 7S AH 3H AS"),
-            new Tableau("QC JD JC 9D 9S AD 5S"),
-            new Tableau("KC JS 8C KS TC 7H TH"),
-            new Tableau("3C 6H 6C 7C 2S 3D JH"),
-            new Tableau("4C QS 8S 6S 3S 5H"),
-            new Tableau("2C 6D 4S 4H TS 8D"),
-            new Tableau("KD 2D 5D AC 9H KH"),
-            new Tableau("5C 9C QH 8H 2H 7D")
+        static readonly Board _b2 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(
+            Tableau.Create("QD 4D TD 7S AH 3H AS"),
+            Tableau.Create("QC JD JC 9D 9S AD 5S"),
+            Tableau.Create("KC JS 8C KS TC 7H TH"),
+            Tableau.Create("3C 6H 6C 7C 2S 3D JH"),
+            Tableau.Create("4C QS 8S 6S 3S 5H"),
+            Tableau.Create("2C 6D 4S 4H TS 8D"),
+            Tableau.Create("KD 2D 5D AC 9H KH"),
+            Tableau.Create("5C 9C QH 8H 2H 7D")
         ));
 
         [Fact]
@@ -69,18 +69,18 @@ KD KC 9S 5S AD QC KH 3H
 6S 9C 2H 6H            
 */
 
-var b = new Board(
-	new Reserve(""3D""),
-	new Foundation(Ranks.R2, Ranks.Nil, Ranks.Nil, Ranks.Ace),
+var b = Board.Create(
+	Reserve.Create(""3D""),
+	Foundation.Create(Ranks.R2, Ranks.Nil, Ranks.Nil, Ranks.Ace),
 	Tableaus.Create(
-		new Tableau(""JD KD 2S 4C 3S 6D 6S""),
-		new Tableau(""2D KC KS 5C TD 8S 9C""),
-		new Tableau(""9H 9S 9D TS 4S 8D 2H""),
-		new Tableau(""JC 5S QD QH TH QS 6H""),
-		new Tableau(""5D AD JS 4H 8H 6C""),
-		new Tableau(""7H QC""),
-		new Tableau(""7C KH AH 4D JH 8C""),
-		new Tableau(""5H 3H 3C 7S 7D TC"")
+		Tableau.Create(""JD KD 2S 4C 3S 6D 6S""),
+		Tableau.Create(""2D KC KS 5C TD 8S 9C""),
+		Tableau.Create(""9H 9S 9D TS 4S 8D 2H""),
+		Tableau.Create(""JC 5S QD QH TH QS 6H""),
+		Tableau.Create(""5D AD JS 4H 8H 6C""),
+		Tableau.Create(""7H QC""),
+		Tableau.Create(""7C KH AH 4D JH 8C""),
+		Tableau.Create(""5H 3H 3C 7S 7D TC"")
 	)
 );
 if (!b.IsValid()) { throw new Exception(); }",

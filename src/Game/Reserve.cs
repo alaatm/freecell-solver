@@ -4,6 +4,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using FreeCellSolver.Game.Extensions;
 
 namespace FreeCellSolver.Game
 {
@@ -17,29 +18,52 @@ namespace FreeCellSolver.Game
 
         private Reserve() { }
 
-        public Reserve(string card1 = null, string card2 = null, string card3 = null, string card4 = null) : this(
-            string.IsNullOrWhiteSpace(card1) ? Card.Nil : Card.Get(card1).RawValue,
-            string.IsNullOrWhiteSpace(card2) ? Card.Nil : Card.Get(card2).RawValue,
-            string.IsNullOrWhiteSpace(card3) ? Card.Nil : Card.Get(card3).RawValue,
-            string.IsNullOrWhiteSpace(card4) ? Card.Nil : Card.Get(card4).RawValue)
-        { }
-
-        private Reserve(byte card1, byte card2, byte card3, byte card4)
+        // Do not call other overloads of Create() since this is called from
+        // Board.FromDealNumber() and thus should be optimized.
+        public static Reserve Create()
         {
-            Debug.Assert((card1 != card2 && card1 != card3 && card1 != card4 && card1 != Card.Nil) || card1 == Card.Nil);
-            Debug.Assert((card2 != card1 && card2 != card3 && card2 != card4 && card2 != Card.Nil) || card2 == Card.Nil);
-            Debug.Assert((card3 != card1 && card3 != card2 && card3 != card4 && card3 != Card.Nil) || card3 == Card.Nil);
-            Debug.Assert((card4 != card1 && card4 != card2 && card4 != card3 && card4 != Card.Nil) || card4 == Card.Nil);
+            var r = new Reserve();
+            var state = r._state;
+            if (state.Length > 3)
+            {
+                state[0] = Card.Nil;
+                state[1] = Card.Nil;
+                state[2] = Card.Nil;
+                state[3] = Card.Nil;
+            }
+            return r;
+        }
 
-            _state[0] = card1;
-            _state[1] = card2;
-            _state[2] = card3;
-            _state[3] = card4;
+        public static Reserve Create(string card1) => Create(card1, null, null, null);
 
-            FreeCount -= card1 != Card.Nil ? 1 : 0;
-            FreeCount -= card2 != Card.Nil ? 1 : 0;
-            FreeCount -= card3 != Card.Nil ? 1 : 0;
-            FreeCount -= card4 != Card.Nil ? 1 : 0;
+        public static Reserve Create(string card1, string card2) => Create(card1, card2, null, null);
+
+        public static Reserve Create(string card1, string card2, string card3) => Create(card1, card2, card3, null);
+
+        public static Reserve Create(string card1, string card2, string card3, string card4)
+        {
+            var c1 = card1.IsEmpty() ? Card.Nil : Card.Get(card1).RawValue;
+            var c2 = card2.IsEmpty() ? Card.Nil : Card.Get(card2).RawValue;
+            var c3 = card3.IsEmpty() ? Card.Nil : Card.Get(card3).RawValue;
+            var c4 = card4.IsEmpty() ? Card.Nil : Card.Get(card4).RawValue;
+
+            Debug.Assert((c1 != c2 && c1 != c3 && c1 != c4 && c1 != Card.Nil) || c1 == Card.Nil);
+            Debug.Assert((c2 != c1 && c2 != c3 && c2 != c4 && c2 != Card.Nil) || c2 == Card.Nil);
+            Debug.Assert((c3 != c1 && c3 != c2 && c3 != c4 && c3 != Card.Nil) || c3 == Card.Nil);
+            Debug.Assert((c4 != c1 && c4 != c2 && c4 != c3 && c4 != Card.Nil) || c4 == Card.Nil);
+
+            var r = new Reserve();
+            r._state[0] = c1;
+            r._state[1] = c2;
+            r._state[2] = c3;
+            r._state[3] = c4;
+
+            r.FreeCount -= c1 != Card.Nil ? 1 : 0;
+            r.FreeCount -= c2 != Card.Nil ? 1 : 0;
+            r.FreeCount -= c3 != Card.Nil ? 1 : 0;
+            r.FreeCount -= c4 != Card.Nil ? 1 : 0;
+
+            return r;
         }
 
         public byte GetValue(int i) => _state[i];

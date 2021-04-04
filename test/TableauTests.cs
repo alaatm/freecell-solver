@@ -16,7 +16,7 @@ namespace FreeCellSolver.Test
         public void Size_props_are_properly_initialized(string tableau, int expectedSize, int expectedSortedSize)
         {
             // Arrange & act
-            var t = new Tableau(tableau);
+            var t = Tableau.Create(tableau);
 
             // Assert
             Assert.Equal(expectedSize, t.Size);
@@ -26,14 +26,14 @@ namespace FreeCellSolver.Test
         [Fact]
         public void IsEmpty_returns_whether_tableau_is_empty()
         {
-            Assert.True(new Tableau().IsEmpty);
-            Assert.False(new Tableau("AS").IsEmpty);
+            Assert.True(Tableau.Create().IsEmpty);
+            Assert.False(Tableau.Create("AS").IsEmpty);
         }
 
         [Fact]
         public void Indexer_returns_cards_starting_from_bottom()
         {
-            var t = new Tableau("5H 9S 2D");
+            var t = Tableau.Create("5H 9S 2D");
             Assert.Equal(Card.Get("2D"), t[2]);
             Assert.Equal(Card.Get("5H"), t[0]);
         }
@@ -41,17 +41,17 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Top_returns_top_card_or_null_if_empty()
         {
-            var t = new Tableau("5H 9S 2D");
+            var t = Tableau.Create("5H 9S 2D");
             Assert.Equal(Card.Get("2D"), t.Top);
 
-            t = new Tableau("");
+            t = Tableau.Create("");
             Assert.Equal(Card.Null, t.Top);
         }
 
         [Fact]
         public void Top_is_tracked_when_pushing()
         {
-            var t = new Tableau("5H");
+            var t = Tableau.Create("5H");
             Assert.Equal(Card.Get("5H"), t.Top);
 
             t.Push(Card.Get("4S"));
@@ -61,7 +61,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Top_is_tracked_when_popping()
         {
-            var t = new Tableau("5H 4S");
+            var t = Tableau.Create("5H 4S");
             Assert.Equal(Card.Get("4S"), t.Top);
 
             t.Pop();
@@ -76,29 +76,29 @@ namespace FreeCellSolver.Test
         [InlineData("6S", "5H", true)]
         [InlineData("4H", "5H", false)]
         public void CanPush_returns_whether_card_can_be_placed_on_top(string top, string card, bool canPush)
-            => Assert.Equal(canPush, new Tableau(top).CanPush(Card.Get(card)));
+            => Assert.Equal(canPush, Tableau.Create(top).CanPush(Card.Get(card)));
 
         [Fact]
         public void CanPop_returns_whether_top_can_be_popped()
         {
             // Can't pop when empty
-            Assert.False(new Tableau("").CanPop());
-            Assert.True(new Tableau("5H").CanPop());
+            Assert.False(Tableau.Create("").CanPop());
+            Assert.True(Tableau.Create("5H").CanPop());
         }
 
         [Fact]
         public void CanMove_returns_whether_top_can_be_moved_to_reserve()
         {
             // Can't move when empty
-            Assert.False(new Tableau().CanMove(new Reserve(), out var idx));
+            Assert.False(Tableau.Create().CanMove(Reserve.Create(), out var idx));
             Assert.Equal(-1, idx);
 
             // Can't move when non-empty but full reserve
-            Assert.False(new Tableau("5H").CanMove(new Reserve("AC", "AD", "AH", "AS"), out idx));
+            Assert.False(Tableau.Create("5H").CanMove(Reserve.Create("AC", "AD", "AH", "AS"), out idx));
             Assert.Equal(-1, idx);
 
             // Can move to reserve slot #2 (index=1)
-            Assert.True(new Tableau("5H").CanMove(new Reserve("AD", null, "AH", "AS"), out idx));
+            Assert.True(Tableau.Create("5H").CanMove(Reserve.Create("AD", null, "AH", "AS"), out idx));
             Assert.Equal(1, idx);
         }
 
@@ -106,19 +106,19 @@ namespace FreeCellSolver.Test
         public void CanMove_returns_whether_top_can_be_moved_to_foundation()
         {
             // Can't move when empty
-            Assert.False(new Tableau().CanMove(new Foundation()));
+            Assert.False(Tableau.Create().CanMove(Foundation.Create()));
 
             // Can't move when non-empty but no valid foundation target
-            Assert.False(new Tableau("5H").CanMove(new Foundation()));
+            Assert.False(Tableau.Create("5H").CanMove(Foundation.Create()));
 
             // Can move to foundation on top of 4H
-            Assert.True(new Tableau("5H").CanMove(new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R4, Ranks.Nil)));
+            Assert.True(Tableau.Create("5H").CanMove(Foundation.Create(Ranks.Nil, Ranks.Nil, Ranks.R4, Ranks.Nil)));
         }
 
         [Fact]
         public void Push_pushes_card_to_top_and_maintains_size_and_sortedSize()
         {
-            var t = new Tableau("8S 2H 9C 8H");
+            var t = Tableau.Create("8S 2H 9C 8H");
             Assert.Equal(4, t.Size);
             Assert.Equal(2, t.SortedSize);
 
@@ -135,7 +135,7 @@ namespace FreeCellSolver.Test
             var cards = "8D 7C 6H 5S 4H 3C 2D";
             var cardsArr = cards.Split(' ').Select(c => Card.Get(c)).ToArray();
 
-            var t = new Tableau("");
+            var t = Tableau.Create("");
             Assert.Equal(0, t.Size);
             Assert.Equal(0, t.SortedSize);
             Assert.Null(t.Top);
@@ -155,7 +155,7 @@ namespace FreeCellSolver.Test
         public void Pop_pops_top_and_maintains_size_and_sortedSize()
         {
             // Arrange
-            var t = new Tableau("8S 2H 9C 8H");
+            var t = Tableau.Create("8S 2H 9C 8H");
             Assert.Equal(4, t.Size);
             Assert.Equal(2, t.SortedSize);
 
@@ -172,7 +172,7 @@ namespace FreeCellSolver.Test
         public void Pop_updates_stack_when_col_is_sorted_after_pop_operation()
         {
             // Arrange
-            var t = new Tableau("TH 9C 7C");
+            var t = Tableau.Create("TH 9C 7C");
 
             // Act
             t.Pop();
@@ -192,7 +192,7 @@ namespace FreeCellSolver.Test
             var cards = "8D 7C 6H 5S 4H 3C 2D";
             var cardsArr = cards.Split(' ').Select(c => Card.Get(c)).ToArray();
 
-            var t = new Tableau(cards);
+            var t = Tableau.Create(cards);
             Assert.Equal(7, t.Size);
             Assert.Equal(7, t.SortedSize);
             Assert.Equal(cardsArr[cardsArr.Length - 1], t.Top);
@@ -217,8 +217,8 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Move_moves_cards_from_tableau_to_another_when_requestedSize_equals_1()
         {
-            var t1 = new Tableau("8S 2H 9C 8H");
-            var t2 = new Tableau("");
+            var t1 = Tableau.Create("8S 2H 9C 8H");
+            var t2 = Tableau.Create("");
 
             t1.Move(t2, 1);
 
@@ -236,8 +236,8 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Move_moves_cards_from_tableau_to_another_when_requestedSize_above_1()
         {
-            var t1 = new Tableau("8S 2H 9C 8H");
-            var t2 = new Tableau("");
+            var t1 = Tableau.Create("8S 2H 9C 8H");
+            var t2 = Tableau.Create("");
 
             t1.Move(t2, 2);
 
@@ -256,8 +256,8 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Move_moves_cards_from_tableau_to_another_and_maintains_top1()
         {
-            var t1 = new Tableau("9C 8H");
-            var t2 = new Tableau("TH");
+            var t1 = Tableau.Create("9C 8H");
+            var t2 = Tableau.Create("TH");
 
             t1.Move(t2, 2);
 
@@ -277,8 +277,8 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Move_moves_cards_from_tableau_to_another_and_maintains_top2()
         {
-            var t1 = new Tableau("TD 9C 8H");
-            var t2 = new Tableau("TH");
+            var t1 = Tableau.Create("TD 9C 8H");
+            var t2 = Tableau.Create("TH");
 
             t1.Move(t2, 2);
 
@@ -299,8 +299,8 @@ namespace FreeCellSolver.Test
         public void Move_updates_stack_when_col_is_sorted_after_move_operation()
         {
             // Arrange
-            var t1 = new Tableau("TS 4D 4S 3D 9D 8C");
-            var t2 = new Tableau("TC");
+            var t1 = Tableau.Create("TS 4D 4S 3D 9D 8C");
+            var t2 = Tableau.Create("TC");
 
             // Act
             t1.Move(t2, 2);
@@ -318,8 +318,8 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Move_moves_card_to_reserve()
         {
-            var t = new Tableau("8S 2H 9C 8H");
-            var r = new Reserve();
+            var t = Tableau.Create("8S 2H 9C 8H");
+            var r = Reserve.Create();
 
             t.Move(r, 0);
 
@@ -333,8 +333,8 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Move_moves_card_to_foundation()
         {
-            var t = new Tableau("8S 2H 9C AH");
-            var f = new Foundation();
+            var t = Tableau.Create("8S 2H 9C AH");
+            var f = Foundation.Create();
 
             t.Move(f);
 
@@ -359,15 +359,15 @@ namespace FreeCellSolver.Test
         [InlineData("2H QS JD TC 9H 8S 7D 6C 5H 4S 3D 2S AD", "KH", 12)]
         public void CountMovable_returns_num_of_cards_that_can_be_moved_to_target(string stack, string targetTop, int expectedMovableCount)
         {
-            var t1 = new Tableau(stack);
-            var t2 = new Tableau(targetTop);
+            var t1 = Tableau.Create(stack);
+            var t2 = Tableau.Create(targetTop);
             Assert.Equal(expectedMovableCount, t1.CountMovable(t2));
         }
 
         [Fact]
         public void Clone_clones_object()
         {
-            var t = new Tableau("8S 2H 9C 8H");
+            var t = Tableau.Create("8S 2H 9C 8H");
             var clone = t.Clone();
 
             Assert.True(t.Equals(clone));
@@ -388,7 +388,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Clone_clones_empty_tableau()
         {
-            var t = new Tableau("");
+            var t = Tableau.Create("");
             var clone = t.Clone();
 
             Assert.Equal(Card.Null, clone.Top);
@@ -398,12 +398,12 @@ namespace FreeCellSolver.Test
 
         [Fact]
         public void ToString_returns_string_representation()
-            => Assert.Equal($"8S{Environment.NewLine}2H{Environment.NewLine}9C{Environment.NewLine}8H", new Tableau("8S 2H 9C 8H").ToString());
+            => Assert.Equal($"8S{Environment.NewLine}2H{Environment.NewLine}9C{Environment.NewLine}8H", Tableau.Create("8S 2H 9C 8H").ToString());
 
         [Fact]
         public void AllCards_returns_all_cards()
         {
-            var t = new Tableau("KS QS");
+            var t = Tableau.Create("KS QS");
             var allCards = t.AllCards().ToList();
 
             // Assert
@@ -411,7 +411,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("KS"), allCards[0]);
             Assert.Equal(Card.Get("QS"), allCards[1]);
 
-            Assert.Empty(new Tableau().AllCards());
+            Assert.Empty(Tableau.Create().AllCards());
         }
     }
 }

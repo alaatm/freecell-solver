@@ -11,14 +11,14 @@ namespace FreeCellSolver.Test
         public void EmptyTableauCount_returns_empty_tableau_count()
         {
             var ts = Tableaus.Create(
-                new Tableau(),
-                new Tableau("KC"),
-                new Tableau("KD"),
-                new Tableau("KH"),
-                new Tableau("KS"),
-                new Tableau("QC"),
-                new Tableau("QD"),
-                new Tableau());
+                Tableau.Create(),
+                Tableau.Create("KC"),
+                Tableau.Create("KD"),
+                Tableau.Create("KH"),
+                Tableau.Create("KS"),
+                Tableau.Create("QC"),
+                Tableau.Create("QD"),
+                Tableau.Create());
             Assert.Equal(2, ts.EmptyTableauCount);
         }
 
@@ -26,14 +26,14 @@ namespace FreeCellSolver.Test
         public void Clone_clones_object()
         {
             var ts = Tableaus.Create(
-                new Tableau(),
-                new Tableau("KC"),
-                new Tableau("KD"),
-                new Tableau("KH"),
-                new Tableau("KS"),
-                new Tableau("QC"),
-                new Tableau("QD"),
-                new Tableau());
+                Tableau.Create(),
+                Tableau.Create("KC"),
+                Tableau.Create("KD"),
+                Tableau.Create("KH"),
+                Tableau.Create("KS"),
+                Tableau.Create("QC"),
+                Tableau.Create("QD"),
+                Tableau.Create());
             var clone = ts.Clone();
 
             Assert.Equal(ts.EmptyTableauCount, clone.EmptyTableauCount);
@@ -65,22 +65,22 @@ namespace FreeCellSolver.Test
         public void ToString_returns_string_representation()
             => Assert.Equal(
                 $"00 01 02 03 04 05 06 07{Environment.NewLine}-- -- -- -- -- -- -- --{Environment.NewLine}   KC KD KH KS QC QD   {Environment.NewLine}      9C               ",
-                    Tableaus.Create(new Tableau(),
-                    new Tableau("KC"),
-                    new Tableau("KD 9C"),
-                    new Tableau("KH"),
-                    new Tableau("KS"),
-                    new Tableau("QC"),
-                    new Tableau("QD"),
-                    new Tableau("")).ToString());
+                    Tableaus.Create(Tableau.Create(),
+                    Tableau.Create("KC"),
+                    Tableau.Create("KD 9C"),
+                    Tableau.Create("KH"),
+                    Tableau.Create("KS"),
+                    Tableau.Create("QC"),
+                    Tableau.Create("QD"),
+                    Tableau.Create("")).ToString());
 
         [Fact]
         public void AllCards_returns_all_cards()
         {
-            var t0 = new Tableau("AC");
-            var t1 = new Tableau("AD");
-            var t3 = new Tableau("AH AS");
-            var ts = Tableaus.Create(t0, t1, new Tableau(), t3);
+            var t0 = Tableau.Create("AC");
+            var t1 = Tableau.Create("AD");
+            var t3 = Tableau.Create("AH AS");
+            var ts = Tableaus.Create(t0, t1, Tableau.Create(), t3);
             var allCards = ts.AllCards().ToList();
 
             // Assert

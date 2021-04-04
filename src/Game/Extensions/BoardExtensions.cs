@@ -68,11 +68,11 @@ namespace FreeCellSolver.Game.Extensions
                     cards[j] = crv[col + (j * 8)];
                 }
 
-                tableaus[col++] = new Tableau(cards.Slice(0, count));
+                tableaus[col++] = Tableau.Create(cards.Slice(0, count));
                 i += count;
             }
 
-            return new Board(Tableaus.Create(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));
+            return Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));
         }
 
         public static bool IsValid(this Board board)
@@ -130,7 +130,7 @@ namespace FreeCellSolver.Game.Extensions
             sb.AppendLine();
 
             var rSb = new StringBuilder();
-            rSb.Append("\tnew Reserve(");
+            rSb.Append("\tReserve.Create(");
             for (var i = 0; i < 4; i++)
             {
                 var c = board.Reserve[i];
@@ -143,7 +143,7 @@ namespace FreeCellSolver.Game.Extensions
             rSb.AppendLine("),");
 
             var fSb = new StringBuilder();
-            fSb.Append("\tnew Foundation(");
+            fSb.Append("\tFoundation.Create(");
             for (var i = 0; i < 4; i++)
             {
                 // Note for cases where board.Foundation[i] - 1 evaluates to -1, 
@@ -160,7 +160,7 @@ namespace FreeCellSolver.Game.Extensions
             var tsSb = new StringBuilder();
             for (var i = 0; i < 8; i++)
             {
-                tsSb.Append($"\t\tnew Tableau(\"");
+                tsSb.Append($"\t\tTableau.Create(\"");
                 var t = board.Tableaus[i];
                 for (var j = 0; j < t.Size; j++)
                 {
@@ -173,7 +173,7 @@ namespace FreeCellSolver.Game.Extensions
                 tsSb.AppendLine(i < 7 ? "\")," : "\")");
             }
 
-            sb.AppendLine("var b = new Board(");
+            sb.AppendLine("var b = Board.Create(");
             sb.Append(rSb);
             sb.Append(fSb);
             sb.AppendLine("\tTableaus.Create(");

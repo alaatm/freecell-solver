@@ -30,15 +30,13 @@ namespace FreeCellSolver.Game
 
         private Board() { }
 
-        public Board(Tableaus tableaus) : this(new Reserve(), new Foundation(), tableaus) { }
-
-        public Board(Reserve reserve, Foundation foundation, Tableaus tableaus)
+        public static Board Create(Reserve reserve, Foundation foundation, Tableaus tableaus) => new()
         {
-            Tableaus = tableaus.Clone();
-            Reserve = reserve.Clone();
-            Foundation = foundation.Clone();
-            MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades]);
-        }
+            Tableaus = tableaus.Clone(),
+            Reserve = reserve.Clone(),
+            Foundation = foundation.Clone(),
+            MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades]),
+        };
 
         public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
 

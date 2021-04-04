@@ -10,7 +10,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void IsSolved_returns_whether_board_is_solved()
         {
-            Assert.True(new Board(new Reserve(), new Foundation(Ranks.Rk, Ranks.Rk, Ranks.Rk, Ranks.Rk), Tableaus.Create()).IsSolved);
+            Assert.True(Board.Create(Reserve.Create(), Foundation.Create(Ranks.Rk, Ranks.Rk, Ranks.Rk, Ranks.Rk), Tableaus.Create()).IsSolved);
             Assert.False(Board.FromDealNum(1).IsSolved);
         }
 
@@ -36,16 +36,16 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var r = new Reserve("KS", "6H", "KD", "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S QD 7D TC JC TH 9C");
-            var t2 = new Tableau("QS QC TS 7C KH");
-            var t3 = new Tableau("JS 8C 3H 7H KC");
-            var t5 = new Tableau("JH 9D 9H 8H 4H");
-            var t6 = new Tableau("5C 6C QH 8D TD 5H");
-            var tRest = new Tableau();
+            var r = Reserve.Create("KS", "6H", "KD", "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
+            var t2 = Tableau.Create("QS QC TS 7C KH");
+            var t3 = Tableau.Create("JS 8C 3H 7H KC");
+            var t5 = Tableau.Create("JH 9D 9H 8H 4H");
+            var t6 = Tableau.Create("5C 6C QH 8D TD 5H");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -82,16 +82,16 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var r = new Reserve("KS", "6H", "KD", "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S TC KC QD JC TH 9C");
-            var t2 = new Tableau("QS QC TS 7C KH");
-            var t3 = new Tableau("JS 8C 3H 7H 7D");
-            var t5 = new Tableau("JH 9D 9H 8H 4H");
-            var t6 = new Tableau("5C 6C QH 8D TD 5H");
-            var tRest = new Tableau();
+            var r = Reserve.Create("KS", "6H", "KD", "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S TC KC QD JC TH 9C");
+            var t2 = Tableau.Create("QS QC TS 7C KH");
+            var t3 = Tableau.Create("JS 8C 3H 7H 7D");
+            var t5 = Tableau.Create("JH 9D 9H 8H 4H");
+            var t6 = Tableau.Create("5C 6C QH 8D TD 5H");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -127,17 +127,17 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var r = new Reserve("KS", "6H", "KD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("JC TH 9C");
-            var t2 = new Tableau("QS QC TS 7C KH");
-            var t3 = new Tableau("JS 8C 3H 7H 7D");
-            var t4 = new Tableau("9S TC KC JD");
-            var t5 = new Tableau("JH 9D 9H 8H 4H");
-            var t6 = new Tableau("5C 6C QH 8D TD QD 5H");
-            var tRest = new Tableau();
+            var r = Reserve.Create("KS", "6H", "KD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("JC TH 9C");
+            var t2 = Tableau.Create("QS QC TS 7C KH");
+            var t3 = Tableau.Create("JS 8C 3H 7H 7D");
+            var t4 = Tableau.Create("9S TC KC JD");
+            var t5 = Tableau.Create("JH 9D 9H 8H 4H");
+            var t6 = Tableau.Create("5C 6C QH 8D TD QD 5H");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, t2, t3, t4, t5, t6, tRest);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -171,16 +171,16 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var r = new Reserve(null, "6H", "KD", "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S QD 7D TC JC TH 9C");
-            var t2 = new Tableau("QS QC TS 7C KH KS");
-            var t3 = new Tableau("JS 8C 3H 7H KC");
-            var t5 = new Tableau("JH 9D 9H 8H 4H");
-            var t6 = new Tableau("5C 6C QH 8D TD 5H");
-            var tRest = new Tableau();
+            var r = Reserve.Create(null, "6H", "KD", "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
+            var t2 = Tableau.Create("QS QC TS 7C KH KS");
+            var t3 = Tableau.Create("JS 8C 3H 7H KC");
+            var t5 = Tableau.Create("JH 9D 9H 8H 4H");
+            var t6 = Tableau.Create("5C 6C QH 8D TD 5H");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0));
@@ -214,16 +214,16 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var r = new Reserve("KS", "6H", "KD", "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S QD 7D TC JC TH 9C");
-            var t2 = new Tableau("QS QC TS 7C KH");
-            var t3 = new Tableau("JS 8C 3H 7H KC");
-            var t5 = new Tableau("JH 9D 9H 8H 4H");
-            var t6 = new Tableau("5C 6C QH 8D 5H TD");
-            var tRest = new Tableau();
+            var r = Reserve.Create("KS", "6H", "KD", "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
+            var t2 = Tableau.Create("QS QC TS 7C KH");
+            var t3 = Tableau.Create("JS 8C 3H 7H KC");
+            var t5 = Tableau.Create("JH 9D 9H 8H 4H");
+            var t6 = Tableau.Create("5C 6C QH 8D 5H TD");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 6));
@@ -255,16 +255,16 @@ namespace FreeCellSolver.Test
              * TH       7C    KS 5H     
              * QS             KD      
              */
-            var r = new Reserve(null, "6H", null, "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S QD 7D TC JC TH QS");
-            var t2 = new Tableau("KH QC JH TS");
-            var t3 = new Tableau("JS 8C 3H 7H KC 7C");
-            var t5 = new Tableau("9C 9D 9H 8H 4H KS KD");
-            var t6 = new Tableau("5C 6C QH 8D TD 5H");
-            var tRest = new Tableau();
+            var r = Reserve.Create(null, "6H", null, "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S QD 7D TC JC TH QS");
+            var t2 = Tableau.Create("KH QC JH TS");
+            var t3 = Tableau.Create("JS 8C 3H 7H KC 7C");
+            var t5 = Tableau.Create("9C 9D 9H 8H 4H KS KD");
+            var t6 = Tableau.Create("5C 6C QH 8D TD 5H");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, tRest);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -298,18 +298,18 @@ namespace FreeCellSolver.Test
              *       ----------
              *        QC,JH,TS - Can't move since available is 2 and move size is 3
              */
-            var r = new Reserve("QS", "6H", "TH", "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S QD 7D TC");
-            var t1 = new Tableau("JC");
-            var t2 = new Tableau("KH QC JH TS");
-            var t3 = new Tableau("JS 8C 3H 7H KC 7C");
-            var t5 = new Tableau("9C 9D 9H 8H 4H KS KD");
-            var t6 = new Tableau("5C 6C QH 8D TD");
-            var t7 = new Tableau("5H");
-            var tRest = new Tableau();
+            var r = Reserve.Create("QS", "6H", "TH", "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S QD 7D TC");
+            var t1 = Tableau.Create("JC");
+            var t2 = Tableau.Create("KH QC JH TS");
+            var t3 = Tableau.Create("JS 8C 3H 7H KC 7C");
+            var t5 = Tableau.Create("9C 9D 9H 8H 4H KS KD");
+            var t6 = Tableau.Create("5C 6C QH 8D TD");
+            var t7 = Tableau.Create("5H");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, t1, t2, t3, tRest, t5, t6, t7);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -343,19 +343,19 @@ namespace FreeCellSolver.Test
              *       ----------
              *        JH,TS - Can't move since available is 1 and move size is 2
              */
-            var r = new Reserve("QS", "6H", "TH", "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S QD 7D TC");
-            var t1 = new Tableau("JC");
-            var t2 = new Tableau("KD KH JH TS");
-            var t3 = new Tableau("JS 8C 3H 7H KC 7C");
-            var t4 = new Tableau("KS");
-            var t5 = new Tableau("9C 9D 9H 8H 4H QC");
-            var t6 = new Tableau("5C 6C QH 8D TD");
-            var t7 = new Tableau("5H");
-            var tRest = new Tableau();
+            var r = Reserve.Create("QS", "6H", "TH", "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S QD 7D TC");
+            var t1 = Tableau.Create("JC");
+            var t2 = Tableau.Create("KD KH JH TS");
+            var t3 = Tableau.Create("JS 8C 3H 7H KC 7C");
+            var t4 = Tableau.Create("KS");
+            var t5 = Tableau.Create("9C 9D 9H 8H 4H QC");
+            var t6 = Tableau.Create("5C 6C QH 8D TD");
+            var t7 = Tableau.Create("5H");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -389,17 +389,17 @@ namespace FreeCellSolver.Test
              *       ----------
              *       QC,JH,TS,9D - Can move since available is (0+1)<<2=4 and move size is 4
              */
-            var r = new Reserve("QS", "6H", "TH", "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S QD 7D TC JC");
-            var t2 = new Tableau("KH QC JH TS 9D");
-            var t3 = new Tableau("JS 8C 3H 7H KC 7C");
-            var t5 = new Tableau("9C KS 9H 8H 4H KD");
-            var t6 = new Tableau("5C 6C QH 8D TD");
-            var t7 = new Tableau("5H");
-            var tRest = new Tableau();
+            var r = Reserve.Create("QS", "6H", "TH", "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S QD 7D TC JC");
+            var t2 = Tableau.Create("KH QC JH TS 9D");
+            var t3 = Tableau.Create("JS 8C 3H 7H KC 7C");
+            var t5 = Tableau.Create("9C KS 9H 8H 4H KD");
+            var t6 = Tableau.Create("5C 6C QH 8D TD");
+            var t7 = Tableau.Create("5H");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, t2, t3, tRest, t5, t6, t7);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -435,14 +435,14 @@ namespace FreeCellSolver.Test
              *          QH            
              *          KH            
              */
-            var r = new Reserve("KC");
-            var f = new Foundation(Ranks.Rq, Ranks.Rk, Ranks.Nil, Ranks.Rj);
-            var t0 = new Tableau("KS");
-            var t1 = new Tableau("QS");
-            var t3 = new Tableau("AH 2H 3H 4H 5H 6H 7H 8H 9H TH JH QH KH");
-            var tRest = new Tableau();
+            var r = Reserve.Create("KC");
+            var f = Foundation.Create(Ranks.Rq, Ranks.Rk, Ranks.Nil, Ranks.Rj);
+            var t0 = Tableau.Create("KS");
+            var t1 = Tableau.Create("QS");
+            var t3 = Tableau.Create("AH 2H 3H 4H 5H 6H 7H 8H 9H TH JH QH KH");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, t1, tRest, t3, tRest, tRest, tRest, tRest);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -481,18 +481,18 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var r = new Reserve("4C", "4D");
-            var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
-            var t0 = new Tableau("QD 3H TD 7S AH 5S");
-            var t1 = new Tableau("QC JD JC 9D 9S");
-            var t2 = new Tableau("KC JS 8C KS TC 7H TH");
-            var t3 = new Tableau("2S 6H 6C AS 7C");
-            var t4 = new Tableau("5H QS 8S 6S 3S");
-            var t5 = new Tableau("JH 6D 4S 4H TS");
-            var t6 = new Tableau("KD 8D 5D KH 9H");
-            var t7 = new Tableau("5C 9C QH 8H 2H 7D");
+            var r = Reserve.Create("4C", "4D");
+            var f = Foundation.Create(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
+            var t0 = Tableau.Create("QD 3H TD 7S AH 5S");
+            var t1 = Tableau.Create("QC JD JC 9D 9S");
+            var t2 = Tableau.Create("KC JS 8C KS TC 7H TH");
+            var t3 = Tableau.Create("2S 6H 6C AS 7C");
+            var t4 = Tableau.Create("5H QS 8S 6S 3S");
+            var t5 = Tableau.Create("JH 6D 4S 4H TS");
+            var t6 = Tableau.Create("KD 8D 5D KH 9H");
+            var t7 = Tableau.Create("5C 9C QH 8H 2H 7D");
             var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -529,18 +529,18 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var r = new Reserve();
-            var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
-            var t0 = new Tableau("QD 3H TD 7S AH 5S");
-            var t1 = new Tableau("QC JD JC 9D 9S");
-            var t2 = new Tableau("KC JS 8C KS TC 7H TH");
-            var t3 = new Tableau("2S 6H 6C AS 7C");
-            var t4 = new Tableau("5H QS 8S 6S 3S 4C");
-            var t5 = new Tableau("JH 6D 4S 4H TS");
-            var t6 = new Tableau("KD 8D 5D KH 9H 4D");
-            var t7 = new Tableau("5C 9C QH 8H 2H 7D");
+            var r = Reserve.Create();
+            var f = Foundation.Create(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
+            var t0 = Tableau.Create("QD 3H TD 7S AH 5S");
+            var t1 = Tableau.Create("QC JD JC 9D 9S");
+            var t2 = Tableau.Create("KC JS 8C KS TC 7H TH");
+            var t3 = Tableau.Create("2S 6H 6C AS 7C");
+            var t4 = Tableau.Create("5H QS 8S 6S 3S 4C");
+            var t5 = Tableau.Create("JH 6D 4S 4H TS");
+            var t6 = Tableau.Create("KD 8D 5D KH 9H 4D");
+            var t7 = Tableau.Create("5C 9C QH 8H 2H 7D");
             var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -574,18 +574,18 @@ namespace FreeCellSolver.Test
              */
 
             // Arrange
-            var r = new Reserve("4C", "4D");
-            var f = new Foundation(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
-            var t0 = new Tableau("QD 3H TD 7S AH 5S");
-            var t1 = new Tableau("QC JD JC 9D 9S");
-            var t2 = new Tableau("KC JS 8C KS TC 7H TH");
-            var t3 = new Tableau("2S 6H 6C AS 7C");
-            var t4 = new Tableau("5H QS 8S 6S 3S");
-            var t5 = new Tableau("JH 6D 4S 4H TS");
-            var t6 = new Tableau("KD 8D 5D KH 9H");
-            var t7 = new Tableau("5C 9C QH 8H 2H 7D");
+            var r = Reserve.Create("4C", "4D");
+            var f = Foundation.Create(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
+            var t0 = Tableau.Create("QD 3H TD 7S AH 5S");
+            var t1 = Tableau.Create("QC JD JC 9D 9S");
+            var t2 = Tableau.Create("KC JS 8C KS TC 7H TH");
+            var t3 = Tableau.Create("2S 6H 6C AS 7C");
+            var t4 = Tableau.Create("5H QS 8S 6S 3S");
+            var t5 = Tableau.Create("JH 6D 4S 4H TS");
+            var t6 = Tableau.Create("KD 8D 5D KH 9H");
+            var t7 = Tableau.Create("5C 9C QH 8H 2H 7D");
             var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -881,12 +881,12 @@ namespace FreeCellSolver.Test
              * KC                     
              * JC
              */
-            var r = new Reserve("QC");
-            var f = new Foundation(Ranks.R10, Ranks.Rk, Ranks.Rk, Ranks.Rk);
-            var t0 = new Tableau("KC JC");
-            var tRest = new Tableau();
+            var r = Reserve.Create("QC");
+            var f = Foundation.Create(Ranks.R10, Ranks.Rk, Ranks.Rk, Ranks.Rk);
+            var t0 = Tableau.Create("KC JC");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             // Act
@@ -951,18 +951,18 @@ namespace FreeCellSolver.Test
              *             6C         
              *             5H         
              */
-            var r = new Reserve("QC", null, null, "9D");
-            var f = new Foundation(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
-            var t0 = new Tableau("KC QH");                                      // unsorted = 0, buried = 0
-            var t1 = new Tableau("5D AC 2D KS KH 6S 4C 3D 2C AD");              // unsorted = 6, buried = 7 -> 7 for (AC), (AD) is within sorted stack so it wont be counted
-            var t2 = new Tableau("TS 7H 8H");                                   // unsorted = 2, buried = 0
-            var t3 = new Tableau("3S 5S 4H 3C");                                // unsorted = 1, buried = 3 -> 3 for (3S), (4H) is within sorted stack so it wont be counted
-            var t4 = new Tableau("9C 4S JC JH 8S KD QS JD TC 9H 8C 7D 6C 5H");  // unsorted = 5, buried = 0
-            var t5 = new Tableau("TH 7S 6D");                                   // unsorted = 1, buried = 0
-            var t6 = new Tableau("4D 5C 9S 8D 7C 6H");                          // unsorted = 3, buried = 0
-            var t7 = new Tableau("QD JS TD");                                   // unsorted = 0, buried = 0
+            var r = Reserve.Create("QC", null, null, "9D");
+            var f = Foundation.Create(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
+            var t0 = Tableau.Create("KC QH");                                      // unsorted = 0, buried = 0
+            var t1 = Tableau.Create("5D AC 2D KS KH 6S 4C 3D 2C AD");              // unsorted = 6, buried = 7 -> 7 for (AC), (AD) is within sorted stack so it wont be counted
+            var t2 = Tableau.Create("TS 7H 8H");                                   // unsorted = 2, buried = 0
+            var t3 = Tableau.Create("3S 5S 4H 3C");                                // unsorted = 1, buried = 3 -> 3 for (3S), (4H) is within sorted stack so it wont be counted
+            var t4 = Tableau.Create("9C 4S JC JH 8S KD QS JD TC 9H 8C 7D 6C 5H");  // unsorted = 5, buried = 0
+            var t5 = Tableau.Create("TH 7S 6D");                                   // unsorted = 1, buried = 0
+            var t6 = Tableau.Create("4D 5C 9S 8D 7C 6H");                          // unsorted = 3, buried = 0
+            var t7 = Tableau.Create("QD JS TD");                                   // unsorted = 0, buried = 0
             var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
-            var b = new Board(r, f, ts);
+            var b = Board.Create(r, f, ts);
             Assert.True(b.IsValid());
 
             b.ComputeCost();
@@ -1133,24 +1133,24 @@ TD 7S JD 7H 8H JH JC 7D
             b2 = b2.ExecuteMoveNoAutoPlay(Move.Get(MoveType.TableauToFoundation, 1));
             Assert.True(b1 == b2);
 
-            b1 = new Board(new Reserve("AD", "AH"), new Foundation(), Tableaus.Create());
-            b2 = new Board(new Reserve("AC", "AS"), new Foundation(), Tableaus.Create());
+            b1 = Board.Create(Reserve.Create("AD", "AH"), Foundation.Create(), Tableaus.Create());
+            b2 = Board.Create(Reserve.Create("AC", "AS"), Foundation.Create(), Tableaus.Create());
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH")));
-            b2 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH")));
+            b1 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(Tableau.Create("KH")));
+            b2 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(Tableau.Create("KH")));
             Assert.True(b1 == b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH QS")));
-            b2 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KD QS")));
+            b1 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(Tableau.Create("KH QS")));
+            b2 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(Tableau.Create("KD QS")));
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH QS")));
-            b2 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KD")));
+            b1 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(Tableau.Create("KH QS")));
+            b2 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(Tableau.Create("KD")));
             Assert.True(b1 != b2);
 
-            b1 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KH QS")));
-            b2 = new Board(new Reserve(), new Foundation(), Tableaus.Create(new Tableau("KD TS 9D")));
+            b1 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(Tableau.Create("KH QS")));
+            b2 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(Tableau.Create("KD TS 9D")));
             Assert.True(b1 != b2);
         }
 
@@ -1198,22 +1198,22 @@ TD 7S JD 7H 8H JH JC 7D
              */
 
             // Arrange
-            var r = new Reserve(null, "6H", null, "JD");
-            var f = new Foundation(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = new Tableau("9S QD 7D TC JC TH 9C");
-            var t1 = new Tableau("KS");
-            var t2 = new Tableau("QS QC TS 7C KH");
-            var t3 = new Tableau("JS 8C 3H 7H KC");
-            var t4 = new Tableau("KD");
-            var t5 = new Tableau("JH 9D 9H 8H 4H");
-            var t6 = new Tableau("5C 6C QH 8D 5H TD");
-            var tRest = new Tableau();
+            var r = Reserve.Create(null, "6H", null, "JD");
+            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
+            var t1 = Tableau.Create("KS");
+            var t2 = Tableau.Create("QS QC TS 7C KH");
+            var t3 = Tableau.Create("JS 8C 3H 7H KC");
+            var t4 = Tableau.Create("KD");
+            var t5 = Tableau.Create("JH 9D 9H 8H 4H");
+            var t6 = Tableau.Create("5C 6C QH 8D 5H TD");
+            var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, tRest);
-            var b1 = new Board(r, f, ts);
+            var b1 = Board.Create(r, f, ts);
             Assert.True(b1.IsValid());
 
-            r = new Reserve("6H", "JD");
-            var b2 = new Board(r, f, ts);
+            r = Reserve.Create("6H", "JD");
+            var b2 = Board.Create(r, f, ts);
             Assert.True(b2.IsValid());
 
             Assert.True(b1 == b2);
