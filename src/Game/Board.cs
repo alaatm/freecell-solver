@@ -352,14 +352,12 @@ namespace FreeCellSolver.Game
 
             static IEnumerable<Move> GetAutoMoves(Board board)
             {
-                if (board.AutoMoveCount == 0)
+                if (board.Prev is null)
                 {
                     return Enumerable.Empty<Move>();
                 }
 
-                Debug.Assert(board.Prev is not null);
-
-                var clone = board.Prev.Clone();
+                var clone = board.Prev.ExecuteMove(board.LastMove, false);
                 var reserve = clone.Reserve;
                 var foundation = clone.Foundation;
                 var tableaus = clone.Tableaus;
@@ -399,7 +397,6 @@ namespace FreeCellSolver.Game
                     }
                 } while (found);
 
-                Debug.Assert(autoMoves.Count == board.AutoMoveCount);
                 return autoMoves;
             }
         }

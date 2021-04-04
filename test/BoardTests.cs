@@ -969,7 +969,7 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void GetMoves_returns_moves()
+        public void GetMoves_returns_moves1()
         {
             /*
              * 00 01 02 03 04 05 06 07 (Deal #4)
@@ -985,16 +985,40 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var b = Board.FromDealNum(4);
-            var c = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0));
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 3, 0));
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 2, 0));
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 2, 1));
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 2, 2));
 
             // Act
-            var moves = c.GetMoves().ToList();
+            var moves = b.GetMoves().ToList();
 
             // Assert
-            Assert.Equal(3, moves.Count); // 1 manual and 2 auto
-            Assert.Equal(Move.Get(MoveType.TableauToReserve, 0, 0), moves[0]);
-            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3), moves[1]);
+            Assert.Equal(7, moves.Count); // 4 manual and 3 auto
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 3, 0), moves[0]);
+            Assert.Equal(Move.Get(MoveType.ReserveToFoundation, 0), moves[1]);
             Assert.Equal(Move.Get(MoveType.TableauToFoundation, 3), moves[2]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 2, 0), moves[3]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 2, 1), moves[4]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 2, 2), moves[5]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 2), moves[6]);
+        }
+
+        [Fact]
+        public void GetMoves_returns_moves2()
+        {
+            // Arrange
+            var b = Board.Create(Reserve.Create(), Foundation.Create(10, 12, 12, 12), Tableaus.Create(Tableau.Create("KC QC")));
+            Assert.True(b.IsValid());
+            b.RootAutoPlay();
+
+            // Act
+            var moves = b.GetMoves().ToList();
+
+            // Assert
+            Assert.Equal(2, moves.Count); // 2 auto
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0), moves[0]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0), moves[1]);
         }
 
         [Fact]
