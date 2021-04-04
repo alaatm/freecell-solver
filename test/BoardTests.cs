@@ -969,7 +969,7 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void GetMoves_returns_moves1()
+        public void GetMoves_returns_moves_with_multi_autoPlays_in_between()
         {
             /*
              * 00 01 02 03 04 05 06 07 (Deal #4)
@@ -1005,7 +1005,7 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void GetMoves_returns_moves2()
+        public void GetMoves_returns_moves_when_all_are_autoPlays()
         {
             // Arrange
             var b = Board.Create(Reserve.Create(), Foundation.Create(10, 12, 12, 12), Tableaus.Create(Tableau.Create("KC QC")));
@@ -1019,6 +1019,28 @@ namespace FreeCellSolver.Test
             Assert.Equal(2, moves.Count); // 2 auto
             Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0), moves[0]);
             Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0), moves[1]);
+        }
+
+        [Fact]
+        public void GetMoves_returns_moves_with_autoPlays_at_the_end()
+        {
+            // Arrange
+            var b = Board.Create(Reserve.Create(), Foundation.Create(8, 12, 12, 12), Tableaus.Create(
+                Tableau.Create("KC TC QC"),
+                Tableau.Create("JC")));
+            Assert.True(b.IsValid());
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 2));
+
+            // Act
+            var moves = b.GetMoves().ToList();
+
+            // Assert
+            Assert.Equal(5, moves.Count); // 1 manual, 4 auto
+            Assert.Equal(Move.Get(MoveType.TableauToTableau, 0, 2), moves[0]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0), moves[1]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 1), moves[2]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 2), moves[3]);
+            Assert.Equal(Move.Get(MoveType.TableauToFoundation, 0), moves[4]);
         }
 
         [Fact]

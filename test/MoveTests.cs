@@ -21,6 +21,40 @@ namespace FreeCellSolver.Test
             Assert.Equal(3, move.Size);
         }
 
+        [Fact]
+        public void GetHashCode_tests()
+        {
+            Assert.Equal(
+                Move.Get(MoveType.TableauToTableau, 1, 3, 2).GetHashCode(),
+                Move.Get(MoveType.TableauToTableau, 1, 3, 2).GetHashCode());
+
+            Assert.Equal(((Move)default).GetHashCode(), ((Move)default).GetHashCode());
+
+            Assert.NotEqual(
+                Move.Get(MoveType.TableauToTableau, 1, 3, 2).GetHashCode(),
+                Move.Get(MoveType.TableauToTableau, 1, 3, 1).GetHashCode());
+        }
+
+        [Fact]
+        public void Equality_tests()
+        {
+            Assert.True(
+                Move.Get(MoveType.TableauToTableau, 1, 3, 2) ==
+                Move.Get(MoveType.TableauToTableau, 1, 3, 2));
+
+            Assert.True(default == ((Move)default));
+
+            Assert.True(
+                Move.Get(MoveType.TableauToTableau, 1, 3, 2) !=
+                Move.Get(MoveType.TableauToTableau, 1, 2, 2));
+
+            Assert.True(
+                Move.Get(MoveType.TableauToTableau, 1, 3, 2) !=
+                Move.Get(MoveType.TableauToTableau, 1, 3, 1));
+
+            Assert.False(((Move)default).Equals(new object()));
+        }
+
         [Theory]
         [InlineData(MoveType.ReserveToFoundation, 0, 0, 1, "ah")]
         [InlineData(MoveType.ReserveToTableau, 1, 1, 1, "b1")]
