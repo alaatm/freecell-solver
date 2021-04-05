@@ -146,7 +146,7 @@ namespace FreeCellSolver.Entry
             using var fs = File.CreateText(path);
             for (var i = 1; i <= count; i++)
             {
-                Execute(fs, i, Board.FromDealNum(i));
+                Execute(fs, i, Board.FromDealNum(i), true);
             }
             return;
         }
@@ -154,7 +154,7 @@ namespace FreeCellSolver.Entry
         static void RunSingle(int dealNum, string visualizePath)
         {
             var b = Board.FromDealNum(dealNum);
-            var result = Execute(Console.Out, dealNum, b);
+            var result = Execute(Console.Out, dealNum, b, false);
 
             if (result.IsSolved)
             {
@@ -195,22 +195,15 @@ namespace FreeCellSolver.Entry
             fs.Close();
         }
 
-        static Result Execute(TextWriter writer, int deal, Board b)
+        static Result Execute(TextWriter writer, int deal, Board b, bool writeToLog)
         {
-            if (writer != Console.Out)
-            {
-                Console.Write($"Processing deal #{deal}");
-            }
-            writer.WriteLine($"Processing deal #{deal}");
+            Console.Write($"Processing deal #{deal}");
             _sw.Restart();
             var result = AStar.Run(b);
             _sw.Stop();
             AStar.Reset();
-            if (writer != Console.Out)
-            {
-                Console.WriteLine(". Done");
-            }
-            writer.Write($"{(result.IsSolved ? "Done" : "Bailed")} in {_sw.Elapsed} - threads: {result.Threads} - visited nodes: {result.VisitedNodes,0:n0}");
+            Console.WriteLine(". Done");
+            writer.Write($"{(result.IsSolved ? "Done" : "Bailed")} in {(writeToLog ? _sw.ElapsedTicks.ToString("0000000000000") : _sw.Elapsed)} - threads: {result.Threads} - visited nodes: {result.VisitedNodes,0:n0}");
             writer.WriteLine(result.IsSolved ? $" - #moves: {result.GoalNode.MoveCount}" : " - #moves: 0");
             writer.Flush();
             return result;
@@ -246,7 +239,7 @@ namespace FreeCellSolver.Entry
                 {
                     var line = lines[l].AsSpan();
 
-                    ts = ts.Add(TimeSpan.Parse(line[0] == 'D' ? line.Slice(8, 16) : line.Slice(10, 16)));
+                    ts = ts.Add(TimeSpan.FromTicks(line[0] == 'D' ? int.Parse(line.Slice(8, 13)) : int.Parse(line.Slice(10, 13))));
 
                     var idxStart = line.IndexOf("visited nodes: ") + lenOfVisitedNodes;
                     var length = line[idxStart..].IndexOf(" - ");
@@ -284,19 +277,15 @@ namespace FreeCellSolver.Entry
             failCount = 0;
 
             var i = 0;
-            var n = 0;
             using var sr = new StreamReader(path, Encoding.UTF8);
             while ((line = sr.ReadLine()) is not null)
             {
-                if (n++ % 2 != 0)
+                if (line[0] == 'B')
                 {
-                    if (line[0] == 'B')
-                    {
-                        failCount++;
-                    }
-
-                    lines[i++] = line;
+                    failCount++;
                 }
+
+                lines[i++] = line;
             }
 
             return i < size ? lines.Slice(0, i) : lines;
