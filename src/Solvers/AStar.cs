@@ -74,6 +74,11 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
+                if (QueueWorkItem(node))
+                {
+                    continue;
+                }
+
                 closed.TryAdd(node, 1);
 
                 foreach (var move in node.GetValidMoves())
@@ -94,10 +99,7 @@ namespace FreeCellSolver.Solvers
                     }
                     else if (!found)
                     {
-                        if (!QueueWorkItem(next))
-                        {
-                            open.Enqueue(next);
-                        }
+                        open.Enqueue(next);
                     }
                 }
             }
