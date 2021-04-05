@@ -228,9 +228,10 @@ namespace FreeCellSolver.Entry
             foreach (var log in logFiles)
             {
                 var fileName = Path.GetFileNameWithoutExtension(log.Path);
-                var lines = ReadAllLines(log.Path, fileName.StartsWith('1') ? 1500 : 32000, out var failed);
+                var lines = ReadAllLines(log.Path, fileName.StartsWith('1') ? 1500 : 32000);
 
                 var count = lines.Length;
+                var failCount = 0;
                 var ts = new TimeSpan();
                 var nc = 0;
                 var mc = 0;
@@ -238,8 +239,10 @@ namespace FreeCellSolver.Entry
                 for (var l = 0; l < lines.Length; l++)
                 {
                     var line = lines[l].AsSpan();
+                    var firstChar = line[0];
 
-                    ts = ts.Add(TimeSpan.FromTicks(line[0] == 'D' ? int.Parse(line.Slice(8, 13)) : int.Parse(line.Slice(10, 13))));
+                    failCount += firstChar == 'B' ? 1 : 0;
+                    ts = ts.Add(TimeSpan.FromTicks(firstChar == 'D' ? int.Parse(line.Slice(8, 13)) : int.Parse(line.Slice(10, 13))));
 
                     var idxStart = line.IndexOf("visited nodes: ") + lenOfVisitedNodes;
                     var length = line[idxStart..].IndexOf(" - ");
@@ -249,7 +252,7 @@ namespace FreeCellSolver.Entry
                     mc += int.Parse(line[idxStart..]);
                 }
 
-                tests.Add((log.CreateDate, fileName, ts, count, nc, failed, (double)mc / count));
+                tests.Add((log.CreateDate, fileName, ts, count, nc, failCount, (double)mc / count));
             }
 
             var maxLenName = tests.Select(p => p.name.Length).Max() + 1;
@@ -269,22 +272,15 @@ namespace FreeCellSolver.Entry
             }
         }
 
-        private static ReadOnlySpan<string> ReadAllLines(string path, int size, out int failCount)
+        private static ReadOnlySpan<string> ReadAllLines(string path, int size)
         {
             string line;
             Span<string> lines = new string[size];
-
-            failCount = 0;
 
             var i = 0;
             using var sr = new StreamReader(path, Encoding.UTF8);
             while ((line = sr.ReadLine()) is not null)
             {
-                if (line[0] == 'B')
-                {
-                    failCount++;
-                }
-
                 lines[i++] = line;
             }
 
