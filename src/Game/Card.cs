@@ -58,7 +58,7 @@ namespace FreeCellSolver.Game
             {
                 for (var s = Suits.Clubs; s <= Suits.Spades; s++)
                 {
-                    var card = new Card((s + (r << 2)));
+                    var card = new Card(s + (r << 2));
                     _allCards[c++] = card;
                 }
             }
@@ -69,8 +69,8 @@ namespace FreeCellSolver.Game
         {
             Debug.Assert(rawValue >= 0 && rawValue < 52, "Invalid card.");
             RawValue = rawValue;
-            Suit = (RawValue & 3);
-            Rank = (RawValue >> 2);
+            Suit = RawValue & 3;
+            Rank = RawValue >> 2;
             Color = Suit == Suits.Hearts || Suit == Suits.Diamonds ? Colors.Red : Colors.Black;
         }
 

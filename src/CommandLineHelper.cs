@@ -19,7 +19,7 @@ namespace FreeCellSolver.Entry
 
         public static CommandLineApplication BuildCmdParser()
         {
-            var app = new CommandLineApplication()
+            var app = new CommandLineApplication
             {
                 Name = "fc-solve",
                 Description = "Freecell Solver",
@@ -50,7 +50,12 @@ namespace FreeCellSolver.Entry
                     benchmarksRunCmd.OnExecute(() =>
                     {
                         var type = optType.ParsedValue.ToUpperInvariant();
-                        var count = type == "SHORT" ? 1500 : type == "FULL" ? 32000 : -1;
+                        var count = type switch
+                        {
+                            "SHORT" => 1500,
+                            "FULL" => 32000,
+                            _ => -1
+                        };
 
                         RunBenchmarks(count, optTag.ParsedValue);
                         PrintBenchmarksSummary();

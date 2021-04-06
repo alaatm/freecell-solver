@@ -9,8 +9,8 @@ namespace FreeCellSolver.Solvers
     {
         internal static List<Board> Expand(Board root, int num)
         {
-            var set = new HashSet<Board>() { root };
-            var tree = new Dictionary<int, List<Board>>() { { 0, new List<Board> { root } } };
+            var set = new HashSet<Board> { root };
+            var tree = new Dictionary<int, List<Board>> { { 0, new List<Board> { root } } };
             var depth = 0;
 
             while (true)
