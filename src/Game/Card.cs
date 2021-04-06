@@ -45,10 +45,10 @@ namespace FreeCellSolver.Game
         public const byte Nil = 52;
         public const Card Null = null;
 
-        public byte RawValue { get; }
-        public byte Suit { get; }
-        public byte Rank { get; }
-        public byte Color { get; }
+        public int RawValue { get; }
+        public int Suit { get; }
+        public int Rank { get; }
+        public int Color { get; }
 
         static Card()
         {
@@ -58,20 +58,20 @@ namespace FreeCellSolver.Game
             {
                 for (var s = Suits.Clubs; s <= Suits.Spades; s++)
                 {
-                    var card = new Card((byte)(s + (r << 2)));
+                    var card = new Card((s + (r << 2)));
                     _allCards[c++] = card;
                 }
             }
             _allCards[c] = Null;
         }
 
-        private Card(byte rawValue)
+        private Card(int rawValue)
         {
             Debug.Assert(rawValue >= 0 && rawValue < 52, "Invalid card.");
             RawValue = rawValue;
-            Suit = (byte)(RawValue & 3);
-            Rank = (byte)(RawValue >> 2);
-            Color = Suit == Suits.Hearts || Suit == Suits.Diamonds ? (byte)Colors.Red : (byte)Colors.Black;
+            Suit = (RawValue & 3);
+            Rank = (RawValue >> 2);
+            Color = Suit == Suits.Hearts || Suit == Suits.Diamonds ? Colors.Red : Colors.Black;
         }
 
         // Note no error checks are made!
@@ -85,8 +85,8 @@ namespace FreeCellSolver.Game
         // Note no error checks are made!
         public static Card Get(int suit, int rank) => _allCards[suit + (rank << 2)];
 
-        public bool IsBelow(Card tableauTop)
-            => Color != tableauTop.Color && Rank + 1 == tableauTop.Rank;
+        public bool IsBelow(Card other)
+            => Color != other.Color && Rank + 1 == other.Rank;
 
         public override string ToString()
             => $"{_ranks[Rank]}{_suits[Suit]}";

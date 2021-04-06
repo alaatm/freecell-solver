@@ -30,7 +30,7 @@ namespace FreeCellSolver.Game
             Create(new[] { 0 }.SelectMany(i => cards
                 .Replace(" ", "")
                 .GroupBy(_ => i++ / 2)
-                .Select(g => Card.Get(string.Join("", g)).RawValue)
+                .Select(g => (byte)Card.Get(string.Join("", g)).RawValue)
             ).ToArray());
 
         internal static Tableau Create(Span<byte> cards)
@@ -69,7 +69,7 @@ namespace FreeCellSolver.Game
         public void Push(Card card)
         {
             Debug.Assert(CanPush(card));
-            _state[Size++] = card.RawValue;
+            _state[Size++] = (byte)card.RawValue;
             SortedSize++;
             Top = card;
             Debug.Assert(SortedSize == CountSorted());

@@ -53,10 +53,10 @@ namespace FreeCellSolver.Game
             Debug.Assert((c4 != c1 && c4 != c2 && c4 != c3 && c4 != Card.Nil) || c4 == Card.Nil);
 
             var r = new Reserve();
-            r._state[0] = c1;
-            r._state[1] = c2;
-            r._state[2] = c3;
-            r._state[3] = c4;
+            r._state[0] = (byte)c1;
+            r._state[1] = (byte)c2;
+            r._state[2] = (byte)c3;
+            r._state[3] = (byte)c4;
 
             r.FreeCount -= c1 != Card.Nil ? 1 : 0;
             r.FreeCount -= c2 != Card.Nil ? 1 : 0;
@@ -85,7 +85,7 @@ namespace FreeCellSolver.Game
         public void Insert(int index, Card card)
         {
             Debug.Assert(CanInsert(out var idx) && idx == index);
-            _state[index] = card.RawValue;
+            _state[index] = (byte)card.RawValue;
             FreeCount--;
             Debug.Assert(FreeCount == _state.Count(c => c == Card.Nil));
         }
