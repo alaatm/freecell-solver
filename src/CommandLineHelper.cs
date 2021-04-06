@@ -36,7 +36,7 @@ namespace FreeCellSolver.Entry
                     var optType = benchmarksRunCmd
                         .Option<string>(
                             "-p|--type <TYPE>",
-                            $"Executes solver against short (1500) or full (32000) deals",
+                            "Executes solver against short (1500) or full (32000) deals",
                             CommandOptionType.SingleValue)
                         .Accepts(x => x.Values("short", "full"))
                         .IsRequired();
@@ -148,7 +148,6 @@ namespace FreeCellSolver.Entry
             {
                 Execute(fs, i, Board.FromDealNum(i), true);
             }
-            return;
         }
 
         static void RunSingle(int dealNum, string visualizePath)
@@ -224,7 +223,6 @@ namespace FreeCellSolver.Entry
 
             var logFiles = Directory.GetFiles(path, "*.log").Select(f => new { Path = f, CreateDate = File.GetLastWriteTime(f) }).ToList();
             var tests = new List<(DateTime createDate, string name, TimeSpan ts, int total, int visited, int failed, double avgMoveCount)>(logFiles.Count);
-            var len = logFiles.Select(f => Path.GetFileNameWithoutExtension(f.Path).Length).Max();
 
             foreach (var log in logFiles)
             {

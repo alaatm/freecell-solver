@@ -9,10 +9,10 @@ namespace FreeCellSolver.Game
 {
     public sealed class Board : IEquatable<Board>, IComparable<Board>
     {
-        private int _hashcode = 0;
+        private int _hashcode;
 
-        internal int _cost = 0;
-        internal int _manualMoveCount = 0;
+        internal int _cost;
+        internal int _manualMoveCount;
 
         public int AutoMoveCount { get; private set; }
         public int MovesEstimated { get; private set; }
@@ -21,9 +21,9 @@ namespace FreeCellSolver.Game
         public Move LastMove { get; private set; }
         public Board Prev { get; private set; }
 
-        public Reserve Reserve { get; init; }
-        public Foundation Foundation { get; init; }
-        public Tableau[] Tableaus { get; init; }
+        public Reserve Reserve { get; private init; }
+        public Foundation Foundation { get; private init; }
+        public Tableau[] Tableaus { get; private init; }
 
         public bool IsSolved => MovesEstimated == 0;
 
@@ -39,7 +39,7 @@ namespace FreeCellSolver.Game
 
         public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
 
-        [ThreadStatic] static List<Move> _moves;
+        [ThreadStatic] private static List<Move> _moves;
 
         public List<Move> GetValidMoves()
         {
@@ -229,7 +229,7 @@ namespace FreeCellSolver.Game
 
             _cost =
                 (MovesEstimated * 2)       // Less cards at foundation is costly by a factor of 2
-                + totalUnsortedSize        // Unsored tableaues are a disadvantage
+                + totalUnsortedSize        // Unsorted tableaus are a disadvantage
                 + (4 - Reserve.FreeCount)  // Fewer free cells is a disadvantage
                 + colorDiff                // Greater color variance at foundation is a disadvantage
                 + numBuried;               // Deeply buried cards, which are next in line, within the unsorted portion of tableaus is a disadvantage

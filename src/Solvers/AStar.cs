@@ -14,7 +14,7 @@ namespace FreeCellSolver.Solvers
         private static ManualResetEventSlim _mres;
         private static Board _goalNode;
         private static int _parallelismLevel;
-        private static int _threadCount = 0;
+        private static int _threadCount;
 
         public static Result Run(Board root) => Run(root, Environment.ProcessorCount);
 
@@ -75,7 +75,7 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
-                // Prevent infinit loop when there is no solution by checking open set count
+                // Prevent infinite loop when there is no solution by checking open set count
                 if (openCount > 1 && QueueWorkItem(node))
                 {
                     continue;

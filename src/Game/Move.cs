@@ -65,7 +65,7 @@ namespace FreeCellSolver.Game
 
         public override int GetHashCode() => HashCode.Combine(Type, From, To, Size);
 
-        public bool Equals(Move other) => Type == other.Type && From == other.From && To == other.To && Size == other.Size;
+        private bool Equals(Move other) => Type == other.Type && From == other.From && To == other.To && Size == other.Size;
 
         public override bool Equals(object obj) => obj is Move other && Equals(other);
 

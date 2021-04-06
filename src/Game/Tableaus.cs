@@ -42,7 +42,7 @@ namespace FreeCellSolver.Game
             return emptyCount;
         }
 
-        public static Tableau[] CloneX(this Tableau[] tableaus) => new Tableau[]
+        public static Tableau[] CloneX(this Tableau[] tableaus) => new[]
         {
             tableaus[0].Clone(),
             tableaus[1].Clone(),

@@ -3,13 +3,13 @@ using System.Diagnostics;
 
 namespace FreeCellSolver.Game
 {
-    public sealed class Colors
+    public static class Colors
     {
         public const int Black = 0;
         public const int Red = 1;
     }
 
-    public sealed class Suits
+    public static class Suits
     {
         public const int Clubs = 0;
         public const int Diamonds = 1;
@@ -17,7 +17,7 @@ namespace FreeCellSolver.Game
         public const int Spades = 3;
     }
 
-    public sealed class Ranks
+    public static class Ranks
     {
         public const int Nil = byte.MaxValue;
         public const int Ace = 0;
