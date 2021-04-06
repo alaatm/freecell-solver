@@ -331,7 +331,7 @@ namespace FreeCellSolver.Game
         internal IEnumerable<Move> GetMoves()
         {
             var moves = new Stack<Move>();
-            Traverse(this, b =>
+            this.Traverse(b =>
             {
                 foreach (var autoMove in GetAutoMoves(b).Reverse())
                 {
@@ -393,17 +393,6 @@ namespace FreeCellSolver.Game
                 } while (found);
 
                 return autoMoves;
-            }
-
-            static void Traverse(Board initial, Action<Board> visit)
-            {
-                var prev = initial;
-
-                while (prev != null)
-                {
-                    visit(prev);
-                    prev = prev.Prev;
-                }
             }
         }
 
