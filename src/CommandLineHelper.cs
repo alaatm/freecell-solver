@@ -203,13 +203,14 @@ namespace FreeCellSolver.Entry
             _sw.Stop();
             AStar.Reset();
             Console.WriteLine(". Done");
-            writer.Write($"{(result.IsSolved ? "Done" : "Bailed")} in {(writeToLog ? _sw.ElapsedTicks.ToString("0000000000000") : _sw.Elapsed)} - threads: {result.Threads} - visited nodes: {result.VisitedNodes,0:n0}");
+            var elapsedTicks = (10000000 * _sw.ElapsedTicks / Stopwatch.Frequency).ToString("0000000000000");
+            writer.Write($"{(result.IsSolved ? "Done" : "Bailed")} in {(writeToLog ? elapsedTicks : _sw.Elapsed)} - threads: {result.Threads} - visited nodes: {result.VisitedNodes,0:n0}");
             writer.WriteLine(result.IsSolved ? $" - #moves: {result.GoalNode.MoveCount}" : " - #moves: 0");
             writer.Flush();
             return result;
         }
 
-        public static void PrintBenchmarksSummary()
+        static void PrintBenchmarksSummary()
         {
             var lenOfVisitedNodes = "visited nodes: ".Length;
             var lenOfMoves = "#moves: ".Length;
@@ -272,7 +273,7 @@ namespace FreeCellSolver.Entry
             }
         }
 
-        private static ReadOnlySpan<string> ReadAllLines(string path, int size)
+        static ReadOnlySpan<string> ReadAllLines(string path, int size)
         {
             string line;
             Span<string> lines = new string[size];
