@@ -540,15 +540,15 @@ namespace FreeCellSolver.Game
 
         static readonly Random _rnd = new();
         static readonly int[] _reserveRand = new int[52];
-        static readonly int[] _tableauUnsortedRand = new int[8];
-        static readonly int[] _tableauSortedRand = new int[14];
+        static readonly int[] _tableauUnsortedRand = new int[7];
+        static readonly int[] _tableauSortedRand = new int[13];
         static readonly int[] _tableauTopRand = new int[52];
 
         static Board()
         {
             InitHashRand(52, _reserveRand);
-            InitHashRand(8, _tableauUnsortedRand);
-            InitHashRand(14, _tableauSortedRand);
+            InitHashRand(7, _tableauUnsortedRand);
+            InitHashRand(13, _tableauSortedRand);
             InitHashRand(52, _tableauTopRand);
         }
 
