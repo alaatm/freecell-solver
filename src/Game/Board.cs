@@ -188,6 +188,8 @@ namespace FreeCellSolver.Game
                 copy.AutoPlay();
             }
 
+            Debug.Assert(copy._hashcode == 0);
+            Debug.Assert(copy._cost == 0);
             return copy;
         }
 
