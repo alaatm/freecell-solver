@@ -102,6 +102,17 @@ namespace FreeCellSolver.Game.Extensions
             return isValid;
         }
 
+        public static void Traverse(this Board board, Action<Board> visit)
+        {
+            var prev = board;
+
+            while (prev != null)
+            {
+                visit(prev);
+                prev = prev.Prev;
+            }
+        }
+
         public static string AsJson(this Board board)
         {
             var json = new StringBuilder();

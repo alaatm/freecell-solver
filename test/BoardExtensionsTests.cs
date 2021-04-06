@@ -37,6 +37,27 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void Traverse_traverses_states_backwards()
+        {
+            // Arrange
+            var b = Board.FromDealNum(4);
+            var c = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0));
+
+            var i = 0;
+            c.Traverse(n =>
+            {
+                if (i++ == 0)
+                {
+                    Assert.Same(c, n);
+                }
+                else
+                {
+                    Assert.Equal(b, n);
+                }
+            });
+        }
+
+        [Fact]
         public void AsJson_returns_json_string() => Assert.Equal(
             "[[41,49,7,12,11,21,23,],[5,48,51,16,37,31,32,],[34,35,33,39,15,29,6,],[40,19,45,46,38,47,22,],[17,1,43,14,30,20,],[26,44,3,0,4,9,],[24,50,2,13,42,28,],[18,10,8,27,25,36,],];",
             Board.FromDealNum(1).AsJson());
