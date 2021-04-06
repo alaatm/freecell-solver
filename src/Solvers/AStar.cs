@@ -63,8 +63,9 @@ namespace FreeCellSolver.Solvers
             var closed = _closed;
             var open = new PriorityQueue<Board>();
             open.Enqueue(root);
+            int openCount;
 
-            while (open.Count != 0)
+            while ((openCount = open.Count) != 0)
             {
                 var node = open.Dequeue();
 
@@ -74,7 +75,8 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
-                if (QueueWorkItem(node))
+                // Prevent infinit loop when there is no solution by checking open set count
+                if (openCount > 1 && QueueWorkItem(node))
                 {
                     continue;
                 }
