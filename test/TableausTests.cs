@@ -8,7 +8,7 @@ namespace FreeCellSolver.Test
     public class TableausTests
     {
         [Fact]
-        public void EmptyTableauCount_returns_empty_tableau_count()
+        public void EmptyCount_returns_empty_tableau_count()
         {
             var ts = Tableaus.Create(
                 Tableau.Create(),
@@ -19,7 +19,7 @@ namespace FreeCellSolver.Test
                 Tableau.Create("QC"),
                 Tableau.Create("QD"),
                 Tableau.Create());
-            Assert.Equal(2, ts.EmptyTableauCount);
+            Assert.Equal(2, ts.EmptyCount());
         }
 
         [Fact]
@@ -34,9 +34,9 @@ namespace FreeCellSolver.Test
                 Tableau.Create("QC"),
                 Tableau.Create("QD"),
                 Tableau.Create());
-            var clone = ts.Clone();
+            var clone = ts.CloneX();
 
-            Assert.Equal(ts.EmptyTableauCount, clone.EmptyTableauCount);
+            Assert.Equal(ts.EmptyCount(), clone.EmptyCount());
             Assert.Equal(Card.Null, clone[0].Top);
             Assert.Equal(Card.Get("KC"), clone[1].Top);
             Assert.Equal(Card.Get("KD"), clone[2].Top);
@@ -48,10 +48,7 @@ namespace FreeCellSolver.Test
 
             Assert.NotSame(ts, clone);
 
-            var fi = typeof(Tableaus).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            Assert.NotSame(fi.GetValue(ts), fi.GetValue(clone));
-
-            fi = typeof(Tableau).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var fi = typeof(Tableau).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             for (var i = 0; i < 8; i++)
             {
                 Assert.True(ts[i].Equals(clone[i]));
@@ -62,7 +59,7 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void ToString_returns_string_representation()
+        public void Dump_returns_string_representation()
             => Assert.Equal(
                 $"00 01 02 03 04 05 06 07{Environment.NewLine}-- -- -- -- -- -- -- --{Environment.NewLine}   KC KD KH KS QC QD   {Environment.NewLine}      9C               ",
                     Tableaus.Create(Tableau.Create(),
@@ -72,7 +69,7 @@ namespace FreeCellSolver.Test
                     Tableau.Create("KS"),
                     Tableau.Create("QC"),
                     Tableau.Create("QD"),
-                    Tableau.Create("")).ToString());
+                    Tableau.Create("")).Dump());
 
         [Fact]
         public void AllCards_returns_all_cards()

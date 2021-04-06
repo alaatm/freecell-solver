@@ -23,15 +23,15 @@ namespace FreeCellSolver.Game
 
         public Reserve Reserve { get; init; }
         public Foundation Foundation { get; init; }
-        public Tableaus Tableaus { get; init; }
+        public Tableau[] Tableaus { get; init; }
 
         public bool IsSolved => MovesEstimated == 0;
 
         private Board() { }
 
-        public static Board Create(Reserve reserve, Foundation foundation, Tableaus tableaus) => new()
+        public static Board Create(Reserve reserve, Foundation foundation, params Tableau[] tableaus) => new()
         {
-            Tableaus = tableaus.Clone(),
+            Tableaus = tableaus.CloneX(),
             Reserve = reserve.Clone(),
             Foundation = foundation.Clone(),
             MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades]),
@@ -51,7 +51,7 @@ namespace FreeCellSolver.Game
             (_moves ??= new List<Move>()).Clear();
 
             var freeCountPlusOne = reserve.FreeCount + 1;
-            var emptyTableauCount = tableaus.EmptyTableauCount;
+            var emptyTableauCount = tableaus.EmptyCount();
 
             // 1. Reserve -> Foundation
             for (var r = 0; r < 4; r++)
@@ -237,7 +237,7 @@ namespace FreeCellSolver.Game
 
         public Board Clone() => new()
         {
-            Tableaus = Tableaus.Clone(),
+            Tableaus = Tableaus.CloneX(),
             Reserve = Reserve.Clone(),
             Foundation = Foundation.Clone(),
 
@@ -301,7 +301,7 @@ namespace FreeCellSolver.Game
                     break;
                 case MoveType.TableauToTableau:
                     Tableaus[move.From].Move(Tableaus[move.To], move.Size);
-                    Debug.Assert(move.Size <= ((Reserve.FreeCount + 1) << (Tableaus.EmptyTableauCount - (Tableaus[move.To].IsEmpty ? 1 : 0))));
+                    Debug.Assert(move.Size <= ((Reserve.FreeCount + 1) << (Tableaus.EmptyCount() - (Tableaus[move.To].IsEmpty ? 1 : 0))));
                     break;
                 case MoveType.ReserveToFoundation:
                     MovesEstimated--;
@@ -462,7 +462,7 @@ namespace FreeCellSolver.Game
             sb.AppendLine();
             sb.AppendLine(Reserve.ToString());
             sb.AppendLine();
-            sb.Append(Tableaus.ToString());
+            sb.Append(Tableaus.Dump());
 
             return sb.ToString();
         }

@@ -6,79 +6,68 @@ using System.Collections.Generic;
 
 namespace FreeCellSolver.Game
 {
-    public sealed class Tableaus
+    public static class Tableaus
     {
-        private readonly Tableau[] _state = new Tableau[8];
-
-        public Tableau this[int index] => _state[index];
-
-        public int EmptyTableauCount
-        {
-            get
-            {
-                var emptyCount = 0;
-                var state = _state;
-
-                for (var i = 0; i < state.Length; i++)
-                {
-                    if (state[i].Size == 0)
-                    {
-                        emptyCount++;
-                    }
-                }
-
-                return emptyCount;
-            }
-        }
-
-        private Tableaus() { }
-
-        public static Tableaus Create(params Tableau[] tableaus)
+        public static Tableau[] Create(params Tableau[] tableaus)
         {
             Debug.Assert(tableaus.Length <= 8);
-            var ts = new Tableaus();
+            var ts = new Tableau[8];
 
             for (var i = 0; i < tableaus.Length; i++)
             {
-                ts._state[i] = tableaus[i].Clone();
+                ts[i] = tableaus[i].Clone();
             }
 
             for (var i = tableaus.Length; i < 8; i++)
             {
-                ts._state[i] = Tableau.Create();
+                ts[i] = Tableau.Create();
             }
 
             return ts;
         }
 
-        public Tableaus Clone()
+        public static int EmptyCount(this Tableau[] tableaus)
         {
-            var copy = new Tableaus();
-            copy._state[0] = _state[0].Clone();
-            copy._state[1] = _state[1].Clone();
-            copy._state[2] = _state[2].Clone();
-            copy._state[3] = _state[3].Clone();
-            copy._state[4] = _state[4].Clone();
-            copy._state[5] = _state[5].Clone();
-            copy._state[6] = _state[6].Clone();
-            copy._state[7] = _state[7].Clone();
-            return copy;
+            var emptyCount = 0;
+            var ts = tableaus;
+
+            for (var i = 0; i < ts.Length; i++)
+            {
+                if (ts[i].Size == 0)
+                {
+                    emptyCount++;
+                }
+            }
+
+            return emptyCount;
         }
 
-        public override string ToString()
+        public static Tableau[] CloneX(this Tableau[] tableaus) => new Tableau[]
+        {
+            tableaus[0].Clone(),
+            tableaus[1].Clone(),
+            tableaus[2].Clone(),
+            tableaus[3].Clone(),
+            tableaus[4].Clone(),
+            tableaus[5].Clone(),
+            tableaus[6].Clone(),
+            tableaus[7].Clone(),
+        };
+
+        public static string Dump(this Tableau[] tableaus)
         {
             var sb = new StringBuilder();
             sb.AppendLine("00 01 02 03 04 05 06 07");
             sb.AppendLine("-- -- -- -- -- -- -- --");
 
-            var maxSize = _state.Max(t => t.Size);
+            var maxSize = tableaus.Max(t => t.Size);
 
             for (var r = 0; r < maxSize; r++)
             {
                 for (var c = 0; c < 8; c++)
                 {
-                    var size = _state[c].Size;
-                    sb.Append(size > r ? _state[c][r].ToString() : "  ");
+                    var size = tableaus[c].Size;
+                    sb.Append(size > r ? tableaus[c][r].ToString() : "  ");
                     sb.Append(c < 7 ? " " : "");
                 }
 
@@ -92,6 +81,6 @@ namespace FreeCellSolver.Game
         }
 
         // Used only for post moves asserts
-        internal IEnumerable<Card> AllCards() => _state.SelectMany(t => t.AllCards());
+        internal static IEnumerable<Card> AllCards(this Tableau[] tableaus) => tableaus.SelectMany(t => t.AllCards());
     }
 }

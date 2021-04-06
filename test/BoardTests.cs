@@ -1071,9 +1071,6 @@ namespace FreeCellSolver.Test
             fi = typeof(Foundation).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.NotSame(fi.GetValue(b1.Foundation), fi.GetValue(b2.Foundation));
 
-            fi = typeof(Tableaus).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            Assert.NotSame(fi.GetValue(b1.Tableaus), fi.GetValue(b2.Tableaus));
-
             fi = typeof(Tableau).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             for (var i = 0; i < 8; i++)
             {
