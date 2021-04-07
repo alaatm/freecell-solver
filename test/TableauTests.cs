@@ -397,6 +397,23 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void Equals_only_checks_occupied_slots_when_checking_equality()
+        {
+            // Arrange
+            var t1 = Tableau.Create("5C 8C 2H 9D");
+            var t2 = Tableau.Create("5C 8C 2H KC");
+
+            t1.Move(Tableau.Create(), 1);
+            t2.Move(Tableau.Create(), 1);
+
+            // Act
+            var equals = t1.Equals(t2);
+
+            // Assert
+            Assert.True(equals);
+        }
+
+        [Fact]
         public void ToString_returns_string_representation()
             => Assert.Equal($"8S{Environment.NewLine}2H{Environment.NewLine}9C{Environment.NewLine}8H", Tableau.Create("8S 2H 9C 8H").ToString());
 
