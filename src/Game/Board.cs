@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
@@ -252,7 +252,7 @@ namespace FreeCellSolver.Game
         // Any change in this function must also be reflected in GetAutoMoves()
         private void AutoPlay()
         {
-            Debug.Assert(Prev != null);
+            Debug.Assert(Prev is not null);
 
             var reserve = Reserve;
             var foundation = Foundation;
@@ -320,7 +320,7 @@ namespace FreeCellSolver.Game
 
         internal void RootAutoPlay()
         {
-            Debug.Assert(Prev == null);
+            Debug.Assert(Prev is null);
 
             Prev = Clone();
             AutoPlay();

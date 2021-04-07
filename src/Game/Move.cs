@@ -69,8 +69,8 @@ namespace FreeCellSolver.Game
 
         public override bool Equals(object obj) => obj is Move other && Equals(other);
 
-        public static bool operator ==(Move a, Move b) => Equals(a, b);
+        public static bool operator ==(Move left, Move right) => left.Equals(right);
 
-        public static bool operator !=(Move a, Move b) => !(a == b);
+        public static bool operator !=(Move left, Move right) => !left.Equals(right);
     }
 }

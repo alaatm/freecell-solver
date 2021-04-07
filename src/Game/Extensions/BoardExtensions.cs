@@ -106,7 +106,7 @@ namespace FreeCellSolver.Game.Extensions
         {
             var prev = board;
 
-            while (prev != null)
+            while (prev is not null)
             {
                 visit(prev);
                 prev = prev.Prev;
