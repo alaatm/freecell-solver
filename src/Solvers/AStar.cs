@@ -94,14 +94,12 @@ namespace FreeCellSolver.Solvers
 
                     next.ComputeCost();
 
-                    var found = open.TryGetValue(next, out var existing);
-                    if (found && next.CompareTo(existing) < 0)
+                    switch (open.TryGetValue(next, out var existing))
                     {
-                        open.Replace(existing, next);
-                    }
-                    else if (!found)
-                    {
-                        open.Enqueue(next);
+                        case true when next.CompareTo(existing) < 0:
+                            open.Replace(existing, next); break;
+                        case false:
+                            open.Enqueue(next); break;
                     }
                 }
             }
