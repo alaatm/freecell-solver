@@ -258,6 +258,7 @@ namespace FreeCellSolver.Test
 
             public int CompareTo(Node other) => Priority.CompareTo(other.Priority);
             public bool Equals(Node other) => Name == Name;
+            public override bool Equals(object obj) => obj is Node node && Equals(node);
             public override int GetHashCode() => Name.GetHashCode();
         }
     }
