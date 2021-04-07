@@ -464,6 +464,7 @@ namespace FreeCellSolver.Game
         public bool Equals(Board other)
         {
             Debug.Assert(other is not null);
+            Debug.Assert(_hashcode != 0 && other._hashcode != 0);
 
             if (!Foundation.Equals(other.Foundation))
             {
@@ -486,6 +487,7 @@ namespace FreeCellSolver.Game
                 }
             }
 
+            Debug.Assert(_hashcode == other._hashcode);
             return true;
         }
 
