@@ -42,6 +42,44 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void GetValidMoves_doesnt_block_TtR_moves_if_last_move_was_not_TtR()
+        {
+            /*
+             * aa bb cc dd
+             * -- -- -- --       
+             *                          
+             * 00 01 02 03 04 05 06 07  
+             * -- -- -- -- -- -- -- --  
+             * 7S TC 5D QC 8C 2C JD 3C  
+             * JS 9H AS AH QH AC AD JH  
+             * 7H 4D KC TS 3D 6D KS 4C  
+             * TH JC QS 6H 5C 2D 2S 8D  
+             * KH 3H QD 2H 9C KD 3S 5H  
+             * 9D 5S 6S 4H TD 6C 7D 7C  
+             * 9S 4S 8S 8H             
+             *              
+             */
+
+            // Arrange
+            var b = Board.FromDealNum(984);
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 4, 1));
+
+            // Act
+            var ttrMoves = b.GetValidMoves().Where(p => p.Type == MoveType.TableauToReserve).ToList();
+
+            // Assert
+            Assert.Equal(8, ttrMoves.Count);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 0, 0, 1), ttrMoves[0]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 1, 0, 1), ttrMoves[1]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 2, 0, 1), ttrMoves[2]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 3, 0, 1), ttrMoves[3]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 4, 0, 1), ttrMoves[4]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 5, 0, 1), ttrMoves[5]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 6, 0, 1), ttrMoves[6]);
+            Assert.Equal(Move.Get(MoveType.TableauToReserve, 7, 0, 1), ttrMoves[7]);
+        }
+
+        [Fact]
         public void GetValidMoves_blocks_non_meaningfull_RtT_moves_when_last_move_is_TtT()
         {
             /*
