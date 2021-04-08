@@ -94,18 +94,19 @@ namespace FreeCellSolver.Game
             return Card.Get(card);
         }
 
-        public void Move(Tableau target, int requestedCount)
+        public bool Move(Tableau target, int requestedCount)
         {
             Debug.Assert(CanMove(target, requestedCount));
+            var stillSorted = SortedSize > requestedCount || Size == requestedCount;
 
             if (requestedCount == 1)
             {
                 target.Push(Pop());
-                return;
+                return stillSorted;
             }
 
             _state.CopyTo(ref target._state, Size - requestedCount, target.Size, requestedCount);
-            
+
             target.Top = Top;
             target.Size += requestedCount;
             target.SortedSize += requestedCount;
@@ -121,6 +122,7 @@ namespace FreeCellSolver.Game
             }
 
             Debug.Assert(SortedSize == CountSorted());
+            return stillSorted;
         }
 
         public void Move(Reserve reserve, int index)

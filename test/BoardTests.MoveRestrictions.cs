@@ -42,49 +42,6 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
-        public void GetValidMoves_blocks_non_meaningfull_TtT_moves_when_last_move_is_TtR()
-        {
-            /*
-             *    CC DD HH SS
-             *    5C 5D 5H 5S
-             *   
-             *    aa bb cc dd
-             * →→ -- -- -- --
-             * ↑                       
-             * ↑  00 01 02 03 04 05 06 07
-             * ↑  -- -- -- -- -- -- -- --
-             * ↑  KS KH KD 6C 6D 6H 6S QD
-             * ↑  JC JS JH JD QC QS QH TD
-             * ↑  7D 7H 9H 9D TC TS TH 7C
-             * ↑  8D 8H 8S 8C 9C 9S 7S
-             * ←← KC
-             */
-
-            // Arrange
-            var b = Board.Create(Reserve.Create(), Foundation.Create(Ranks.R5, Ranks.R5, Ranks.R5, Ranks.R5), Tableaus.Create(
-                Tableau.Create("KS JC 7D 8D KC"),
-                Tableau.Create("KH JS 7H 8H"),
-                Tableau.Create("KD JH 9H 8S"),
-                Tableau.Create("6C JD 9D 8C"),
-                Tableau.Create("6D QC TC 9C"),
-                Tableau.Create("6H QS TS 9S"),
-                Tableau.Create("6S QH TH 7S"),
-                Tableau.Create("QD TD 7C")));
-            Assert.True(b.IsValid());
-            b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0, 1), false);
-
-            // Act
-            var tttMoves = b.GetValidMoves().Where(p => p.Type == MoveType.TableauToTableau).ToList();
-
-            // Assert
-            Assert.Equal(4, tttMoves.Count);
-            Assert.Equal(Move.Get(MoveType.TableauToTableau, 0, 4, 1), tttMoves[0]);
-            Assert.Equal(Move.Get(MoveType.TableauToTableau, 0, 5, 1), tttMoves[1]);
-            Assert.Equal(Move.Get(MoveType.TableauToTableau, 6, 0, 1), tttMoves[2]);
-            Assert.Equal(Move.Get(MoveType.TableauToTableau, 7, 0, 1), tttMoves[3]);
-        }
-
-        [Fact]
         public void GetValidMoves_blocks_non_meaningfull_RtT_moves_when_last_move_is_TtT()
         {
             /*
@@ -127,7 +84,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(Move.Get(MoveType.ReserveToTableau, 1, 6, 1), rttMoves[1]);
         }
 
-        [Fact(Skip = "Doesn't work atm")]
+        [Fact]
         public void GetValidMoves_blocks_reverse_moves_TtT_regardless_when_they_took_place_in_move_history()
         {
             /*
@@ -171,7 +128,7 @@ namespace FreeCellSolver.Test
             Assert.Empty(tttMoves.Where(m => m.From == 6 && m.To == 0));
         }
 
-        [Fact(Skip = "Doesn't work atm")]
+        [Fact]
         public void GetValidMoves_unblocks_reverse_moves_TtT_when_original_tableaus_had_any_manual_moves()
         {
             /*
@@ -216,49 +173,51 @@ namespace FreeCellSolver.Test
             Assert.Single(tttMoves.Where(m => m.From == 6 && m.To == 0));
         }
 
-        [Fact(Skip = "Doesn't work atm")]
-        public void GetValidMoves_unblocks_reverse_moves_TtT_when_original_tableaus_had_any_auto_moves()
+        [Fact]
+        public void GetValidMoves_doesnt_block_TtT_move_when_column_sortSize_changes_after_move()
         {
             /*
              * CC DD HH SS
-             * 4C 6D 2H 8S
-             *
-             * aa bb cc dd
-             * KS 6H KD JD
-             *                                    
+             * 6C AD 6H 4S
+             * 
+             * 00 01 02 03
+             * QH 5D KH KD
+             * 
              * 00 01 02 03 04 05 06 07
              * -- -- -- -- -- -- -- --
-             * 3H 9S QS JS KC JH 5C 7H
-             * 9C QD QC 8C    9D 6C
-             *    7D TS       9H QH
-             *    TC 7C       8H 8D
-             *    JC KH       4H 5H
-             *    TH             TD
-             *                   
-             */
+             * KC 2D QC QD 6S 8H TH JD
+             * 7D JH    JS QS 8S 9C TS
+             * TC             KS 7C 9H
+             * 9D             6D 3D
+             * 8C             5S 7S
+             * 7H             4D JC
+             *                   TD
+             *                   9S
+             *                   8D
+            */
 
-            // Arrange
-            var r = Reserve.Create("KS", "6H", "KD", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
-            var t0 = Tableau.Create("3H 9C");
-            var t1 = Tableau.Create("9S QD 7D TC JC TH");
-            var t2 = Tableau.Create("QS QC TS 7C KH");
-            var t3 = Tableau.Create("JS 8C");
-            var t4 = Tableau.Create("KC");
-            var t5 = Tableau.Create("JH 9D 9H 8H 4H");
-            var t6 = Tableau.Create("5C 6C QH 8D 5H TD");
-            var t7 = Tableau.Create("7H");
-            var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
-            var b = Board.Create(r, f, ts);
+            var b = Board.Create(
+                    Reserve.Create("QH", "5D", "KH", "KD"),
+                    Foundation.Create(Ranks.R6, Ranks.Ace, Ranks.R6, Ranks.R4),
+                    Tableaus.Create(
+                            Tableau.Create("KC 7D TC 9D 8C 7H"),
+                            Tableau.Create("2D JH"),
+                            Tableau.Create("QC"),
+                            Tableau.Create("QD JS"),
+                            Tableau.Create("6S QS"),
+                            Tableau.Create("8H 8S KS 6D 5S 4D"),
+                            Tableau.Create("TH 9C 7C 3D 7S JC TD 9S 8D"),
+                            Tableau.Create("JD TS 9H")
+                    )
+            );
             Assert.True(b.IsValid());
-
-            b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 6));
+            b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 1, 2));
 
             // Act
             var tttMoves = b.GetValidMoves().Where(p => p.Type == MoveType.TableauToTableau).ToList();
 
             // Assert
-            Assert.Single(tttMoves.Where(m => m.From == 6 && m.To == 0));
+            Assert.Single(tttMoves.Where(m => m.From == 2 && m.To == 1 && m.Size == 1));
         }
     }
 }

@@ -315,6 +315,27 @@ namespace FreeCellSolver.Test
             Assert.Equal(Card.Get("TS"), t1[0]);
         }
 
+        [Theory]
+        [InlineData("5H 4C", "6S", 2, true)]
+        [InlineData("5H", "6S", 1, true)]
+        [InlineData("5H 4C 3D", "4S", 1, true)]
+        [InlineData("KD 4C 3D", "5D", 2, false)]
+        [InlineData("5H 4C", "5D", 1, true)]
+        [InlineData("KD 5H", "6S", 1, false)]
+        [InlineData("KD QS 5H", "6S", 1, false)]
+        public void Move_returns_whether_tableau_is_still_sorted_after_carrying_move(string t1Cards, string t2Cards, int moveSize, bool expected)
+        {
+            // Arrange
+            var t1 = Tableau.Create(t1Cards);
+            var t2 = Tableau.Create(t2Cards);
+
+            // Act
+            var stillSorted = t1.Move(t2, moveSize);
+
+            // Assert
+            Assert.Equal(expected, stillSorted);
+        }
+
         [Fact]
         public void Move_moves_card_to_reserve()
         {

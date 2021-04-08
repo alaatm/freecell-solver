@@ -4,12 +4,14 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using FreeCellSolver.Game.Extensions;
+using FreeCellSolver.Buffers;
 
 namespace FreeCellSolver.Game
 {
     public sealed class Board : IEquatable<Board>, IComparable<Board>
     {
         private int _hashcode;
+        private ForbiddenMoves _forbiddenMoves;
 
         internal int _cost;
         internal int _manualMoveCount;
@@ -48,7 +50,6 @@ namespace FreeCellSolver.Game
             var tableaus = Tableaus;
             var reserve = Reserve;
             var foundation = Foundation;
-            var lastMove = LastMove;
 
             (_moves ??= new List<Move>()).Clear();
 
@@ -144,20 +145,12 @@ namespace FreeCellSolver.Game
                     // Skip move if moving entire column to empty one
                     if (emptyTarget && (moveSize = Math.Min(moveSize, maxMoveSize)) != tableauSize)
                     {
-                        var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
-                        if (!move.IsReverseOfTT(lastMove))
-                        {
-                            alreadyMovedToEmpty = true;
-                            _moves.Add(move);
-                        }
+                        alreadyMovedToEmpty = true;
+                        _moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, moveSize));
                     }
                     else if (!emptyTarget && maxMoveSize >= moveSize)
                     {
-                        var move = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
-                        if (!move.IsReverseOfTT(lastMove))
-                        {
-                            _moves.Add(move);
-                        }
+                        _moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, moveSize));
                     }
                 }
             }
@@ -245,6 +238,7 @@ namespace FreeCellSolver.Game
             Reserve = Reserve.Clone(),
             Foundation = Foundation.Clone(),
 
+            _forbiddenMoves = _forbiddenMoves,
             _manualMoveCount = _manualMoveCount,
             AutoMoveCount = AutoMoveCount,
             MovesEstimated = MovesEstimated,
@@ -297,14 +291,23 @@ namespace FreeCellSolver.Game
             switch (move.Type)
             {
                 case MoveType.TableauToFoundation:
+                    LiftMoveRestrictions(move.From);
                     MovesEstimated--;
                     Tableaus[move.From].Move(Foundation);
                     break;
                 case MoveType.TableauToReserve:
+                    LiftMoveRestrictions(move.From);
                     Tableaus[move.From].Move(Reserve, move.To);
                     break;
                 case MoveType.TableauToTableau:
-                    Tableaus[move.From].Move(Tableaus[move.To], move.Size);
+                    LiftMoveRestrictions(move.From);
+                    LiftMoveRestrictions(move.To);
+                    if (Tableaus[move.From].Move(Tableaus[move.To], move.Size))
+                    {
+                        // Only add a move restriction when the source tableau is still sorted to prevent the same move in reverse in the future.
+                        // This move restriction will be lifted if either the source or target tableaus receive any adjustments in the future.
+                        AddMoveRestriction(move.To, move.From);
+                    }
                     Debug.Assert(move.Size <= ((Reserve.FreeCount + 1) << (Tableaus.EmptyCount() - (Tableaus[move.To].IsEmpty ? 1 : 0))));
                     break;
                 case MoveType.ReserveToFoundation:
@@ -312,6 +315,7 @@ namespace FreeCellSolver.Game
                     Reserve.Move(move.From, Foundation);
                     break;
                 case MoveType.ReserveToTableau:
+                    LiftMoveRestrictions(move.To);
                     Reserve.Move(move.From, Tableaus[move.To]);
                     break;
             }
@@ -418,18 +422,8 @@ namespace FreeCellSolver.Game
             !(LastMove.Type == MoveType.TableauToReserve && r == LastMove.To && t == LastMove.From);
 
         private bool AllowTableauToTableau(int t1, int t2) =>
-            // Block if last move is TtR unless the last move source is same as either the source
-            // or dest of the proposed move.
-            //
-            //     r
-            //     ↑
-            // 00 01 02 03 04 05 06 07
-            //
-            // i.e. if last move t1-->r, then we block any TtT move where target or source is not 1.
-            // so we only allow tx-->t1 or t1-->tx
-            //
-            // We do this because we want to stay with the same tableau discovering more promising positions.
-            !(LastMove.Type == MoveType.TableauToReserve && LastMove.From != t1 && LastMove.From != t2);
+            // Block reverse move
+            !_forbiddenMoves.Contains(t1, t2);
 
         private bool AllowTableauToReserve(int t) =>
             // Block if last move is also TtR unless the last move source is greater or equal to
@@ -446,6 +440,27 @@ namespace FreeCellSolver.Game
             !(LastMove.Type == MoveType.TableauToReserve && LastMove.From > t) &&
             // Block reverse move
             !(LastMove.Type == MoveType.ReserveToTableau && LastMove.To == t);
+
+        private void AddMoveRestriction(int from, int to)
+            => _forbiddenMoves.Add(from, to);
+
+        private void LiftMoveRestrictions(int t)
+            => _forbiddenMoves.Remove(t);
+
+        struct ForbiddenMoves
+        {
+            private Arr04 _items;
+            private byte _size;
+
+            public void Add(int from, int to)
+                => _items[_size++] = (byte)((from << 4) | to);
+
+            public void Remove(int t)
+                => _items.Remove((byte)t, ref _size);
+
+            public bool Contains(int t1, int t2)
+                => _items.IndexOf((byte)((t1 << 4) | t2), _size) != -1;
+        }
 
         #region overrides and interface impl functions
         public override string ToString()
