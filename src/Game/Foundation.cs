@@ -3,6 +3,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using FreeCellSolver.Buffers;
 
 namespace FreeCellSolver.Game
 {
@@ -12,7 +13,7 @@ namespace FreeCellSolver.Game
         // Index 1 -> Suit.Diamonds
         // Index 2 -> Suit.Hearts
         // Index 3 -> Suit.Spades
-        private readonly byte[] _state = new byte[4];
+        private Arr04 _state;
 
         public byte this[int s] => _state[s];
 
@@ -40,7 +41,7 @@ namespace FreeCellSolver.Game
             return f;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool CanPush(Card card) => _state[card.Suit] == card.Rank;
 
         public bool CanAutoPlay(Card card)
@@ -75,15 +76,9 @@ namespace FreeCellSolver.Game
             _state[card.Suit]++;
         }
 
-        public Foundation Clone()
-        {
-            var clone = new Foundation();
-            Unsafe.CopyBlock(ref clone._state[0], ref _state[0], 4);
-            return clone;
-        }
+        public Foundation Clone() => new() { _state = _state };
 
-        public bool Equals(Foundation other) =>
-            Unsafe.As<byte, int>(ref _state[0]) == Unsafe.As<byte, int>(ref other._state[0]);
+        public bool Equals(Foundation other) => _state == other._state;
 
         public override string ToString()
         {
@@ -106,7 +101,7 @@ namespace FreeCellSolver.Game
 
         // Used only for post moves asserts
         internal IEnumerable<Card> AllCards()
-            => _state.SelectMany((nr, s) => nr != Ranks.Ace
+            => _state.AsArray().SelectMany((nr, s) => nr != Ranks.Ace
                 ? Enumerable.Range(Ranks.Ace, nr - Ranks.Ace).Select(r => Card.Get((byte)s, (byte)r))
                 : Enumerable.Empty<Card>());
     }

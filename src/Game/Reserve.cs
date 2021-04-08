@@ -3,14 +3,14 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using FreeCellSolver.Game.Extensions;
+using FreeCellSolver.Buffers;
 
 namespace FreeCellSolver.Game
 {
     public sealed class Reserve
     {
-        private readonly byte[] _state = new byte[4];
+        private Arr04 _state;
 
         public Card this[int i] => Card.Get(_state[i]);
 
@@ -23,14 +23,10 @@ namespace FreeCellSolver.Game
         public static Reserve Create()
         {
             var r = new Reserve();
-            var state = r._state;
-            if (state.Length > 3)
-            {
-                state[0] = Card.Nil;
-                state[1] = Card.Nil;
-                state[2] = Card.Nil;
-                state[3] = Card.Nil;
-            }
+            r._state[0] = Card.Nil;
+            r._state[1] = Card.Nil;
+            r._state[2] = Card.Nil;
+            r._state[3] = Card.Nil;
             return r;
         }
 
@@ -70,7 +66,7 @@ namespace FreeCellSolver.Game
 
         public bool CanInsert(out int index)
         {
-            index = _state.AsSpan().IndexOf(Card.Nil);
+            index = _state.IndexOf(Card.Nil);
             return FreeCount > 0;
         }
 
@@ -87,7 +83,7 @@ namespace FreeCellSolver.Game
             Debug.Assert(CanInsert(out var idx) && idx == index);
             _state[index] = (byte)card.RawValue;
             FreeCount--;
-            Debug.Assert(FreeCount == _state.Count(c => c == Card.Nil));
+            Debug.Assert(FreeCount == _state.AsArray().Count(c => c == Card.Nil));
         }
 
         private Card Remove(int index)
@@ -97,7 +93,7 @@ namespace FreeCellSolver.Game
 
             var card = _state[index];
             _state[index] = Card.Nil;
-            Debug.Assert(FreeCount == _state.Count(c => c == Card.Nil));
+            Debug.Assert(FreeCount == _state.AsArray().Count(c => c == Card.Nil));
 
             return Card.Get(card);
         }
@@ -114,12 +110,7 @@ namespace FreeCellSolver.Game
             foundation.Push(Remove(index));
         }
 
-        public Reserve Clone()
-        {
-            var clone = new Reserve { FreeCount = FreeCount };
-            Unsafe.CopyBlock(ref clone._state[0], ref _state[0], 4);
-            return clone;
-        }
+        public Reserve Clone() => new() { _state = _state, FreeCount = FreeCount };
 
         public bool Equals(Reserve other)
         {
@@ -135,25 +126,15 @@ namespace FreeCellSolver.Game
 
             // We have same number of occupied slots, verify that cards in them are the same
             // regardless of order
+            var state = _state;
+            var otherState = other._state;
+
             for (var i = 0; i < 4; i++)
             {
-                var card = _state[i];
-                if (card != Card.Nil)
+                var card = state[i];
+                if (card != Card.Nil && otherState.IndexOf(card) == -1)
                 {
-                    var found = false;
-                    for (var j = 0; j < 4; j++)
-                    {
-                        if (card == other._state[j])
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    if (!found)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
             }
 
@@ -178,6 +159,6 @@ namespace FreeCellSolver.Game
         }
 
         // Used only for post moves asserts
-        internal IEnumerable<Card> AllCards() => _state.Where(c => c != Card.Nil).Select(c => Card.Get(c));
+        internal IEnumerable<Card> AllCards() => _state.AsArray().Where(c => c != Card.Nil).Select(c => Card.Get(c));
     }
 }

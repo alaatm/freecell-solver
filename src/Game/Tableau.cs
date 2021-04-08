@@ -4,13 +4,13 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using FreeCellSolver.Buffers;
 
 namespace FreeCellSolver.Game
 {
     public sealed class Tableau
     {
-        private const int Capacity = 18;
-        private readonly byte[] _state = new byte[Capacity];
+        private Arr18 _state;
 
         public Card Top { get; private set; }
 
@@ -104,8 +104,8 @@ namespace FreeCellSolver.Game
                 return;
             }
 
-            Unsafe.CopyBlock(ref target._state[target.Size], ref _state[Size - requestedCount], (uint)requestedCount);
-
+            _state.CopyTo(ref target._state, Size - requestedCount, target.Size, requestedCount);
+            
             target.Top = Top;
             target.Size += requestedCount;
             target.SortedSize += requestedCount;
@@ -135,7 +135,7 @@ namespace FreeCellSolver.Game
             foundation.Push(Pop());
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int CountMovable(Tableau target)
         {
             Debug.Assert(this != target);
@@ -174,18 +174,14 @@ namespace FreeCellSolver.Game
             return rankDiff;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
-        public Tableau Clone()
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Tableau Clone() => new()
         {
-            var clone = new Tableau();
-
-            Unsafe.CopyBlock(ref clone._state[0], ref _state[0], (uint)Size);
-            clone.Top = Top;
-            clone.Size = Size;
-            clone.SortedSize = SortedSize;
-
-            return clone;
-        }
+            _state = _state,
+            Top = Top,
+            Size = Size,
+            SortedSize = SortedSize,
+        };
 
         private int CountSorted()
         {
@@ -224,12 +220,13 @@ namespace FreeCellSolver.Game
             return sortedSize;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization | MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(Tableau other)
         {
             var size = Size;
+            var sortedSize = SortedSize;
 
-            if (SortedSize != other.SortedSize || size != other.Size)
+            if (sortedSize != other.SortedSize || size != other.Size)
             {
                 return false;
             }
@@ -245,10 +242,16 @@ namespace FreeCellSolver.Game
                 return false;
             }
 
+            // At this point, both should have same size, same sorted size, same unsorted size and same top
+            Debug.Assert(size == other.Size && sortedSize == other.SortedSize && Top == other.Top);
+            // At this point, min size=1, min sorted=1, min unsorted=0
+            Debug.Assert(size >= 1 && sortedSize >= 1);
             // Since all tableaus have a common ancestor, at this point (same size, same sorted size, same unsorted size, same top)
             // then the unsorted portion of both tableaus should be exactly the same
-            Debug.Assert(_state.AsSpan(0, size - SortedSize).SequenceEqual(other._state.AsSpan(0, size - SortedSize)));
-            return _state.AsSpan(0, size).SequenceEqual(other._state.AsSpan(0, other.Size));
+            Debug.Assert(_state.SequenceEqual(other._state, 0, size - sortedSize));
+
+            // Equal if sorted portion on both sides is the same
+            return _state.SequenceEqual(other._state, size - sortedSize, sortedSize - 1);
         }
 
         public override string ToString()
@@ -269,6 +272,6 @@ namespace FreeCellSolver.Game
         }
 
         // Used only for post moves asserts
-        internal IEnumerable<Card> AllCards() => _state.Take(Size).Select(c => Card.Get(c));
+        internal IEnumerable<Card> AllCards() => _state.AsArray().Take(Size).Select(c => Card.Get(c));
     }
 }

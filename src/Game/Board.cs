@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
@@ -41,6 +41,8 @@ namespace FreeCellSolver.Game
 
         [ThreadStatic] private static List<Move> _moves;
 
+        // TODO: Cache moves in a compressed format (single byte per move) per hashcode for quick retr.
+        // when re-running solver to get best solution.
         public List<Move> GetValidMoves()
         {
             var tableaus = Tableaus;
@@ -464,7 +466,7 @@ namespace FreeCellSolver.Game
         public bool Equals(Board other)
         {
             Debug.Assert(other is not null);
-            Debug.Assert(_hashcode != 0 && other._hashcode != 0);
+            //Debug.Assert(_hashcode != 0 && other._hashcode != 0); // Should always true when running, but not when running tests
 
             if (!Foundation.Equals(other.Foundation))
             {
@@ -508,10 +510,10 @@ namespace FreeCellSolver.Game
             var r1 = reserve.GetValue(1);
             var r2 = reserve.GetValue(2);
             var r3 = reserve.GetValue(3);
-            if (r0 != Card.Nil) _hashcode += _reserveRand[r0];
-            if (r1 != Card.Nil) _hashcode += _reserveRand[r1];
-            if (r2 != Card.Nil) _hashcode += _reserveRand[r2];
-            if (r3 != Card.Nil) _hashcode += _reserveRand[r3];
+            if (r0 != Card.Nil) { _hashcode += _reserveRand[r0]; }
+            if (r1 != Card.Nil) { _hashcode += _reserveRand[r1]; }
+            if (r2 != Card.Nil) { _hashcode += _reserveRand[r2]; }
+            if (r3 != Card.Nil) { _hashcode += _reserveRand[r3]; }
 
             for (var i = 0; i < 8; i++)
             {
