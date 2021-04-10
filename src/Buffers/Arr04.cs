@@ -56,9 +56,8 @@ namespace FreeCellSolver.Buffers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(byte value, ref byte len)
         {
-#if DEBUG
             Debug.Assert(len is >= 0 and <= 4);
-#endif
+
             for (var i = IndexOfWithMask(value, len); i >= 0; i = IndexOfWithMask(value, len))
             {
                 len--;
