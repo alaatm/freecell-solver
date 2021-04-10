@@ -49,7 +49,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Equal(4, moves.Where(m => m.Type == MoveType.ReserveToTableau).Count());
@@ -95,7 +95,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Equal(5, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
@@ -141,7 +141,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Equal(5, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
@@ -186,7 +186,7 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 0, 0));
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.ReserveToTableau && m.From == 0 && m.To == 0));
@@ -229,7 +229,7 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 6));
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 6 && m.To == 0));
@@ -268,7 +268,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 2 && m.Size == 4));
@@ -313,7 +313,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 2 && m.To == 5 && m.Size == 3));
@@ -359,7 +359,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Empty(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 2 && m.To == 5 && m.Size == 2));
@@ -403,7 +403,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Single(moves.Where(m => m.Type == MoveType.TableauToTableau && m.From == 2 && m.To == 5 && m.Size == 4));
@@ -496,7 +496,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Equal(2, moves.Where(m => m.Type == MoveType.ReserveToFoundation).Count());
@@ -544,7 +544,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Equal(2, moves.Where(m => m.Type == MoveType.TableauToFoundation).Count());
@@ -589,7 +589,7 @@ namespace FreeCellSolver.Test
             Assert.True(b.IsValid());
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Single(moves.Where(m => m.Type == MoveType.ReserveToTableau));
@@ -623,7 +623,7 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 3, 0));
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Equal(4, moves.Where(m => m.Type == MoveType.TableauToTableau).Count());
@@ -654,7 +654,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(984);
 
             // Act
-            var moves = b.GetValidMoves();
+            var moves = b.GetValidMoves().ToArray();
 
             // Assert
             Assert.Equal(8, moves.Where(m => m.Type == MoveType.TableauToReserve).Count());
@@ -933,9 +933,9 @@ namespace FreeCellSolver.Test
              * aa bb cc dd
              * QC -- -- 9D              occupied        = 4 - 2                         = 2
              * 
-             * 00 01 02 03 04 05 06 07  unsorted_size                                   = 18
+             * 00 01 02 03 04 05 06 07  unsorted_size                                   = 17
              * -- -- -- -- -- -- -- --
-             * KC 5D TS 3S 9C TH 4D QD  num_buried                                      = 10
+             * KC 5D TS 3S 9C TH 4D QD  num_buried                                      = 11
              * QH AC 7H 5S 4S 7S 5C JS
              *    2D 8H 4H JC 6D AD TD
              *    KS    3C JH    9S   
@@ -953,12 +953,12 @@ namespace FreeCellSolver.Test
             var r = Reserve.Create("QC", null, null, "9D");
             var f = Foundation.Create(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
             var t0 = Tableau.Create("KC QH");                                      // unsorted = 0, buried = 0
-            var t1 = Tableau.Create("5D AC 2D KS KH 6S 4C 3D 2C AD");              // unsorted = 6, buried = 7 -> 7 for (AC), (AD) is within sorted stack so it wont be counted
+            var t1 = Tableau.Create("5D AC 2D KS KH 6S 4C 3D 2C AD");              // unsorted = 6, buried = 8 -> 8 for (AC), (AD) is within sorted stack so it wont be counted
             var t2 = Tableau.Create("TS 7H 8H");                                   // unsorted = 2, buried = 0
             var t3 = Tableau.Create("3S 5S 4H 3C");                                // unsorted = 1, buried = 3 -> 3 for (3S), (4H) is within sorted stack so it wont be counted
             var t4 = Tableau.Create("9C 4S JC JH 8S KD QS JD TC 9H 8C 7D 6C 5H");  // unsorted = 5, buried = 0
             var t5 = Tableau.Create("TH 7S 6D");                                   // unsorted = 1, buried = 0
-            var t6 = Tableau.Create("4D 5C 9S 8D 7C 6H");                          // unsorted = 3, buried = 0
+            var t6 = Tableau.Create("4D 5C 9S 8D 7C 6H");                          // unsorted = 2, buried = 0
             var t7 = Tableau.Create("QD JS TD");                                   // unsorted = 0, buried = 0
             var ts = Tableaus.Create(t0, t1, t2, t3, t4, t5, t6, t7);
             var b = Board.Create(r, f, ts);

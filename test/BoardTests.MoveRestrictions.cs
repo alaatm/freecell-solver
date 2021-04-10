@@ -31,7 +31,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToReserve, 4, 0, 1));
 
             // Act
-            var ttrMoves = b.GetValidMoves().Where(p => p.Type == MoveType.TableauToReserve).ToList();
+            var moves = b.GetValidMoves().ToArray();
+            var ttrMoves = moves.Where(p => p.Type == MoveType.TableauToReserve).ToList();
 
             // Assert
             Assert.Equal(4, ttrMoves.Count);
@@ -65,7 +66,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 0, 4, 1));
 
             // Act
-            var ttrMoves = b.GetValidMoves().Where(p => p.Type == MoveType.TableauToReserve).ToList();
+            var moves = b.GetValidMoves().ToArray();
+            var ttrMoves = moves.Where(p => p.Type == MoveType.TableauToReserve).ToList();
 
             // Assert
             Assert.Equal(8, ttrMoves.Count);
@@ -114,7 +116,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 6, 1, 1), false);
 
             // Act
-            var rttMoves = b.GetValidMoves().Where(p => p.Type == MoveType.ReserveToTableau).ToList();
+            var moves = b.GetValidMoves().ToArray();
+            var rttMoves = moves.Where(p => p.Type == MoveType.ReserveToTableau).ToList();
 
             // Assert
             Assert.Equal(2, rttMoves.Count);
@@ -160,7 +163,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 2, 1));
 
             // Act
-            var tttMoves = b.GetValidMoves().Where(p => p.Type == MoveType.TableauToTableau).ToList();
+            var moves = b.GetValidMoves().ToArray();
+            var tttMoves = moves.Where(p => p.Type == MoveType.TableauToTableau).ToList();
 
             // Assert
             Assert.Empty(tttMoves.Where(m => m.From == 6 && m.To == 0));
@@ -205,7 +209,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 6, 7));
 
             // Act
-            var tttMoves = b.GetValidMoves().Where(p => p.Type == MoveType.TableauToTableau).ToList();
+            var moves = b.GetValidMoves().ToArray();
+            var tttMoves = moves.Where(p => p.Type == MoveType.TableauToTableau).ToList();
 
             // Assert
             Assert.Single(tttMoves.Where(m => m.From == 6 && m.To == 0));
@@ -252,7 +257,8 @@ namespace FreeCellSolver.Test
             b = b.ExecuteMove(Move.Get(MoveType.TableauToTableau, 1, 2));
 
             // Act
-            var tttMoves = b.GetValidMoves().Where(p => p.Type == MoveType.TableauToTableau).ToList();
+            var moves = b.GetValidMoves().ToArray();
+            var tttMoves = moves.Where(p => p.Type == MoveType.TableauToTableau).ToList();
 
             // Assert
             Assert.Single(tttMoves.Where(m => m.From == 2 && m.To == 1 && m.Size == 1));

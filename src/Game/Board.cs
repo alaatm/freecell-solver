@@ -41,17 +41,18 @@ namespace FreeCellSolver.Game
 
         public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
 
-        [ThreadStatic] private static List<Move> _moves;
+        [ThreadStatic] private static Move[] _moves;
 
         // TODO: Cache moves in a compressed format (single byte per move) per hashcode for quick retr.
         // when re-running solver to get best solution.
-        public List<Move> GetValidMoves()
+        public ReadOnlySpan<Move> GetValidMoves()
         {
             var tableaus = Tableaus;
             var reserve = Reserve;
             var foundation = Foundation;
 
-            (_moves ??= new List<Move>()).Clear();
+            var moveCount = 0;
+            _moves ??= new Move[64];
 
             var freeCountPlusOne = reserve.FreeCount + 1;
             var emptyTableauCount = tableaus.EmptyCount();
@@ -61,7 +62,7 @@ namespace FreeCellSolver.Game
             {
                 if (reserve.CanMove(r, foundation))
                 {
-                    _moves.Add(Move.Get(MoveType.ReserveToFoundation, r));
+                    _moves[moveCount++] = Move.Get(MoveType.ReserveToFoundation, r);
                     Debug.Assert(!foundation.CanAutoPlay(reserve[r]));
                 }
             }
@@ -71,7 +72,7 @@ namespace FreeCellSolver.Game
             {
                 if (tableaus[t].CanMove(foundation))
                 {
-                    _moves.Add(Move.Get(MoveType.TableauToFoundation, t));
+                    _moves[moveCount++] = Move.Get(MoveType.TableauToFoundation, t);
                     Debug.Assert(!foundation.CanAutoPlay(tableaus[t].Top));
                 }
             }
@@ -100,7 +101,7 @@ namespace FreeCellSolver.Game
 
                         if (reserve.CanMove(r, tableau))
                         {
-                            _moves.Add(Move.Get(MoveType.ReserveToTableau, r, t));
+                            _moves[moveCount++] = Move.Get(MoveType.ReserveToTableau, r, t);
                             alreadyMovedToEmpty = emptyTarget || alreadyMovedToEmpty;
                         }
                     }
@@ -146,11 +147,11 @@ namespace FreeCellSolver.Game
                     if (emptyTarget && (moveSize = Math.Min(moveSize, maxMoveSize)) != tableauSize)
                     {
                         alreadyMovedToEmpty = true;
-                        _moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, moveSize));
+                        _moves[moveCount++] = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
                     }
                     else if (!emptyTarget && maxMoveSize >= moveSize)
                     {
-                        _moves.Add(Move.Get(MoveType.TableauToTableau, t1, t2, moveSize));
+                        _moves[moveCount++] = Move.Get(MoveType.TableauToTableau, t1, t2, moveSize);
                     }
                 }
             }
@@ -160,11 +161,11 @@ namespace FreeCellSolver.Game
             {
                 if (AllowTableauToReserve(t) && tableaus[t].CanMove(reserve, out var r))
                 {
-                    _moves.Add(Move.Get(MoveType.TableauToReserve, t, r));
+                    _moves[moveCount++] = Move.Get(MoveType.TableauToReserve, t, r);
                 }
             }
 
-            return _moves;
+            return _moves.AsSpan().Slice(0, moveCount);
         }
 
         public Board ExecuteMove(Move move) => ExecuteMove(move, true);
