@@ -138,7 +138,7 @@ namespace FreeCellSolver.Test
             var t = Tableau.Create("");
             Assert.Equal(0, t.Size);
             Assert.Equal(0, t.SortedSize);
-            Assert.Null(t.Top);
+            Assert.Equal(Card.Null, t.Top);
 
             // Act & assert
             for (var i = 0; i < cardsArr.Length; i++)
@@ -207,7 +207,7 @@ namespace FreeCellSolver.Test
                 }
                 else
                 {
-                    Assert.Null(t.Top);
+                    Assert.Equal(Card.Null, t.Top);
                 }
                 Assert.Equal(i, t.Size);
                 Assert.Equal(i, t.SortedSize);
