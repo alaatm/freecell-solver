@@ -6,22 +6,26 @@ using FreeCellSolver.Game;
 
 namespace FreeCellSolver.Solvers
 {
-    public static class AStar
+    public sealed class AStar
     {
         private static readonly object _syncLock = new();
 
-        private static ConcurrentDictionary<Board, byte> _closed;
-        private static ManualResetEventSlim _mres;
-        private static Board _goalNode;
-        private static int _parallelismLevel;
-        private static int _threadCount;
+        private ConcurrentDictionary<Board, byte> _closed;
+        private ManualResetEventSlim _mres;
+        private Board _goalNode;
+        private int _parallelismLevel;
+        private int _threadCount;
 
         public static Result Run(Board root) => Run(root, Environment.ProcessorCount);
 
         public static Result Run(Board root, int parallelismLevel)
         {
             Debug.Assert(parallelismLevel > 0);
+            return new AStar().RunCore(root, parallelismLevel);
+        }
 
+        private Result RunCore(Board root, int parallelismLevel)
+        {
             var clone = root.Clone();
             clone.RootAutoPlay();
 
@@ -41,18 +45,7 @@ namespace FreeCellSolver.Solvers
             };
         }
 
-        internal static void Reset()
-        {
-            _goalNode = null;
-
-            _closed.Clear();
-            _closed = null;
-            _mres.Dispose();
-            _mres = null;
-            GC.Collect();
-        }
-
-        private static void Search(Board root)
+        private void Search(Board root)
         {
             var closed = _closed;
             var open = new PriorityQueue<Board>();
@@ -105,7 +98,7 @@ namespace FreeCellSolver.Solvers
             }
         }
 
-        private static bool QueueWorkItem(Board root)
+        private bool QueueWorkItem(Board root)
         {
             int newThreadCount;
             int currentThreadCount;
@@ -123,7 +116,7 @@ namespace FreeCellSolver.Solvers
             return true;
         }
 
-        private static void Finalize(Board node)
+        private void Finalize(Board node)
         {
             lock (_syncLock)
             {

@@ -205,7 +205,7 @@ namespace FreeCellSolver.Entry
             _sw.Restart();
             var result = AStar.Run(b);
             _sw.Stop();
-            AStar.Reset();
+            GC.Collect();
             Console.WriteLine(". Done");
             var elapsedTicks = (10000000 * _sw.ElapsedTicks / Stopwatch.Frequency).ToString("0000000000000");
             writer.Write($"{(result.IsSolved ? "Done" : "Bailed")} in {(writeToLog ? elapsedTicks : _sw.Elapsed)} - threads: {result.Threads} - visited nodes: {result.VisitedNodes,0:n0}");
