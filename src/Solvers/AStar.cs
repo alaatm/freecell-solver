@@ -25,18 +25,12 @@ namespace FreeCellSolver.Solvers
             var clone = root.Clone();
             clone.RootAutoPlay();
 
+            _threadCount = 1;
+            _parallelismLevel = parallelismLevel;
             _closed = new(parallelismLevel, 1000);
+
             _mres = new(false);
-
-            _threadCount = _parallelismLevel = parallelismLevel;
-
-            var nodes = ParallelHelper.Expand(clone, parallelismLevel);
-            for (var i = 0; i < nodes.Count; i++)
-            {
-                var node = nodes[i];
-                ThreadPool.UnsafeQueueUserWorkItem(_ => Search(node), null);
-            }
-
+            ThreadPool.UnsafeQueueUserWorkItem(_ => Search(clone), null);
             _mres.Wait();
 
             return new Result
@@ -75,7 +69,8 @@ namespace FreeCellSolver.Solvers
                     break;
                 }
 
-                // Prevent infinite loop when there is no solution by checking open set count
+                // Check that we have at least 1 node besides the dequeued one in open set
+                // to prevent infinite loop when there is no solution or on initial root search
                 if (openCount > 1 && QueueWorkItem(node))
                 {
                     continue;
