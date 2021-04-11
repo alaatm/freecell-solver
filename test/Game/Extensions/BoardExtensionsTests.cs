@@ -93,16 +93,14 @@ KD KC 9S 5S AD QC KH 3H
 var b = Board.Create(
 	Reserve.Create(""3D""),
 	Foundation.Create(Ranks.R2, Ranks.Nil, Ranks.Nil, Ranks.Ace),
-	Tableaus.Create(
-		Tableau.Create(""JD KD 2S 4C 3S 6D 6S""),
-		Tableau.Create(""2D KC KS 5C TD 8S 9C""),
-		Tableau.Create(""9H 9S 9D TS 4S 8D 2H""),
-		Tableau.Create(""JC 5S QD QH TH QS 6H""),
-		Tableau.Create(""5D AD JS 4H 8H 6C""),
-		Tableau.Create(""7H QC""),
-		Tableau.Create(""7C KH AH 4D JH 8C""),
-		Tableau.Create(""5H 3H 3C 7S 7D TC"")
-	)
+	Tableau.Create(""JD KD 2S 4C 3S 6D 6S""),
+	Tableau.Create(""2D KC KS 5C TD 8S 9C""),
+	Tableau.Create(""9H 9S 9D TS 4S 8D 2H""),
+	Tableau.Create(""JC 5S QD QH TH QS 6H""),
+	Tableau.Create(""5D AD JS 4H 8H 6C""),
+	Tableau.Create(""7H QC""),
+	Tableau.Create(""7C KH AH 4D JH 8C""),
+	Tableau.Create(""5H 3H 3C 7S 7D TC"")
 );
 if (!b.IsValid()) { throw new Exception(); }",
             writer.ToString());

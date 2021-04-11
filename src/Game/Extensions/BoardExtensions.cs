@@ -171,7 +171,7 @@ namespace FreeCellSolver.Game.Extensions
             var tsSb = new StringBuilder();
             for (var i = 0; i < 8; i++)
             {
-                tsSb.Append("\t\tTableau.Create(\"");
+                tsSb.Append("\tTableau.Create(\"");
                 var t = board.Tableaus[i];
                 for (var j = 0; j < t.Size; j++)
                 {
@@ -187,9 +187,7 @@ namespace FreeCellSolver.Game.Extensions
             sb.AppendLine("var b = Board.Create(");
             sb.Append(rSb);
             sb.Append(fSb);
-            sb.AppendLine("\tTableaus.Create(");
             sb.Append(tsSb);
-            sb.AppendLine("\t)");
             sb.AppendLine(");");
             sb.Append("if (!b.IsValid()) { throw new Exception(); }");
 
