@@ -22,6 +22,8 @@ namespace FreeCellSolver.Game
 
         public Card this[int index] => Card.Get(_state[index]);
 
+        public byte GetValue(int index) => _state[index];
+
         private Tableau() { }
 
         public static Tableau Create() => new();

@@ -196,9 +196,19 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var tableaus = Tableaus;
 
+            var clubs = foundation[Suits.Clubs];
+            var spades = foundation[Suits.Spades];
+            var diamonds = foundation[Suits.Diamonds];
+            var hearts = foundation[Suits.Hearts];
+
             var colorDiff = Math.Abs(
-                foundation[Suits.Clubs] + foundation[Suits.Spades] -
-                foundation[Suits.Diamonds] - foundation[Suits.Hearts]);
+                clubs + spades -
+                diamonds - hearts);
+
+            clubs = (byte)(clubs << 2);
+            diamonds = (byte)((diamonds << 2) | 1);
+            hearts = (byte)((hearts << 2) | 2);
+            spades = (byte)((spades << 2) | 3);
 
             var suitsFound = 0;
             var numBuried = 0;
@@ -214,9 +224,14 @@ namespace FreeCellSolver.Game
                 {
                     // Count depth of buried cards next in line to go to foundation
                     // only in the unsorted portion of each tableau.
-                    for (var j = unsortedSize - 1; j >= 0; j--)
+                    for (var j = 0; j < unsortedSize; j++)
                     {
-                        if (foundation.CanPush(t[j]))
+                        var card = t.GetValue(j);
+
+                        if ((card == clubs) ||
+                            (card == diamonds) ||
+                            (card == hearts) ||
+                            (card == spades))
                         {
                             numBuried += size - j - 1;
                             suitsFound++;

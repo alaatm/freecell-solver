@@ -39,6 +39,14 @@ namespace FreeCellSolver.Test
         }
 
         [Fact]
+        public void GetValue_returns_value_at_specified_index()
+        {
+            var t = Tableau.Create("5H 9S 2D");
+            Assert.Equal(Card.Get("2D").RawValue, t.GetValue(2));
+            Assert.Equal(Card.Get("5H").RawValue, t.GetValue(0));
+        }
+
+        [Fact]
         public void Top_returns_top_card_or_null_if_empty()
         {
             var t = Tableau.Create("5H 9S 2D");
