@@ -15,7 +15,7 @@ namespace FreeCellSolver.Game
 
             for (var i = 0; i < tableaus.Length; i++)
             {
-                ts[i] = tableaus[i].Clone();
+                ts[i] = tableaus[i];
             }
 
             for (var i = tableaus.Length; i < 8; i++)
