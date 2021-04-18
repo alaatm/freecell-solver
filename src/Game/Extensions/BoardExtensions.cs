@@ -11,12 +11,21 @@ namespace FreeCellSolver.Game.Extensions
         public static Board FromDealNum(int dealNum)
         {
             Span<byte> crv = stackalloc byte[] 
-            { 
-                51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41,
-                40, 39, 38, 37, 36, 35, 34, 33, 32, 31,
-                30, 29, 28, 27, 26, 25, 24, 23, 22, 21,
-                20, 19, 18, 17, 16, 15, 14, 13, 12, 11,
-                10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0 
+            {/*
+              * SS  HH  DD  CC  */
+                51, 50, 49, 48, // RK
+                47, 46, 45, 44, // RQ
+                43, 42, 41, 40, // RJ
+                39, 38, 37, 36, // RT
+                35, 34, 33, 32, // R9
+                31, 30, 29, 28, // R8
+                27, 26, 25, 24, // R7
+                23, 22, 21, 20, // R6
+                19, 18, 17, 16, // R5
+                15, 14, 13, 12, // R4
+                11, 10, 09, 08, // R3
+                07, 06, 05, 04, // R2
+                03, 02, 01, 00  // RA
             };
 
             var seed = dealNum;
@@ -30,30 +39,6 @@ namespace FreeCellSolver.Game.Extensions
                 crv[i] = crv[pos];
                 crv[pos] = tmp;
             }
-
-            // IDX: 0  8  16 24 32 40 48
-            // T0 : JD KD 2S 4C 3S 6D 6S
-
-            // IDX: 1  9  17 25 33 41 49
-            // T1 : 2D KC KS 5C TD 8S 9C
-
-            // IDX: 2  10 18 26 34 42 50
-            // T2 : 9H 9S 9D TS 4S 8D 2H
-
-            // IDX: 3  11 19 27 35 43 51
-            // T3 : JC 5S QD QH TH QS 6H
-
-            // IDX: 4  12 20 28 36 44
-            // T4 : 5D AD JS 4H 8H 6C
-
-            // IDX: 5  13 21 29 37 45
-            // T5 : 7H QC AS AC 2C 3D
-
-            // IDX: 6  14 22 30 38 46
-            // T6 : 7C KH AH 4D JH 8C
-
-            // IDX: 7  15 23 31 39 47
-            // T7 : 5H 3H 3C 7S 7D TC
 
             var col = 0;
             var tableaus = new Tableau[8];
