@@ -248,6 +248,20 @@ namespace FreeCellSolver.Test
             Assert.False(pq.TryGetValue(node, out _));
         }
 
+        [Fact]
+        public void Clear_skips_clearing_a_cleared_queue()
+        {
+            // Arrange
+            var pq = new PriorityQueue<Node>();
+            Assert.Equal(0, pq.Count);
+
+            // Act
+            pq.Clear();
+
+            // Assert
+            Assert.Equal(0, pq.Count);
+        }
+
         [DebuggerDisplay("{Priority}", Name = "{Name}")]
         class Node : IComparable<Node>, IEquatable<Node>
         {
@@ -257,7 +271,7 @@ namespace FreeCellSolver.Test
             public Node(string name, int priority) => (Name, Priority) = (name, priority);
 
             public int CompareTo(Node other) => Priority.CompareTo(other.Priority);
-            public bool Equals(Node other) => Name == Name;
+            public bool Equals(Node other) => Name == other.Name;
             public override bool Equals(object obj) => obj is Node node && Equals(node);
             public override int GetHashCode() => Name.GetHashCode();
         }

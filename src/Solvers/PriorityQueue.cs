@@ -85,13 +85,16 @@ namespace FreeCellSolver.Solvers
 
         public void Clear()
         {
-            if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+            if (_size > 0)
             {
-                Array.Clear(_nodes, 0, _size);
-            }
+                if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
+                {
+                    Array.Clear(_nodes, 0, _size);
+                }
 
-            _hash.Clear();
-            _size = 0;
+                _hash.Clear();
+                _size = 0;
+            }
         }
 
         private void RemoveRootNode()
