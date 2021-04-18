@@ -166,8 +166,13 @@ namespace FreeCellSolver.Game
             {
                 return 0;
             }
-            if ((rankDiff & 1) == (top.Color == lead.Color ? 1 : 0))
+            if (
+                (rankDiff & 1)                  // 1 for odd rank diff, 0 for even rank diff
+                ==
+                (top.Color ^ lead.Color ^ 1))   // 1 for same color, 0 for different color
             {
+                // Odd rank diff and same color on both tops
+                // -or- even rank diff and different color on both tops
                 return 0;
             }
 
