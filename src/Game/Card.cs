@@ -85,7 +85,7 @@ namespace FreeCellSolver.Game
         public static Card Get(int suit, int rank) => _allCards[suit + (rank << 2)];
 
         public bool IsBelow(Card other)
-            => Color != other.Color && Rank + 1 == other.Rank;
+            => Rank + 1 == other.Rank && Color != other.Color;
 
         public override string ToString()
             => $"{_ranks[Rank]}{_suits[Suit]}";
