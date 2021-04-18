@@ -45,10 +45,10 @@ namespace FreeCellSolver.Game
         public const byte Nil = 52;
         public const Card Null = null;
 
-        public int RawValue { get; }
-        public int Suit { get; }
-        public int Rank { get; }
-        public int Color { get; }
+        public readonly int RawValue;
+        public readonly int Suit;
+        public readonly int Rank;
+        public readonly int Color;
 
         static Card()
         {
@@ -62,7 +62,6 @@ namespace FreeCellSolver.Game
                     _allCards[c++] = card;
                 }
             }
-            _allCards[c] = Null;
         }
 
         private Card(int rawValue)
