@@ -15,7 +15,7 @@ namespace FreeCellSolver.Game
         // Index 3 -> Suit.Spades
         private Arr04 _state;
 
-        public byte this[int s] => _state[s];
+        public byte this[int suit] => _state[suit];
 
         private Foundation() { }
 

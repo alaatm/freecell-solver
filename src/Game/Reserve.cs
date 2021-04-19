@@ -11,7 +11,7 @@ namespace FreeCellSolver.Game
     {
         private Arr04 _state;
 
-        public Card this[int i] => Card.Get(_state[i]);
+        public Card this[int index] => Card.Get(_state[index]);
 
         public int FreeCount { get; private set; } = 4;
 
@@ -61,7 +61,7 @@ namespace FreeCellSolver.Game
             return r;
         }
 
-        public byte GetValue(int i) => _state[i];
+        public byte GetValue(int index) => _state[index];
 
         public bool CanInsert(out int index)
         {
