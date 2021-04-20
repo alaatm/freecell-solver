@@ -8,7 +8,7 @@ namespace FreeCellSolver.Game.Extensions
 {
     public static class BoardExtensions
     {
-        public static Board FromDealNum(int dealNum)
+        public static Tableau[] FromDealNum(int dealNum)
         {
             Span<byte> crv = stackalloc byte[] 
             {/*
@@ -25,7 +25,7 @@ namespace FreeCellSolver.Game.Extensions
                 15, 14, 13, 12, // R4
                 11, 10, 09, 08, // R3
                 07, 06, 05, 04, // R2
-                03, 02, 01, 00  // RA
+                03, 02, 01, 00,  // RA
             };
 
             var seed = dealNum;
@@ -57,7 +57,7 @@ namespace FreeCellSolver.Game.Extensions
                 i += count;
             }
 
-            return Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(tableaus[0], tableaus[1], tableaus[2], tableaus[3], tableaus[4], tableaus[5], tableaus[6], tableaus[7]));
+            return tableaus;
         }
 
         public static bool IsValid(this Board board)

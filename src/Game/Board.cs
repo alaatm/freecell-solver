@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
@@ -33,13 +33,19 @@ namespace FreeCellSolver.Game
 
         public static Board Create(Reserve reserve, Foundation foundation, params Tableau[] tableaus) => new()
         {
-            Tableaus = tableaus.CloneX(),
             Reserve = reserve.Clone(),
             Foundation = foundation.Clone(),
+            Tableaus = tableaus.CloneX(),
             MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades]),
         };
 
-        public static Board FromDealNum(int dealNum) => BoardExtensions.FromDealNum(dealNum);
+        public static Board FromDealNum(int dealNum) => new()
+        {
+            Reserve = Reserve.Create(),
+            Foundation = Foundation.Create(),
+            Tableaus = BoardExtensions.FromDealNum(dealNum),
+            MovesEstimated = 52,
+        };
 
         [ThreadStatic] private static Move[] _moves;
 
