@@ -77,7 +77,7 @@ class ReplayBoard {
     }
 
     private stepBackward = async () => {
-        this.prev.disabled = true;
+        this.toggleNav(true);
         if (this.currentPos > 0) {
             if (this.isPlaying) {
                 // Pause first
@@ -87,7 +87,7 @@ class ReplayBoard {
             }
             await this.undo(this.moves[--this.currentPos], this.movesAnimArray[this.currentPos], 350);
         }
-        this.prev.disabled = false;
+        this.toggleNav(false);
     }
 
     private play = async () => {
@@ -100,7 +100,7 @@ class ReplayBoard {
     }
 
     private stepForward = async () => {
-        this.next.disabled = true;
+        this.toggleNav(true);
         if (this.currentPos < this.moves.length) {
             if (this.isPlaying) {
                 // Pause first
@@ -110,7 +110,12 @@ class ReplayBoard {
             }
             await this.move(this.moves[this.currentPos++], 350);
         }
-        this.next.disabled = false;
+        this.toggleNav(false);
+    }
+
+    private toggleNav(disable: boolean) {
+        this.prev.disabled = disable;
+        this.next.disabled = disable;
     }
 
     private initializeBoard() {
