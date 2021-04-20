@@ -18,8 +18,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_skips_similar_moves_from_reserve_to_multiple_empty_tableaus()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * KS 6H KD JD
@@ -37,7 +37,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create("KS", "6H", "KD", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
             var t2 = Tableau.Create("QS QC TS 7C KH");
             var t3 = Tableau.Create("JS 8C 3H 7H KC");
@@ -60,8 +60,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_skips_similar_moves_from_tableau_to_multiple_empty_tableaus()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * KS 6H KD JD
@@ -83,7 +83,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create("KS", "6H", "KD", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S TC KC QD JC TH 9C");
             var t2 = Tableau.Create("QS QC TS 7C KH");
             var t3 = Tableau.Create("JS 8C 3H 7H 7D");
@@ -106,8 +106,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_skips_partial_moves_of_sorted_tableau_to_empty_one()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * KS 6H KD --
@@ -128,7 +128,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create("KS", "6H", "KD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("JC TH 9C");
             var t2 = Tableau.Create("QS QC TS 7C KH");
             var t3 = Tableau.Create("JS 8C 3H 7H 7D");
@@ -153,8 +153,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_skips_moves_that_are_reverse_of_last_move_tr_rt()
         {
             /*
-             * CC DD HH SS                        CC DD HH SS
-             * 4C 6D 2H 8S                        4C 6D 2H 8S
+             * HH CC DD SS                        HH CC DD SS
+             * 2H 4C 6D 8S                        2H 4C 6D 8S
              *
              * aa bb cc dd                        aa bb cc dd
              * -- 6H KD JD                        9C 6H KD JD
@@ -172,7 +172,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create(null, "6H", "KD", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
             var t2 = Tableau.Create("QS QC TS 7C KH KS");
             var t3 = Tableau.Create("JS 8C 3H 7H KC");
@@ -196,8 +196,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_skips_moves_that_are_reverse_of_last_move_tt_tt()
         {
             /*
-             * CC DD HH SS                        CC DD HH SS
-             * 4C 6D 2H 8S                        4C 6D 2H 8S
+             * HH CC DD SS                        HH CC DD SS
+             * 2H 4C 6D 8S                        2H 4C 6D 8S
              *
              * aa bb cc dd                        aa bb cc dd
              * KS 6H KD JD                        KS 6H KD JD
@@ -215,7 +215,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create("KS", "6H", "KD", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
             var t2 = Tableau.Create("QS QC TS 7C KH");
             var t3 = Tableau.Create("JS 8C 3H 7H KC");
@@ -239,8 +239,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_skips_moves_which_are_whole_columns_to_empty_one()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * -- 6H -- JD
@@ -256,7 +256,7 @@ namespace FreeCellSolver.Test
              * QS             KD      
              */
             var r = Reserve.Create(null, "6H", null, "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC JC TH QS");
             var t2 = Tableau.Create("KH QC JH TS");
             var t3 = Tableau.Create("JS 8C 3H 7H KC 7C");
@@ -278,8 +278,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_skips_super_moves_when_not_enough_space_to_carry_move()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * QS 6H TH JD
@@ -299,7 +299,7 @@ namespace FreeCellSolver.Test
              *        QC,JH,TS - Can't move since available is 2 and move size is 3
              */
             var r = Reserve.Create("QS", "6H", "TH", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC");
             var t1 = Tableau.Create("JC");
             var t2 = Tableau.Create("KH QC JH TS");
@@ -323,8 +323,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_calculates_maxMoveSize_correctly()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * QS 6H TH JD
@@ -344,7 +344,7 @@ namespace FreeCellSolver.Test
              *        JH,TS - Can't move since available is 1 and move size is 2
              */
             var r = Reserve.Create("QS", "6H", "TH", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC");
             var t1 = Tableau.Create("JC");
             var t2 = Tableau.Create("KD KH JH TS");
@@ -369,8 +369,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_includes_super_moves_when_enough_is_available_to_carry_move()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * QS 6H TH JD
@@ -390,7 +390,7 @@ namespace FreeCellSolver.Test
              *       QC,JH,TS,9D - Can move since available is (0+1)<<2=4 and move size is 4
              */
             var r = Reserve.Create("QS", "6H", "TH", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC JC");
             var t2 = Tableau.Create("KH QC JH TS 9D");
             var t3 = Tableau.Create("JS 8C 3H 7H KC 7C");
@@ -413,8 +413,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_returns_moves_in_correct_order()
         {
             /* 
-             * CC DD HH SS
-             * QC KD -- JS
+             * HH CC DD SS
+             * -- QC KD JS
              *
              * aa bb cc dd
              * KC -- -- --
@@ -436,7 +436,7 @@ namespace FreeCellSolver.Test
              *          KH            
              */
             var r = Reserve.Create("KC");
-            var f = Foundation.Create(Ranks.Rq, Ranks.Rk, Ranks.Nil, Ranks.Rj);
+            var f = Foundation.Create(Ranks.Nil, Ranks.Rq, Ranks.Rk, Ranks.Rj);
             var t0 = Tableau.Create("KS");
             var t1 = Tableau.Create("QS");
             var t3 = Tableau.Create("AH 2H 3H 4H 5H 6H 7H 8H 9H TH JH QH KH");
@@ -463,8 +463,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_returns_all_valid_rf_moves()
         {
             /* 
-             * CC DD HH SS
-             * 3C 3D -- --
+             * HH CC DD SS
+             * -- 3C 3D --
              *
              * aa bb cc dd
              * 4C 4D -- --              <-- should pick these 2
@@ -482,7 +482,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create("4C", "4D");
-            var f = Foundation.Create(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
+            var f = Foundation.Create(Ranks.Nil, Ranks.R3, Ranks.R3, Ranks.Nil);
             var t0 = Tableau.Create("QD 3H TD 7S AH 5S");
             var t1 = Tableau.Create("QC JD JC 9D 9S");
             var t2 = Tableau.Create("KC JS 8C KS TC 7H TH");
@@ -508,8 +508,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_returns_all_valid_tf_moves()
         {
             /* 
-             * CC DD HH SS
-             * 3C 3D -- --
+             * HH CC DD SS
+             * -- 3C 3D --
              *
              * aa bb cc dd
              * -- -- -- --
@@ -530,7 +530,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create();
-            var f = Foundation.Create(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
+            var f = Foundation.Create(Ranks.Nil, Ranks.R3, Ranks.R3, Ranks.Nil);
             var t0 = Tableau.Create("QD 3H TD 7S AH 5S");
             var t1 = Tableau.Create("QC JD JC 9D 9S");
             var t2 = Tableau.Create("KC JS 8C KS TC 7H TH");
@@ -556,8 +556,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_returns_all_valid_rt_moves()
         {
             /* 
-             * CC DD HH SS
-             * 3C 3D -- --
+             * HH CC DD SS
+             * -- 3C 3D --
              *
              * aa bb cc dd
              * 4C 4D -- --              <-- should pick 4D to go to tableau 0 on top of 5S
@@ -575,7 +575,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create("4C", "4D");
-            var f = Foundation.Create(Ranks.R3, Ranks.R3, Ranks.Nil, Ranks.Nil);
+            var f = Foundation.Create(Ranks.Nil, Ranks.R3, Ranks.R3, Ranks.Nil);
             var t0 = Tableau.Create("QD 3H TD 7S AH 5S");
             var t1 = Tableau.Create("QC JD JC 9D 9S");
             var t2 = Tableau.Create("KC JS 8C KS TC 7H TH");
@@ -870,8 +870,8 @@ namespace FreeCellSolver.Test
         public void ExecuteMove_auto_plays_all_possible_moves_next()
         {
             /* 
-             * CC DD HH SS
-             * TC KD KH KS
+             * HH CC DD SS
+             * KH TC KD KS
              *
              * aa bb cc dd
              * QC -- -- --
@@ -882,7 +882,7 @@ namespace FreeCellSolver.Test
              * JC
              */
             var r = Reserve.Create("QC");
-            var f = Foundation.Create(Ranks.R10, Ranks.Rk, Ranks.Rk, Ranks.Rk);
+            var f = Foundation.Create(Ranks.Rk, Ranks.R10, Ranks.Rk, Ranks.Rk);
             var t0 = Tableau.Create("KC JC");
             var tRest = Tableau.Create();
             var ts = Tableaus.Create(t0, tRest, tRest, tRest, tRest, tRest, tRest, tRest);
@@ -927,8 +927,8 @@ namespace FreeCellSolver.Test
         public void ComputeCost_computes_cost()
         {
             /* 
-             * CC DD HH SS
-             * -- -- 3H 2S              colorDiff       = abs(0 + 2 - 0 - 3)            = 1
+             * HH CC DD SS
+             * 3H -- -- 2S              colorDiff       = abs(0 + 2 - 0 - 3)            = 1
              *                          movesEstimated  = 52 - (0 + 0 + 3 + 2) = 47 * 2 = 94
              * aa bb cc dd
              * QC -- -- 9D              occupied        = 4 - 2                         = 2
@@ -951,7 +951,7 @@ namespace FreeCellSolver.Test
              *             5H         
              */
             var r = Reserve.Create("QC", null, null, "9D");
-            var f = Foundation.Create(Ranks.Nil, Ranks.Nil, Ranks.R3, Ranks.R2);
+            var f = Foundation.Create(Ranks.R3, Ranks.Nil, Ranks.Nil, Ranks.R2);
             var t0 = Tableau.Create("KC QH");                                      // unsorted = 0, buried = 0
             var t1 = Tableau.Create("5D AC 2D KS KH 6S 4C 3D 2C AD");              // unsorted = 6, buried = 8 -> 8 for (AC), (AD) is within sorted stack so it wont be counted
             var t2 = Tableau.Create("TS 7H 8H");                                   // unsorted = 2, buried = 0
@@ -1008,7 +1008,7 @@ namespace FreeCellSolver.Test
         public void GetMoves_returns_moves_when_all_are_autoPlays()
         {
             // Arrange
-            var b = Board.Create(Reserve.Create(), Foundation.Create(10, 12, 12, 12), Tableaus.Create(Tableau.Create("KC QC")));
+            var b = Board.Create(Reserve.Create(), Foundation.Create(Ranks.Rk, Ranks.Rj, Ranks.Rk, Ranks.Rk), Tableaus.Create(Tableau.Create("KC QC")));
             Assert.True(b.IsValid());
             b.RootAutoPlay();
 
@@ -1025,7 +1025,7 @@ namespace FreeCellSolver.Test
         public void GetMoves_returns_moves_with_autoPlays_at_the_end()
         {
             // Arrange
-            var b = Board.Create(Reserve.Create(), Foundation.Create(8, 12, 12, 12), Tableaus.Create(
+            var b = Board.Create(Reserve.Create(), Foundation.Create(Ranks.Rk, Ranks.R9, Ranks.Rk, Ranks.Rk), Tableaus.Create(
                 Tableau.Create("KC TC QC"),
                 Tableau.Create("JC")));
             Assert.True(b.IsValid());
@@ -1086,7 +1086,7 @@ namespace FreeCellSolver.Test
             var b = Board.FromDealNum(5);
 
             Assert.Equal(
-@"CC DD HH SS
+@"HH CC DD SS
 -- -- -- --
 
 00 01 02 03
@@ -1201,8 +1201,8 @@ TD 7S JD 7H 8H JH JC 7D
         public void Board_should_be_equal_when_same_reserve_but_different_order()
         {
             /*
-             * CC DD HH SS               |    CC DD HH SS
-             * 4C 6D 2H 8S               |    4C 6D 2H 8S
+             * HH CC DD SS               |    HH CC DD SS
+             * 2H 4C 6D 8S               |    2H 4C 6D 8S
              *                           |
              * aa bb cc dd               |    aa bb cc dd
              * -- 6H -- JD               |    6H JD -- --
@@ -1220,7 +1220,7 @@ TD 7S JD 7H 8H JH JC 7D
 
             // Arrange
             var r = Reserve.Create(null, "6H", null, "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
             var t1 = Tableau.Create("KS");
             var t2 = Tableau.Create("QS QC TS 7C KH");

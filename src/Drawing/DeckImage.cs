@@ -24,7 +24,7 @@ namespace FreeCellSolver.Drawing
 
         public SKImage GetCard(int suit, int rank)
         {
-            var s = ~suit & 3;
+            var s = suit;
             var r = rank;
 
             var left = CardWidth * r;

@@ -36,7 +36,7 @@ namespace FreeCellSolver.Game
             Reserve = reserve.Clone(),
             Foundation = foundation.Clone(),
             Tableaus = tableaus.CloneX(),
-            MovesEstimated = 52 - (foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Hearts] + foundation[Suits.Spades]),
+            MovesEstimated = 52 - (foundation[Suits.Hearts] + foundation[Suits.Clubs] + foundation[Suits.Diamonds] + foundation[Suits.Spades]),
         };
 
         public static Board FromDealNum(int dealNum) => new()
@@ -202,18 +202,18 @@ namespace FreeCellSolver.Game
             var foundation = Foundation;
             var tableaus = Tableaus;
 
-            var clubs = foundation[Suits.Clubs];
-            var spades = foundation[Suits.Spades];
-            var diamonds = foundation[Suits.Diamonds];
             var hearts = foundation[Suits.Hearts];
+            var clubs = foundation[Suits.Clubs];
+            var diamonds = foundation[Suits.Diamonds];
+            var spades = foundation[Suits.Spades];
 
             var colorDiff = Math.Abs(
                 clubs + spades -
                 diamonds - hearts);
 
-            clubs = (byte)(clubs << 2);
-            diamonds = (byte)((diamonds << 2) | 1);
-            hearts = (byte)((hearts << 2) | 2);
+            hearts <<= 2;
+            clubs = (byte)((clubs << 2) | 1);
+            diamonds = (byte)((diamonds << 2) | 2);
             spades = (byte)((spades << 2) | 3);
 
             var suitsFound = 0;

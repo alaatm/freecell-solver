@@ -85,8 +85,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_blocks_non_meaningfull_RtT_moves_when_last_move_is_TtT()
         {
             /*
-             * CC DD HH SS
-             * 4C 4D 4H 4S
+             * HH CC DD SS
+             * 4H 4C 4D 4S
              *
              * aa bb cc dd
              * 6D 9S -- --
@@ -129,8 +129,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_blocks_reverse_moves_TtT_regardless_when_they_took_place_in_move_history()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * KS 6H KD JD
@@ -148,7 +148,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create("KS", "6H", "KD", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
             var t2 = Tableau.Create("QS QC TS 7C KH");
             var t3 = Tableau.Create("JS 8C 3H 7H KC");
@@ -174,8 +174,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_unblocks_reverse_moves_TtT_when_original_tableaus_had_any_manual_moves()
         {
             /*
-             * CC DD HH SS
-             * 4C 6D 2H 8S
+             * HH CC DD SS
+             * 2H 4C 6D 8S
              *
              * aa bb cc dd
              * KS 6H KD JD
@@ -193,7 +193,7 @@ namespace FreeCellSolver.Test
 
             // Arrange
             var r = Reserve.Create("KS", "6H", "KD", "JD");
-            var f = Foundation.Create(Ranks.R4, Ranks.R6, Ranks.R2, Ranks.R8);
+            var f = Foundation.Create(Ranks.R2, Ranks.R4, Ranks.R6, Ranks.R8);
             var t0 = Tableau.Create("9S QD 7D TC JC TH 9C");
             var t2 = Tableau.Create("QS QC TS 7C KH");
             var t3 = Tableau.Create("JS 8C 3H 7H KC");
@@ -220,8 +220,8 @@ namespace FreeCellSolver.Test
         public void GetValidMoves_doesnt_block_TtT_move_when_column_sortSize_changes_after_move()
         {
             /*
-             * CC DD HH SS
-             * 6C AD 6H 4S
+             * HH CC DD SS
+             * 6H 6C AD 4S
              * 
              * 00 01 02 03
              * QH 5D KH KD
@@ -241,7 +241,7 @@ namespace FreeCellSolver.Test
 
             var b = Board.Create(
                     Reserve.Create("QH", "5D", "KH", "KD"),
-                    Foundation.Create(Ranks.R6, Ranks.Ace, Ranks.R6, Ranks.R4),
+                    Foundation.Create(Ranks.R6, Ranks.R6, Ranks.Ace, Ranks.R4),
                     Tableaus.Create(
                             Tableau.Create("KC 7D TC 9D 8C 7H"),
                             Tableau.Create("2D JH"),

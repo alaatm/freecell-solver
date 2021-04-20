@@ -120,7 +120,7 @@ namespace FreeCellSolver.Test
             Assert.False(Tableau.Create("5H").CanMove(Foundation.Create()));
 
             // Can move to foundation on top of 4H
-            Assert.True(Tableau.Create("5H").CanMove(Foundation.Create(Ranks.Nil, Ranks.Nil, Ranks.R4, Ranks.Nil)));
+            Assert.True(Tableau.Create("5H").CanMove(Foundation.Create(Ranks.R4, Ranks.Nil, Ranks.Nil, Ranks.Nil)));
         }
 
         [Fact]

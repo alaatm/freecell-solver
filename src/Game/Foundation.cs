@@ -9,9 +9,9 @@ namespace FreeCellSolver.Game
 {
     public sealed class Foundation
     {
-        // Index 0 -> Suit.Clubs
-        // Index 1 -> Suit.Diamonds
-        // Index 2 -> Suit.Hearts
+        // Index 0 -> Suit.Hearts
+        // Index 1 -> Suit.Clubs
+        // Index 2 -> Suit.Diamonds
         // Index 3 -> Suit.Spades
         private Arr04 _state;
 
@@ -21,22 +21,22 @@ namespace FreeCellSolver.Game
 
         public static Foundation Create() => new();
 
-        public static Foundation Create(int clubsTop, int diamondsTop, int heartsTop, int spadesTop)
+        public static Foundation Create(int heartsTop, int clubsTop, int diamondsTop, int spadesTop)
         {
+            var heartsNext = heartsTop == Ranks.Nil ? Ranks.Ace : heartsTop + 1;
             var clubsNext = clubsTop == Ranks.Nil ? Ranks.Ace : clubsTop + 1;
             var diamondsNext = diamondsTop == Ranks.Nil ? Ranks.Ace : diamondsTop + 1;
-            var heartsNext = heartsTop == Ranks.Nil ? Ranks.Ace : heartsTop + 1;
             var spadesNext = spadesTop == Ranks.Nil ? Ranks.Ace : spadesTop + 1;
 
+            Debug.Assert(heartsNext >= Ranks.Ace && heartsNext <= Ranks.Rk + 1);
             Debug.Assert(clubsNext >= Ranks.Ace && clubsNext <= Ranks.Rk + 1);
             Debug.Assert(diamondsNext >= Ranks.Ace && diamondsNext <= Ranks.Rk + 1);
-            Debug.Assert(heartsNext >= Ranks.Ace && heartsNext <= Ranks.Rk + 1);
             Debug.Assert(spadesNext >= Ranks.Ace && spadesNext <= Ranks.Rk + 1);
 
             var f = new Foundation();
-            f._state[0] = (byte)clubsNext;
-            f._state[1] = (byte)diamondsNext;
-            f._state[2] = (byte)heartsNext;
+            f._state[0] = (byte)heartsNext;
+            f._state[1] = (byte)clubsNext;
+            f._state[2] = (byte)diamondsNext;
             f._state[3] = (byte)spadesNext;
             return f;
         }
@@ -60,8 +60,8 @@ namespace FreeCellSolver.Game
 
             if (card.Color == Colors.Black)
             {
-                return _state[Suits.Diamonds] >= rank
-                    && _state[Suits.Hearts] >= rank;
+                return _state[Suits.Hearts] >= rank
+                    && _state[Suits.Diamonds] >= rank;
             }
             else
             {
@@ -83,7 +83,7 @@ namespace FreeCellSolver.Game
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("CC DD HH SS");
+            sb.AppendLine("HH CC DD SS");
             for (byte s = 0; s < 4; s++)
             {
                 // Note for cases where _state[s] - 1 evaluates to -1, 

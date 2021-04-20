@@ -7,7 +7,7 @@ namespace FreeCellSolver.Test
 {
     public class BoardExtensionsTests
     {
-        static readonly Board _b1 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(
+        static readonly Board _b1 = Board.Create(Reserve.Create(), Foundation.Create(),
             Tableau.Create("JD KD 2S 4C 3S 6D 6S"),
             Tableau.Create("2D KC KS 5C TD 8S 9C"),
             Tableau.Create("9H 9S 9D TS 4S 8D 2H"),
@@ -16,9 +16,9 @@ namespace FreeCellSolver.Test
             Tableau.Create("7H QC AS AC 2C 3D"),
             Tableau.Create("7C KH AH 4D JH 8C"),
             Tableau.Create("5H 3H 3C 7S 7D TC")
-        ));
+        );
 
-        static readonly Board _b2 = Board.Create(Reserve.Create(), Foundation.Create(), Tableaus.Create(
+        static readonly Board _b2 = Board.Create(Reserve.Create(), Foundation.Create(),
             Tableau.Create("QD 4D TD 7S AH 3H AS"),
             Tableau.Create("QC JD JC 9D 9S AD 5S"),
             Tableau.Create("KC JS 8C KS TC 7H TH"),
@@ -27,13 +27,25 @@ namespace FreeCellSolver.Test
             Tableau.Create("2C 6D 4S 4H TS 8D"),
             Tableau.Create("KD 2D 5D AC 9H KH"),
             Tableau.Create("5C 9C QH 8H 2H 7D")
-        ));
+        );
+
+        static readonly Board _b9999999 = Board.Create(Reserve.Create(), Foundation.Create(),
+            Tableau.Create("6S 9D AD 4C 5S 3H 7C"),
+            Tableau.Create("QS AC 6C JD 4H 5D 6D"),
+            Tableau.Create("TH JC QC 4S 7S 3S 3D"),
+            Tableau.Create("KD AH 9C QD 8H TD 5C"),
+            Tableau.Create("KS 2H QH AS JS 2C"),
+            Tableau.Create("9H 5H 8S 6H JH TS"),
+            Tableau.Create("2S 8D KC 8C 7D 7H"),
+            Tableau.Create("TC 3C KH 9S 2D 4D")
+        );
 
         [Fact]
         public void FromDealNum_returns_correct_result()
         {
             Assert.True(Board.FromDealNum(1) == _b1);
             Assert.True(Board.FromDealNum(2) == _b2);
+            Assert.True(Board.FromDealNum(9999999) == _b9999999);
         }
 
         [Fact]
@@ -59,7 +71,7 @@ namespace FreeCellSolver.Test
 
         [Fact]
         public void AsJson_returns_json_string() => Assert.Equal(
-            "[[41,49,7,12,11,21,23,],[5,48,51,16,37,31,32,],[34,35,33,39,15,29,6,],[40,19,45,46,38,47,22,],[17,1,43,14,30,20,],[26,44,3,0,4,9,],[24,50,2,13,42,28,],[18,10,8,27,25,36,],];",
+            "[[42,50,7,13,11,22,23,],[6,49,51,17,38,31,33,],[32,35,34,39,15,30,4,],[41,19,46,44,36,47,20,],[18,2,43,12,28,21,],[24,45,3,1,5,10,],[25,48,0,14,40,29,],[16,8,9,27,26,37,],];",
             Board.FromDealNum(1).AsJson());
 
         [Fact]
@@ -73,8 +85,8 @@ namespace FreeCellSolver.Test
                 .EmitCSharpCode(writer);
             Assert.Equal(
 @"/*
-CC DD HH SS
-2C -- -- AS
+HH CC DD SS
+-- 2C -- AS
 
 00 01 02 03
 3D -- -- --
@@ -92,7 +104,7 @@ KD KC 9S 5S AD QC KH 3H
 
 var b = Board.Create(
 	Reserve.Create(""3D""),
-	Foundation.Create(Ranks.R2, Ranks.Nil, Ranks.Nil, Ranks.Ace),
+	Foundation.Create(Ranks.Nil, Ranks.R2, Ranks.Nil, Ranks.Ace),
 	Tableau.Create(""JD KD 2S 4C 3S 6D 6S""),
 	Tableau.Create(""2D KC KS 5C TD 8S 9C""),
 	Tableau.Create(""9H 9S 9D TS 4S 8D 2H""),

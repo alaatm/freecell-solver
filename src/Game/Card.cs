@@ -5,15 +5,15 @@ namespace FreeCellSolver.Game
 {
     public static class Colors
     {
-        public const int Black = 0;
-        public const int Red = 1;
+        public const int Red = 0;
+        public const int Black = 1;
     }
 
     public static class Suits
     {
-        public const int Clubs = 0;
-        public const int Diamonds = 1;
-        public const int Hearts = 2;
+        public const int Hearts = 0;
+        public const int Clubs = 1;
+        public const int Diamonds = 2;
         public const int Spades = 3;
     }
 
@@ -39,7 +39,7 @@ namespace FreeCellSolver.Game
     {
         private static readonly Card[] _allCards = new Card[53];
 
-        private static readonly char[] _suits = "CDHS".ToCharArray();
+        private static readonly char[] _suits = "HCDS".ToCharArray();
         private static readonly char[] _ranks = "A23456789TJQK".ToCharArray();
 
         public const byte Nil = 52;
@@ -56,7 +56,7 @@ namespace FreeCellSolver.Game
             var c = 0;
             for (var r = Ranks.Ace; r <= Ranks.Rk; r++)
             {
-                for (var s = Suits.Clubs; s <= Suits.Spades; s++)
+                for (var s = Suits.Hearts; s <= Suits.Spades; s++)
                 {
                     var card = new Card(s + (r << 2));
                     _allCards[c++] = card;
@@ -70,7 +70,7 @@ namespace FreeCellSolver.Game
             RawValue = rawValue;
             Suit = RawValue & 3;
             Rank = RawValue >> 2;
-            Color = Suit == Suits.Hearts || Suit == Suits.Diamonds ? Colors.Red : Colors.Black;
+            Color = RawValue & 1;
         }
 
         // Note no error checks are made!

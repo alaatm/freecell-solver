@@ -13,6 +13,7 @@ namespace FreeCellSolver.Test
                 var card = Card.Get(i);
                 Assert.Equal(i & 3, card.Suit);
                 Assert.Equal(i >> 2, card.Rank);
+                Assert.Equal(card.Suit == Suits.Hearts || card.Suit == Suits.Diamonds ? Colors.Red : Colors.Black, card.Color);
             }
         }
 
@@ -20,7 +21,7 @@ namespace FreeCellSolver.Test
         public void Can_get_card_by_string()
         {
             const string ranks = "A23456789TJQK";
-            const string suits = "CDHS";
+            const string suits = "HCDS";
 
             foreach (var r in ranks)
             {
@@ -29,6 +30,7 @@ namespace FreeCellSolver.Test
                     var card = Card.Get($"{r}{s}");
                     Assert.Equal(suits.IndexOf(s), card.Suit);
                     Assert.Equal(ranks.IndexOf(r), card.Rank);
+                    Assert.Equal(s == 'H' || s == 'D' ? Colors.Red : Colors.Black, card.Color);
                 }
             }
         }
@@ -38,11 +40,12 @@ namespace FreeCellSolver.Test
         {
             for (var r = Ranks.Ace; r <= Ranks.Rk; r++)
             {
-                for (var s = Suits.Clubs; s <= Suits.Spades; s++)
+                for (var s = Suits.Hearts; s <= Suits.Spades; s++)
                 {
                     var card = Card.Get(s, r);
                     Assert.Equal(s, card.Suit);
                     Assert.Equal(r, card.Rank);
+                    Assert.Equal(s == Suits.Hearts || s == Suits.Diamonds ? Colors.Red : Colors.Black, card.Color);
                 }
             }
         }
@@ -99,7 +102,7 @@ namespace FreeCellSolver.Test
         [InlineData("3S", "4D", true)]
         [InlineData("3S", "4H", true)]
         [InlineData("3S", "4S", false)]
-        public void IsBelow_returns_whether_card_can_go_below_specfied_tableau_top(string check, string top, bool expectedIsBelow)
+        public void IsBelow_returns_whether_card_can_go_below_specfied_another(string check, string top, bool expectedIsBelow)
             => Assert.Equal(expectedIsBelow, Card.Get(check).IsBelow(Card.Get(top)));
 
         [Fact]

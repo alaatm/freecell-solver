@@ -10,22 +10,25 @@ namespace FreeCellSolver.Game.Extensions
     {
         public static Tableau[] FromDealNum(int dealNum)
         {
-            Span<byte> crv = stackalloc byte[] 
+            Span<byte> crv = stackalloc byte[]
             {/*
               * SS  HH  DD  CC  */
-                51, 50, 49, 48, // RK
-                47, 46, 45, 44, // RQ
-                43, 42, 41, 40, // RJ
-                39, 38, 37, 36, // RT
-                35, 34, 33, 32, // R9
-                31, 30, 29, 28, // R8
-                27, 26, 25, 24, // R7
-                23, 22, 21, 20, // R6
-                19, 18, 17, 16, // R5
-                15, 14, 13, 12, // R4
-                11, 10, 09, 08, // R3
-                07, 06, 05, 04, // R2
-                03, 02, 01, 00,  // RA
+                51, 48, 50, 49, // RK
+                47, 44, 46, 45, // RQ
+                43, 40, 42, 41, // RJ
+                39, 36, 38, 37, // RT
+                35, 32, 34, 33, // R9
+                31, 28, 30, 29, // R8
+                27, 24, 26, 25, // R7
+                23, 20, 22, 21, // R6
+                19, 16, 18, 17, // R5
+                15, 12, 14, 13, // R4
+                11, 08, 10, 09, // R3
+                07, 04, 06, 05, // R2
+                03, 00, 02, 01, // RA
+                // The non sequential numbers in the array is because the original ms algorithm
+                // uses Clubs to 0, Diamonds to 1, Hearts to 2 and Spades to 3 but in our solution
+                // we set Hearts to 0, Clubs to 1, Diamonds to 2 and Spades to 3.
             };
 
             var seed = dealNum;
