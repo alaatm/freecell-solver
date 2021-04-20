@@ -36,6 +36,14 @@ class ReplayBoard {
     duration = 850;
 
     constructor(public board: number[][], public moves: Move[]) {
+        document.onkeydown = e => {
+            const code = e.key || e.keyCode;
+            switch (code) {
+                case 'ArrowLeft': case 37: !this.prev.disabled && this.stepBackward(); break;
+                case 'ArrowRight': case 39: !this.next.disabled && this.stepForward(); break;
+            }
+        };
+
         this.slowDown = document.getElementById('slow-down')! as HTMLButtonElement;
         this.speedUp = document.getElementById('speed-up')! as HTMLButtonElement;
         this.prev = document.getElementById('prev')! as HTMLButtonElement;
@@ -86,7 +94,7 @@ class ReplayBoard {
         for (let i = this.currentPos; i < this.moves.length && this.isPlaying; i++) {
             await this.move(this.moves[this.currentPos++]);
         }
-        if (this.currentPos == this.moves.length) {
+        if (this.currentPos === this.moves.length) {
             this.playOrPause(); // Pause when done
         }
     }
@@ -145,10 +153,10 @@ class ReplayBoard {
     }
 
     private setTargetFoundationPosition(m: Move) {
-        if (m.type == MoveType.ReserveToFoundation) {
+        if (m.type === MoveType.ReserveToFoundation) {
             const card = this.getReserveCard(m.from);
             m.to = card & 3;
-        } else if (m.type == MoveType.TableauToFoundation) {
+        } else if (m.type === MoveType.TableauToFoundation) {
             const card = this.getTableauCards(m.from)[0];
             m.to = card & 3;
         }
@@ -156,7 +164,6 @@ class ReplayBoard {
 
     private async move(m: Move, duration?: number) {
         let sourceX: number, sourceY: number, targetX: number, targetY: number;
-        let translateX: number, translateY: number;
         let cards: number[];
         let target: Element;
 
@@ -215,8 +222,9 @@ class ReplayBoard {
                 break;
         }
 
-        translateX = targetX - sourceX;
-        translateY = targetY - sourceY;
+        const translateX = targetX - sourceX;
+        const translateY = targetY - sourceY;
+
         this.movesAnimArray.push({ translateX, translateY });
 
         const cardEls = cards.map(v => document.getElementsByClassName(`rv${v}`)[0]);
@@ -231,7 +239,7 @@ class ReplayBoard {
             duration,
         }).finished;
 
-        if (m.type == MoveType.ReserveToTableau || m.type == MoveType.TableauToTableau) {
+        if (m.type === MoveType.ReserveToTableau || m.type === MoveType.TableauToTableau) {
             for (let i = 0; i < cardEls.length; i++) {
                 cardEls[i].setAttribute('style', `top:${(target.children.length - 1) * this.stackOffset}px;`);
                 target.appendChild(cardEls[i]);
@@ -283,7 +291,7 @@ class ReplayBoard {
 
         this.movesAnimArray.pop();
 
-        if (m.type == MoveType.TableauToFoundation || m.type == MoveType.TableauToReserve || m.type == MoveType.TableauToTableau) {
+        if (m.type === MoveType.TableauToFoundation || m.type === MoveType.TableauToReserve || m.type === MoveType.TableauToTableau) {
             for (let i = 0; i < cardEls.length; i++) {
                 cardEls[i].setAttribute('style', `top:${(target.children.length - 1) * this.stackOffset}px;`);
                 target.appendChild(cardEls[i]);
