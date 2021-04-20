@@ -211,10 +211,12 @@ namespace FreeCellSolver.Game
                 clubs + spades -
                 diamonds - hearts);
 
-            hearts <<= 2;
-            clubs = (byte)((clubs << 2) | 1);
-            diamonds = (byte)((diamonds << 2) | 2);
-            spades = (byte)((spades << 2) | 3);
+            // Convert to card's rawValue and add 1 to the rank so we can
+            // check if tableaus' cards can be inserted to foundation
+            hearts = (byte)((hearts + 1) << 2);
+            clubs = (byte)(((clubs + 1) << 2) | 1);
+            diamonds = (byte)(((diamonds + 1) << 2) | 2);
+            spades = (byte)(((spades + 1) << 2) | 3);
 
             var suitsFound = 0;
             var numBuried = 0;
@@ -571,17 +573,17 @@ namespace FreeCellSolver.Game
         }
 
         static readonly Random _rnd = new();
-        static readonly int[] _reserveRand = new int[52];
+        static readonly int[] _reserveRand = new int[56];
         static readonly int[] _tableauUnsortedRand = new int[7];
         static readonly int[] _tableauSortedRand = new int[13];
-        static readonly int[] _tableauTopRand = new int[52];
+        static readonly int[] _tableauTopRand = new int[56];
 
         static Board()
         {
-            InitHashRand(52, _reserveRand);
+            InitHashRand(56, _reserveRand);
             InitHashRand(7, _tableauUnsortedRand);
             InitHashRand(13, _tableauSortedRand);
-            InitHashRand(52, _tableauTopRand);
+            InitHashRand(56, _tableauTopRand);
         }
 
         static void InitHashRand(int count, int[] rand)

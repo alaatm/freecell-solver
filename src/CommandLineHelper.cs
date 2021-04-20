@@ -175,9 +175,9 @@ namespace FreeCellSolver.Entry
                     WriteResource("FreeCellSolver.visualizer.dist.index.min.js", Path.Combine(path, "index.min.js"));
                     WriteResource("FreeCellSolver.visualizer.dist.visualizer.min.html", Path.Combine(path, "visualizer.html"));
 
-                    for (var i = 0; i < 52; i++)
+                    foreach (var card in Card.All())
                     {
-                        Card.Get(i).ToImage().Save(Path.Combine(path, "assets", $"{i}.png"));
+                        card.ToImage().Save(Path.Combine(path, "assets", $"{card.RawValue}.png"));
                     }
 
                     var html = File.ReadAllText(Path.Combine(path, "visualizer.html"));

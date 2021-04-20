@@ -13,12 +13,12 @@ namespace FreeCellSolver.Game
         ReserveToTableau,
     }
 
-    public readonly struct Move
+    public readonly struct Move: IEquatable<Move>
     {
-        public MoveType Type { get; }
-        public byte From { get; }
-        public byte To { get; }
-        public byte Size { get; }
+        public readonly MoveType Type;
+        public readonly byte From;
+        public readonly byte To;
+        public readonly byte Size;
 
         private Move(MoveType type, byte from, byte to, byte size)
         {
@@ -65,9 +65,9 @@ namespace FreeCellSolver.Game
 
         public override int GetHashCode() => HashCode.Combine(Type, From, To, Size);
 
-        private bool Equals(Move other) => Type == other.Type && From == other.From && To == other.To && Size == other.Size;
+        public bool Equals(Move other) => Type == other.Type && From == other.From && To == other.To && Size == other.Size;
 
-        public override bool Equals(object obj) => obj is Move other && Equals(other);
+        public override bool Equals(object obj) => throw new NotImplementedException();
 
         public static bool operator ==(Move left, Move right) => left.Equals(right);
 

@@ -55,8 +55,6 @@ namespace FreeCellSolver.Test
             Assert.False(
                 Move.Get(MoveType.TableauToTableau, 1, 3, 2) !=
                 Move.Get(MoveType.TableauToTableau, 1, 3, 2));
-
-            Assert.False(((Move)default).Equals(new object()));
         }
 
         [Theory]

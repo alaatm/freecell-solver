@@ -17,17 +17,7 @@ namespace FreeCellSolver.Game
 
         private Reserve() { }
 
-        // Do not call other overloads of Create() since this is called from
-        // Board.FromDealNumber() and thus should be optimized.
-        public static Reserve Create()
-        {
-            var r = new Reserve();
-            r._state[0] = Card.Nil;
-            r._state[1] = Card.Nil;
-            r._state[2] = Card.Nil;
-            r._state[3] = Card.Nil;
-            return r;
-        }
+        public static Reserve Create() => new();
 
         public static Reserve Create(string card1) => Create(card1, null, null, null);
 
@@ -37,10 +27,10 @@ namespace FreeCellSolver.Game
 
         public static Reserve Create(string card1, string card2, string card3, string card4)
         {
-            var c1 = card1.IsEmpty() ? Card.Nil : Card.Get(card1).RawValue;
-            var c2 = card2.IsEmpty() ? Card.Nil : Card.Get(card2).RawValue;
-            var c3 = card3.IsEmpty() ? Card.Nil : Card.Get(card3).RawValue;
-            var c4 = card4.IsEmpty() ? Card.Nil : Card.Get(card4).RawValue;
+            var c1 = Card.Get(card1).RawValue;
+            var c2 = Card.Get(card2).RawValue;
+            var c3 = Card.Get(card3).RawValue;
+            var c4 = Card.Get(card4).RawValue;
 
             Debug.Assert((c1 != c2 && c1 != c3 && c1 != c4 && c1 != Card.Nil) || c1 == Card.Nil);
             Debug.Assert((c2 != c1 && c2 != c3 && c2 != c4 && c2 != Card.Nil) || c2 == Card.Nil);
@@ -48,10 +38,10 @@ namespace FreeCellSolver.Game
             Debug.Assert((c4 != c1 && c4 != c2 && c4 != c3 && c4 != Card.Nil) || c4 == Card.Nil);
 
             var r = new Reserve();
-            r._state[0] = (byte)c1;
-            r._state[1] = (byte)c2;
-            r._state[2] = (byte)c3;
-            r._state[3] = (byte)c4;
+            r._state[0] = c1;
+            r._state[1] = c2;
+            r._state[2] = c3;
+            r._state[3] = c4;
 
             r.FreeCount -= c1 != Card.Nil ? 1 : 0;
             r.FreeCount -= c2 != Card.Nil ? 1 : 0;
@@ -80,7 +70,7 @@ namespace FreeCellSolver.Game
         public void Insert(int index, Card card)
         {
             Debug.Assert(CanInsert(out var idx) && idx == index);
-            _state[index] = (byte)card.RawValue;
+            _state[index] = card.RawValue;
             FreeCount--;
             Debug.Assert(FreeCount == _state.AsArray().Count(c => c == Card.Nil));
         }

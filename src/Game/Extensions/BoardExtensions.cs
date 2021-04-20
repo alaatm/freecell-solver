@@ -13,22 +13,23 @@ namespace FreeCellSolver.Game.Extensions
             Span<byte> crv = stackalloc byte[]
             {/*
               * SS  HH  DD  CC  */
-                51, 48, 50, 49, // RK
-                47, 44, 46, 45, // RQ
-                43, 40, 42, 41, // RJ
-                39, 36, 38, 37, // RT
-                35, 32, 34, 33, // R9
-                31, 28, 30, 29, // R8
-                27, 24, 26, 25, // R7
-                23, 20, 22, 21, // R6
-                19, 16, 18, 17, // R5
-                15, 12, 14, 13, // R4
-                11, 08, 10, 09, // R3
-                07, 04, 06, 05, // R2
-                03, 00, 02, 01, // RA
+                55, 52, 54, 53, // RK
+                51, 48, 50, 49, // RQ
+                47, 44, 46, 45, // RJ
+                43, 40, 42, 41, // RT
+                39, 36, 38, 37, // R9
+                35, 32, 34, 33, // R8
+                31, 28, 30, 29, // R7
+                27, 24, 26, 25, // R6
+                23, 20, 22, 21, // R5
+                19, 16, 18, 17, // R4
+                15, 12, 14, 13, // R3
+                11, 08, 10, 09, // R2
+                07, 04, 06, 05, // RA
                 // The non sequential numbers in the array is because the original ms algorithm
                 // uses Clubs to 0, Diamonds to 1, Hearts to 2 and Spades to 3 but in our solution
                 // we set Hearts to 0, Clubs to 1, Diamonds to 2 and Spades to 3.
+                // Also, since Ace is now equal to 1 instead of 0 so we start from 4 instead of 0.
             };
 
             var seed = dealNum;
@@ -145,9 +146,7 @@ namespace FreeCellSolver.Game.Extensions
             fSb.Append("\tFoundation.Create(");
             for (var i = 0; i < 4; i++)
             {
-                // Note for cases where board.Foundation[i] - 1 evaluates to -1, 
-                // the byte cast will make the result 255 which is equal to Ranks.Nil
-                var c = (byte)(board.Foundation[i] - 1);
+                var c = board.Foundation[i];
                 fSb.Append(c != Ranks.Nil ? $"Ranks.{GetRank(c)}" : "Ranks.Nil");
                 if (i < 3)
                 {

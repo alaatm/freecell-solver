@@ -751,7 +751,7 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Equal(Card.Get("2D"), b.Tableaus[3].Top);
-            Assert.Equal(Ranks.R2, b.Foundation[Suits.Diamonds]);
+            Assert.Equal(Ranks.Ace, b.Foundation[Suits.Diamonds]);
         }
 
         [Fact]
@@ -833,7 +833,7 @@ namespace FreeCellSolver.Test
 
             // Assert
             Assert.Equal(Card.Null, b.Reserve[0]);
-            Assert.Equal(Ranks.R2, b.Foundation[Suits.Diamonds]);
+            Assert.Equal(Ranks.Ace, b.Foundation[Suits.Diamonds]);
         }
 
         [Fact]
@@ -1075,7 +1075,7 @@ namespace FreeCellSolver.Test
             for (var i = 0; i < 8; i++)
             {
                 Assert.NotSame(b1.Tableaus[i], b2.Tableaus[i]);
-                Assert.Same(b1.Tableaus[i].Top, b2.Tableaus[i].Top);
+                Assert.Equal(b1.Tableaus[i].Top, b2.Tableaus[i].Top);
                 Assert.NotSame(fi.GetValue(b1.Tableaus[i]), fi.GetValue(b2.Tableaus[i]));
             }
         }

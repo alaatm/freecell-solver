@@ -128,7 +128,7 @@ namespace FreeCellSolver.Test
 
             Assert.Equal(Card.Null, r[0]);
             Assert.Equal(4, r.FreeCount);
-            Assert.Equal(Ranks.R2, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Ace, f[Suits.Clubs]);
         }
 
         [Fact]

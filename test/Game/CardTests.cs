@@ -1,3 +1,4 @@
+using System.Linq;
 using FreeCellSolver.Game;
 using Xunit;
 
@@ -8,7 +9,7 @@ namespace FreeCellSolver.Test
         [Fact]
         public void Can_get_card_by_rawValue()
         {
-            for (var i = 0; i < 52; i++)
+            for (var i = 4; i < 56; i++)
             {
                 var card = Card.Get(i);
                 Assert.Equal(i & 3, card.Suit);
@@ -29,7 +30,7 @@ namespace FreeCellSolver.Test
                 {
                     var card = Card.Get($"{r}{s}");
                     Assert.Equal(suits.IndexOf(s), card.Suit);
-                    Assert.Equal(ranks.IndexOf(r), card.Rank);
+                    Assert.Equal(ranks.IndexOf(r) + 1, card.Rank);
                     Assert.Equal(s == 'H' || s == 'D' ? Colors.Red : Colors.Black, card.Color);
                 }
             }
@@ -46,6 +47,30 @@ namespace FreeCellSolver.Test
                     Assert.Equal(s, card.Suit);
                     Assert.Equal(r, card.Rank);
                     Assert.Equal(s == Suits.Hearts || s == Suits.Diamonds ? Colors.Red : Colors.Black, card.Color);
+                }
+            }
+        }
+
+        [Fact]
+        public void All_returns_all_cards()
+        {
+            var cards = Card.All();
+
+            Assert.Equal(52, cards.Length);
+
+            var rank = 1;
+            var suit = 0;
+            for (var i = 0; i < cards.Length; i++)
+            {
+                var card = cards[i];
+                Assert.Equal(i + 4, card.RawValue);
+                Assert.Equal(rank, card.Rank);
+                Assert.Equal(suit, card.Suit);
+
+                if (++suit > 3)
+                {
+                    rank++;
+                    suit = 0;
                 }
             }
         }
@@ -102,11 +127,41 @@ namespace FreeCellSolver.Test
         [InlineData("3S", "4D", true)]
         [InlineData("3S", "4H", true)]
         [InlineData("3S", "4S", false)]
-        public void IsBelow_returns_whether_card_can_go_below_specfied_another(string check, string top, bool expectedIsBelow)
+        public void IsBelow_returns_whether_card_can_go_below_another(string check, string top, bool expectedIsBelow)
             => Assert.Equal(expectedIsBelow, Card.Get(check).IsBelow(Card.Get(top)));
 
         [Fact]
-        public void ToString_returns_string_representation()
-            => Assert.Equal("AS", Card.Get("AS").ToString());
+        public void GetHashCode_tests()
+        {
+            Assert.Equal(
+                Card.Get("AC").GetHashCode(),
+                Card.Get("AC").GetHashCode());
+
+            Assert.Equal(((Card)default).GetHashCode(), ((Card)default).GetHashCode());
+
+            Assert.NotEqual(
+                Card.Get("AC").GetHashCode(),
+                Card.Get("AD").GetHashCode());
+        }
+
+        [Fact]
+        public void Equality_tests()
+        {
+            Assert.True(
+                Card.Get("AC") ==
+                Card.Get("AC"));
+
+            Assert.True(default == ((Card)default));
+
+            Assert.True(
+                Card.Get("AC") !=
+                Card.Get("AD"));
+        }
+
+        [Theory]
+        [InlineData("", "--")]
+        [InlineData("AS", "AS")]
+        public void ToString_returns_string_representation(string card, string expected)
+            => Assert.Equal(expected, Card.Get(card).ToString());
     }
 }

@@ -15,18 +15,18 @@ namespace FreeCellSolver.Test
 
             for (var i = 0; i < 4; i++)
             {
-                Assert.Equal(Ranks.Ace, f[i]);
+                Assert.Equal(Ranks.Nil, f[i]);
             }
         }
 
         [Fact]
-        public void Indexer_returns_next_rank_of_specified_suit()
+        public void Indexer_returns_rank_of_specified_suit()
         {
             var f = Foundation.Create(Ranks.Nil, Ranks.R6, Ranks.Nil, Ranks.Nil);
-            Assert.Equal(Ranks.Ace, f[Suits.Hearts]);
-            Assert.Equal(Ranks.R7, f[Suits.Clubs]);
-            Assert.Equal(Ranks.Ace, f[Suits.Diamonds]);
-            Assert.Equal(Ranks.Ace, f[Suits.Spades]);
+            Assert.Equal(Ranks.Nil, f[Suits.Hearts]);
+            Assert.Equal(Ranks.R6, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Nil, f[Suits.Diamonds]);
+            Assert.Equal(Ranks.Nil, f[Suits.Spades]);
         }
 
         [Fact]
@@ -70,9 +70,9 @@ namespace FreeCellSolver.Test
         {
             var f = Foundation.Create(Ranks.Nil, Ranks.Nil, Ranks.Nil, Ranks.Nil);
 
-            Assert.Equal(Ranks.Ace, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Nil, f[Suits.Clubs]);
             f.Push(Card.Get("AC"));
-            Assert.Equal(Ranks.R2, f[Suits.Clubs]);
+            Assert.Equal(Ranks.Ace, f[Suits.Clubs]);
         }
 
         [Fact]
@@ -82,10 +82,10 @@ namespace FreeCellSolver.Test
             var clone = f.Clone();
 
             Assert.True(f.Equals(clone));
-            Assert.Equal(Ranks.Ace, clone[Suits.Hearts]);
-            Assert.Equal(Ranks.R2, clone[Suits.Clubs]);
-            Assert.Equal(Ranks.R5, clone[Suits.Diamonds]);
-            Assert.Equal(Ranks.R4, clone[Suits.Spades]);
+            Assert.Equal(Ranks.Nil, clone[Suits.Hearts]);
+            Assert.Equal(Ranks.Ace, clone[Suits.Clubs]);
+            Assert.Equal(Ranks.R4, clone[Suits.Diamonds]);
+            Assert.Equal(Ranks.R3, clone[Suits.Spades]);
 
             Assert.NotSame(f, clone);
             var fi = typeof(Foundation).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);

@@ -7,13 +7,28 @@ namespace FreeCellSolver.Test
 {
     public class TableauTests
     {
+        [Fact]
+        public void State_is_initialized_to_empty_tableau()
+        {
+            var t = Tableau.Create();
+
+            for (var i = 0; i < 18; i++)
+            {
+                Assert.Equal(Card.Null, t[i]);
+            }
+
+            Assert.Equal(0, t.Size);
+            Assert.Equal(0, t.SortedSize);
+            Assert.Equal(Card.Null, t.Top);
+        }
+
         [Theory]
-        [InlineData("", 0, 0)]
-        [InlineData("KD", 1, 1)]
-        [InlineData("KD 5H 4S 2D", 4, 1)]
-        [InlineData("KD 5H 4S", 3, 2)]
-        [InlineData("6C 5H 4S", 3, 3)]
-        public void Size_props_are_properly_initialized(string tableau, int expectedSize, int expectedSortedSize)
+        [InlineData("", 0, 0, "")]
+        [InlineData("KD", 1, 1, "KD")]
+        [InlineData("KD 5H 4S 2D", 4, 1, "2D")]
+        [InlineData("KD 5H 4S", 3, 2, "4S")]
+        [InlineData("6C 5H 4S", 3, 3, "4S")]
+        public void Props_are_properly_initialized(string tableau, int expectedSize, int expectedSortedSize, string expectedTop)
         {
             // Arrange & act
             var t = Tableau.Create(tableau);
@@ -21,6 +36,7 @@ namespace FreeCellSolver.Test
             // Assert
             Assert.Equal(expectedSize, t.Size);
             Assert.Equal(expectedSortedSize, t.SortedSize);
+            Assert.Equal(Card.Get(expectedTop), t.Top);
         }
 
         [Fact]
@@ -371,7 +387,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(3, t.Size);
             Assert.Equal(1, t.SortedSize);
 
-            Assert.Equal(Ranks.R2, f[Suits.Hearts]);
+            Assert.Equal(Ranks.Ace, f[Suits.Hearts]);
         }
 
         [Theory]
@@ -408,7 +424,7 @@ namespace FreeCellSolver.Test
             Assert.Equal(4, clone.Size);
             Assert.Equal(2, clone.SortedSize);
 
-            Assert.Same(t.Top, clone.Top);
+            Assert.Equal(t.Top, clone.Top);
             Assert.NotSame(t, clone);
             var fi = typeof(Tableau).GetField("_state", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.NotSame(fi.GetValue(t), fi.GetValue(clone));
