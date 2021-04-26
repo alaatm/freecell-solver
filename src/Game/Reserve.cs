@@ -2,7 +2,6 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
-using FreeCellSolver.Game.Extensions;
 using FreeCellSolver.Buffers;
 
 namespace FreeCellSolver.Game

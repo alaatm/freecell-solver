@@ -1,4 +1,3 @@
-using System.Linq;
 using FreeCellSolver.Game;
 using Xunit;
 
