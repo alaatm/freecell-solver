@@ -2,14 +2,18 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using FreeCellSolver.Buffers;
 using System.Collections.Generic;
 using FreeCellSolver.Game.Extensions;
-using FreeCellSolver.Buffers;
+using FreeCellSolver.Solvers.Visualizers;
 
 namespace FreeCellSolver.Game
 {
-    public sealed class Board : IEquatable<Board>, IComparable<Board>
+    public sealed class Board : IEquatable<Board>, IComparable<Board>, ITaggable
     {
+        public string Id { get; } = $"n{Guid.NewGuid():N}";
+        public string Tag => _manualMoveCount.ToString();
+
         private int _hashcode;
         private ForbiddenMoves _forbiddenMoves;
 

@@ -1,8 +1,10 @@
 using System;
 using System.Threading;
 using System.Diagnostics;
+using System.Collections.Generic;
 using System.Collections.Concurrent;
 using FreeCellSolver.Game;
+using FreeCellSolver.Solvers.Visualizers;
 
 namespace FreeCellSolver.Solvers
 {
@@ -15,6 +17,8 @@ namespace FreeCellSolver.Solvers
         private Board _goalNode;
         private int _parallelismLevel;
         private int _threadCount;
+
+        public static readonly List<Event<Board>> Events = new();
 
         public static Result Run(Board root) => Run(root, Environment.ProcessorCount);
 
@@ -32,6 +36,11 @@ namespace FreeCellSolver.Solvers
             _threadCount = 1;
             _parallelismLevel = parallelismLevel;
             _closed = new(parallelismLevel, 1000);
+
+            if (parallelismLevel == 1)
+            {
+                throw new Exception("Cannot produce graph unless no parallelism is specified.");
+            }
 
             _mres = new(false);
             ThreadPool.UnsafeQueueUserWorkItem(_ => Search(clone), null);
@@ -52,13 +61,17 @@ namespace FreeCellSolver.Solvers
             open.Enqueue(root);
             int openCount;
 
+            Events.Add(new Event<Board>(null, root, EventType.Enqueue));
+
             while ((openCount = open.Count) != 0)
             {
                 var node = open.Dequeue();
+                Events.Add(new Event<Board>(node, EventType.Dequeue));
 
                 if (node.IsSolved || _goalNode is not null)
                 {
                     Finalize(node);
+                    Events.Add(new Event<Board>(node, EventType.Goal));
                     break;
                 }
 
@@ -77,6 +90,7 @@ namespace FreeCellSolver.Solvers
 
                     if (closed.ContainsKey(next))
                     {
+                        Events.Add(new Event<Board>(node, next, EventType.CloseExist));
                         continue;
                     }
 
@@ -85,9 +99,17 @@ namespace FreeCellSolver.Solvers
                     switch (open.TryGetValue(next, out var existing))
                     {
                         case true when next.CompareTo(existing) < 0:
-                            open.Replace(existing, next); break;
+                            open.Replace(existing, next);
+                            Events.Add(new Event<Board>(node, next, EventType.ReplaceAdd));
+                            Events.Add(new Event<Board>(existing, EventType.ReplaceRemove));
+                            break;
                         case false:
-                            open.Enqueue(next); break;
+                            open.Enqueue(next);
+                            Events.Add(new Event<Board>(node, next, EventType.Enqueue));
+                            break;
+                        default:
+                            Events.Add(new Event<Board>(node, next, EventType.OpenExist));
+                            break;
                     }
                 }
             }
