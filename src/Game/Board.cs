@@ -49,8 +49,6 @@ namespace FreeCellSolver.Game
 
         [ThreadStatic] private static Move[] _moves;
 
-        // TODO: Cache moves in a compressed format (single byte per move) per hashcode for quick retr.
-        // when re-running solver to get best solution.
         public ReadOnlySpan<Move> GetValidMoves()
         {
             var tableaus = Tableaus;
