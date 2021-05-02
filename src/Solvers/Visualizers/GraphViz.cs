@@ -32,19 +32,22 @@ namespace FreeCellSolver.Solvers.Visualizers
 
     public struct Event<T> where T : class, ITaggable
     {
+        public int ThreadId;
         public T Parent;
         public T Node;
         public EventType EventType;
 
-        public Event(T parent, T node, EventType eventType)
+        public Event(int threadId, T parent, T node, EventType eventType)
         {
+            ThreadId = threadId;
             Parent = parent;
             Node = node;
             EventType = eventType;
         }
 
-        public Event(T node, EventType eventType)
+        public Event(int threadId, T node, EventType eventType)
         {
+            ThreadId = threadId;
             Parent = null;
             Node = node;
             EventType = eventType;
@@ -54,13 +57,21 @@ namespace FreeCellSolver.Solvers.Visualizers
     public static class GraphViz
     {
         public static void WriteTo<T>(string path, List<Event<T>> events, bool onlyFinal) where T : class, ITaggable
+            => WriteTo(path, events, events.Count, onlyFinal);
+
+        public static void WriteTo<T>(string path, List<Event<T>> events, int maxEventCount, bool onlyFinal) where T : class, ITaggable
         {
+            if (maxEventCount > events.Count)
+            {
+                throw new ArgumentException("", nameof(maxEventCount));
+            }
+
             var events_ = events.ToArray().AsSpan();
-            var end = onlyFinal ? events_.Length - 1 : 0;
+            var end = onlyFinal ? maxEventCount - 1 : 0;
 
             var eventsDict = new Dictionary<string, Event<T>>();
 
-            while (end++ < events_.Length)
+            while (end++ < maxEventCount)
             {
                 using var fs = File.OpenWrite(Path.Join(path, $"{end - 1:00000}.dot"));
                 using var writer = new StreamWriter(fs);
@@ -102,7 +113,7 @@ namespace FreeCellSolver.Solvers.Visualizers
                         case EventType.ReplaceRemove: color = "yellow"; break;
                     }
 
-                    writer.Write($"{kvp.Value.Node.Id}[label=\"{kvp.Value.Node.Tag}\",style=filled,color={color}];");
+                    writer.Write($"{kvp.Value.Node.Id}[label=\"{kvp.Value.Node.Tag} - {kvp.Value.ThreadId}\",style=filled,color={color}];");
                 }
 
                 writer.Write('}');

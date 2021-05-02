@@ -27,29 +27,29 @@ namespace FreeCellSolver.Test.Solvers.Visualizers
 
             var events = new List<Event<TestObj>>
             {
-                new Event<TestObj>(null, root, EventType.Enqueue),
-                new Event<TestObj>(root, EventType.Dequeue),
+                new Event<TestObj>(0, null, root, EventType.Enqueue),
+                new Event<TestObj>(0, root, EventType.Dequeue),
 
-                new Event<TestObj>(root, c0, EventType.Enqueue),
-                new Event<TestObj>(root, c1, EventType.Enqueue),
-                new Event<TestObj>(root, c2, EventType.Enqueue),
+                new Event<TestObj>(0, root, c0, EventType.Enqueue),
+                new Event<TestObj>(0, root, c1, EventType.Enqueue),
+                new Event<TestObj>(0, root, c2, EventType.Enqueue),
 
-                new Event<TestObj>(c1, EventType.Dequeue),
+                new Event<TestObj>(0, c1, EventType.Dequeue),
 
-                new Event<TestObj>(c1, c10, EventType.Enqueue),
-                new Event<TestObj>(c1, c11, EventType.Enqueue),
+                new Event<TestObj>(0, c1, c10, EventType.Enqueue),
+                new Event<TestObj>(0, c1, c11, EventType.Enqueue),
 
-                new Event<TestObj>(c11, EventType.Dequeue),
+                new Event<TestObj>(0, c11, EventType.Dequeue),
 
-                new Event<TestObj>(c11, c110, EventType.CloseExist),
-                new Event<TestObj>(c11, c111, EventType.OpenExist),
-                new Event<TestObj>(c11, c112, EventType.ReplaceAdd),
-                new Event<TestObj>(c10, EventType.ReplaceRemove),
-                new Event<TestObj>(c11, c113, EventType.Enqueue),
-                new Event<TestObj>(c11, c114, EventType.Enqueue),
+                new Event<TestObj>(0, c11, c110, EventType.CloseExist),
+                new Event<TestObj>(0, c11, c111, EventType.OpenExist),
+                new Event<TestObj>(0, c11, c112, EventType.ReplaceAdd),
+                new Event<TestObj>(0, c10, EventType.ReplaceRemove),
+                new Event<TestObj>(0, c11, c113, EventType.Enqueue),
+                new Event<TestObj>(0, c11, c114, EventType.Enqueue),
 
-                new Event<TestObj>(c112, EventType.Dequeue),
-                new Event<TestObj>(c112, EventType.Goal),
+                new Event<TestObj>(0, c112, EventType.Dequeue),
+                new Event<TestObj>(0, c112, EventType.Goal),
             };
 
             var tmpPath = Path.Join(Path.GetTempPath(), "freecell_solver_graphvis");

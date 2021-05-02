@@ -37,11 +37,6 @@ namespace FreeCellSolver.Solvers
             _parallelismLevel = parallelismLevel;
             _closed = new(parallelismLevel, 1000);
 
-            if (parallelismLevel == 1)
-            {
-                throw new Exception("Cannot produce graph unless no parallelism is specified.");
-            }
-
             _mres = new(false);
             ThreadPool.UnsafeQueueUserWorkItem(_ => Search(clone), null);
             _mres.Wait();
@@ -61,17 +56,16 @@ namespace FreeCellSolver.Solvers
             open.Enqueue(root);
             int openCount;
 
-            Events.Add(new Event<Board>(null, root, EventType.Enqueue));
+            lock (_syncLock) { Events.Add(new Event<Board>(Thread.CurrentThread.ManagedThreadId, null, root, EventType.Enqueue)); }
 
             while ((openCount = open.Count) != 0)
             {
                 var node = open.Dequeue();
-                Events.Add(new Event<Board>(node, EventType.Dequeue));
+                lock (_syncLock) { Events.Add(new Event<Board>(Thread.CurrentThread.ManagedThreadId, node, EventType.Dequeue)); }
 
                 if (node.IsSolved || _goalNode is not null)
                 {
                     Finalize(node);
-                    Events.Add(new Event<Board>(node, EventType.Goal));
                     break;
                 }
 
@@ -90,7 +84,7 @@ namespace FreeCellSolver.Solvers
 
                     if (closed.ContainsKey(next))
                     {
-                        Events.Add(new Event<Board>(node, next, EventType.CloseExist));
+                        lock (_syncLock) { Events.Add(new Event<Board>(Thread.CurrentThread.ManagedThreadId, node, next, EventType.CloseExist)); }
                         continue;
                     }
 
@@ -100,15 +94,18 @@ namespace FreeCellSolver.Solvers
                     {
                         case true when next.CompareTo(existing) < 0:
                             open.Replace(existing, next);
-                            Events.Add(new Event<Board>(node, next, EventType.ReplaceAdd));
-                            Events.Add(new Event<Board>(existing, EventType.ReplaceRemove));
+                            lock (_syncLock)
+                            {
+                                Events.Add(new Event<Board>(Thread.CurrentThread.ManagedThreadId, node, next, EventType.ReplaceAdd));
+                                Events.Add(new Event<Board>(Thread.CurrentThread.ManagedThreadId, existing, EventType.ReplaceRemove));
+                            }
                             break;
                         case false:
                             open.Enqueue(next);
-                            Events.Add(new Event<Board>(node, next, EventType.Enqueue));
+                            lock (_syncLock) { Events.Add(new Event<Board>(Thread.CurrentThread.ManagedThreadId, node, next, EventType.Enqueue)); }
                             break;
                         default:
-                            Events.Add(new Event<Board>(node, next, EventType.OpenExist));
+                            lock (_syncLock) { Events.Add(new Event<Board>(Thread.CurrentThread.ManagedThreadId, node, next, EventType.OpenExist)); }
                             break;
                     }
                 }
@@ -145,6 +142,7 @@ namespace FreeCellSolver.Solvers
                 if (_goalNode is null || (node.IsSolved && node.MoveCount < _goalNode.MoveCount))
                 {
                     _goalNode = node;
+                    Events.Add(new Event<Board>(Thread.CurrentThread.ManagedThreadId, node, EventType.Goal));
                 }
             }
         }
