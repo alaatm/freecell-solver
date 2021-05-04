@@ -169,7 +169,7 @@ namespace FreeCellSolver.Game
                 }
             }
 
-            return _moves.AsSpan().Slice(0, moveCount);
+            return _moves.AsSpan(0, moveCount);
         }
 
         public Board ExecuteMove(Move move) => ExecuteMove(move, true);
