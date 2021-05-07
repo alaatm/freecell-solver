@@ -42,7 +42,7 @@ namespace FreeCellSolver.Solvers
 
             if (_nodes.Length == currentSize)
             {
-                Array.Resize(ref _nodes, _nodes.Length * 2);
+                Array.Resize(ref _nodes, currentSize * 2);
             }
 
             _hash.Add(element);
