@@ -201,7 +201,9 @@ namespace FreeCellSolver.Game
 
             if (size <= 1)
             {
-                Top = size == 0 ? Card.Null : Top = Card.Get(state[size - 1]);
+                Top = size == 0
+                    ? Card.Null
+                    : Card.Get(state[size - 1]);
                 return size;
             }
 
