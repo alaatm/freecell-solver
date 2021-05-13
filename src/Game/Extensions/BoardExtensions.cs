@@ -3,12 +3,14 @@ using System.IO;
 using System.Text;
 using System.Linq;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace FreeCellSolver.Game.Extensions
 {
     public static class BoardExtensions
     {
-        public static Tableau[] FromDealNum(int dealNum)
+        [SkipLocalsInit]
+        public static unsafe Tableau[] FromDealNum(int dealNum)
         {
             Span<byte> crv = stackalloc byte[]
             {/*
