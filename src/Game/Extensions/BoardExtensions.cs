@@ -52,11 +52,17 @@ namespace FreeCellSolver.Game.Extensions
 
             for (var i = 0; i < crv.Length;)
             {
-                var count = col < 4 ? 7 : 6;
-
-                for (var j = 0; j < count; j++)
+                var count = 6;
+                cards[0] = crv[col + 0];
+                cards[1] = crv[col + 8];
+                cards[2] = crv[col + 16];
+                cards[3] = crv[col + 24];
+                cards[4] = crv[col + 32];
+                cards[5] = crv[col + 40];
+                if (col < 4)
                 {
-                    cards[j] = crv[col + (j * 8)];
+                    cards[6] = crv[col + 48];
+                    count = 7;
                 }
 
                 tableaus[col++] = Tableau.Create(cards.Slice(0, count));
