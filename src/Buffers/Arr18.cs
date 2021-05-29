@@ -88,4 +88,11 @@ namespace FreeCellSolver.Buffers
             arr._b16, arr._b17,
         };
     }
+
+    internal static class SpanExtensions
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void CopyTo(this Span<byte> source, ref Arr18 destination, int count)
+            => Unsafe.CopyBlock(ref destination._b00, ref MemoryMarshal.GetReference(source), (uint)count);
+    }
 }

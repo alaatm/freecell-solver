@@ -38,12 +38,8 @@ namespace FreeCellSolver.Game
         internal static Tableau Create(Span<byte> cards)
         {
             var t = new Tableau();
-
-            for (var i = 0; i < cards.Length; i++)
-            {
-                t._state[t.Size++] = cards[i];
-            }
-
+            cards.CopyTo(ref t._state, cards.Length);
+            t.Size = cards.Length;
             t.SortedSize = t.CountSorted();
             return t;
         }
