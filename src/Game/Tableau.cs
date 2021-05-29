@@ -169,18 +169,18 @@ namespace FreeCellSolver.Game
                 return 0;
             }
             if (
-                (rankDiff & 1)                  // 1 for odd rank diff, 0 for even rank diff
+                (rankDiff & 1)              // 1 for odd rank diff, 0 for even rank diff
                 ==
-                (top.Color ^ lead.Color ^ 1))   // 1 for same color, 0 for different color
+                (top.Color ^ lead.Color))   // 0 for same color, 1 for different color
             {
-                // Odd rank diff and same color on both tops
-                // -or- even rank diff and different color on both tops
-                return 0;
+                // Odd rank diff and diff color on both tops
+                // -or- even rank diff and same color on both tops
+                Debug.Assert(target.CanPush(this[Size - rankDiff]));
+                return rankDiff;
             }
 
-            Debug.Assert(target.CanPush(this[Size - rankDiff]));
-
-            return rankDiff;
+            Debug.Assert(!target.CanPush(this[Size - rankDiff]));
+            return 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
