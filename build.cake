@@ -1,4 +1,4 @@
-#addin nuget:?package=Cake.Yarn&version=0.4.8
+#addin nuget:?package=Cake.Npm&version=1.0.0
 #addin nuget:?package=Cake.Coverlet&version=2.5.4
 #tool nuget:?package=ReportGenerator&version=4.8.7
 
@@ -54,8 +54,8 @@ Task("Build")
 Task("VisualizerBuild")
     .Does(() =>
 {
-    Yarn.FromPath("./src/visualizer").Install();
-    Yarn.FromPath("./src/visualizer").RunScript("build");
+    NpmInstall(new NpmInstallSettings { WorkingDirectory = "./src/visualizer" });
+    NpmRunScript(new NpmRunScriptSettings { WorkingDirectory = "./src/visualizer", ScriptName = "build" });
 });
 
 Task("Test")

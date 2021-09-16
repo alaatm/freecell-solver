@@ -4,7 +4,18 @@ A freecell solver implemented using [A* search algorithm](https://en.wikipedia.o
 
 ## Build
 
-Make sure you have [.net 5 or later SDK](https://dotnet.microsoft.com/download) installed then run the following command in the terminal:
+Make sure you have the following already installed on your machine:
+
+* [.net 5 or later SDK](https://dotnet.microsoft.com/download)
+* [npm cli](https://nodejs.org/en/download/current/). This is used for the visualizer.
+
+Run the following command in the terminal:
+
+```
+dotnet tool restore
+```
+
+Then run the following to execute the build:
 
 ```
 dotnet cake
