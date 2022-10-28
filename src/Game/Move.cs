@@ -13,7 +13,7 @@ namespace FreeCellSolver.Game
         ReserveToTableau,
     }
 
-    public readonly struct Move: IEquatable<Move>
+    public readonly struct Move : IEquatable<Move>
     {
         public readonly MoveType Type;
         public readonly byte From;
@@ -35,7 +35,7 @@ namespace FreeCellSolver.Game
                 (type == MoveType.ReserveToTableau && from >= 0 && from < 4 && to >= 0 && to < 8 && size == 1) ||
                 (type == MoveType.TableauToFoundation && from >= 0 && from < 8 && to == 0 && size == 1) ||
                 (type == MoveType.TableauToReserve && from >= 0 && from < 8 && to >= 0 && to < 4 && size == 1) ||
-                (type == MoveType.TableauToTableau && from != to && from >= 0 && from < 8 && to >= 0 && to < 8 && size >= 1 && size <= 11)
+                (type == MoveType.TableauToTableau && from != to && from >= 0 && from < 8 && to >= 0 && to < 8 && size >= 1 && size <= 12)
             );
 
             return new Move(type, (byte)from, (byte)to, (byte)size);
