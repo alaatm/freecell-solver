@@ -76,14 +76,12 @@ namespace FreeCellSolver.Game.Extensions
         {
             var isValid = true;
 
-            var allCards = Enumerable.Range(0, 52).Select(c => Card.Get(c));
-
             var boardCards = board.AllCards.ToList();
             var uniqueCards = new HashSet<Card>(board.AllCards);
 
             if (uniqueCards.Count != 52)
             {
-                var missing = string.Join(", ", allCards.Except(uniqueCards).Select(c => $"'{c}'"));
+                var missing = string.Join(", ", Card.All().Except(uniqueCards).Select(c => $"'{c}'"));
                 Console.Error.WriteLine($"Invalid card count, should be '52' but found '{uniqueCards.Count}' cards.");
                 Console.Error.WriteLine($"The following card(s) are missing: {missing}");
                 isValid = false;
